@@ -1,0 +1,66 @@
+/* Store component styles for Swiper fade effect */
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Custom pagination styles for Store component */
+.swiper-pagination-bullet {
+  background: rgba(78, 77, 77, 0.856) !important;
+  opacity: 1 !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: whitesmoke !important;
+  opacity: 1 !important;
+}
+
+/* Custom navigation styles */
+.swiper-button-next,
+.swiper-button-prev {
+  color: white;
+  background: rgba(59, 59, 59, 0.767);
+  padding: 20px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Ensure fade effect works properly */
+.swiper-slide-active {
+  z-index: 1;
+}
+
+.swiper-slide-prev,
+.swiper-slide-next {
+  z-index: 0;
+}
+
+/* Hide scrollbar for horizontal scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+} 
