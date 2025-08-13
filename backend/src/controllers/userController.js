@@ -2,44 +2,76 @@ import User from "../models/userModel.js";
 import { ThrowError } from "../utils/ErrorUtils.js"
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs";
-import fs from 'fs';
-import path from "path";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendForbiddenResponse, sendCreatedResponse, sendUnauthorizedResponse, sendNotFoundResponse } from '../utils/ResponseUtils.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
-import Post from "../models/postModel.js"
-import Comment from "../models/commentModel.js"
+import { encryptData } from "../middlewares/incrypt.js";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+// Configure S3 client
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY.trim(),
+        secretAccessKey: process.env.S3_SECRET_KEY.trim()
+    },
+    region: process.env.S3_REGION || "us-east-1"
+});
+
+// Helper function to delete file from S3
+const deleteFileFromS3 = async (fileUrl) => {
+    try {
+        if (!fileUrl) return;
+
+        // Extract the key from the URL
+        const key = fileUrl.split('.com/')[1];
+        if (!key) return;
+
+        const deleteParams = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: key
+        };
+
+        await s3.send(new DeleteObjectCommand(deleteParams));
+    } catch (error) {
+        console.error('Error deleting file from S3:', error);
+        throw error;
+    }
+};
 
 export const register = async (req, res) => {
     try {
         const { contactNo, email, password, name, role } = req.body;
 
-        // Check for contactNo uniqueness if provided
+        // Only encrypt values that exist and are not undefined
+        const contactNoHash = contactNo ? encryptData(contactNo) : undefined;
+        const emailHash = email ? encryptData(email) : undefined;
+        const nameHash = name ? encryptData(name) : undefined;
+        const passwordHash = password ? encryptData(password) : undefined;
+
+
+        // Check for contactNo uniqueness if provided (check against encrypted value) 
         if (contactNo) {
-            const userByContact = await User.findOne({ contactNo });
+            const userByContact = await User.findOne({ contactNo: contactNoHash });
             if (userByContact) {
                 return sendBadRequestResponse(res, "ContactNo already taken");
             }
         }
 
-        // Check for email uniqueness if provided
+        // Check for email uniqueness if provided (check against encrypted value)
         if (email) {
-            const userByEmail = await User.findOne({ email });
+            const userByEmail = await User.findOne({ email: emailHash });
             if (userByEmail) {
                 return sendBadRequestResponse(res, "Email already in use");
             }
         }
 
-        if (!password) {
-            return sendBadRequestResponse(res, "Password is required");
-        }
-        const hashedPass = await bcrypt.hash(password, 10);
-
-        const data = await User.create({
-            name,
-            email,
-            contactNo,
-            password: hashedPass,
+        const data = await User.insertOne({
+            name: nameHash,
+            email: emailHash,
+            contactNo: contactNoHash,
+            password: passwordHash,
             role: role || 'user',
         });
 
@@ -63,41 +95,35 @@ export const editProfile = async (req, res) => {
             email,
             bio,
             gender,
-            isPrivate,
         } = req.body;
 
+        const emailHash = email ? encryptData(email) : undefined;
+        const nameHash = name ? encryptData(name) : undefined;
+        const bioHash = bio ? encryptData(bio) : undefined;
+        const usernameHash = username ? encryptData(username) : undefined;
+        const genderHash = gender ? encryptData(gender) : undefined;
+
+
         if (!req.user || (req.user._id.toString() !== userId && req.user.role !== 'admin')) {
-            if (req.file) {
-                const filePath = path.resolve(req.file.path);
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
-            }
             return sendForbiddenResponse(res, "Access denied. You can only update your own profile.");
         }
 
         const existingUser = await User.findById(userId);
         if (!existingUser) {
-            if (req.file) {
-                const filePath = path.resolve(req.file.path);
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
-            }
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // Check for unique username
+        // Check for unique username (check against encrypted value)
         if (username && username !== existingUser.username) {
-            const existingUsername = await User.findOne({ username });
+            const existingUsername = await User.findOne({ username: usernameHash });
             if (existingUsername) {
                 return sendErrorResponse(res, 400, "Username already exists");
             }
         }
 
-        // Check for unique email
+        // Check for unique email (check against encrypted value)
         if (email && email !== existingUser.email) {
-            const existingEmail = await User.findOne({ email });
+            const existingEmail = await User.findOne({ email: emailHash });
             if (existingEmail) {
                 return sendErrorResponse(res, 400, "Email already exists");
             }
@@ -105,20 +131,19 @@ export const editProfile = async (req, res) => {
 
         // Handle image upload
         if (req.file) {
-            const newImagePath = `/public/profilePic/${path.basename(req.file.path)}`;
-            if (existingUser.profilePic && fs.existsSync(path.join(process.cwd(), existingUser.profilePic))) {
-                fs.unlinkSync(path.join(process.cwd(), existingUser.profilePic));
-            }
+            // With S3, the file.location contains the full S3 URL
+            const newImagePath = req.file.location;
+            
+            // Store the S3 URL in the database
             existingUser.profilePic = newImagePath;
         }
 
         // Update allowed fields
-        if (name) existingUser.name = name;
-        if (username) existingUser.username = username;
-        if (email) existingUser.email = email;
-        if (bio) existingUser.bio = bio;
-        if (gender) existingUser.gender = gender;
-        if (isPrivate !== undefined) existingUser.isPrivate = isPrivate;
+        if (name) existingUser.name = nameHash;
+        if (username) existingUser.username = usernameHash;
+        if (email) existingUser.email = emailHash;
+        if (bio) existingUser.bio = bioHash;
+        if (gender) existingUser.gender = genderHash;
 
         await existingUser.save();
         const userResponse = existingUser.toObject();
@@ -126,12 +151,6 @@ export const editProfile = async (req, res) => {
         return sendSuccessResponse(res, "User updated successfully", userResponse);
 
     } catch (error) {
-        if (req.file) {
-            const filePath = path.resolve(req.file.path);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }
         return sendErrorResponse(res, 500, error.message);
     }
 };
@@ -203,46 +222,39 @@ export const editUser = async (req, res) => {
             email,
             bio,
             gender,
-            isPrivate,
         } = req.body;
 
         if (!req.user || (req.user._id.toString() !== userId && req.user.role !== 'admin')) {
-            if (req.file) {
-                const filePath = path.resolve(req.file.path);
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
-            }
             return sendForbiddenResponse(res, "Access denied. You can only update your own profile.");
         }
 
         const existingUser = await User.findById(userId);
         if (!existingUser) {
-            if (req.file) {
-                const filePath = path.resolve(req.file.path);
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
-            }
             return sendErrorResponse(res, 404, "User not found");
         }
 
+        // Encrypt values that will be updated
+        const nameHash = name ? encryptData(name) : undefined;
+        const usernameHash = username ? encryptData(username) : undefined;
+        const emailHash = email ? encryptData(email) : undefined;
+        const bioHash = bio ? encryptData(bio) : undefined;
+        const genderHash = gender ? encryptData(gender) : undefined;
+
         // Handle image upload
         if (req.file) {
-            const newImagePath = `/public/profilePic/${path.basename(req.file.path)}`;
-            if (existingUser.profilePic && fs.existsSync(path.join(process.cwd(), existingUser.profilePic))) {
-                fs.unlinkSync(path.join(process.cwd(), existingUser.profilePic));
-            }
+            // With S3, the file.location contains the full S3 URL
+            const newImagePath = req.file.location;
+            
+            // Store the S3 URL in the database
             existingUser.profilePic = newImagePath;
         }
 
-        // Update allowed fields
-        if (name) existingUser.name = name;
-        if (username) existingUser.username = username;
-        if (email) existingUser.email = email;
-        if (bio) existingUser.bio = bio;
-        if (gender) existingUser.gender = gender;
-        if (isPrivate !== undefined) existingUser.isPrivate = isPrivate;
+        // Update allowed fields with encrypted values
+        if (name) existingUser.name = nameHash;
+        if (username) existingUser.username = usernameHash;
+        if (email) existingUser.email = emailHash;
+        if (bio) existingUser.bio = bioHash;
+        if (gender) existingUser.gender = genderHash;
 
         await existingUser.save();
         const userResponse = existingUser.toObject();
@@ -250,12 +262,6 @@ export const editUser = async (req, res) => {
         return sendSuccessResponse(res, "User updated successfully", userResponse);
 
     } catch (error) {
-        if (req.file) {
-            const filePath = path.resolve(req.file.path);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }
         return sendErrorResponse(res, 500, error.message);
     }
 };
@@ -273,29 +279,29 @@ export const deleteUser = async (req, res) => {
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // 1. Delete user's posts
-        await Post.deleteMany({ user: userId });
+        // 1. Delete user's posts (commented out until Post model exists)
+        // await Post.deleteMany({ user: userId });
 
-        // 2. Delete comments by user
-        await Comment.deleteMany({ user: userId });
+        // 2. Delete comments by user (commented out until Comment model exists)
+        // await Comment.deleteMany({ user: userId });
 
-        // 3. Remove likes and saved references from all posts
-        await Post.updateMany(
-            { likes: userId },
-            { $pull: { likes: userId } }
-        );
-        await Post.updateMany(
-            { saved: userId },
-            { $pull: { saved: userId } }
-        );
-        await Post.updateMany(
-            { taggedFriends: userId },
-            { $pull: { taggedFriends: userId } }
-        );
-        await Comment.updateMany(
-            { likeComment: userId },
-            { $pull: { likeComment: userId } }
-        )
+        // 3. Remove likes and saved references from all posts (commented out until Post model exists)
+        // await Post.updateMany(
+        //     { likes: userId },
+        //     { $pull: { likes: userId } }
+        // );
+        // await Post.updateMany(
+        //     { saved: userId },
+        //     { $pull: { saved: userId } }
+        // );
+        // await Post.updateMany(
+        //     { taggedFriends: userId },
+        //     { $pull: { taggedFriends: userId } }
+        // );
+        // await Comment.updateMany(
+        //     { likeComment: userId },
+        //     { $pull: { likeComment: userId } }
+        // )
 
         // 7. Remove user from other users' followers and followings
         await User.updateMany(
