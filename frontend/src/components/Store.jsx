@@ -31,7 +31,7 @@ const Store = () => {
   return (
     <>
       <Header />
-      <section className="bg-black">
+      <section className="bg-black pt-16">
         {/* HERO section */}
         <div className="relative w-full">
           <Swiper
