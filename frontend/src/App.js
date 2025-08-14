@@ -5,16 +5,18 @@ import Header from './components/Header';
 import Login from './components/Login';
 import Register from './components/Register';
 import Store from './components/Store';
+import Rewards from './components/Rewards';
 
 function App() {
   return (
     <>
-      {/* <Header /> */}
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/store" element={<Store />} />
+        <Route path="/rewards" element={<Rewards />} />
       </Routes>
     </>
   );
