@@ -2,146 +2,160 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import { S3Client } from '@aws-sdk/client-s3';
+import multerS3 from "multer-s3";
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Configure storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        let uploadPath = 'public/';
-        if (file.fieldname === 'profilePic') {
-            uploadPath += 'profilePic';
-        } else if (file.fieldname === 'audio') {
-            uploadPath += 'audio';
-        } else if (file.fieldname === 'audio_image') {
-            uploadPath += 'audio_image';
-        } else if (file.fieldname === 'post_image') {
-            uploadPath += 'post_images';
-        } else if (file.fieldname === 'post_video') {
-            uploadPath += 'post_videos';
-        }
-
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-
-        cb(null, uploadPath);
+// Configure S3 storage
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY.trim(),
+        secretAccessKey: process.env.S3_SECRET_KEY.trim()
     },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+    region: process.env.S3_REGION || "us-east-1"
+});
+
+const storage = multerS3({
+    s3: s3,
+    bucket: process.env.S3_BUCKET_NAME,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    metadata: function (req, file, cb) {
+        cb(null, { fieldname: file.fieldname });
+    },
+    key: function (req, file, cb) {
+        const sanitizedName = file.originalname.replace(/\s+/g, '');
+        const timestamp = Date.now();
+        
+        // Organize files by field type in S3
+        let folder = 'uploads';
+        if (file.fieldname === 'profilePic') {
+            folder = 'profilePic';
+        } else if (file.fieldname === 'thumbnail' || file.fieldname === 'image') {
+            folder = 'images';
+        } else if (file.fieldname === 'video') {
+            folder = 'videos';
+        }
+        
+        const finalName = `${folder}/${timestamp}-${sanitizedName}`;
+        cb(null, finalName);
     }
 });
 
 const fileFilter = (req, file, cb) => {
-    const isAudio = file.mimetype.startsWith('audio/');
-    const isImage = file.mimetype.startsWith('image/');
-    const isOctetStream = file.mimetype === 'application/octet-stream';
     const ext = path.extname(file.originalname).toLowerCase();
-    const isJfifExt = ext === '.jfif';
+    
+    // Image file types
+    const allowedImageExts = ['.jpeg', '.jpg', '.png', '.webp', '.jfif'];
+    const allowedImageMimeTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/jfif',
+        'application/octet-stream'
+    ];
 
-    if (file.fieldname === 'audio') {
-        if (isAudio) {
-            cb(null, true);
-        } else {
-            cb(new Error('File for "audio" field must be an audio file.'), false);
+    // Video file types
+    const allowedVideoExts = ['.mp4', '.mov', '.avi', '.wmv', '.flv', '.mkv'];
+    const allowedVideoMimeTypes = [
+        'video/mp4',
+        'video/quicktime',
+        'video/x-msvideo',
+        'video/x-ms-wmv',
+        'video/x-flv',
+        'video/x-matroska'
+    ];
+
+    // Check if it's an image or video file
+    if (
+        file.fieldname === 'profilePic' ||
+        file.fieldname === 'thumbnail' ||
+        file.fieldname === 'image' ||
+        file.fieldname === 'starring_image' ||
+        file.fieldname === 'category_image' ||
+        file.fieldname === 'bg_image'
+    ) {
+        if (!allowedImageExts.includes(ext) || !allowedImageMimeTypes.includes(file.mimetype)) {
+            return cb(new Error(`Invalid image format. Allowed formats: ${allowedImageExts.join(', ')}`));
         }
-    } else if (file.fieldname === 'audio_image' || file.fieldname === 'profilePic' || file.fieldname === 'post_image') {
-        if (isImage || isOctetStream || isJfifExt) {
-            cb(null, true);
-        } else {
-            cb(new Error(`File for "${file.fieldname}" field must be an image.`), false);
-        }
-    } else if (file.fieldname === 'post_video') {
-        if (file.mimetype.startsWith('video/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only video files are allowed!'), false);
+    } else if (file.fieldname === 'video') {
+        if (!allowedVideoExts.includes(ext) || !allowedVideoMimeTypes.includes(file.mimetype)) {
+            return cb(new Error(`Invalid video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
         }
     } else {
-        cb(new Error(`Invalid field name for file upload: ${file.fieldname}`), false);
+        return cb(new Error(`Invalid field name: ${file.fieldname}. Expected 'profilePic', 'thumbnail', 'image', 'starring_image', 'category_image', 'bg_image', or 'video'`));
     }
+
+    cb(null, true);
 };
 
-const upload = multer({
+// Create base multer instance
+const multerInstance = multer({
     storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 1024 * 1024 * 200 } // 200MB file size limit
+    fileFilter
 });
 
-const uploadHandlers = {
-    single: (fieldName) => upload.single(fieldName),
-    fields: (fields) => upload.fields(fields)
+// Create different upload handlers
+const upload = {
+    // For single file upload (e.g., profile image)
+    single: (fieldName) => {
+        return multerInstance.single(fieldName);
+    },
+    
+    // For multiple files with specific fields (e.g., thumbnail and video)
+    fields: (fields) => {
+        return multerInstance.fields(fields);
+    },
+    
+    // For multiple files with the same field name
+    array: (fieldName, maxCount) => {
+        return multerInstance.array(fieldName, maxCount);
+    }
 };
 
 // Error handling middleware
 const handleMulterError = (err, req, res, next) => {
-    console.log('Upload error:', err);
-
     if (err instanceof multer.MulterError) {
         return res.status(400).json({
-            success: false,
-            message: err.message
+            status: false,
+            msg: err.message,
+            data: null
         });
-    } else if (err) {
+    }
+    if (err) {
         return res.status(400).json({
-            success: false,
-            message: err.message
+            status: false,
+            msg: err.message,
+            data: null
         });
     }
     next();
 };
 
-const convertJfifToJpeg = async (req, res, next) => {
+const convertJfifToWebp = async (req, res, next) => {
     try {
-        if (!req.files) return next();
+        const file = req.file || (req.files && req.files['image'] && req.files['image'][0]);
+        if (!file) return next();
 
-        const conversionPromises = [];
+        // Only process image files
+        if (file.fieldname === 'profilePic' || file.fieldname === 'thumbnail' || file.fieldname === 'image') {
+            const ext = path.extname(file.originalname).toLowerCase();
 
-        for (const fieldName in req.files) {
-            const files = req.files[fieldName];
-            for (const file of files) {
-                const isImageField = fieldName === 'audio_image' || fieldName === 'profilePic' || fieldName === 'post_image';
-                if (!isImageField) continue;
-
-                const ext = path.extname(file.originalname).toLowerCase();
-                const isConvertible = ext === '.jfif' || file.mimetype === 'image/jfif' || file.mimetype === 'application/octet-stream';
-
-                if (isConvertible) {
-                    const promise = (async () => {
-                        const inputPath = file.path;
-                        const outputPath = inputPath.replace(/\.[^/.]+$/, "") + ".jpeg";
-
-                        await sharp(inputPath).jpeg().toFile(outputPath);
-
-                        if (fs.existsSync(inputPath)) {
-                            fs.unlinkSync(inputPath);
-                        }
-
-                        file.path = outputPath;
-                        file.filename = path.basename(outputPath);
-                        file.mimetype = 'image/jpeg';
-                    })();
-                    conversionPromises.push(promise);
-                }
+            if (ext === '.jfif' || file.mimetype === 'image/jfif' || file.mimetype === 'application/octet-stream') {
+                // For S3, we'll need to download, convert, and re-upload
+                // This is a placeholder - you might want to handle JFIF conversion on the client side
+                // or implement a more complex S3 download -> convert -> upload flow
+                console.log(`JFIF file detected: ${file.originalname}. Consider converting to WebP on client side for better S3 integration.`);
             }
         }
 
-        await Promise.all(conversionPromises);
         next();
     } catch (err) {
-        console.error('Error in convertJfifToJpeg:', err);
-        
+        console.error('Error in convertJfifToWebp:', err);
         next(err);
     }
 };
 
-export const uploadMedia = upload.fields([
-    { name: 'profilePic', maxCount: 1 },
-    { name: 'audio', maxCount: 1 },
-    { name: 'audio_image', maxCount: 1 },
-    { name: 'post_image', maxCount: 1 },
-    { name: 'post_video', maxCount: 1 }
-]);
-
-export { upload, convertJfifToJpeg, handleMulterError };
+export { upload, handleMulterError, convertJfifToWebp };
+export default upload;

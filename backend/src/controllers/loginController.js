@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendUnauthorizedResponse } from '../utils/ResponseUtils.js';
 import nodemailer from "nodemailer"
 import twilio from 'twilio';
+import { encryptData } from "../middlewares/incrypt.js";
 
 
 
@@ -16,7 +17,8 @@ const phoneNoOtp = async (contactNo, otp) => {
     } else if (formattedContactNo.length === 12 && formattedContactNo.startsWith('91')) {
         formattedContactNo = `+${formattedContactNo}`;
     } else {
-        return ThrowError(res, 400, "Invalid contactNo format. Please provide a valid 10-digit Indian contactNo.");
+        console.error("Invalid contactNo format. Please provide a valid 10-digit Indian contactNo.");
+        return false;
     }
     // Twilio
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -31,8 +33,10 @@ const phoneNoOtp = async (contactNo, otp) => {
             to: formattedContactNo,
             from: fromPhone
         });
+        return true;
     } catch (twilioError) {
         console.log(`SMS sending failed: ${twilioError.message}`);
+        return false;
     }
 }
 
@@ -62,10 +66,13 @@ export const userLogin = async (req, res) => {
     try {
         const { email, password, contactNo } = req.body;
 
+        const emailHash = email ? encryptData(email) : undefined;
+        const contactNoHash = contactNo ? encryptData(contactNo) : undefined;
+
         // 1. Contact Number Login (OTP)
-        if (contactNo && !email && !password) {
+        if (contactNo || !email && !password) {
             // Check if user exists with this contactNo
-            const user = await User.findOne({ contactNo });
+            const user = await User.findOne({ contactNo: contactNoHash });
             if (!user) {
                 return sendErrorResponse(res, 404, "User not found with this contact number");
             }
@@ -78,8 +85,11 @@ export const userLogin = async (req, res) => {
             user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
             await user.save();
 
-            // Send OTP to contactNo
-            await phoneNoOtp(contactNo, otp);
+            // Send OTP to contactNo (use original, not encrypted)
+            const smsSent = await phoneNoOtp(contactNo, otp);
+            if (!smsSent) {
+                return sendErrorResponse(res, 500, "Failed to send OTP via SMS");
+            }
 
             return sendSuccessResponse(res, "OTP sent to contact number", { contactNo });
         }
@@ -89,13 +99,14 @@ export const userLogin = async (req, res) => {
             return sendBadRequestResponse(res, "Email and password are required");
         }
 
-        const user = await User.findOne({ email: email.toLowerCase() });
+        const user = await User.findOne({ email: emailHash });
         if (!user) {
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // Validate password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        // Validate password (don't encrypt input password for comparison)
+        console.log(password)   
+        const isPasswordValid = await user.validatePassword(password);
         if (!isPasswordValid) {
             return sendUnauthorizedResponse(res, "Invalid password");
         }
@@ -134,11 +145,13 @@ export const VerifyPhone = async (req, res) => {
             return sendBadRequestResponse(res, "Please provide contactNo and OTP.");
         }
 
+        const contactNoHash = contactNo ? encryptData(contactNo) : undefined;
+
         const user = await User.findOne({
             $or: [
-                { contactNo: contactNo },
-                { contactNo: '+91' + contactNo },
-                { contactNo: Number(contactNo) }
+                { contactNo: contactNoHash },
+                { contactNo: '+91' + contactNoHash },
+                { contactNo: Number(contactNoHash) }
             ]
         });
         if (!user) {
@@ -175,17 +188,23 @@ export const forgotPassword = async (req, res) => {
     try {
         const { email, contactNo } = req.body;
 
+        const contactNoHash = contactNo ? encryptData(contactNo) : undefined;
+        const emailHash = email ? encryptData(email) : undefined;
+
         // 1. Forgot by Contact Number
         if (contactNo && !email) {
             const otp = generateOTP()
 
-            const user = await User.findOne({ contactNo: contactNo });
+            const user = await User.findOne({ contactNo: contactNoHash });
             if (!user) {
                 return sendErrorResponse(res, 404, "User not found");
             }
 
-            // Send OTP to contactNo
-            await phoneNoOtp(contactNo, otp);
+            // Send OTP to contactNo (use original, not encrypted)
+            const smsSent = await phoneNoOtp(contactNo, otp);
+            if (!smsSent) {
+                return sendErrorResponse(res, 500, "Failed to send OTP via SMS");
+            }
             user.otp = otp;
             user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
             await user.save();
@@ -197,11 +216,12 @@ export const forgotPassword = async (req, res) => {
         if (email && !contactNo) {
             const otp = generateOTP()
             // Find user by email
-            const user = await User.findOne({ email: email.toLowerCase() });
+            const user = await User.findOne({ email: emailHash });
             if (!user) {
                 return sendErrorResponse(res, 404, "User not found");
             }
 
+            // Send OTP to the original email (not encrypted)
             await sendOtpEmail(email, otp);
             // Set OTP and expiry (e.g., 5 minutes from now)
             user.otp = otp;
@@ -226,7 +246,8 @@ export const VerifyOtp = async (req, res) => {
         const { contactNo, email, otp } = req.body;
 
         if (contactNo && otp) {
-            const user = await User.findOne({ contactNo });
+            const contactNoHash = contactNo ? encryptData(contactNo) : undefined;
+            const user = await User.findOne({ contactNo: contactNoHash });
             if (!user) {
                 return sendErrorResponse(res, 404, "User not found.");
             }
@@ -245,7 +266,8 @@ export const VerifyOtp = async (req, res) => {
             await user.save();
             return sendSuccessResponse(res, "OTP verified successfully.");
         } else if (email && otp) {
-            const user = await User.findOne({ email: email.toLowerCase() });
+            const emailHash = email ? encryptData(email) : undefined;
+            const user = await User.findOne({ email: emailHash });
             if (!user) {
                 return sendErrorResponse(res, 404, "User not found.");
             }
@@ -279,7 +301,11 @@ export const resetPassword = async (req, res) => {
             return sendBadRequestResponse(res, "Please provide email, newpassword and confirmpassword.");
         }
 
-        const user = await User.findOne({ email: email });
+        const emailHash = email ? encryptData(email) : undefined;
+        const newPasswordHash = newPassword ? encryptData(newPassword) : undefined;
+        const confirmPasswordHash = confirmPassword ? encryptData(confirmPassword) : undefined;
+
+        const user = await User.findOne({ email: emailHash });
         if (!user) {
             return sendErrorResponse(res, 400, "User Not Found");
         }
@@ -288,12 +314,13 @@ export const resetPassword = async (req, res) => {
             return sendBadRequestResponse(res, "Please check newpassword and confirmpassword.");
         }
 
-        user.password = await bcrypt.hash(newPassword, 10);
+        user.password = newPasswordHash;
         user.otp = undefined;
         user.otpExpiry = undefined;
         await user.save();
 
-        return sendSuccessResponse(res, "Password reset successfully.", { id: user._id, email: user.email });
+        // Return the original email (not encrypted) in response
+        return sendSuccessResponse(res, "Password reset successfully.", { id: user._id, email: email });
     } catch (error) {
         return ThrowError(res, 500, error.message);
     }
@@ -303,7 +330,9 @@ export const resetPassword = async (req, res) => {
 export const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword, confirmPassword } = req.body;
+        const currentPasswordHash = currentPassword ? encryptData(currentPassword) : undefined;
 
+        const newPasswordHash = newPassword ? encryptData(newPassword) : undefined; 
         if (!currentPassword || !newPassword || !confirmPassword) {
             return sendBadRequestResponse(res, "currentPassword, newPassword, and confirmPassword are required.");
         }
@@ -317,7 +346,7 @@ export const changePassword = async (req, res) => {
             return sendErrorResponse(res, 404, "User not found.");
         }
 
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        const isMatch = await user.validatePassword(currentPassword);
         if (!isMatch) {
             return sendBadRequestResponse(res, "Current password is incorrect.");
         }
@@ -330,7 +359,7 @@ export const changePassword = async (req, res) => {
             return sendBadRequestResponse(res, "New password and confirm password do not match.");
         }
 
-        user.password = await bcrypt.hash(newPassword, 10);
+        user.password = newPasswordHash;
         await user.save();
 
         return sendSuccessResponse(res, "Password changed successfully.");

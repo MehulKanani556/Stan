@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { decryptData } from "../middlewares/incrypt.js";
 
 const userSchema = new mongoose.Schema(
     {
         name: { type: String, },
-        username: { type: String, unique: true },
-        email: { type: String, unique: true },
-        contactNo: { type: Number, unique: true },
+        username: { type: String },
+        email: { type: String },
+        contactNo: { type: String },
         password: { type: String, required: true },
         profilePic: { type: String, default: null },
         bio: { type: String, maxlength: 160 },
@@ -16,26 +17,15 @@ const userSchema = new mongoose.Schema(
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         followings: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
-        posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-        liked: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-        saved: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-        comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-
         joinedAt: { type: Date, default: Date.now },
 
         otp: { type: String },
         otpExpiry: { type: Date },
 
         // Privacy & Security
-        isPrivate: { type: Boolean, default: false }, // If true, only approved followers can see posts
-        blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         role: { type: String, enum: ["admin", "user"] },
         isAdmin: { type: Boolean, default: false },
         lastLogin: { type: Date, default: null },
-        taggedPosts: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Post'
-        }]
     },
     { timestamps: true }
 );
@@ -58,10 +48,16 @@ userSchema.methods.getJWT = async function () {
     return token;
 };
 
-//  Password validation method
+//  Password validation method (for encrypted passwords)
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
     const user = this;
-    return await bcrypt.compare(passwordInputByUser, user.password);
+    try {
+        // Decrypt the stored password and compare with input
+        const decryptedPassword = decryptData(user.password);
+        return decryptedPassword === passwordInputByUser;
+    } catch (error) {
+        return false;
+    }
 };
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("UserStan", userSchema);
