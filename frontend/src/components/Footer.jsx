@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa';
 import { IoMailOutline, IoCallOutline, IoLocationOutline } from 'react-icons/io5';
+import stanLogo from "../images/stan-logo.svg"
 
 const Footer = () => {
   return (
@@ -13,7 +14,7 @@ const Footer = () => {
             {/* Company Info */}
             <div className="space-y-4 sm:space-y-6">
               <div className="flex items-center gap-2 sm:gap-3">
-                <img src='./image/stan-logo.svg' alt="logo" className="w-6 h-6 sm:w-8 sm:h-8" />
+                <img src={stanLogo} alt="logo" className="w-6 h-6 sm:w-8 sm:h-8" />
                 <h3 className='text-white text-xl sm:text-2xl font-bold'>STAN</h3>
               </div>
               <p className="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-xs sm:max-w-none">

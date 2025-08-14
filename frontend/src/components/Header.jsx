@@ -25,7 +25,7 @@ import { MdLogout } from "react-icons/md";
 export default function Header() {
     return (
         <>
-            <header className='bg-black sticky w-full top-0 '>
+            <header className='bg-black sticky w-full top-0 z-50 '>
                 <div className="drawer">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
@@ -46,7 +46,7 @@ export default function Header() {
                                         }>Home</NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to="/chatter" className={({ isActive }) =>
+                                        <NavLink to="/support" className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
                                         }>Chatter</NavLink>
                                     </li>
@@ -75,10 +75,7 @@ export default function Header() {
 
                             {/* Right Section */}
                             <div className="flex items-center gap-5">
-                                {/* Wallet & Profile only on desktop */}
-                                <NavLink to="/wallet" className="hidden md:block">
-                                    <FaWallet className='text-white text-xl hover:text-[#ab99e1]' />
-                                </NavLink>
+                          
                                 <div className="hidden md:block relative w-9 h-9">
                                     <div className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center">
                                         <img
@@ -140,41 +137,19 @@ export default function Header() {
                             </label>
 
                             <div className='w-full flex flex-col gap-5'>
-                                <div className='w-full'>
-                                    <p className='text-sm text-white mb-1'>Benefits</p>
+                                <div className='w-full mt-5'>
+                                   
                                     <div className='flex flex-wrap justify-between gap-y-3'>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-sm'>
-                                            <MdRocketLaunch /> Refer $ Earn
+                                       
+                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-[13px]'>
+                                            <SlBadge /> Rewards Offers
                                         </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-sm'>
-                                            <SlBadge />  Offer Wall
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-sm'>
-                                            <FaGift /> Rewards
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-sm'>
-                                            <RiHandCoinFill />  Earn More
-                                        </div>
-                                        {/* <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-sm'>
-                                            Okto Wallet
-                                        </div> */}
-                                    </div>
-                                </div>
-                                <div className='w-full'>
-                                    <p className='text-sm text-white mb-1'>Account</p>
-                                    <div className='flex flex-wrap justify-between gap-y-3'>
                                         <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <CgNotes />  Transaction
                                         </div>
                                         <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
-                                            <BsChatHeartFill />  chatter
+                                            <BsChatHeartFill />  chat
                                         </div>
-
-                                    </div>
-                                </div>
-                                <div className='w-full'>
-                                    <p className='text-sm text-white mb-1'>More</p>
-                                    <div className='flex flex-wrap justify-between gap-y-3'>
                                         <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <BiSupport />  Support
                                         </div>
@@ -184,9 +159,11 @@ export default function Header() {
                                         <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <IoGameController /> Free Games
                                         </div>
-
+                                       
                                     </div>
                                 </div>
+                                
+                                
                             </div>
 
                             <div className='absolute bottom-4 left-0 w-full flex items-center justify-center'>
@@ -200,7 +177,7 @@ export default function Header() {
                 </div>
             </header>
 
-            <footer className="bg-[#1c1b1e] text-white  py-2 rounded-t-2xl fixed bottom-0 w-full md:hidden block">
+            <footer className="bg-[#1c1b1e] text-white  py-2 rounded-t-2xl fixed bottom-0 w-full md:hidden block z-50">
                 <ul className="flex  items-center justify-evenly">
                     <li>
                         <NavLink to="/" className="flex items-center justify-center flex-col gap-1 text-xs">
