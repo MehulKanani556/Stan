@@ -26,7 +26,7 @@ const deleteFileFromS3 = async (fileUrl) => {
 
         // Extract the key from the URL
         const key = fileUrl.split('.com/')[1];
-        if (!key) return;
+        if (!key) return;.0
 
         const deleteParams = {
             Bucket: process.env.S3_BUCKET_NAME,
@@ -131,6 +131,16 @@ export const editProfile = async (req, res) => {
 
         // Handle image upload
         if (req.file) {
+            // Delete old profile image from S3 if it exists
+            if (existingUser.profilePic) {
+                try {
+                    await deleteFileFromS3(existingUser.profilePic);
+                } catch (error) {
+                    console.error('Error deleting old profile image:', error);
+                    // Continue with the update even if deletion fails
+                }
+            }
+            
             // With S3, the file.location contains the full S3 URL
             const newImagePath = req.file.location;
             
@@ -242,6 +252,16 @@ export const editUser = async (req, res) => {
 
         // Handle image upload
         if (req.file) {
+            // Delete old profile image from S3 if it exists
+            if (existingUser.profilePic) {
+                try {
+                    await deleteFileFromS3(existingUser.profilePic);
+                } catch (error) {
+                    console.error('Error deleting old profile image:', error);
+                    // Continue with the update even if deletion fails
+                }
+            }
+            
             // With S3, the file.location contains the full S3 URL
             const newImagePath = req.file.location;
             
@@ -279,31 +299,17 @@ export const deleteUser = async (req, res) => {
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // 1. Delete user's posts (commented out until Post model exists)
-        // await Post.deleteMany({ user: userId });
+        // 1. Delete profile image from AWS S3 if it exists
+        if (user.profilePic) {
+            try {
+                await deleteFileFromS3(user.profilePic);
+            } catch (error) {
+                console.error('Error deleting profile image from S3:', error);
+                // Continue with user deletion even if image deletion fails
+            }
+        }
 
-        // 2. Delete comments by user (commented out until Comment model exists)
-        // await Comment.deleteMany({ user: userId });
-
-        // 3. Remove likes and saved references from all posts (commented out until Post model exists)
-        // await Post.updateMany(
-        //     { likes: userId },
-        //     { $pull: { likes: userId } }
-        // );
-        // await Post.updateMany(
-        //     { saved: userId },
-        //     { $pull: { saved: userId } }
-        // );
-        // await Post.updateMany(
-        //     { taggedFriends: userId },
-        //     { $pull: { taggedFriends: userId } }
-        // );
-        // await Comment.updateMany(
-        //     { likeComment: userId },
-        //     { $pull: { likeComment: userId } }
-        // )
-
-        // 7. Remove user from other users' followers and followings
+        // 2. Remove user from other users' followers and followings
         await User.updateMany(
             { followers: userId },
             { $pull: { followers: userId } }
@@ -313,13 +319,13 @@ export const deleteUser = async (req, res) => {
             { $pull: { followings: userId } }
         );
 
-        // 8. (Optional) Remove from blockedUsers if used
+        // 3. Remove from blockedUsers if used
         await User.updateMany(
             { blockedUsers: userId },
             { $pull: { blockedUsers: userId } }
         );
 
-        // 9. Finally, delete the user
+        // 4. Finally, delete the user
         await User.findByIdAndDelete(userId);
 
         return sendSuccessResponse(res, "User and all associated data deleted successfully");
