@@ -10,9 +10,9 @@ const ConversationSchema = mongoose.Schema({
     messages: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Message",
+            ref: "MessageStan",
         },
     ],
 });
 
-export default mongoose.model("Conversation", ConversationSchema);
+export default mongoose.model("ConversationStan", ConversationSchema);
