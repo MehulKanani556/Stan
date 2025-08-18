@@ -4,6 +4,7 @@ import { upload, convertJfifToWebp } from "../middlewares/imageupload.js";
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
+import { getMessage, sendMessage } from "../controllers/messageController.js";
 
 
 const indexRoutes = express.Router()
@@ -27,6 +28,10 @@ indexRoutes.post("/changePassword", UserAuth, changePassword)
 indexRoutes.get("/searchUsers", UserAuth, searchUsers)
 indexRoutes.get("/suggestedUsers", UserAuth, isUser, suggestedUsers)
 indexRoutes.post("/followOrUnfollow/:id", UserAuth, isUser, followOrUnfollow)
+
+
+indexRoutes.post("/sendMessage/:id", UserAuth, isUser, sendMessage)
+indexRoutes.get("/getMessage/:id", UserAuth, isUser, getMessage)
 
 
 export default indexRoutes

@@ -3,8 +3,6 @@ import Conversation from "../models/conversationModel.js";
 import Message from "../models/messageModel.js";
 import User from "../models/userModel.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
-import getDataUri from "../utils/datauri.js";
-import cloudinary from "../utils/cloudinary.js";
 
 export const sendMessage = async (req, res) => {
     try {
@@ -15,13 +13,8 @@ export const sendMessage = async (req, res) => {
 
         let imageUrl;
         if (image) {
-            // Convert image buffer to Data URI
-            const fileUri = getDataUri(image);
-
-            // Upload to Cloudinary
-            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-
-            imageUrl = cloudResponse.secure_url;
+            // With S3 + multer-s3, the uploaded file URL is available at req.file.location
+            imageUrl = image.location;
         }
 
         let conversation = await Conversation.findOne({

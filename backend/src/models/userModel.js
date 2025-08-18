@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 import { decryptData } from "../middlewares/incrypt.js";
 
 const userSchema = new mongoose.Schema(
