@@ -9,11 +9,13 @@ import Header from './components/Header';
 import Transaction from './components/Transaction';
 import Support from './components/Support';
 import ManageAddress from './components/ManageAddress';
+import Games from './components/Games';
+import GamePlay from './components/GamePlay';
 
 function App() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -23,6 +25,8 @@ function App() {
         <Route path="/transaction" element={<Transaction />} />
         <Route path='/support' element={<Support />} />
         <Route path='/manageAddress' element={<ManageAddress />} />
+        <Route path="/games" element={<Games />} />
+        <Route path="/games/:slug" element={<GamePlay />} />
       </Routes>
 
     </>
