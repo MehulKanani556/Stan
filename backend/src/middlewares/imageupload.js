@@ -1,7 +1,5 @@
 import multer from 'multer';
-import fs from 'fs';
 import path from 'path';
-import sharp from 'sharp';
 import { S3Client } from '@aws-sdk/client-s3';
 import multerS3 from "multer-s3";
 import dotenv from 'dotenv';
@@ -74,7 +72,8 @@ const fileFilter = (req, file, cb) => {
         file.fieldname === 'image' ||
         file.fieldname === 'starring_image' ||
         file.fieldname === 'category_image' ||
-        file.fieldname === 'bg_image'
+        file.fieldname === 'bg_image'||
+        file.fieldname === 'messageImage'
     ) {
         if (!allowedImageExts.includes(ext) || !allowedImageMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid image format. Allowed formats: ${allowedImageExts.join(', ')}`));
@@ -84,7 +83,7 @@ const fileFilter = (req, file, cb) => {
             return cb(new Error(`Invalid video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
         }
     } else {
-        return cb(new Error(`Invalid field name: ${file.fieldname}. Expected 'profilePic', 'thumbnail', 'image', 'starring_image', 'category_image', 'bg_image', or 'video'`));
+        return cb(new Error(`Invalid field name: ${file.fieldname}. Expected 'profilePic', 'thumbnail', 'messageImage', 'starring_image', 'category_image', 'bg_image', or 'video'`));
     }
 
     cb(null, true);
@@ -139,7 +138,7 @@ const convertJfifToWebp = async (req, res, next) => {
         if (!file) return next();
 
         // Only process image files
-        if (file.fieldname === 'profilePic' || file.fieldname === 'thumbnail' || file.fieldname === 'image') {
+        if (file.fieldname === 'profilePic' || file.fieldname === 'thumbnail' || file.fieldname === 'messageImage') {
             const ext = path.extname(file.originalname).toLowerCase();
 
             if (ext === '.jfif' || file.mimetype === 'image/jfif' || file.mimetype === 'application/octet-stream') {

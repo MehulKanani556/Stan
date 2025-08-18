@@ -1,6 +1,6 @@
 
 import express from "express";
-import { upload, convertJfifToWebp } from "../middlewares/imageupload.js";
+import { upload, convertJfifToWebp, handleMulterError } from "../middlewares/imageupload.js";
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
@@ -30,7 +30,7 @@ indexRoutes.get("/suggestedUsers", UserAuth, isUser, suggestedUsers)
 indexRoutes.post("/followOrUnfollow/:id", UserAuth, isUser, followOrUnfollow)
 
 
-indexRoutes.post("/sendMessage/:id", UserAuth, isUser, sendMessage)
+indexRoutes.post("/sendMessage/:id", UserAuth, isUser, upload.single("messageImage"), handleMulterError, convertJfifToWebp, sendMessage)
 indexRoutes.get("/getMessage/:id", UserAuth, isUser, getMessage)
 
 
