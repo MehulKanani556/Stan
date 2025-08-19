@@ -80,7 +80,14 @@ export const register = async (req, res) => {
             return sendErrorResponse(res, 500, "Failed to generate token");
         }
 
-        return sendCreatedResponse(res, "Account created successfully", { data, token: token });
+        return sendCreatedResponse(res, "Account created successfully", {
+            id: data._id,
+            name: data.name,
+            email: data.email,
+            role: data.role || 'user',
+            isAdmin: data.role === 'admin',
+            lastLogin: data.lastLogin,
+            token: token });
     } catch (error) {
         return sendErrorResponse(res, 500, error.message);
     }

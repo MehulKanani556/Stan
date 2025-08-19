@@ -22,7 +22,7 @@ indexRoutes.post("/userLogin", userLogin)
 indexRoutes.post("/VerifyPhone", VerifyPhone)
 indexRoutes.post("/forgotPassword", forgotPassword)
 indexRoutes.post("/VerifyEmail", VerifyOtp)
-indexRoutes.post("/resetPassword", UserAuth, resetPassword)
+indexRoutes.post("/resetPassword",  resetPassword)
 indexRoutes.post("/changePassword", UserAuth, changePassword)
 
 indexRoutes.get("/searchUsers", UserAuth, searchUsers)

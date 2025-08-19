@@ -296,22 +296,17 @@ export const VerifyOtp = async (req, res) => {
 // Reset Password using OTP
 export const resetPassword = async (req, res) => {
     try {
-        const { email, newPassword, confirmPassword } = req.body;
-        if (!newPassword || !confirmPassword) {
-            return sendBadRequestResponse(res, "Please provide email, newpassword and confirmpassword.");
+        const { email, newPassword,  } = req.body;
+        if (!newPassword) {
+            return sendBadRequestResponse(res, "Please provide email and password.");
         }
 
         const emailHash = email ? encryptData(email) : undefined;
         const newPasswordHash = newPassword ? encryptData(newPassword) : undefined;
-        const confirmPasswordHash = confirmPassword ? encryptData(confirmPassword) : undefined;
 
         const user = await User.findOne({ email: emailHash });
         if (!user) {
             return sendErrorResponse(res, 400, "User Not Found");
-        }
-
-        if (!(newPassword === confirmPassword)) {
-            return sendBadRequestResponse(res, "Please check newpassword and confirmpassword.");
         }
 
         user.password = newPasswordHash;
