@@ -6,15 +6,27 @@ import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
     try {
-        const senderId = req.id;
+        const senderId = req.user?._id;
         const receiverId = req.params.id;
         const { textMessage: message } = req.body;
-        const image = req.file;
+        const messageImage = req.file;
 
-        let imageUrl;
-        if (image) {
+        // Validate auth and params
+        if (!senderId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+        if (!receiverId || !mongoose.Types.ObjectId.isValid(receiverId)) {
+            return res.status(400).json({ success: false, message: "Invalid receiverId" });
+        }
+
+        let messageImageUrl;
+        if (messageImage) {
             // With S3 + multer-s3, the uploaded file URL is available at req.file.location
-            imageUrl = image.location;
+            messageImageUrl = messageImage.location;
+        }
+
+        if (!message && !messageImageUrl) {
+            return res.status(400).json({ success: false, message: "Either textMessage or messageImage is required" });
         }
 
         let conversation = await Conversation.findOne({
@@ -32,7 +44,7 @@ export const sendMessage = async (req, res) => {
             senderId,
             receiverId,
             message,
-            image: imageUrl,
+            messageImage: messageImageUrl,
         });
 
         if (newMessage) conversation.messages.push(newMessage._id);
@@ -68,19 +80,20 @@ export const sendMessage = async (req, res) => {
         });
     } catch (error) {
         console.log("Error sending message:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Something went wrong",
-        });
+        return res.status(500).json({ success: false, message: error?.message || "Internal Server Error" });
     }
 };
 
 export const getMessage = async (req, res) => {
     try {
-        const senderId = mongoose.Types.ObjectId.createFromHexString(req.id);
-        const receiverId = mongoose.Types.ObjectId.createFromHexString(
-            req.params.id
-        );
+        const senderId = req.user?._id;
+        const receiverId = req.params.id;
+        if (!senderId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+        if (!receiverId || !mongoose.Types.ObjectId.isValid(receiverId)) {
+            return res.status(400).json({ success: false, message: "Invalid receiverId" });
+        }
 
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] }, // ✅ Fix: Use an array instead of an object
