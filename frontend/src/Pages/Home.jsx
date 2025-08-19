@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Header from './Header'
+import Header from '../components/Header'
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -20,6 +20,7 @@ import game3 from '../images/game3.jpg';
 import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
+import TopGames from '../components/TopGames';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -269,6 +270,8 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <TopGames/>
 
       </section>
     </>
