@@ -14,8 +14,8 @@ import { MdOutlineContentCopy } from "react-icons/md";
 
 import 'swiper/css';
 import 'swiper/css/pagination';
-import Header from './Header';
-import Footer from './Footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 // Custom CSS for Swiper pagination
 const swiperStyles = `

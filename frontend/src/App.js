@@ -1,20 +1,21 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
+import Home from './Pages/Home';
 import Login from './components/Login';
 import Register from './components/Register';
-import Store from './components/Store';
-import Rewards from './components/Rewards';
+import Store from './Pages/Store';
+import Rewards from './Pages/Rewards';
 import Header from './components/Header';
 import Transaction from './components/Transaction';
 import Support from './components/Support';
 import ManageAddress from './components/ManageAddress';
-import Games from './components/Games';
+import Games from './Pages/Games';
 import GamePlay from './components/GamePlay';
 import { Provider } from 'react-redux';
 import { configureStore } from './Redux/Store';
 import { SnackbarProvider } from 'notistack';
 const { store, persistor } = configureStore();
+import TopGames from './components/TopGames';
 
 function App() {
   return (
@@ -39,9 +40,12 @@ function App() {
             <Route path='/manageAddress' element={<ManageAddress />} />
             <Route path="/games" element={<Games />} />
             <Route path="/games/:slug" element={<GamePlay />} />
+            <Route path="/TopGames" element={<TopGames />} />
           </Routes>
         </SnackbarProvider>
       </Provider>
+
+     
     </>
   );
 }

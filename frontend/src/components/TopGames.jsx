@@ -60,7 +60,6 @@ function TopGames() {
       ],
     },
   ];
-  
   return (
     <div className="bg-black text-white py-8">
       <div className="container mx-auto px-4">
