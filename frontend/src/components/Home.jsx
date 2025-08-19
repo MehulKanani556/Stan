@@ -20,6 +20,7 @@ import game3 from '../images/game3.jpg';
 import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
+import TopGames from './TopGames';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -95,7 +96,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <section className="bg-black pt-16">
+      <section className="bg-black ">
         <div className="relative w-full">
           <Swiper
             modules={[EffectFade, Pagination, Autoplay]}
@@ -120,7 +121,6 @@ export default function Home() {
             loop={true}
             className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px]"
           >
-            {/* Slide 1 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -132,7 +132,6 @@ export default function Home() {
               </div>
             </SwiperSlide>
 
-            {/* Slide 2 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -144,7 +143,6 @@ export default function Home() {
               </div>
             </SwiperSlide>
 
-            {/* Slide 3 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -156,7 +154,6 @@ export default function Home() {
               </div>
             </SwiperSlide>
 
-            {/* Slide 4 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -172,31 +169,37 @@ export default function Home() {
 
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-0 flex flex-col items-center">
           <div className='py-6 sm:py-8 md:py-10 lg:py-12 xl:py-14 w-full'>
-            {/* Tab buttons */}
-            <div className="flex justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4">
-              {categories.map((category, index) => (
-                <button
-                  key={index}
-                  className={`
-                   px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3
-                   rounded-lg font-medium text-sm sm:text-base md:text-lg
-                   transition-all duration-200 ease-out
-                   border border-transparent
-                   ${activeTab === index
-                      ? ' text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                      : 'text-gray-300 hover:text-[#ab99e1]'
-                    }
-                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                 `}
-                  onClick={() => setActiveTab(index)}
-                >
-                  {category}
-                </button>
-              ))}
+
+            <div className="relative w-full mb-6 sm:mb-8 md:mb-10 px-4 sm:px-6">
+             
+              <div className="w-full max-w-6xl mx-auto">
+                <div className="overflow-x-auto scrollbar-hide pb-2">
+                  <div className="flex space-x-2 sm:space-x-3 md:space-x-4 w-max min-w-full justify-center">
+                    {categories.map((category, index) => (
+                      <button
+                        key={index}
+                        className={`
+                          px-4 py-2 sm:px-5 sm:py-2.5 md:px-5 md:py-2.5 lg:px-6 lg:py-3
+                          rounded-lg font-medium text-sm sm:text-[15px] md:text-base
+                          transition-all duration-200 ease-out
+                          ${activeTab === index
+                            ? 'text-[#ab99e1] bg-white/10 shadow-[0_0_10px_rgba(171,153,225,0.3)]'
+                            : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                          }
+                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ab99e1]
+                          whitespace-nowrap flex-shrink-0
+                        `}
+                        onClick={() => setActiveTab(index)}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Tab content - Game cards */}
-            <div className="w-full container bg-base-100 rounded-box border border-base-300 mx-auto">
+            <div className="w-full container bg-base-900 rounded-box mx-auto">
               <div className='py-6 sm:py-8 md:py-10 lg:py-12'>
                 <div className="">
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
@@ -267,9 +270,12 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
+            {/* top 5 games of the month */}
+            <TopGames />
       </section>
     </>
   )

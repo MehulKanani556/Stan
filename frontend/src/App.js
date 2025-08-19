@@ -11,6 +11,7 @@ import Support from './components/Support';
 import ManageAddress from './components/ManageAddress';
 import Games from './components/Games';
 import GamePlay from './components/GamePlay';
+import TopGames from './components/TopGames';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path='/manageAddress' element={<ManageAddress />} />
         <Route path="/games" element={<Games />} />
         <Route path="/games/:slug" element={<GamePlay />} />
+        <Route path="/TopGames" element={<TopGames />} />
       </Routes>
 
     </>
