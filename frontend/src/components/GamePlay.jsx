@@ -34,7 +34,6 @@ const GamePlay = () => {
 
     return (
         <>
-            <Header />
             <div className='container pt-28 pb-24'>
                 <div className='flex items-center justify-between'>
                     <h1 className='text-white text-2xl font-semibold'>{game ? game.name : 'Game'}</h1>
@@ -82,7 +81,6 @@ const GamePlay = () => {
                     <p className='text-gray-300 mt-4'>Game not found.</p>
                 )}
             </div>
-            <Footer />
         </>
     )
 }

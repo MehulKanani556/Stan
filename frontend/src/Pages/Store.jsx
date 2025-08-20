@@ -30,7 +30,6 @@ const games = [
 const Store = () => {
   return (
     <>
-      <Header />
       <section className="bg-black pt-16">
         {/* HERO section */}
         <div className="relative w-full">
@@ -337,8 +336,6 @@ const Store = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
     </>
   );
 };

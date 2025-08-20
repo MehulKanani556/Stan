@@ -95,7 +95,6 @@ export default function Home() {
 
   return (
     <>
-
       <section className="bg-black ">
         <div className="relative w-full">
           <Swiper

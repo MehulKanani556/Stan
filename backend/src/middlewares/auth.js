@@ -51,6 +51,7 @@ export const UserAuth = async (req, res, next) => {
 
 export const isAdmin = async (req, res, next) => {
     try {
+        console.log(!req.user.isAdmin);
         if (!req.user || !req.user.isAdmin) {
             return sendForbiddenResponse(res, "Access denied. Admin privileges required.");
         }

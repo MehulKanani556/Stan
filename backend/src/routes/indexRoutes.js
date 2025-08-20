@@ -4,7 +4,8 @@ import { upload, convertJfifToWebp, handleMulterError } from "../middlewares/ima
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
-import { getAllMessageUsers, getMessage, sendMessage } from "../controllers/messageController.js";
+import { getMessage, sendMessage } from "../controllers/messageController.js";
+import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
 
 
 const indexRoutes = express.Router()
@@ -12,7 +13,7 @@ const indexRoutes = express.Router()
 //register Routes
 indexRoutes.post("/register", register)
 indexRoutes.get("/getAllUsers", UserAuth, isAdmin, getAllUsers)
-indexRoutes.get("/getUserById/:id", UserAuth, isAdmin, getUserById)
+indexRoutes.get("/getUserById/:id", UserAuth, getUserById)
 indexRoutes.put("/editUser/:id", UserAuth, isAdmin, upload.single("profilePic"), convertJfifToWebp, editUser)
 indexRoutes.put("/editProfile/:id", UserAuth, upload.single("profilePic"), convertJfifToWebp, editProfile)
 indexRoutes.delete("/deleteUser/:id", UserAuth, deleteUser)
@@ -22,7 +23,7 @@ indexRoutes.post("/userLogin", userLogin)
 indexRoutes.post("/VerifyPhone", VerifyPhone)
 indexRoutes.post("/forgotPassword", forgotPassword)
 indexRoutes.post("/VerifyEmail", VerifyOtp)
-indexRoutes.post("/resetPassword",  resetPassword)
+indexRoutes.post("/resetPassword", resetPassword)
 indexRoutes.post("/changePassword", UserAuth, changePassword)
 
 indexRoutes.get("/searchUsers", UserAuth, searchUsers)
@@ -34,4 +35,12 @@ indexRoutes.post("/sendMessage/:id", UserAuth, isUser, upload.single("messageIma
 indexRoutes.get("/getMessage/:id", UserAuth, isUser, getMessage)
 indexRoutes.get("/getAllMessageUsers", UserAuth, getAllMessageUsers)
 
-export default indexRoutes;
+// Free Games Routes
+indexRoutes.post("/free-games", UserAuth, isAdmin, createFreeGame)
+indexRoutes.get("/free-games", getFreeGames)
+indexRoutes.get("/free-games/:slug", getFreeGameBySlug)
+indexRoutes.put("/free-games/:id", UserAuth, isAdmin, updateFreeGame)
+indexRoutes.delete("/free-games/:id", UserAuth, isAdmin, deleteFreeGame)
+
+
+export default indexRoutes
