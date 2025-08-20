@@ -74,7 +74,6 @@ export default function Rewards() {
 
     return (
         <>
-            {/* <Header /> */}
             <section className='w-full'>
                 <div className='container'>
                     <div className='flex items-center justify-between text-center text-sm md:text-lg'>
@@ -83,7 +82,7 @@ export default function Rewards() {
                             <div className={`w-full h-1 mt-1 transition-all ease-in duration-500 ${isActive === "redeem" ? 'bg-[#aa98fe] ' : "bg-transparent"} `}></div>
                         </div>
                         <div onClick={() => setIsActive("refer")} className={`w-1/2 pt-2 cursor-pointer   `}>
-                        Need Help?
+                            Need Help?
                             <div className={`w-full h-1 mt-1  transition-all ease-in duration-500 ${isActive === "refer" ? 'bg-[#aa98fe] ' : "bg-transparent"} `}></div>
                         </div>
                     </div>
@@ -93,7 +92,6 @@ export default function Rewards() {
 
                 </div>
             </section>
-            <Footer />
         </>
     )
 }
@@ -569,37 +567,37 @@ const NeedHelp = () => {
     return (
         <section className='py-10 px-4'>
             <div className='flex flex-col gap-4'>
-                <div className="collapse collapse-arrow" style={{backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">When will I be eligible for a referral reward?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">You will be eligible for referral reward only when your friend successfully signups using your unique referral code.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">When does referral reward get credited to my account?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">The referral reward gets credited to your account within 24 hours.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">What if my friend doesn't use my referral code?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">To ensure you receive your reward, please make sure that your friend uses your referral code during the signup process. Reward will not be granted if the referral code is not used.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">What should I do if my referral reward is not credited?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">In the event that your referral reward is not credited, please don't hesitate to reach out to our support team. We are here to assist you.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">Can this referral reward policy change in future?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">Please be aware that this referral reward policy may be subject to change in future. We will notify you of any modifications.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">Can my referral cash expire?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">No, referral cash does not have an expiration date. However, please be aware that STAN reserves the right to cancel your referral cash if any suspicious activity is detected.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)'}}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">How many times in a day can I redeem referral cash?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">There is no limit on the number of times you can redeem referral cash in a day.</div>

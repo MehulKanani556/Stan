@@ -26,7 +26,7 @@ const deleteFileFromS3 = async (fileUrl) => {
 
         // Extract the key from the URL
         const key = fileUrl.split('.com/')[1];
-        if (!key) return;.0
+        if (!key) return;
 
         const deleteParams = {
             Bucket: process.env.S3_BUCKET_NAME,
@@ -87,7 +87,8 @@ export const register = async (req, res) => {
             role: data.role || 'user',
             isAdmin: data.role === 'admin',
             lastLogin: data.lastLogin,
-            token: token });
+            token: token
+        });
     } catch (error) {
         return sendErrorResponse(res, 500, error.message);
     }
@@ -99,12 +100,11 @@ export const editProfile = async (req, res) => {
         const {
             name,
             username,
-            email,
+            // email is intentionally ignored to prevent updates via this endpoint
             bio,
             gender,
         } = req.body;
 
-        const emailHash = email ? encryptData(email) : undefined;
         const nameHash = name ? encryptData(name) : undefined;
         const bioHash = bio ? encryptData(bio) : undefined;
         const usernameHash = username ? encryptData(username) : undefined;
@@ -120,20 +120,17 @@ export const editProfile = async (req, res) => {
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // Check for unique username (check against encrypted value)
-        if (username && username !== existingUser.username) {
-            const existingUsername = await User.findOne({ username: usernameHash });
+        // Check for unique username (compare against encrypted values and exclude current user)
+        if (username && usernameHash && usernameHash !== existingUser.username) {
+            const existingUsername = await User.findOne({ username: usernameHash, _id: { $ne: userId } });
             if (existingUsername) {
                 return sendErrorResponse(res, 400, "Username already exists");
             }
         }
 
-        // Check for unique email (check against encrypted value)
-        if (email && email !== existingUser.email) {
-            const existingEmail = await User.findOne({ email: emailHash });
-            if (existingEmail) {
-                return sendErrorResponse(res, 400, "Email already exists");
-            }
+        // Block email updates explicitly
+        if (typeof req.body.email !== 'undefined') {
+            return sendErrorResponse(res, 400, "Email cannot be updated");
         }
 
         // Handle image upload
@@ -147,10 +144,10 @@ export const editProfile = async (req, res) => {
                     // Continue with the update even if deletion fails
                 }
             }
-            
+
             // With S3, the file.location contains the full S3 URL
             const newImagePath = req.file.location;
-            
+
             // Store the S3 URL in the database
             existingUser.profilePic = newImagePath;
         }
@@ -158,7 +155,6 @@ export const editProfile = async (req, res) => {
         // Update allowed fields
         if (name) existingUser.name = nameHash;
         if (username) existingUser.username = usernameHash;
-        if (email) existingUser.email = emailHash;
         if (bio) existingUser.bio = bioHash;
         if (gender) existingUser.gender = genderHash;
 
@@ -236,7 +232,7 @@ export const editUser = async (req, res) => {
         const {
             name,
             username,
-            email,
+            // email is intentionally ignored to prevent updates via this endpoint
             bio,
             gender,
         } = req.body;
@@ -253,7 +249,6 @@ export const editUser = async (req, res) => {
         // Encrypt values that will be updated
         const nameHash = name ? encryptData(name) : undefined;
         const usernameHash = username ? encryptData(username) : undefined;
-        const emailHash = email ? encryptData(email) : undefined;
         const bioHash = bio ? encryptData(bio) : undefined;
         const genderHash = gender ? encryptData(gender) : undefined;
 
@@ -268,18 +263,29 @@ export const editUser = async (req, res) => {
                     // Continue with the update even if deletion fails
                 }
             }
-            
+
             // With S3, the file.location contains the full S3 URL
             const newImagePath = req.file.location;
-            
+
             // Store the S3 URL in the database
             existingUser.profilePic = newImagePath;
+        }
+
+        // Check for unique username/email (check against encrypted values)
+        if (username && usernameHash && usernameHash !== existingUser.username) {
+            const existingUsername = await User.findOne({ username: usernameHash, _id: { $ne: userId } });
+            if (existingUsername) {
+                return sendErrorResponse(res, 400, "Username already exists");
+            }
+        }
+        // Block email updates explicitly
+        if (typeof req.body.email !== 'undefined') {
+            return sendErrorResponse(res, 400, "Email cannot be updated");
         }
 
         // Update allowed fields with encrypted values
         if (name) existingUser.name = nameHash;
         if (username) existingUser.username = usernameHash;
-        if (email) existingUser.email = emailHash;
         if (bio) existingUser.bio = bioHash;
         if (gender) existingUser.gender = genderHash;
 

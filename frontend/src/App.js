@@ -1,25 +1,33 @@
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
-import Home from './Pages/Home';
-import Login from './components/Login';
-import Register from './components/Register';
-import Store from './Pages/Store';
-import Rewards from './Pages/Rewards';
-import Header from './components/Header';
-import Transaction from './components/Transaction';
-import Support from './components/Support';
-import ManageAddress from './components/ManageAddress';
-import Games from './Pages/Games';
-import GamePlay from './components/GamePlay';
-import { Provider } from 'react-redux';
-import { configureStore } from './Redux/Store';
-import { SnackbarProvider } from 'notistack';
-const { store, persistor } = configureStore();
-import TopGames from './components/TopGames';
+import React from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { Provider } from "react-redux";
+import { SnackbarProvider } from "notistack";
+import { configureStore } from "./Redux/Store";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./Pages/Home";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Store from "./Pages/Store";
+import Rewards from "./Pages/Rewards";
+import Transaction from "./components/Transaction";
+import Support from "./components/Support";
+import ManageAddress from "./components/ManageAddress";
+import Games from "./Pages/Games";
+import GamePlay from "./components/GamePlay";
+import TopGames from "./components/TopGames";
+import Profile from "./Pages/Profile";
 
-function App() {
+// Component to conditionally render Header and Footer
+function AppContent() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+  const { store } = configureStore();
+
   return (
     <>
+      {!isAuthPage && <Header />}
       <Provider store={store}>
         <SnackbarProvider
           maxSnack={3}
@@ -41,13 +49,17 @@ function App() {
             <Route path="/games" element={<Games />} />
             <Route path="/games/:slug" element={<GamePlay />} />
             <Route path="/TopGames" element={<TopGames />} />
+            <Route path="/Profile" element={<Profile />} />
           </Routes>
         </SnackbarProvider>
       </Provider>
-
-     
+      {!isAuthPage && <Footer />}
     </>
   );
+}
+
+function App() {
+  return <AppContent />;
 }
 
 export default App;
