@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import Header from '../header/Header'
+import { useState, useRef } from 'react';
+import Header from '../components/Header'
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -24,6 +24,10 @@ import TopGames from '../components/TopGames';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
+  const scrollContainerRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const categories = [
     "Thriller",
@@ -41,7 +45,9 @@ export default function Home() {
       { id: 1, title: "Resident Evil Village", price: 2999, discount: 15, tag: "Horror", image: game1 },
       { id: 2, title: "The Last of Us Part II", price: 3499, discount: 10, tag: "Survival", image: game2 },
       { id: 3, title: "Dead Space Remake", price: 3999, discount: 0, tag: "Sci-Fi", image: game3 },
-      { id: 4, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game4 }
+      { id: 4, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game4 },
+      { id: 29, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game5 },
+      { id: 30, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game6 },
     ],
 
     // Racing games (index 1)
@@ -49,7 +55,8 @@ export default function Home() {
       { id: 5, title: "Forza Horizon 5", price: 3499, discount: 20, tag: "Open World", image: game4 },
       { id: 6, title: "Need for Speed Unbound", price: 2999, discount: 25, tag: "Arcade", image: game2 },
       { id: 7, title: "Gran Turismo 7", price: 3799, discount: 10, tag: "Simulation", image: game1 },
-      { id: 8, title: "F1 2023", price: 3599, discount: 15, tag: "Simulation", image: game4 }
+      { id: 8, title: "Gran Turismo 7", price: 3799, discount: 10, tag: "Simulation", image: game3 },
+      { id: 31, title: "F1 2023", price: 3599, discount: 15, tag: "Simulation", image: game4 }
     ],
 
     // Fighting games (index 2)
@@ -92,6 +99,39 @@ export default function Home() {
       { id: 28, title: "It Takes Two", price: 2499, discount: 20, tag: "Co-op", image: game2 }
     ]
   ];
+
+  // Mouse drag functionality for horizontal scrolling
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll speed multiplier
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  // Function to scroll to the right
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: 300,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <>
@@ -166,39 +206,34 @@ export default function Home() {
           </Swiper>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-0 flex flex-col items-center">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-0 flex flex-col items-center sm:max-w-full">
           <div className='py-6 sm:py-8 md:py-10 lg:py-12 xl:py-14 w-full'>
-
-            <div className="relative w-full mb-6 sm:mb-8 md:mb-10 px-4 sm:px-6">
-
-              <div className="w-full max-w-6xl mx-auto">
-                <div className="overflow-x-auto scrollbar-hide pb-2">
-                  <div className="flex space-x-2 sm:space-x-3 md:space-x-4 w-max min-w-full justify-center">
-                    {categories.map((category, index) => (
-                      <button
-                        key={index}
-                        className={`
-                          px-4 py-2 sm:px-5 sm:py-2.5 md:px-5 md:py-2.5 lg:px-6 lg:py-3
-                          rounded-lg font-medium text-sm sm:text-[15px] md:text-base
-                          transition-all duration-200 ease-out
-                          ${activeTab === index
-                            ? 'text-[#ab99e1] bg-white/10 shadow-[0_0_10px_rgba(171,153,225,0.3)]'
-                            : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                          }
-                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ab99e1]
-                          whitespace-nowrap flex-shrink-0
-                        `}
-                        onClick={() => setActiveTab(index)}
-                      >
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            {/* Tab buttons */}
+            <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
+              {categories.map((category, index) => (
+                <button
+                  key={index}
+                  className={`
+                   px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                   rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                   transition-all duration-200 ease-out
+                   border border-transparent
+                   whitespace-nowrap
+                   ${activeTab === index
+                      ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                    }
+                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                 `}
+                  onClick={() => setActiveTab(index)}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
 
-            <div className="w-full container bg-base-900 rounded-box mx-auto">
+            {/* Tab content - Game cards */}
+            <div className="w-full container bg-base-100 rounded-box border border-base-300 mx-auto sm:max-w-[95%]">
               <div className='py-6 sm:py-8 md:py-10 lg:py-12'>
                 <div className="">
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
@@ -207,13 +242,23 @@ export default function Home() {
                         Popular {categories[activeTab]} Games
                       </p>
                     </div>
-                    <div className='text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white/80 hover:text-white transition-colors cursor-pointer'>
+                    <div
+                      className='text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white/80 hover:text-white transition-colors cursor-pointer hover:scale-110 transform duration-200'
+                      onClick={scrollRight}
+                    >
                       <FaArrowRight />
                     </div>
                   </div>
 
-                  <div className='overflow-x-auto scrollbar-hide'>
-                    <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max pb-2 sm:pb-3 md:pb-4 pl-4 sm:pl-0 pr-4 sm:pr-0 justify-center'>
+                  <div
+                    ref={scrollContainerRef}
+                    className='overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing'
+                    onMouseDown={handleMouseDown}
+                    onMouseLeave={handleMouseLeave}
+                    onMouseUp={handleMouseUp}
+                    onMouseMove={handleMouseMove}
+                  >
+                    <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max pb-2 sm:pb-3 md:pb-4 pl-4 sm:pl-0 pr-4 sm:pr-0'>
                       {gamesByCategory[activeTab]?.map((game) => (
                         <div
                           key={game.id}
@@ -273,8 +318,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* top 5 games of the month */}
         <TopGames />
+
       </section>
     </>
   )
