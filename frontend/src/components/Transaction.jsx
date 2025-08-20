@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Footer from './Footer'
 import lazyCatImage from '../images/lazy-cat-1.png'
 import { IoArrowBack } from "react-icons/io5"
 
