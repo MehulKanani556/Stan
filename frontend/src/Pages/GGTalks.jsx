@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axiosInstance from "../Utils/axiosInstance";
-import { SocketContext } from "../context/SocketContext";
+import { useSocket } from "../context/SocketContext";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllMessageUsers, getAllMessages } from "../Redux/Slice/user.slice";
 import ChatUserList from "../chat/ChatUserList";
@@ -12,7 +12,7 @@ export default function GGTalks() {
     // const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [newMessage, setNewMessage] = useState("");
-    const { socket } = useContext(SocketContext);
+    const { socket } = useSocket();
     const dispatch = useDispatch();
 
     useEffect(() => {

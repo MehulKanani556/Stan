@@ -5,7 +5,7 @@ import { BASE_URL } from "../../Utils/baseUrl";
 import axiosInstance from "../../Utils/axiosInstance";
 // import { Socket } from "socket.io-client";
 // import { enqueueSnackbar } from 'notistack';
-
+import { enqueueSnackbar } from 'notistack';
 const handleErrors = (error, dispatch, rejectWithValue) => {
   const errorMessage = error.response?.data?.message || "An error occurred";
 
@@ -56,7 +56,20 @@ export const getUser = createAsyncThunk(
 //         }
 //     }
 // );
-
+// Get user by ID
+export const getUserById = createAsyncThunk(
+  "user/getUserById",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/getUserById/${userId}`);
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Failed to fetch user";
+      enqueueSnackbar(errorMessage, { variant: "error" });
+      return rejectWithValue(error.response?.data || { message: errorMessage });
+    }
+  }
+);
 export const createPlan = createAsyncThunk(
   "auth/createPlan",
   async (planData, { rejectWithValue }) => {
@@ -717,21 +730,7 @@ const userSlice = createSlice({
         state.error = action.payload.message;
         state.message = action.payload?.message || "Failed to muteChat chat";
       })
-      .addCase(getAllUsers.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getAllUsers.fulfilled, (state, action) => {
-        state.loading = false;
-        state.users = action.payload.result || [];
-        state.message = action.payload.message;
-        state.error = null;
-      })
-      .addCase(getAllUsers.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Failed to fetch users";
-        state.users = [];
-      })
+    
 
       // GetUserById cases
       .addCase(getUserById.pending, (state) => {
@@ -772,3 +771,4 @@ const userSlice = createSlice({
 });
 
 export const { logout, clearUsers, clearCurrentUser, setCurrentUser } = userSlice.actions;
+export default userSlice.reducer;

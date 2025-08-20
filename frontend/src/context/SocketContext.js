@@ -13,7 +13,9 @@ import { closeSnackbar, enqueueSnackbar } from "notistack";
 import { addMessage } from "../Redux/Slice/manageState.slice"; // You'll need this action
 
 export const SocketContext = createContext();
-export const useSocket = () => useContext(SocketContext);
+export const useSocket = () => {
+  return useContext(SocketContext);
+};
 
 export const SocketProvider = ({ children }) => {
   const navigate = useNavigate();

@@ -4,8 +4,8 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 import { configureStore } from "./Redux/Store";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./header/Header";
+import Footer from "./footer/Footer";
 import Home from "./Pages/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -18,6 +18,7 @@ import Games from "./Pages/Games";
 import GamePlay from "./components/GamePlay";
 import TopGames from "./components/TopGames";
 import Profile from "./Pages/Profile";
+import GGTalks from './Pages/GGTalks';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -45,6 +46,7 @@ function AppContent() {
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/transaction" element={<Transaction />} />
             <Route path='/support' element={<Support />} />
+            {/* <Route path='/GGTalks' element={<GGTalks />} /> */}
             <Route path='/manageAddress' element={<ManageAddress />} />
             <Route path="/games" element={<Games />} />
             <Route path="/games/:slug" element={<GamePlay />} />
