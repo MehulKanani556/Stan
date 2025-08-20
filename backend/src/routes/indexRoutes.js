@@ -4,7 +4,7 @@ import { upload, convertJfifToWebp, handleMulterError } from "../middlewares/ima
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
-import { getMessage, sendMessage } from "../controllers/messageController.js";
+import { getAllMessageUsers, getMessage, sendMessage } from "../controllers/messageController.js";
 
 
 const indexRoutes = express.Router()
@@ -32,6 +32,6 @@ indexRoutes.post("/followOrUnfollow/:id", UserAuth, isUser, followOrUnfollow)
 
 indexRoutes.post("/sendMessage/:id", UserAuth, isUser, upload.single("messageImage"), handleMulterError, convertJfifToWebp, sendMessage)
 indexRoutes.get("/getMessage/:id", UserAuth, isUser, getMessage)
+indexRoutes.get("/getAllMessageUsers", UserAuth, getAllMessageUsers)
 
-
-export default indexRoutes
+export default indexRoutes;

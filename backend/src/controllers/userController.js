@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 import bcrypt from "bcryptjs";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendForbiddenResponse, sendCreatedResponse, sendUnauthorizedResponse, sendNotFoundResponse } from '../utils/ResponseUtils.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
-import { encryptData } from "../middlewares/incrypt.js";
+import { encryptData, decryptData } from "../middlewares/incrypt.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
 
@@ -174,25 +174,31 @@ export const editProfile = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
     try {
-        // Check if user is authenticated and is admin
+        // Check if user is authenticated
         if (!req.user) {
             return sendUnauthorizedResponse(res, "Authentication required");
         }
 
-        if (!req.user.isAdmin) {
-            return sendForbiddenResponse(res, "Access denied. Only admins can view all users.");
-        }
+        const currentUserId = req.user._id;
 
-        // Find all users with role 'user'
-        const users = await User.find({ role: 'user' }).select('-password');
+        // Find all users except the currently logged-in user
+        const users = await User.find({ _id: { $ne: currentUserId } }).select('-password');
 
         // Check if any users were found
         if (!users || users.length === 0) {
             return sendSuccessResponse(res, "No users found", []);
         }
 
-        // Send a success response with the fetched users
-        return sendSuccessResponse(res, "Users fetched successfully", users);
+        // Decrypt necessary user data
+        const decryptedUsers = users.map(user => ({
+            ...user.toObject(),
+            name: decryptData(user.name),
+            email: decryptData(user.email),
+            // Add other fields you need to decrypt
+        }));
+
+        // Send a success response with the fetched and decrypted users
+        return sendSuccessResponse(res, "Users fetched successfully", decryptedUsers);
 
     } catch (error) {
         return ThrowError(res, 500, error.message)

@@ -1,14 +1,16 @@
 import mongoose from "mongoose";
 import Conversation from "../models/conversationModel.js";
-import Message from "../models/messageModel.js";
+// import Message from "../models/messageModel.js";
+import MessageStan from "../models/messageModel.js";
 import User from "../models/userModel.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
+import { decryptData } from "../middlewares/incrypt.js";
 
 export const sendMessage = async (req, res) => {
     try {
         const senderId = req.user?._id;
         const receiverId = req.params.id;
-        const { textMessage: message } = req.body;
+        const { text: message } = req.body;
         const messageImage = req.file;
 
         // Validate auth and params
@@ -40,7 +42,7 @@ export const sendMessage = async (req, res) => {
             });
         }
 
-        const newMessage = await Message.create({
+        const newMessage = await MessageStan.create({
             senderId,
             receiverId,
             message,
@@ -58,7 +60,7 @@ export const sendMessage = async (req, res) => {
 
             // Fetch sender details to include in notification
             const sender = await User.findById(senderId).select(
-                "username profilePic"
+                "name profilePic"
             );
 
             // Construct notification object
@@ -115,5 +117,299 @@ export const getMessage = async (req, res) => {
         return res
             .status(500)
             .json({ success: false, error: "Internal Server Error" });
+    }
+};
+export const getAllMessageUsers = async (req, res) => {
+    try {
+
+        const pipeline = [
+            // Match messages where user is either sender or receiver
+            {
+                $match: {
+                    $or: [{ senderId: req.user._id }, { receiverId: req.user._id }],
+                },
+            },
+
+            // Project to get the other user in the conversation
+            {
+                $project: {
+                    user: {
+                        $cond: {
+                            if: { $eq: ["$senderId", req.user._id] },
+                            then: "$receiverId",
+                            else: "$senderId",
+                        },
+                    },
+                },
+            },
+
+            // Group by user to remove duplicates
+            {
+                $group: {
+                    _id: "$user",
+                },
+            },
+
+            // Lookup user details
+            {
+                $lookup: {
+                    from: "userstans",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "userData",
+                },
+            },
+
+            // Unwind user data
+            {
+                $unwind: {
+                    path: "$userData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+
+            // Project required user fields
+            {
+                $project: {
+                    _id: 1,
+                    name: { $ifNull: ["$userData.name", ""] },
+                    email: { $ifNull: ["$userData.email", null] },
+                    photo: { $ifNull: ["$userData.photo", null] },
+                    profilePhoto: { $ifNull: ["$userData.profilePhoto", null] },
+                    createdAt: { $ifNull: ["$userData.createdAt", null] },
+                    phone: { $ifNull: ["$userData.phone", null] },
+                    dob: { $ifNull: ["$userData.dob", null] },
+                    bio: { $ifNull: ["$userData.bio", null] },
+                    archiveUsers: { $ifNull: ["$userData.archiveUsers", null] },
+                    blockedUsers: { $ifNull: ["$userData.blockedUsers", null] },
+                    isUser: {
+                        $cond: [{ $ifNull: ["$userData._id", null] }, true, false],
+                    },
+                    deleteChatFor: { $ifNull: ["$userData.deleteChatFor", null] },
+                },
+            },
+
+            // Union with current user's data
+            {
+                $unionWith: {
+                    coll: "userstans",
+                    pipeline: [
+                        {
+                            $match: {
+                                _id: req.user._id,
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                email: 1,
+                                photo: 1,
+                                profilePhoto: 1,
+                                createdAt: 1,
+                                phone: 1,
+                                dob: 1,
+                                bio: 1,
+                                archiveUsers: 1,
+                                blockedUsers: 1,
+                                isUser: { $literal: true },
+                                deleteChatFor: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+
+
+
+            // Modified messages lookup for direct messages
+            {
+                $lookup: {
+                    from: "messagestans",
+                    let: {
+                        userId: "$_id",
+                        currentUserId: req.user._id,
+                        isUser: "$isUser",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$$isUser", true] },
+                                        {
+                                            $or: [
+                                                {
+                                                    $and: [
+                                                        { $eq: ["$senderId", "$$userId"] },
+                                                        { $eq: ["$receiverId", "$$currentUserId"] },
+                                                        { $ne: ["$isBlocked", true] },
+                                                    ],
+                                                },
+                                                {
+                                                    $and: [
+                                                        { $eq: ["$senderId", "$$currentUserId"] },
+                                                        { $eq: ["$receiverId", "$$userId"] },
+                                                        // { $ne: ["$isBlocked", true] },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $sort: { createdAt: -1 },
+                        },
+                        {
+                            $limit: 20,
+                        },
+                    ],
+                    as: "directMessages",
+                },
+            },
+
+            // Final projection for users
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    email: 1,
+                    profilePhoto: 1,
+                    photo: 1,
+                    createdAt: 1,
+                    phone: 1,
+                    dob: 1,
+                    bio: 1,
+                    archiveUsers: 1,
+                    blockedUsers: 1,
+                    isUser: 1,
+                    directMessages: 1,
+                    groups: 1,
+                    deleteChatFor: 1,
+                },
+            },
+        ];
+
+        const results = await MessageStan.aggregate(pipeline);
+
+        // Process the results to include group messages
+        const userResults = results.filter((item) => item.isUser);
+
+        // Extract unique groups from the results using a Map
+        const uniqueGroupsMap = new Map();
+
+        results.forEach((result) => {
+            if (result.groups && result.groups.length > 0) {
+                result.groups.forEach((group) => {
+                    // Use group ID as key to ensure uniqueness
+                    uniqueGroupsMap.set(group._id.toString(), group);
+                });
+            }
+        });
+
+        // Convert Map values to array to get unique groups
+        const uniqueGroups = Array.from(uniqueGroupsMap.values());
+
+        // Get current user's data to check deleteChatFor
+        const currentUser = results.find(
+            (r) => r._id.toString() === req.user._id.toString()
+        );
+
+        // console.log("currentUser", currentUser);
+
+        // Now fetch messages for each group
+        const groupsWithMessages = [];
+        for (const group of uniqueGroups) {
+            // Skip groups that are in deleteChatFor
+            if (currentUser?.deleteChatFor?.includes(group._id.toString())) {
+                continue;
+            }
+
+            const groupMessages = await MessageStan
+                .find({
+                    receiverId: group._id,
+                    deletedFor: { $ne: req.user._id },
+                })
+                .sort({ createdAt: -1 })
+                .limit(20);
+
+            groupsWithMessages.push({
+                _id: group._id,
+                name: group.name,
+                photo: group.photo,
+                createdAt: group.createdAt,
+                members: group.members,
+                admin: group.admin,
+                description: group.description,
+                createdBy: group.createdBy,
+                isGroup: true,
+                messages: groupMessages,
+                bio: group.bio,
+            });
+        }
+
+        // Format the user results and filter out users in deleteChatFor without messages
+        // console.log("userResults", userResults);
+        const formattedUsers = userResults
+            .filter((user) => {
+
+                const isInDeleteChatFor = currentUser?.deleteChatFor?.includes(
+                    user._id.toString()
+                );
+
+                let hasMessages;
+                if (isInDeleteChatFor) {
+                    hasMessages =
+                        user?.directMessages &&
+                        user?.directMessages.filter((u) => {
+                            const deletedForStrings = u.deletedFor.map((id) => id.toString());
+                            return !deletedForStrings.includes(currentUser._id.toString());
+                        });
+                    // console.log(
+                    //     "hasMessages",
+                    //     hasMessages.length,
+                    //     isInDeleteChatFor,
+                    //     currentUser._id.toString()
+                    // );
+                }
+
+                if (hasMessages && hasMessages?.length <= 0) {
+                    return false
+                } else {
+                    return true
+                }
+
+                // Keep user if they have messages or are not in deleteChatFor
+                // return (hasMessages.length <= 0 && isInDeleteChatFor);
+            })
+            .map((user) => ({
+                _id: user._id,
+                name: decryptData(user.name),
+                email: user.email,
+                photo: user.photo,
+                profilePhoto: user.profilePhoto,
+                createdAt: user.createdAt,
+                phone: user.phone,
+                dob: user.dob,
+                bio: user.bio,
+                archiveUsers: user.archiveUsers,
+                blockedUsers: user.blockedUsers,
+                isUser: true,
+                messages: user.directMessages || [],
+            }));
+
+        return res.status(200).json({
+            status: 200,
+            message: "All Message Users and Groups Found Successfully...",
+            users: [...formattedUsers],
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: 500,
+            message: error.message,
+        });
     }
 };

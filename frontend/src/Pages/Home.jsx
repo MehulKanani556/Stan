@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Header from '../components/Header'
+import Header from '../header/Header'
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -95,7 +95,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+
       <section className="bg-black ">
         <div className="relative w-full">
           <Swiper
@@ -171,7 +171,7 @@ export default function Home() {
           <div className='py-6 sm:py-8 md:py-10 lg:py-12 xl:py-14 w-full'>
 
             <div className="relative w-full mb-6 sm:mb-8 md:mb-10 px-4 sm:px-6">
-             
+
               <div className="w-full max-w-6xl mx-auto">
                 <div className="overflow-x-auto scrollbar-hide pb-2">
                   <div className="flex space-x-2 sm:space-x-3 md:space-x-4 w-max min-w-full justify-center">
@@ -274,8 +274,8 @@ export default function Home() {
           </div>
         </div>
 
-            {/* top 5 games of the month */}
-            <TopGames />
+        {/* top 5 games of the month */}
+        <TopGames />
       </section>
     </>
   )

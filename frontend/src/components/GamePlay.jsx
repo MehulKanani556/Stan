@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import Header from './Header'
-import Footer from './Footer'
+import Header from '../header/Header'
+import Footer from '../footer/Footer'
 import { getGameBySlug } from '../data/games'
 
 const GamePlay = () => {

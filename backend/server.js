@@ -2,8 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import { connectDB } from './src/config/db.js';
 import indexRouter from './src/routes/indexRoutes.js';
-
-
+import http from 'http';
+import { Server } from 'socket.io';
+import socketManager from "./src/socketManager/SocketManager.js";
 const app = express();
 
 // Middleware
@@ -19,10 +20,34 @@ app.use('/public', express.static('public'));
 app.use("/api", indexRouter)
 
 
+// Create single HTTP server from Express
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    // allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  },
+  transports: ['websocket', 'polling'],
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  connectTimeout: 45000,
+});
+
+// Make Socket.IO globally accessible
+global.io = io;
+
+// Initialize socket manager
+socketManager.initializeSocket(io);
+
+
 // Connect to database
 connectDB();  
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server + Socket.IO running on port ${PORT}`);
 });

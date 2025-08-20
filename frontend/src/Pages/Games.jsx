@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
+import Header from '../header/Header'
+import Footer from '../footer/Footer'
 import { games } from '../data/games'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
