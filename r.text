@@ -1,0 +1,35 @@
+//socketManager.js
+
+import Message from "../models/messageModel.js";
+
+function initializeSocket(io) {
+  io.on("connection", (socket) => {
+    console.log("New socket connection:", socket.id);
+
+    // listen for your custom event
+    socket.on("conection", (data) => {
+      console.log("Custom 'conection' event received:", data);
+    });
+    socket.on("sendMessage", async (data) => {
+      const { receiverId, message, senderId } = data;
+      // Validate message content
+      if (!message || message.trim() === "") {
+        console.log("Attempted to send an empty message, ignoring.");
+        return; // Do not process empty messages
+      }
+      const newMessage = await Message.create({
+        receiverId,
+        message,
+        senderId
+      });
+
+      io.to(receiverId).emit("newMessage", newMessage);
+     
+      socket.emit("newMessage", newMessage);
+      
+
+    });
+  });
+}
+
+export default { initializeSocket };

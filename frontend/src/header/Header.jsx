@@ -46,9 +46,9 @@ export default function Header() {
                                         }>Home</NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to="/support" className={({ isActive }) =>
+                                        <NavLink to="/ggtalks" className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
-                                        }>Chatter</NavLink>
+                                        }>GGTalks</NavLink>
                                     </li>
                                     <li>
                                         <NavLink to="/clubs" className={({ isActive }) =>
