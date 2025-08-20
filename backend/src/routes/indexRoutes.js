@@ -12,7 +12,7 @@ const indexRoutes = express.Router()
 
 //register Routes
 indexRoutes.post("/register", register)
-indexRoutes.get("/getAllUsers", UserAuth, isAdmin, getAllUsers)
+indexRoutes.get("/getAllUsers", UserAuth,  getAllUsers)
 indexRoutes.get("/getUserById/:id", UserAuth, getUserById)
 indexRoutes.put("/editUser/:id", UserAuth, isAdmin, upload.single("profilePic"), convertJfifToWebp, editUser)
 indexRoutes.put("/editProfile/:id", UserAuth, upload.single("profilePic"), convertJfifToWebp, editProfile)

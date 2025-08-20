@@ -286,7 +286,6 @@ export const getAllMessageUsers = async (req, res) => {
                     blockedUsers: 1,
                     isUser: 1,
                     directMessages: 1,
-                    groups: 1,
                     deleteChatFor: 1,
                 },
             },
@@ -297,92 +296,30 @@ export const getAllMessageUsers = async (req, res) => {
         // Process the results to include group messages
         const userResults = results.filter((item) => item.isUser);
 
-        // Extract unique groups from the results using a Map
-        const uniqueGroupsMap = new Map();
-
-        results.forEach((result) => {
-            if (result.groups && result.groups.length > 0) {
-                result.groups.forEach((group) => {
-                    // Use group ID as key to ensure uniqueness
-                    uniqueGroupsMap.set(group._id.toString(), group);
-                });
-            }
-        });
-
-        // Convert Map values to array to get unique groups
-        const uniqueGroups = Array.from(uniqueGroupsMap.values());
-
-        // Get current user's data to check deleteChatFor
         const currentUser = results.find(
             (r) => r._id.toString() === req.user._id.toString()
         );
 
-        // console.log("currentUser", currentUser);
-
-        // Now fetch messages for each group
-        const groupsWithMessages = [];
-        for (const group of uniqueGroups) {
-            // Skip groups that are in deleteChatFor
-            if (currentUser?.deleteChatFor?.includes(group._id.toString())) {
-                continue;
-            }
-
-            const groupMessages = await MessageStan
-                .find({
-                    receiverId: group._id,
-                    deletedFor: { $ne: req.user._id },
-                })
-                .sort({ createdAt: -1 })
-                .limit(20);
-
-            groupsWithMessages.push({
-                _id: group._id,
-                name: group.name,
-                photo: group.photo,
-                createdAt: group.createdAt,
-                members: group.members,
-                admin: group.admin,
-                description: group.description,
-                createdBy: group.createdBy,
-                isGroup: true,
-                messages: groupMessages,
-                bio: group.bio,
-            });
-        }
-
-        // Format the user results and filter out users in deleteChatFor without messages
-        // console.log("userResults", userResults);
         const formattedUsers = userResults
             .filter((user) => {
-
                 const isInDeleteChatFor = currentUser?.deleteChatFor?.includes(
                     user._id.toString()
                 );
 
-                let hasMessages;
                 if (isInDeleteChatFor) {
-                    hasMessages =
-                        user?.directMessages &&
-                        user?.directMessages.filter((u) => {
-                            const deletedForStrings = u.deletedFor.map((id) => id.toString());
-                            return !deletedForStrings.includes(currentUser._id.toString());
-                        });
-                    // console.log(
-                    //     "hasMessages",
-                    //     hasMessages.length,
-                    //     isInDeleteChatFor,
-                    //     currentUser._id.toString()
-                    // );
-                }
+                    const hasMessages = user?.directMessages && user?.directMessages.filter((u) => {
+                        const deletedForStrings = u.deletedFor.map((id) => id.toString());
+                        return !deletedForStrings.includes(currentUser._id.toString());
+                    });
 
-                if (hasMessages && hasMessages?.length <= 0) {
-                    return false
+                    if (hasMessages && hasMessages?.length <= 0) {
+                        return false
+                    } else {
+                        return true
+                    }
                 } else {
                     return true
                 }
-
-                // Keep user if they have messages or are not in deleteChatFor
-                // return (hasMessages.length <= 0 && isInDeleteChatFor);
             })
             .map((user) => ({
                 _id: user._id,

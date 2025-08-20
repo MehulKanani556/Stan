@@ -185,16 +185,10 @@ export const getAllUsers = async (req, res) => {
             return sendSuccessResponse(res, "No users found", []);
         }
 
-        // Decrypt necessary user data
-        const decryptedUsers = users.map(user => ({
-            ...user.toObject(),
-            name: decryptData(user.name),
-            email: decryptData(user.email),
-            // Add other fields you need to decrypt
-        }));
+       
 
         // Send a success response with the fetched and decrypted users
-        return sendSuccessResponse(res, "Users fetched successfully", decryptedUsers);
+        return sendSuccessResponse(res, "Users fetched successfully", users);
 
     } catch (error) {
         return ThrowError(res, 500, error.message)
