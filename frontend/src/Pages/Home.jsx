@@ -161,7 +161,6 @@ export default function Home() {
             loop={true}
             className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px]"
           >
-            {/* Slide 1 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -173,7 +172,6 @@ export default function Home() {
               </div>
             </SwiperSlide>
 
-            {/* Slide 2 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -185,7 +183,6 @@ export default function Home() {
               </div>
             </SwiperSlide>
 
-            {/* Slide 3 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -197,7 +194,6 @@ export default function Home() {
               </div>
             </SwiperSlide>
 
-            {/* Slide 4 */}
             <SwiperSlide>
               <div className="relative w-full h-full overflow-hidden">
                 <img
@@ -319,6 +315,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 

@@ -30,24 +30,24 @@ io.on("connection", (socket) => {
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   // Handle real-time messages
-  socket.on("sendMessage", (messageData) => {
-    const { senderId, receiverId, text } = messageData;
+  // socket.on("sendMessage", (messageData) => {
+  //   const { senderId, receiverId, text } = messageData;
 
-    // console.log(`📩 New Message from ${senderId} to ${receiverId}: ${text}`);
+  //   // console.log(`📩 New Message from ${senderId} to ${receiverId}: ${text}`);
 
-    // Save the message in the database (Example - Modify based on your DB schema)
-    // You can integrate this inside your `message.route.js` if needed
-    // Message.create({ sender: senderId, receiver: receiverId, text });
+  //   // Save the message in the database (Example - Modify based on your DB schema)
+  //   // You can integrate this inside your `message.route.js` if needed
+  //   // Message.create({ sender: senderId, receiver: receiverId, text });
 
-    const receiverSocketId = getReceiverSocketId(receiverId);
+  //   const receiverSocketId = getReceiverSocketId(receiverId);
 
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", messageData); // ✅ Send real-time message to receiver
-      // console.log(`🚀 Message sent to receiver (Socket ID: ${receiverSocketId})`);
-    } else {
-      console.log(`⚠️ Receiver (${receiverId}) is offline, storing message in DB.`);
-    }
-  });
+  //   if (receiverSocketId) {
+  //     io.to(receiverSocketId).emit("newMessage", messageData); // ✅ Send real-time message to receiver
+  //     // console.log(`🚀 Message sent to receiver (Socket ID: ${receiverSocketId})`);
+  //   } else {
+  //     console.log(`⚠️ Receiver (${receiverId}) is offline, storing message in DB.`);
+  //   }
+  // });
 
   socket.on("sendNotification", ({ receiverId, notification }) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
