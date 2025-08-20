@@ -61,9 +61,8 @@ export default function GGTalks() {
                     ((message.senderId === selectedUser._id && message.receiverId === localStorage.getItem('userId')) ||
                     (message.senderId === localStorage.getItem('userId') && message.receiverId === selectedUser._id))
                 ) {
-                    // console.log("message", messages,message);
-                    // alert("newMessage");
-                    // dispatch(addMessage(message));
+                    // console.log("New message received:", message);
+                    dispatch(addMessage(message));
                 }
 
             });
@@ -91,8 +90,8 @@ export default function GGTalks() {
     return (
         <div className="flex bg-gray-100 ">
             {/* SIDEBAR */}
-            <div className="flex h-full">  
-            <ChatUserList />
+            <div className="flex max-h-full">  
+                <ChatUserList />
             </div>
 
             {/* CHAT WINDOW */}
