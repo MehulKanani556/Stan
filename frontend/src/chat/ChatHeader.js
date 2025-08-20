@@ -1,24 +1,19 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 import { decryptData } from '../Utils/encryption';
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function ChatHeader({ onMenuClick, showUserList }) {
     const { selectedUser } = useSelector((state) => state.manageState);
-    
+
     return (
-        <div className="flex items-center gap-3 px-4 py-[6px] bg-blue-600 text-white shadow-md">
+        <div className="flex items-center gap-3 px-4 py-[6px] bg-gray-800 text-white shadow-md border-b border-gray-800 h-16">
             {/* Mobile menu button */}
             <button
-                className="md:hidden p-2 -ml-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="md:hidden p-2 -ml-2 rounded-lg hover:bg-gray-800 transition-colors"
                 onClick={onMenuClick}
             >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {showUserList ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    )}
-                </svg>
+                <IoMdArrowRoundBack className='text-2xl' />
             </button>
 
             {selectedUser ? (
@@ -26,9 +21,9 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                     {/* User avatar */}
                     <div className="flex-shrink-0">
                         {selectedUser.profilePhoto ? (
-                            <img 
-                                src={selectedUser.profilePhoto} 
-                                alt="profile" 
+                            <img
+                                src={selectedUser.profilePhoto}
+                                alt="profile"
                                 className="w-10 h-10 rounded-full object-cover"
                             />
                         ) : (
@@ -37,11 +32,11 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                             </div>
                         )}
                     </div>
-                    
+
                     {/* User info */}
                     <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-lg truncate capitalize">{selectedUser.name}</h3>
-                        <div className="flex items-center gap-2 text-blue-200 text-sm">
+                        <div className="flex items-center gap-2 text-gray-300 text-sm">
                             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                             <span>Online</span>
                         </div>
@@ -75,7 +70,7 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                 <div className="flex items-center justify-center flex-1">
                     <div className="text-center">
                         <h3 className="font-bold text-lg">Welcome to GG Talks</h3>
-                        <p className="text-blue-200 text-sm">Select a chat to start messaging</p>
+                        <p className="text-gray-300 text-sm">Select a chat to start messaging</p>
                     </div>
                 </div>
             )}

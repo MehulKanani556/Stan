@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import Header from '../header/Header'
 import Footer from '../footer/Footer'
-import { getGameBySlug } from '../data/games'
+import { fetchGameBySlug, clearSelectedGame } from '../Redux/Slice/freeGame.slice'
 
 const GamePlay = () => {
     const { slug } = useParams()
-    const game = getGameBySlug(slug)
+    const dispatch = useDispatch()
+    const { selectedGame: game, loading } = useSelector((state) => state.freeGame)
     const [iframeError, setIframeError] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        if (game) {
+        if (slug) {
             setIsLoading(true)
             setIframeError(false)
+            dispatch(fetchGameBySlug(slug))
         }
-    }, [game])
+        return () => {
+            dispatch(clearSelectedGame())
+        }
+    }, [dispatch, slug])
 
     const handleIframeLoad = () => {
         setIsLoading(false)
@@ -28,7 +34,7 @@ const GamePlay = () => {
 
     const openGameInNewTab = () => {
         if (game && game.iframeSrc) {
-            window.open(game.iframeSrc, '_blank')
+            window.open(game.iframeSrc, '_blank', 'noopener,noreferrer')
         }
     }
 
@@ -41,7 +47,7 @@ const GamePlay = () => {
                 </div>
                 {game ? (
                     <div className='mt-4 bg-[#221f2a] rounded-xl overflow-hidden relative'>
-                        {isLoading && (
+                        {(isLoading || loading) && (
                             <div className='absolute inset-0 flex items-center justify-center bg-[#221f2a] z-10'>
                                 <div className='text-white text-lg'>Loading game...</div>
                             </div>
@@ -73,7 +79,9 @@ const GamePlay = () => {
                                 allowFullScreen
                                 onLoad={handleIframeLoad}
                                 onError={handleIframeError}
-                                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+                                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-pointer-lock allow-top-navigation-by-user-activation"
+                                allow="autoplay; fullscreen; clipboard-read; clipboard-write; encrypted-media; gamepad; accelerometer; gyroscope; magnetometer"
+                                referrerPolicy="origin-when-cross-origin"
                             />
                         )}
                     </div>

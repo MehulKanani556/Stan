@@ -36,10 +36,10 @@ indexRoutes.get("/getMessage/:id", UserAuth, isUser, getMessage)
 indexRoutes.get("/getAllMessageUsers", UserAuth, getAllMessageUsers)
 
 // Free Games Routes
-indexRoutes.post("/free-games", UserAuth, isAdmin, createFreeGame)
+indexRoutes.post("/free-games", UserAuth, isAdmin, upload.single("image"), handleMulterError, convertJfifToWebp, createFreeGame)
 indexRoutes.get("/free-games", getFreeGames)
 indexRoutes.get("/free-games/:slug", getFreeGameBySlug)
-indexRoutes.put("/free-games/:id", UserAuth, isAdmin, updateFreeGame)
+indexRoutes.put("/free-games/:id", UserAuth, isAdmin, upload.single("image"), handleMulterError, convertJfifToWebp, updateFreeGame)
 indexRoutes.delete("/free-games/:id", UserAuth, isAdmin, deleteFreeGame)
 
 

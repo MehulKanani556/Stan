@@ -21,6 +21,13 @@ export default function GGTalks() {
         dispatch(getAllMessageUsers());
     }, [dispatch]);
 
+    // On mobile, show the user list first until a chat is selected
+    useEffect(() => {
+        if (window.innerWidth < 768 && !selectedUser) {
+            setShowUserList(true);
+        }
+    }, [selectedUser]);
+
     // Auto-select first user on desktop, but not on mobile to show welcome screen
     useEffect(() => {
         if (allMessageUsers && allMessageUsers.length > 0 && !selectedUser) {
@@ -122,7 +129,7 @@ export default function GGTalks() {
     }, []);
 
     return (
-        <div className="flex h-screen bg-gray-100 relative overflow-hidden">
+        <div className="flex bg-gray-950 relative overflow-hidden h-[calc(100vh-64px-56px)] md:h-[calc(100vh-72px)]">
             {/* User List Sidebar */}
             <ChatUserList 
                 showUserList={showUserList} 
@@ -130,7 +137,7 @@ export default function GGTalks() {
             />
 
             {/* Main Chat Area */}
-            <div className="flex flex-col flex-1 min-w-0">
+            <div className={`min-w-0 flex-1 ${(!selectedUser || showUserList) ? 'hidden' : 'flex'} md:flex flex-col`}>
                 {/* Chat Header */}
                 <ChatHeader 
                     onMenuClick={() => setShowUserList(!showUserList)}
@@ -158,15 +165,15 @@ export default function GGTalks() {
 
                 {/* Message Input */}
                 {selectedUser && (
-                    <div className="p-3 sm:p-4 bg-white border-t shadow-lg">
-                        <div className="flex items-end gap-2 sm:gap-3 max-w-4xl mx-auto">
+                    <div className="p-3 sm:p-4 bg-gray-800 shadow-lg">
+                        <div className="flex items-end gap-2 sm:gap-3 max-w-[95%] mx-auto">
                           
 
                             {/* Text input */}
                             <div className="flex-1 relative">
-                                <textarea
+                                <input  
                                     placeholder={`Message ${selectedUser.name}...`}
-                                    className="w-full border rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200"
+                                    className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200"
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     onKeyPress={handleKeyPress}
