@@ -75,7 +75,7 @@ export default function Header() {
 
                             {/* Right Section */}
                             <div className="flex items-center gap-5">
-                          
+
                                 <div className="hidden md:block relative w-9 h-9">
                                     <div className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center">
                                         <img
@@ -138,32 +138,32 @@ export default function Header() {
 
                             <div className='w-full flex flex-col gap-5'>
                                 <div className='w-full mt-5'>
-                                   
+
                                     <div className='flex flex-wrap justify-between gap-y-3'>
-                                       
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-[13px]'>
+
+                                        <NavLink to="/rewards" className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-[13px]'>
                                             <SlBadge /> Rewards Offers
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/transaction" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <CgNotes />  Transaction
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/chatter" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <BsChatHeartFill />  chat
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/support" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <BiSupport />  Support
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <PiQuestionMarkFill />  Guides
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/games" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <IoGameController /> Free Games
-                                        </div>
-                                       
+                                        </NavLink>
+
                                     </div>
                                 </div>
-                                
-                                
+
+
                             </div>
 
                             <div className='absolute bottom-4 left-0 w-full flex items-center justify-center'>

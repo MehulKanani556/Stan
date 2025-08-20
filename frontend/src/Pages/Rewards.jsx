@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import greenGem from "../images/green-gem.png"
 import gemesLogo from "../images/gens-logo1.png"
 import { FaGem, FaWhatsapp, FaInfoCircle, FaMoneyBillWave, FaArrowUp } from "react-icons/fa";
+import { IoArrowBack } from "react-icons/io5";
 import phonePe from "../images/phonepe.jpg"
 import Amazon from "../images/Amazon.png"
 import dominos from "../images/dominos.png"
@@ -60,6 +61,9 @@ const swiperStyles = `
 
 export default function Rewards() {
     const [isActive, setIsActive] = React.useState("redeem")
+    const handleBackClick = () => {
+        window.history.back();
+    };
 
     // Inject custom styles
     React.useEffect(() => {
@@ -76,6 +80,19 @@ export default function Rewards() {
         <>
             {/* <Header /> */}
             <section className='w-full'>
+                {/* Header */}
+                <div className='sticky top-0 z-20'>
+                    <div className='flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-4 bg-black/30 backdrop-blur-xl shadow-lg border-b border-white/10 text-white'>
+                        <button
+                            className='text-white rounded-full p-2 hover:bg-white/10 transition-colors'
+                            onClick={handleBackClick}
+                            aria-label='Go back'
+                        >
+                            <IoArrowBack className='w-5 h-5 sm:w-6 sm:h-6' />
+                        </button>
+                        <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Rewards</h1>
+                    </div>
+                </div>
                 <div className='container'>
                     <div className='flex items-center justify-between text-center text-sm md:text-lg'>
                         <div onClick={() => setIsActive("redeem")} className={`w-1/2 pt-2    cursor-pointer   `}>
@@ -83,7 +100,7 @@ export default function Rewards() {
                             <div className={`w-full h-1 mt-1 transition-all ease-in duration-500 ${isActive === "redeem" ? 'bg-[#aa98fe] ' : "bg-transparent"} `}></div>
                         </div>
                         <div onClick={() => setIsActive("refer")} className={`w-1/2 pt-2 cursor-pointer   `}>
-                        Need Help?
+                        FAQs
                             <div className={`w-full h-1 mt-1  transition-all ease-in duration-500 ${isActive === "refer" ? 'bg-[#aa98fe] ' : "bg-transparent"} `}></div>
                         </div>
                     </div>
