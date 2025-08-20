@@ -33,14 +33,14 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                             />
                         ) : (
                             <div className="w-10 h-10 rounded-full font-bold bg-blue-500 flex items-center justify-center text-white capitalize border-2 border-blue-300">
-                                {decryptData(selectedUser.name).charAt(0)}
+                                {selectedUser.name.charAt(0)}
                             </div>
                         )}
                     </div>
                     
                     {/* User info */}
                     <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-lg truncate capitalize">{decryptData(selectedUser.name)}</h3>
+                        <h3 className="font-bold text-lg truncate capitalize">{selectedUser.name}</h3>
                         <div className="flex items-center gap-2 text-blue-200 text-sm">
                             <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                             <span>Online</span>

@@ -190,35 +190,35 @@ export const getAllMessageUsers = async (req, res) => {
             },
 
             // Union with current user's data
-            {
-                $unionWith: {
-                    coll: "userstans",
-                    pipeline: [
-                        {
-                            $match: {
-                                _id: req.user._id,
-                            },
-                        },
-                        {
-                            $project: {
-                                _id: 1,
-                                name: 1,
-                                email: 1,
-                                photo: 1,
-                                profilePhoto: 1,
-                                createdAt: 1,
-                                phone: 1,
-                                dob: 1,
-                                bio: 1,
-                                archiveUsers: 1,
-                                blockedUsers: 1,
-                                isUser: { $literal: true },
-                                deleteChatFor: 1,
-                            },
-                        },
-                    ],
-                },
-            },
+            // {
+            //     $unionWith: {
+            //         coll: "userstans",
+            //         pipeline: [
+            //             {
+            //                 $match: {
+            //                     _id: req.user._id,
+            //                 },
+            //             },
+            //             {
+            //                 $project: {
+            //                     _id: 1,
+            //                     name: 1,
+            //                     email: 1,
+            //                     photo: 1,
+            //                     profilePhoto: 1,
+            //                     createdAt: 1,
+            //                     phone: 1,
+            //                     dob: 1,
+            //                     bio: 1,
+            //                     archiveUsers: 1,
+            //                     blockedUsers: 1,
+            //                     isUser: { $literal: true },
+            //                     deleteChatFor: 1,
+            //                 },
+            //             },
+            //         ],
+            //     },
+            // },
 
 
 

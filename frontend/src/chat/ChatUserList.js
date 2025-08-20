@@ -144,7 +144,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                 />
                                             ) : (
                                                 <div className="w-12 h-12 rounded-full font-bold bg-gray-200 flex items-center justify-center text-gray-600 capitalize text-lg">
-                                                    {decryptData(user.name).charAt(0)}
+                                                    {user.name.charAt(0)}
                                                 </div>
                                             )}
                                         </div>
@@ -153,7 +153,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between">
                                                 <p className="font-medium text-gray-900 truncate capitalize text-base">
-                                                    {decryptData(user.name)}
+                                                    {user.name}
                                                 </p>
                                                 {/* Online indicator */}
                                                 {/* <div className="w-3 h-3 bg-green-400 rounded-full flex-shrink-0"></div> */}
