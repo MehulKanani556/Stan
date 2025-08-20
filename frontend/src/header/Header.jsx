@@ -228,24 +228,24 @@ export default function Header() {
 
                                     <div className='flex flex-wrap justify-between gap-y-3'>
 
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-[13px]'>
+                                        <NavLink to="/rewards" className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-[13px]'>
                                             <SlBadge /> Rewards Offers
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/transaction" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <CgNotes />  Transaction
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/chatter" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <BsChatHeartFill />  chat
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/support" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <BiSupport />  Support
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <PiQuestionMarkFill />  Guides
-                                        </div>
-                                        <div className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
+                                        </NavLink>
+                                        <NavLink to="/games" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <IoGameController /> Free Games
-                                        </div>
+                                        </NavLink>
 
                                     </div>
                                 </div>
