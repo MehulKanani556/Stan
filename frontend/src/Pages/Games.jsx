@@ -68,27 +68,25 @@ const Games = () => {
 							<button
 								onClick={() => scroll('left')}
 								disabled={!canScrollLeft}
-								className={`p-2 rounded-full transition-colors ${
-									canScrollLeft 
-										? 'bg-[#ab99e1] hover:bg-[#9a8ad0] text-white' 
+								className={`p-2 rounded-full transition-colors ${canScrollLeft
+										? 'bg-[#ab99e1] hover:bg-[#9a8ad0] text-white'
 										: 'bg-gray-600 text-gray-400 cursor-not-allowed'
-								}`}
+									}`}
 							>
 								<FaChevronLeft size={16} />
 							</button>
 							<button
 								onClick={() => scroll('right')}
 								disabled={!canScrollRight}
-								className={`p-2 rounded-full transition-colors ${
-									canScrollRight 
-										? 'bg-[#ab99e1] hover:bg-[#9a8ad0] text-white' 
+								className={`p-2 rounded-full transition-colors ${canScrollRight
+										? 'bg-[#ab99e1] hover:bg-[#9a8ad0] text-white'
 										: 'bg-gray-600 text-gray-400 cursor-not-allowed'
-								}`}
+									}`}
 							>
 								<FaChevronRight size={16} />
 							</button>
 						</div>
-						<button 
+						<button
 							onClick={toggleShowAll}
 							className='text-[#ab99e1] hover:text-white hover:underline transition-colors font-medium'
 						>
@@ -98,15 +96,15 @@ const Games = () => {
 				</div>
 
 				{/* Top horizontal row - identical card width */}
-				<div 
+				<div
 					ref={scrollContainerRef}
 					className='flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide pb-4'
 					onScroll={updateScrollButtons}
 				>
 					{displayedGames.map((game) => (
-						<Link 
-							key={game.slug} 
-							to={`/games/${game.slug}`} 
+						<Link
+							key={game.slug}
+							to={`/games/${game.slug}`}
 							className='group flex-shrink-0'
 						>
 							<div className={`${cardWidthClass} aspect-[4/3] ${cardBaseClass}`}>
@@ -123,7 +121,7 @@ const Games = () => {
 				{showAll && additionalGames.length > 0 && (
 					<div className='mt-6 flex flex-wrap gap-4 md:gap-6'>
 						{additionalGames.map((game) => (
-							<Link 
+							<Link
 								key={game.slug}
 								to={`/games/${game.slug}`}
 								className='group'
@@ -139,6 +137,7 @@ const Games = () => {
 					</div>
 				)}
 			</div>
+			
 			<Footer />
 		</>
 	)
