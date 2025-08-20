@@ -59,7 +59,6 @@ const Games = () => {
 
 	return (
 		<>
-			<Header />
 			<div className='container pt-28 pb-24'>
 				<div className='flex items-center justify-between mb-6'>
 					<h2 className='text-white text-2xl font-semibold'>Free Games</h2>
@@ -137,8 +136,6 @@ const Games = () => {
 					</div>
 				)}
 			</div>
-			
-			<Footer />
 		</>
 	)
 }

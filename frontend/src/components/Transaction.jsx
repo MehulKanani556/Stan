@@ -213,7 +213,6 @@ export default function Transaction() {
                     </div>
                 </div>
             </section>
-            <Footer />
         </>
     )
 }

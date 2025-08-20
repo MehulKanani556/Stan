@@ -171,7 +171,6 @@ const Store = () => {
 
   return (
     <>
-      <Header />
       <section className="bg-black pt-16">
         {/* Hero Swiper */}
         <div className="relative w-full">
@@ -206,7 +205,6 @@ const Store = () => {
           <GameSection title="Top Games" games={gamesByCategory.top} sectionRef={scrollContainerRefs.top} />
         </div>
       </section>
-      <Footer />
     </>
   );
 };

@@ -1,5 +1,6 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { FaWallet } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi"; // Added close icon
 import { RiHome4Line, RiHome4Fill } from "react-icons/ri";
@@ -10,7 +11,8 @@ import { IoBagOutline, IoBag } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
 import stanUser from "../images/stan-user.jpg"
 import stanLogo from "../images/stan-logo.svg"
-import { MdRocketLaunch } from "react-icons/md";
+import { getUserById } from "../Redux/Slice/user.slice"
+import { MdRocketLaunch, MdSettings } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
 import { RiHandCoinFill } from "react-icons/ri";
@@ -23,6 +25,48 @@ import { MdLogout } from "react-icons/md";
 
 
 export default function Header() {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dispatch = useDispatch();
+    const { currentUser } = useSelector((state) => state.user);
+    const { user: authUser } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
+        const userId = authUser?._id || localStorage.getItem("userId");
+        if (userId && !currentUser) {
+            dispatch(getUserById(userId));
+        }
+    }, [dispatch, authUser, currentUser]);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleProfileClick = () => {
+        setIsDropdownOpen(false);
+        navigate('/profile');
+    };
+
+    const handleLogoutClick = () => {
+        setIsDropdownOpen(false);
+        // Add logout logic here
+        console.log('Logout clicked');
+    };
+
     return (
         <>
             <header className='bg-black sticky w-full top-0 z-50 '>
@@ -75,15 +119,60 @@ export default function Header() {
 
                             {/* Right Section */}
                             <div className="flex items-center gap-5">
-
-                                <div className="hidden md:block relative w-9 h-9">
-                                    <div className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center">
+                                <div className="hidden md:block relative" ref={dropdownRef}>
+                                    <div
+                                        className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
+                                        onClick={toggleDropdown}
+                                    >
                                         <img
-                                            src={stanUser}
+                                            src={currentUser?.profilePic || authUser?.photo || stanUser}
                                             className="w-full h-full object-cover object-top"
                                             alt="User"
                                         />
                                     </div>
+
+                                    {/* Dropdown Menu */}
+                                    {isDropdownOpen && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-[#221f2a] rounded-lg shadow-lg border border-gray-700 z-50">
+                                            <div className="py-2">
+                                                <button
+                                                    onClick={handleProfileClick}
+                                                    className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                                >
+                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center">
+                                                        <img
+                                                            src={currentUser?.profilePic || authUser?.photo || stanUser}
+                                                            className="w-full h-full object-cover object-top rounded-full"
+                                                            alt="User"
+                                                        />
+                                                    </div>
+                                                    Profile
+                                                </button>
+
+                                                <button
+                                                    onClick={() => {
+                                                        setIsDropdownOpen(false);
+                                                        navigate('/settings');
+                                                    }}
+                                                    className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                                >
+                                                    <MdSettings className="w-5 h-5 text-white" />
+                                                    Settings
+                                                </button>
+
+                                                <button
+                                                    onClick={() => {
+                                                        setIsDropdownOpen(false);
+                                                        navigate('/login');
+                                                    }}
+                                                    className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                                >
+                                                    <MdLogout className="w-5 h-5 text-red-400" />
+                                                    Sign In
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Mobile Menu Icon at far right */}
@@ -110,16 +199,14 @@ export default function Header() {
                                 <div className='flex gap-4 items-center'>
                                     <div className="w-12 h-12 rounded-full border-2 border-white overflow-hidden flex items-center justify-center">
                                         <img
-                                            src={stanUser}
+                                            src={currentUser?.profilePic || authUser?.photo || stanUser}
                                             className="w-full h-full object-cover object-top"
                                             alt="User"
                                         />
                                     </div>
                                     <div className='flex flex-col gap-1 '>
-                                        <h2 className="text-white text-sm font-medium capitalize">Vaibhav Gohil</h2>
-
+                                        <h2 className="text-white text-sm font-medium capitalize">Archit Bhuva</h2>
                                         <p className="text-white text-xs font-light">View Profile</p>
-
                                     </div>
                                 </div>
                                 <button className='text-[#ebe8f1] text-lg'>
