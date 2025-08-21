@@ -17,6 +17,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
+import StylishDiv from '../components/StylishDiv';
 
 // Custom CSS for Swiper pagination
 const swiperStyles = `
@@ -79,30 +80,32 @@ export default function Rewards() {
     return (
         <>
             <section className='w-full'>
-                {/* Header */}
-                <div className='sticky top-0 z-20'>
-                    <div className='flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-4 bg-black/30 backdrop-blur-xl shadow-lg border-b border-white/10 text-white'>
-                        <button
-                            className='text-white rounded-full p-2 hover:bg-white/10 transition-colors'
-                            onClick={handleBackClick}
-                            aria-label='Go back'
+
+                <div className=''>
+                    <div className="flex items-center justify-between text-center text-sm md:text-lg font-medium relative bg-[#1c1c2b] rounded-xl  shadow-lg overflow-hidden">
+                        {/* Redeem & Win */}
+                        <div
+                            onClick={() => setIsActive("redeem")}
+                            className={`w-1/2 py-3 cursor-pointer transition-all duration-500 rounded-lg 
+        ${isActive === "redeem"
+                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-105"
+                                    : "text-gray-300 hover:text-white hover:bg-white/10"}`}
                         >
-                            <IoArrowBack className='w-5 h-5 sm:w-6 sm:h-6' />
-                        </button>
-                        <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Rewards</h1>
-                    </div>
-                </div>
-                <div className='container'>
-                    <div className='flex items-center justify-between text-center text-sm md:text-lg'>
-                        <div onClick={() => setIsActive("redeem")} className={`w-1/2 pt-2    cursor-pointer   `}>
                             Redeem & Win
-                            <div className={`w-full h-1 mt-1 transition-all ease-in duration-500 ${isActive === "redeem" ? 'bg-[#aa98fe] ' : "bg-transparent"} `}></div>
                         </div>
-                        <div onClick={() => setIsActive("refer")} className={`w-1/2 pt-2 cursor-pointer   `}>
-                        FAQs
-                            <div className={`w-full h-1 mt-1  transition-all ease-in duration-500 ${isActive === "refer" ? 'bg-[#aa98fe] ' : "bg-transparent"} `}></div>
+
+                        {/* FAQs */}
+                        <div
+                            onClick={() => setIsActive("refer")}
+                            className={`w-1/2 py-3 cursor-pointer transition-all duration-500 rounded-lg
+        ${isActive === "refer"
+                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-105"
+                                    : "text-gray-300 hover:text-white hover:bg-white/10"}`}
+                        >
+                            FAQs
                         </div>
                     </div>
+
                     {
                         isActive === "redeem" ? <RedeemAndWin /> : <NeedHelp />
                     }
@@ -153,6 +156,15 @@ const RedeemAndWin = () => {
             console.error('Failed to copy text: ', err);
         }
     };
+
+    const coupons = [
+        { name: "Dominos", logo: dominos, bgGradient: "from-blue-400 to-blue-600" },
+        { name: "Flipkart", logo: flipkart, bgGradient: "from-yellow-400 to-yellow-500" },
+        { name: "Dominos", logo: dominos, bgGradient: "from-blue-400 to-blue-600" },
+        { name: "Flipkart", logo: flipkart, bgGradient: "from-yellow-400 to-yellow-500" },
+        { name: "Dominos", logo: dominos, bgGradient: "from-blue-400 to-blue-600" },
+        { name: "Flipkart", logo: flipkart, bgGradient: "from-yellow-400 to-yellow-500" },
+    ];
 
     const cards = [
         { id: 1, price: 10, gems: 200 },
@@ -232,347 +244,397 @@ const RedeemAndWin = () => {
                 </div>
             )}
 
-            {/* Go Up Button */}
             {showGoUp && (
                 <button
                     onClick={scrollToTop}
-                    className="fixed bottom-20 right-6 z-50 bg-gradient-to-r from-purple-600 to-purple-700 text-white p-3 rounded-full shadow-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-110 hover:shadow-xl"
+                    className="fixed bottom-20 right-6 z-50 p-4 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg animate-pulse hover:animate-none hover:scale-110 transition-all duration-500"
                     title="Go to top"
                 >
-                    <FaArrowUp className="w-5 h-5" />
+                    <FaArrowUp className="w-6 h-6" />
                 </button>
             )}
 
-            <div className='container'>
-                <div className='flex flex-col w-full  items-center justify-center md:pt-20 pt-10'>
-                    <img src={greenGem} className='max-w-[400px] w-[20%]' />
-                    <img src={gemesLogo} className='max-w-[900px] w-[50%]' />
-                </div>
-                <div className='rounded-lg w-full m-auto bg-gradient-to-b from-[#b292fb] to-[#6723f2] md:p-5 p-3 flex items-center justify-between   max-w-[500px]'>
-                    <div className='flex items-center gap-3'>
-                        <img src={greenGem} className='max-w-[400px] w-[15%]' />
-                        <div className='flex flex-col  justify-start '>
-                            <h2 className='text-white md:text-2xl text-sm '>Total Gem Balance</h2>
-                            <h3 className='text-white md:text-4xl text-xl font-bold '>1000</h3>
-                        </div>
-                    </div>
-                    <button className='bg-white text-black px-3 py-1 rounded-md text-sm font-medium '>History</button>
-                </div>
-
-                <div className="py-10 w-full">
-                    <h5 className="text-white font-semibold text-base md:text-xl w-full">
-                        PhonePe EGift Voucher
-                    </h5>
-
-                    <div className="bg-black flex items-center justify-center py-5 w-full pb-16 relative">
-                        <Swiper
-                            slidesPerView={2}
-                            spaceBetween={10}
-                            autoplay={false}
-                            pagination={{
-                                clickable: true,
-                            }}
-                            modules={[Pagination]}
-                            className="mySwiper w-full"
-                            breakpoints={{
-                                640: {
-                                    slidesPerView: 2,
-                                    spaceBetween: 15,
-                                },
-                                768: {
-                                    slidesPerView: 3,
-                                    spaceBetween: 30,
-                                },
-                                1024: {
-                                    slidesPerView: 5,
-                                    spaceBetween: 20,
-                                },
-                            }}
-                        >
-                            {cards.map((card, index) => (
-                                <SwiperSlide key={index}>
-                                    <div className="bg-[#1b1724] rounded-2xl flex flex-col items-center p-5 shadow-lg mx-auto w-full max-w-[200px]">
-                                        {/* Logo */}
-                                        <img
-                                            src={phonePe}
-                                            alt="PhonePe"
-                                            className="w-14 h-14 lg:w-20 lg:h-20 object-contain bg-white rounded-md p-1"
-                                        />
-
-                                        {/* Price */}
-                                        <p className="text-white text-lg font-semibold mt-2">
-                                            ₹{card.price}
-                                        </p>
-
-                                        {/* Gems */}
-                                        <div className="bg-[#2b2635] rounded-lg px-3 py-1 flex items-center gap-2 mt-3">
-                                            <FaGem className="text-green-500" />
-                                            <span className="text-white font-semibold">{card.gems}</span>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    </div>
-                </div>
 
 
-                <div className="py-10 w-full">
-                    <h5 className="text-white font-semibold text-base md:text-xl w-full">
-                        Amazon EGift Voucher
-                    </h5>
 
-                    <div className="bg-black flex items-center justify-center py-5 w-full pb-16 relative">
-                        <Swiper
-                            slidesPerView={2}
-                            spaceBetween={10}
-                            autoplay={false}
-                            pagination={{
-                                clickable: true,
-                            }}
-                            modules={[Pagination]}
-                            className="mySwiper w-full"
-                            breakpoints={{
-                                640: {
-                                    slidesPerView: 2,
-                                    spaceBetween: 15,
-                                },
-                                768: {
-                                    slidesPerView: 3,
-                                    spaceBetween: 30,
-                                },
-                                1024: {
-                                    slidesPerView: 5,
-                                    spaceBetween: 20,
-                                },
-                            }}
-                        >
-                            {cards.map((card, index) => (
-                                <SwiperSlide key={index}>
-                                    <div className="bg-[#1b1724] rounded-2xl flex flex-col items-center p-5 shadow-lg mx-auto w-full max-w-[200px]">
-                                        {/* Logo */}
-                                        <img
-                                            src={Amazon}
-                                            alt="Amazon"
-                                            className="w-14 h-14 lg:w-20 lg:h-20 object-contain bg-white rounded-md p-1"
-                                        />
+            <div className='max-w-[1480px] m-auto w-full'>
+                <div className="flex flex-col w-full items-center justify-center md:pt-20 pt-10">
 
-                                        {/* Price */}
-                                        <p className="text-white text-lg font-semibold mt-2">
-                                            ₹{card.price}
-                                        </p>
+                    <img
+                        src={greenGem}
+                        className="md:w-[150px]  w-[100px] mb-10 opacity-100 hover:opacity-50 duration-500"
+                        alt="Gem"
+                    />
+                    {/* <img
+                        src={gemesLogo}
+                        className="max-w-[900px] w-[55%] mb-10"
+                        alt="Gemes Logo"
+                    /> */}
 
-                                        {/* Gems */}
-                                        <div className="bg-[#2b2635] rounded-lg px-3 py-1 flex items-center gap-2 mt-3">
-                                            <FaGem className="text-green-500" />
-                                            <span className="text-white font-semibold">{card.gems}</span>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    </div>
-                </div>
+                    {/* Balance Card */}
+                    <div className="relative w-full max-w-[520px] rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-500 to-indigo-600 p-6 shadow-xl overflow-hidden group">
+                        {/* Glowing Orbs */}
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+                        <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-cyan-400 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
 
-                <div className='py-10 w-full pb-16'>
-                    <div className='flex items-center justify-between mb-6'>
-                        <h5 className="text-white font-semibold text-base md:text-xl">Exciting Coupons</h5>
-
-                    </div>
-
-                    {/* Exciting Coupons Cards */}
-                    <Swiper
-                        slidesPerView={1}
-                        spaceBetween={20}
-                        autoplay={false}
-                        pagination={{
-                            clickable: true,
-                        }}
-                        modules={[Pagination]}
-                        className="mySwiper w-full"
-                        breakpoints={{
-                            640: {
-                                slidesPerView: 1,
-                                spaceBetween: 20,
-                            },
-                            768: {
-                                slidesPerView: 2,
-                                spaceBetween: 30,
-                            },
-                            1024: {
-                                slidesPerView: 3,
-                                spaceBetween: 20,
-                            },
-                        }}
-                    >
-                        {[
-                            { name: 'Dominos', logo: dominos, bgGradient: 'from-blue-400 to-blue-600' },
-                            { name: 'Flipkart', logo: flipkart, bgGradient: 'from-yellow-400 to-yellow-500' },
-                            { name: 'Dominos', logo: dominos, bgGradient: 'from-blue-400 to-blue-600' },
-                            { name: 'Flipkart', logo: flipkart, bgGradient: 'from-yellow-400 to-yellow-500' },
-                            { name: 'Dominos', logo: dominos, bgGradient: 'from-blue-400 to-blue-600' },
-                            { name: 'Flipkart', logo: flipkart, bgGradient: 'from-yellow-400 to-yellow-500' }
-                        ].map((card, index) => (
-                            <SwiperSlide key={index}>
-                                <div className={`bg-gradient-to-br ${card.bgGradient} rounded-2xl p-4 flex items-center gap-4 shadow-lg mx-auto w-full max-w-[380px]`}>
-                                    {/* Small Logo */}
-                                    <div className='flex flex-col items-center gap-2'>
-                                        <div className='w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1'>
-                                            <img src={card.logo} alt={card.name} className='w-8 h-8 object-contain' />
-                                        </div>
-                                        <span className='text-white text-sm font-medium'>{card.name}</span>
-                                    </div>
-
-                                    {/* Large Logo */}
-                                    <div className='flex-1 flex justify-center'>
-                                        <div className='w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl flex items-center justify-center p-2'>
-                                            <img src={card.logo} alt={card.name} className='w-full h-full object-contain' />
-                                        </div>
-                                    </div>
+                        {/* Content */}
+                        <div className="flex items-center justify-between gap-4">
+                            {/* Left Side: Gem + Text */}
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <img
+                                    src={greenGem}
+                                    className="w-10 h-10 md:w-14 md:h-14 drop-shadow-lg"
+                                    alt="Gem"
+                                />
+                                <div className="flex flex-col leading-tight">
+                                    <h2 className="text-white text-sm md:text-lg font-medium">
+                                        Total Gem Balance
+                                    </h2>
+                                    <h3 className="text-white text-xl md:text-3xl font-extrabold">
+                                        1000
+                                    </h3>
                                 </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
-
-                <div className='flex flex-col w-full  items-center justify-center md:pt-20 pt-10 pb-20'>
-                    <img src={referlcash} className='max-w-[1000px] w-[100%]' />
-                </div>
-
-                <div className='pb-10 w-full'>
-                    <h5 className="text-white font-semibold text-base md:text-xl w-full mb-6">
-                        Earn With
-                    </h5>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Refer & Get Card */}
-                        <div className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 relative overflow-hidden">
-                            {/* Background Pattern */}
-                            <div className="absolute inset-0 opacity-10">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full -translate-y-16 translate-x-16"></div>
-                                <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-br from-green-400 to-blue-500 rounded-full translate-y-12 translate-x-12"></div>
                             </div>
 
-                            <div className="relative z-10">
-                                <div className="flex flex-col">
-                                    <div className="flex-1">
-                                        <h3 className="text-yellow-400 font-bold text-xl lg:text-2xl mb-2">Refer & Get</h3>
-                                        <div className="flex  items-center gap-2 mb-4">
-                                            <span className="text-white text-3xl lg:text-4xl font-bold">₹45</span>
-                                            <span className="text-gray-300 text-sm lg:text-base flex items-center gap-1">Per Install <FaInfoCircle className="w-5 h-5 text-gray-400" /></span>
+                            {/* Right Side: Button */}
+                            <button className="bg-white z-50 text-black px-3 py-1 md:px-5 md:py-2 rounded-md md:rounded-lg text-xs md:text-base font-semibold shadow hover:bg-gray-200 transition">
+                                History
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
+                <div className="py-10 w-full">
+                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6">
+                        ✨ PhonePe E-Gift Vouchers ✨
+                    </h5>
+
+                    <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
+                        <Swiper
+                            spaceBetween={12}
+                            pagination={{ clickable: true }}
+                            modules={[Pagination]}
+                            className="mySwiper w-full px-4"
+                            breakpoints={{
+                                320: { slidesPerView: 2, spaceBetween: 10 },   // 🔥 mobile (2 cards)
+                                640: { slidesPerView: 2, spaceBetween: 12 },   // tablet
+                                768: { slidesPerView: 3, spaceBetween: 15 },   // small laptop
+                                1024: { slidesPerView: 4, spaceBetween: 20 },  // desktop
+                                1200: { slidesPerView: 5, spaceBetween: 20 },  // desktop
+                            }}
+                        >
+                            {cards.map((card, index) => (
+                                <SwiperSlide key={index} className="flex justify-center">
+                                    <div className="bg-[#1b1724] hover:bg-[#241c32] transition-all duration-300 
+                           rounded-2xl flex flex-col items-center justify-between 
+                           p-5 sm:p-6 shadow-lg hover:shadow-2xl 
+                           w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
+                           max-h-[300px] sm:h-[320px] group relative overflow-hidden cursor-pointer">
+
+                                        {/* Glow effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-purple-600/20 via-transparent to-transparent 
+                             opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+
+                                        {/* Logo Section */}
+                                        <div className="bg-white overflow-hidden rounded-xl shadow-md flex items-center justify-center w-full   ">
+                                            <img
+                                                src={phonePe}
+                                                alt="PhonePe"
+                                                className="w-full h-full object-cover"
+                                            />
                                         </div>
 
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="border border-dashed border-gray-500 rounded-lg p-3 py-1 flex-1">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-gray-300 text-xs lg:text-base">Invite Code: <span className="text-white font-mono">CyjcfXGT</span></span>
+                                        {/* Price */}
+                                        <p className="text-white text-xl sm:text-2xl font-bold mt-2">
+                                            ₹{card.price}
+                                        </p>
 
-                                                    <button
-                                                        onClick={() => copyToClipboard('CyjcfXGT')}
-                                                        className="p-1 hover:bg-gray-700 rounded transition-colors"
-                                                        title="Copy invite code"
-                                                    >
-                                                        <MdOutlineContentCopy className={`w-4 h-4 ${copySuccess ? 'text-green-500' : 'text-gray-300'} transition-colors`} />
-                                                    </button>
+                                        {/* Gems */}
+                                        <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 
+                             rounded-lg px-4 py-1 flex items-center gap-2 mt-4 
+                             border border-green-400/40">
+                                            <FaGem className="text-green-400 animate-pulse" />
+                                            <span className="text-white font-semibold text-base sm:text-lg">
+                                                {card.gems}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+                </div>
 
-                                                </div>
+
+                <div className="py-10 w-full">
+                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6">
+                        🛒 Amazon E-Gift Vouchers 🛒
+                    </h5>
+
+                    <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
+                        <Swiper
+                            spaceBetween={12}
+                            pagination={{ clickable: true }}
+                            modules={[Pagination]}
+                            className="mySwiper w-full px-4"
+                            breakpoints={{
+                                320: { slidesPerView: 2, spaceBetween: 10 },   // 🔥 mobile (2 cards)
+                                640: { slidesPerView: 2, spaceBetween: 12 },   // tablet
+                                768: { slidesPerView: 3, spaceBetween: 15 },   // small laptop
+                                1024: { slidesPerView: 4, spaceBetween: 20 },  // desktop
+                                1200: { slidesPerView: 5, spaceBetween: 20 },  // desktop
+                            }}
+                        >
+                            {cards.map((card, index) => (
+                                <SwiperSlide key={index} className="flex justify-center">
+                                    <div className="bg-[#1b1724] hover:bg-[#241c32] transition-all duration-300 
+                           rounded-2xl flex flex-col items-center justify-between 
+                           p-5 sm:p-6 shadow-lg hover:shadow-2xl 
+                           w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
+                           max-h-[300px] sm:h-[320px] group relative overflow-hidden cursor-pointer">
+
+                                        {/* Glow effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-orange-600/20 via-transparent to-transparent 
+                             opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+
+                                        {/* Logo Section */}
+                                        <div className="bg-white overflow-hidden rounded-xl shadow-md flex items-center justify-center w-full">
+                                            <img
+                                                src={Amazon}
+                                                alt="Amazon"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+
+                                        {/* Price */}
+                                        <p className="text-white text-xl sm:text-2xl font-bold mt-2">
+                                            ₹{card.price}
+                                        </p>
+
+                                        {/* Gems */}
+                                        <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 
+                             rounded-lg px-4 py-1 flex items-center gap-2 mt-4 
+                             border border-green-400/40">
+                                            <FaGem className="text-green-400 animate-pulse" />
+                                            <span className="text-white font-semibold text-base sm:text-lg">
+                                                {card.gems}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+                </div>
+
+                <div className="py-10 w-full">
+                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6">
+                        🎁 Exciting Coupons 🎁
+                    </h5>
+
+                    <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
+                        <Swiper
+                            spaceBetween={12}
+                            pagination={{ clickable: true }}
+                            modules={[Pagination]}
+                            className="mySwiper w-full px-4"
+                            breakpoints={{
+                                320: { slidesPerView: 1, spaceBetween: 10 },   // 🔥 mobile (1 card)
+                                480: { slidesPerView: 1, spaceBetween: 12 },   // small mobile
+                                640: { slidesPerView: 2, spaceBetween: 14 },   // tablet
+                                768: { slidesPerView: 2, spaceBetween: 16 },   // small laptop
+                                1024: { slidesPerView: 3, spaceBetween: 18 },  // desktop
+                                1280: { slidesPerView: 4, spaceBetween: 20 },  // large desktop
+                            }}
+                        >
+                            {coupons.map((card, index) => (
+                                <SwiperSlide key={index} className="flex justify-center">
+                                    <div className={`bg-gradient-to-br ${card.bgGradient} hover:scale-[1.02] transition-all duration-300 
+                           rounded-2xl flex items-center gap-3 sm:gap-4 lg:gap-6 
+                           p-4 sm:p-5 lg:p-6 shadow-lg hover:shadow-2xl 
+                           w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] 
+                           group relative overflow-hidden cursor-pointer`}>
+
+                                        {/* Glow effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-transparent 
+                             opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+
+                                        {/* Small Logo + Name */}
+                                        <div className="flex flex-col items-center gap-2 min-w-[50px] sm:min-w-[60px] lg:min-w-[70px] relative z-10">
+                                            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white rounded-lg 
+                                            flex items-center justify-center p-1 shadow-md group-hover:shadow-lg transition-all duration-300">
+                                                <img
+                                                    src={card.logo}
+                                                    alt={card.name}
+                                                    className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 object-contain"
+                                                />
                                             </div>
-
+                                            <span className="text-white text-xs sm:text-sm lg:text-base font-medium text-center">
+                                                {card.name}
+                                            </span>
                                         </div>
 
-                                        <button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105">
-                                            REFER NOW
+                                        {/* Big Logo */}
+                                        <div className="flex-1 flex justify-center relative z-10">
+                                            <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 
+                                            bg-white rounded-xl flex items-center justify-center p-2 shadow-md group-hover:shadow-lg transition-all duration-300">
+                                                <img
+                                                    src={card.logo}
+                                                    alt={card.name}
+                                                    className="w-full h-full object-contain"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+                </div>
+
+
+               
+
+                <div className="pb-16 w-full">
+                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-8 text-center">
+                        🚀 Earn With
+                    </h5>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        {/* Refer & Get Card */}
+                        <div className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 rounded-2xl p-8 backdrop-blur-xl border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden">
+                            {/* Floating Shapes */}
+                            <div className="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500 animate-pulse"></div>
+                            <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-gradient-to-br from-green-400 to-blue-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+
+                            {/* Content */}
+                            <div className="relative z-10 flex flex-col">
+                                <h3 className="text-yellow-400 font-extrabold text-2xl mb-3 tracking-wide">
+                                    Refer & Get
+                                </h3>
+
+                                <div className="flex items-center gap-2 mb-6">
+                                    <span className="text-white text-4xl font-extrabold drop-shadow-md">₹45</span>
+                                    <span className="text-gray-300 text-sm lg:text-base flex items-center gap-1">
+                                        Per Install <FaInfoCircle className="w-5 h-5 text-gray-400" />
+                                    </span>
+                                </div>
+
+                                {/* Invite Code Box */}
+                                <div className="border border-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-3 py-2 flex-1 bg-black/30">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-300 text-sm lg:text-base">
+                                            Invite Code: <span className="text-white font-mono">CyjcfXGT</span>
+                                        </span>
+                                        <button
+                                            onClick={() => copyToClipboard("CyjcfXGT")}
+                                            className="p-2 hover:bg-purple-700/40 rounded-lg transition-colors"
+                                            title="Copy invite code"
+                                        >
+                                            <MdOutlineContentCopy className="w-5 h-5 text-gray-300 group-hover:text-yellow-400 transition-colors" />
                                         </button>
                                     </div>
                                 </div>
+
+                                {/* Button */}
+                                <button className="mt-6 w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 transition-all duration-500 transform hover:scale-105 hover:shadow-purple-500/50">
+                                    REFER NOW
+                                </button>
                             </div>
                         </div>
 
                         {/* Earn & Redeem Card */}
-                        <div className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 relative overflow-hidden">
-                            {/* Background Pattern */}
-                            <div className="absolute inset-0 opacity-10">
-                                <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full -translate-y-14 translate-x-14"></div>
-                                <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400 to-teal-500 rounded-full translate-y-10 translate-x-10"></div>
-                            </div>
+                        <div className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 rounded-2xl p-8 backdrop-blur-xl border border-blue-500/30 shadow-lg hover:shadow-blue-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden">
+                            {/* Floating Shapes */}
+                            <div className="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+                            <div className="absolute -bottom-12 -left-12 w-28 h-28 bg-gradient-to-br from-green-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
 
-                            <div className="relative z-10">
-                                <div className="flex flex-col">
-                                    <div className="flex-1">
-                                        <p className="text-gray-300 text-sm lg:text-base mb-2">Complete all the quests and redeem coupons</p>
-                                        <h3 className="text-yellow-400 font-bold text-xl lg:text-2xl mb-4">Earn & Redeem</h3>
+                            {/* Content */}
+                            <div className="relative z-10 flex flex-col">
+                                <p className="text-gray-400 text-sm lg:text-base mb-2 italic">
+                                    Complete quests and redeem amazing coupons 🎁
+                                </p>
+                                <h3 className="text-yellow-400 font-extrabold text-2xl mb-6 tracking-wide">
+                                    Earn & Redeem
+                                </h3>
 
-                                        <div className="bg-[#2a2a3e] rounded-lg p-4 mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                                    <span className="text-white text-sm font-bold">₹</span>
-                                                </div>
-                                                <div>
-                                                    <p className="text-gray-300 text-sm lg:text-base">Referral Cash Balance</p>
-                                                    <p className="text-white text-xl lg:text-2xl font-bold">0</p>
-                                                </div>
-                                            </div>
+                                {/* Balance Box */}
+                                <div className="bg-[#2a2a3e]/70 rounded-lg p-5 mb-6 border border-gray-600/40">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-md shadow-green-500/40">
+                                            <span className="text-white text-lg font-extrabold">₹</span>
                                         </div>
-
-                                        <button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105">
-                                            Redeem
-                                        </button>
+                                        <div>
+                                            <p className="text-gray-300 text-sm lg:text-base">Referral Cash Balance</p>
+                                            <p className="text-white text-2xl font-bold">0</p>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {/* Button */}
+                                <button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 transition-all duration-500 transform hover:scale-105 hover:shadow-purple-500/50">
+                                    Redeem
+                                </button>
                             </div>
                         </div>
-                    </div>
-
-                    <div className='flex items-center '>
-
                     </div>
                 </div>
 
                 {/* Task Cards Section */}
-                <div className='py-10 w-full'>
-                    <h5 className="text-white font-semibold text-base md:text-xl w-full mb-6">
-                        Complete Tasks & Earn
+                <div className="py-14 w-full">
+                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-10 text-center">
+                        🎯 Complete Tasks & Earn
                     </h5>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {displayedTasks.map((task) => (
-                            <div key={task.id} className="bg-[#1a1a2e] rounded-xl p-4 relative">
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className={`w-12 h-12 ${task.bgColor} rounded-lg flex items-center justify-center`}>
-                                        <span className="text-white font-bold text-lg">{task.icon}</span>
+                            <StylishDiv>
+                                <div className="relative z-10 flex flex-col">
+                                    {/* Icon & Info */}
+                                    <div className="flex items-start justify-between mb-5">
+                                        <div
+                                            className={`w-14 h-14 ${task.bgColor} rounded-xl flex items-center justify-center shadow-lg shadow-black/30`}
+                                        >
+                                            <span className="text-white font-bold text-xl">{task.icon}</span>
+                                        </div>
+                                        <FaInfoCircle className="w-5 h-5 text-gray-400 hover:text-yellow-400 transition-colors cursor-pointer" />
                                     </div>
-                                    <FaInfoCircle className="w-5 h-5 text-gray-400" />
-                                </div>
 
-                                <div className="mb-4">
-                                    <h4 className="text-white font-semibold text-lg mb-1">{task.title}</h4>
-                                    <p className="text-gray-300 text-sm">{task.description}</p>
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-300 text-sm">earn upto</span>
-                                        <FaMoneyBillWave className="w-4 h-4 text-green-500" />
-                                        <span className="text-white font-semibold">{task.reward}</span>
+                                    {/* Title & Description */}
+                                    <div className="mb-6">
+                                        <h4 className="text-white font-bold text-lg mb-2 tracking-wide">{task.title}</h4>
+                                        <p className="text-gray-400 text-sm leading-relaxed">{task.description}</p>
                                     </div>
-                                    <button className="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors">
-                                        CLAIM
-                                    </button>
+
+                                    {/* Reward & Claim */}
+                                    <div className="flex items-center justify-between mt-auto">
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="text-gray-300">Earn upto</span>
+                                            <FaMoneyBillWave className="w-4 h-4 text-green-500" />
+                                            <span className="text-white font-semibold">{task.reward}</span>
+                                        </div>
+                                        <button className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
+                                            CLAIM
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            </StylishDiv>
                         ))}
                     </div>
 
-                    {/* View More Button */}
-                    <div className="flex justify-center mt-8">
+                    <div className="flex justify-center mt-12">
                         <button
                             onClick={() => setShowAllTasks(!showAllTasks)}
-                            className="border border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-colors"
+                            className="relative group px-12 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 shadow-lg shadow-purple-600/50 hover:shadow-pink-500/70 transition-all duration-500 overflow-hidden"
                         >
-                            {showAllTasks ? 'Show Less' : 'View More'}
+                            <span className="relative z-10">
+                                {showAllTasks ? "Show Less" : "View More"}
+                            </span>
+                            {/* Glow effect */}
+                            <span className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 opacity-0 group-hover:opacity-100 blur-xl transition duration-500"></span>
                         </button>
                     </div>
+
                 </div>
 
             </div>

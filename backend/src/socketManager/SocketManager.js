@@ -58,7 +58,7 @@ function initializeSocket(io) {
         const receiverSocketId = userSocketMap.get(receiverId);
         if (receiverSocketId) {
           io.to(receiverSocketId).emit("newMessage", messageWithTime);
-          console.log(`Message sent to receiver ${receiverId}`);
+          console.log(`Message sent to receiver ${receiverId} ${receiverSocketId}`);
         } else {
           console.log(`Receiver ${receiverId} is not online`);
         }

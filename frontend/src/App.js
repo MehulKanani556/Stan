@@ -19,6 +19,7 @@ import GamePlay from "./components/GamePlay";
 import TopGames from "./components/TopGames";
 import Profile from "./Pages/Profile";
 import GGTalks from './Pages/GGTalks';
+import { SocketProvider } from './context/SocketContext';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -38,6 +39,7 @@ function AppContent() {
           }}
           autoHideDuration={3000}
         >
+          <SocketProvider>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -46,13 +48,14 @@ function AppContent() {
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/transaction" element={<Transaction />} />
             <Route path='/support' element={<Support />} />
-            {/* <Route path='/GGTalks' element={<GGTalks />} /> */}
+            <Route path='/GGTalks' element={<GGTalks />} />
             <Route path='/manageAddress' element={<ManageAddress />} />
             <Route path="/games" element={<Games />} />
             <Route path="/games/:slug" element={<GamePlay />} />
             <Route path="/TopGames" element={<TopGames />} />
             <Route path="/Profile" element={<Profile />} />
           </Routes>
+          </SocketProvider>
         </SnackbarProvider>
       </Provider>
       {!isAuthPage && <Footer />}

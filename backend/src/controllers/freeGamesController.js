@@ -11,7 +11,13 @@ import {
 
 export const createFreeGame = async (req, res) => {
     try {
-        const { slug, name, image, iframeSrc } = req.body;
+        console.log("Request body:", req.body);
+        console.log("Uploaded file:", req.file);
+        
+        const { slug, name, iframeSrc } = req.body;
+        
+        // Get image URL from uploaded file
+        const image = req.file ? req.file.location : req.body.image;
 
         if (!slug || !name || !image || !iframeSrc) {
             return sendBadRequestResponse(res, "slug, name, image and iframeSrc are required");
@@ -38,6 +44,7 @@ export const createFreeGame = async (req, res) => {
 
         return sendCreatedResponse(res, "Free game created successfully", created);
     } catch (error) {
+        console.error("Error in createFreeGame:", error);
         return sendErrorResponse(res, 500, error.message);
     }
 };
@@ -78,8 +85,14 @@ export const updateFreeGame = async (req, res) => {
         const update = {};
         if (typeof req.body.slug !== "undefined") update.slug = sanitize(req.body.slug).toLowerCase();
         if (typeof req.body.name !== "undefined") update.name = sanitize(req.body.name);
-        if (typeof req.body.image !== "undefined") update.image = sanitize(req.body.image);
         if (typeof req.body.iframeSrc !== "undefined") update.iframeSrc = sanitize(req.body.iframeSrc).toLowerCase();
+        
+        // Handle image update - use uploaded file if available, otherwise use body
+        if (req.file) {
+            update.image = sanitize(req.file.location);
+        } else if (typeof req.body.image !== "undefined") {
+            update.image = sanitize(req.body.image);
+        }
 
         // uniqueness checks if slug or iframeSrc are being updated
         if (update.slug) {
@@ -101,6 +114,7 @@ export const updateFreeGame = async (req, res) => {
         }
         return sendSuccessResponse(res, "Free game updated successfully", updated);
     } catch (error) {
+        console.error("Error in updateFreeGame:", error);
         return sendErrorResponse(res, 500, error.message);
     }
 };

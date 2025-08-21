@@ -8,7 +8,9 @@ import socketManager from "./src/socketManager/SocketManager.js";
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true
@@ -45,7 +47,7 @@ socketManager.initializeSocket(io);
 
 
 // Connect to database
-connectDB();  
+connectDB();
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

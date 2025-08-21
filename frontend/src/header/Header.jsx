@@ -12,6 +12,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import stanUser from "../images/stan-user.jpg"
 import stanLogo from "../images/stan-logo.svg"
 import { getUserById } from "../Redux/Slice/user.slice"
+import { logoutUser } from "../Redux/Slice/auth.slice"
 import { MdRocketLaunch, MdSettings } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
@@ -31,6 +32,7 @@ export default function Header() {
     const { user: authUser } = useSelector((state) => state.auth);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
+    const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -63,13 +65,16 @@ export default function Header() {
 
     const handleLogoutClick = () => {
         setIsDropdownOpen(false);
-        // Add logout logic here
-        console.log('Logout clicked');
+        const id = authUser?._id || currentUser?._id || localStorage.getItem("userId");
+        if (id) {
+            dispatch(logoutUser(id));
+        }
+        navigate('/login');
     };
 
     return (
         <>
-            <header className='bg-black sticky w-full top-0 z-50 '>
+            <header className='bg-black  sticky w-full top-0 z-50 '>
                 <div className="drawer">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
@@ -135,41 +140,53 @@ export default function Header() {
                                     {isDropdownOpen && (
                                         <div className="absolute right-0 mt-2 w-48 bg-[#221f2a] rounded-lg shadow-lg border border-gray-700 z-50">
                                             <div className="py-2">
-                                                <button
-                                                    onClick={handleProfileClick}
-                                                    className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
-                                                >
-                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center">
-                                                        <img
-                                                            src={currentUser?.profilePic || authUser?.photo || stanUser}
-                                                            className="w-full h-full object-cover object-top rounded-full"
-                                                            alt="User"
-                                                        />
-                                                    </div>
-                                                    Profile
-                                                </button>
+                                                {isLoggedIn ? (
+                                                    <>
+                                                        <button
+                                                            onClick={handleProfileClick}
+                                                            className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                                        >
+                                                            <div className="w-5 h-5 rounded-full flex items-center justify-center">
+                                                                <img
+                                                                    src={currentUser?.profilePic || authUser?.photo || stanUser}
+                                                                    className="w-full h-full object-cover object-top rounded-full"
+                                                                    alt="User"
+                                                                />
+                                                            </div>
+                                                            Profile
+                                                        </button>
 
-                                                <button
-                                                    onClick={() => {
-                                                        setIsDropdownOpen(false);
-                                                        navigate('/settings');
-                                                    }}
-                                                    className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
-                                                >
-                                                    <MdSettings className="w-5 h-5 text-white" />
-                                                    Settings
-                                                </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                setIsDropdownOpen(false);
+                                                                navigate('/settings');
+                                                            }}
+                                                            className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                                        >
+                                                            <MdSettings className="w-5 h-5 text-white" />
+                                                            Settings
+                                                        </button>
 
-                                                <button
-                                                    onClick={() => {
-                                                        setIsDropdownOpen(false);
-                                                        navigate('/login');
-                                                    }}
-                                                    className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
-                                                >
-                                                    <MdLogout className="w-5 h-5 text-red-400" />
-                                                    Sign In
-                                                </button>
+                                                        <button
+                                                            onClick={handleLogoutClick}
+                                                            className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                                        >
+                                                            <MdLogout className="w-5 h-5 text-red-400" />
+                                                            Logout
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => {
+                                                            setIsDropdownOpen(false);
+                                                            navigate('/login');
+                                                        }}
+                                                        className="w-full px-4 py-2 text-left text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                                    >
+                                                        <MdLogout className="w-5 h-5 text-red-400" />
+                                                        Sign In
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     )}
@@ -195,24 +212,26 @@ export default function Header() {
                         <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay"></label>
                         <div className="bg-[#151517] min-h-full w-80 p-4 relative ">
 
-                            <div className="bg-[#221f2a] px-3 py-2 rounded-lg flex items-center justify-between">
-                                <div className='flex gap-4 items-center'>
-                                    <div className="w-12 h-12 rounded-full border-2 border-white overflow-hidden flex items-center justify-center">
-                                        <img
-                                            src={currentUser?.profilePic || authUser?.photo || stanUser}
-                                            className="w-full h-full object-cover object-top"
-                                            alt="User"
-                                        />
+                            {isLoggedIn && (
+                                <div onClick={handleProfileClick} className="bg-[#221f2a] px-3 py-2 rounded-lg flex items-center justify-between cursor-pointer">
+                                    <div className='flex gap-4 items-center'>
+                                        <div className="w-12 h-12 rounded-full border-2 border-white overflow-hidden flex items-center justify-center">
+                                            <img
+                                                src={currentUser?.profilePic || authUser?.photo || stanUser}
+                                                className="w-full h-full object-cover object-top"
+                                                alt="User"
+                                            />
+                                        </div>
+                                        <div className='flex flex-col gap-1 '>
+                                            <h2 className="text-white text-sm font-medium capitalize">{currentUser?.userName || currentUser?.fullName || authUser?.userName || authUser?.fullName || 'Profile'}</h2>
+                                            <p className="text-white text-xs font-light">View Profile</p>
+                                        </div>
                                     </div>
-                                    <div className='flex flex-col gap-1 '>
-                                        <h2 className="text-white text-sm font-medium capitalize">Archit Bhuva</h2>
-                                        <p className="text-white text-xs font-light">View Profile</p>
-                                    </div>
+                                    <button className='text-[#ebe8f1] text-lg'>
+                                        <IoIosArrowForward />
+                                    </button>
                                 </div>
-                                <button className='text-[#ebe8f1] text-lg'>
-                                    <IoIosArrowForward />
-                                </button>
-                            </div>
+                            )}
 
 
                             {/* Close Button */}
@@ -254,9 +273,15 @@ export default function Header() {
                             </div>
 
                             <div className='absolute bottom-4 left-0 w-full flex items-center justify-center'>
-                                <NavLink className="flex items-center justify-center text-md gap-3 cursor-pointer">
-                                    <MdLogout /> Logout
-                                </NavLink>
+                                {isLoggedIn ? (
+                                    <button onClick={handleLogoutClick} className="flex items-center justify-center text-md gap-3 cursor-pointer text-white">
+                                        <MdLogout /> Logout
+                                    </button>
+                                ) : (
+                                    <button onClick={() => navigate('/login')} className="flex items-center justify-center text-md gap-3 cursor-pointer text-white">
+                                        <MdLogout /> Sign In
+                                    </button>
+                                )}
                             </div>
 
                         </div>
