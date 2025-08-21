@@ -89,12 +89,12 @@ const ReviewHome = () => {
   
 
   return (
-    <div className="bg-black pt-11">
-      <section className="md:py-12 bg-black text-white">
+    <div className=" pt-11">
+      <section className="md:py-12 text-white">
         <h2 className="md:text-[35px] text-[28px] font-bold  text-center">
           Player Reviews
         </h2>
-        <div className="container">
+        <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
   <Slider {...settings} className="ds_review_slider flex items-center justify-center py-5">
     {reviews.map((r) => (
       <div key={r.id} className="flex justify-center px-4 h-full"> 
