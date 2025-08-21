@@ -22,7 +22,7 @@ import { BsChatHeartFill, BsChatHeart } from "react-icons/bs";
 import { BiSupport } from "react-icons/bi";
 import { PiQuestionMarkFill } from "react-icons/pi";
 import { MdLogout } from "react-icons/md";
-
+import { ReactComponent as YOYO_LOGO } from "../images/YOYO-WITH-TEXT.svg"
 
 
 export default function Header() {
@@ -74,16 +74,15 @@ export default function Header() {
 
     return (
         <>
-            <header className='bg-black  sticky w-full top-0 z-50 '>
-                <div className="drawer">
+            <header className='bg-black/30 backdrop-blur-xl sticky w-full top-0 z-50 '>
+                <div className="drawer max-w-[95%] md:max-w-[85%] m-auto w-full  ">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
                         {/* Navbar */}
-                        <div className="navbar bg-black w-full px-4 justify-between">
+                        <div className="navbar  w-full px-4 justify-between">
                             {/* Left Section - Logo */}
                             <div className="flex items-center gap-2 flex-none">
-                                <img src={stanLogo} alt="logo" />
-                                <h3 className='text-white text-3xl font-bold'>STAN</h3>
+                                <YOYO_LOGO className="svg-current-color h-8 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
                             </div>
 
                             {/* Center Section - Menu (Desktop) */}
@@ -99,11 +98,7 @@ export default function Header() {
                                             isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
                                         }>GGTalks</NavLink>
                                     </li>
-                                    <li>
-                                        <NavLink to="/clubs" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
-                                        }>Clubs</NavLink>
-                                    </li>
+                                    
                                     <li>
                                         <NavLink to="/games" className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
@@ -321,20 +316,7 @@ export default function Header() {
                         </NavLink>
                     </li>
 
-                    <li>
-                        <NavLink to="/clubs" className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => (
-                                <>
-                                    {isActive ? (
-                                        <HiMicrophone className="size-5 text-[#ab99e1]" /> // Solid filled icon
-                                    ) : (
-                                        <HiOutlineMicrophone className="size-5 text-gray-400" /> // Outline icon
-                                    )}
-                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>Clubs</p>
-                                </>
-                            )}
-                        </NavLink>
-                    </li>
+                   
 
                     <li>
                         <NavLink to="/games" className="flex items-center justify-center flex-col gap-1 text-xs">
