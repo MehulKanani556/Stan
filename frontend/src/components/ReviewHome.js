@@ -5,6 +5,7 @@ import { FaStar } from 'react-icons/fa'
 // Import slick styles
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import StylishDiv from './StylishDiv'
 
 
 const ReviewHome = () => {
@@ -90,45 +91,49 @@ const ReviewHome = () => {
   return (
     <div className="bg-black pt-11">
       <section className="md:py-12 bg-black text-white">
-        <h2 className="md:text-[35px] text-[28px] font-bold mb-7 text-center">
+        <h2 className="md:text-[35px] text-[28px] font-bold  text-center">
           Player Reviews
         </h2>
         <div className="container">
-          <Slider {...settings} className='ds_review_slider'>
-            {reviews.map((r) => (
-              <div key={r.id} className="px-3 h-full flex">
-                <div className="bg-gray-900 rounded-2xl shadow-lg border border-gray-800 p-6 hover:shadow-2xl transition flex flex-col h-full w-full">
-                  <div className="flex items-center gap-4 mb-4">
-                    <img
-                      src={r.avatar}
-                      alt={r.name}
-                      className="w-12 h-12 rounded-full object-cover border border-gray-700"
-                    />
-                    <div>
-                      <p className="font-semibold">{r.name}</p>
-                      <p className="text-sm text-gray-400">{r.game}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex mb-3 mt-6">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar
-                        key={i}
-                        className={`h-5 w-5 mx-1 ${
-                          i < r.rating ? 'text-yellow-400' : 'text-gray-600'
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  <p className="text-gray-300 sm:text-[16px] text-[14px] leading-relaxed mt-5 flex-grow">
-                    {r.review}
-                  </p>
-                </div>
+  <Slider {...settings} className="ds_review_slider flex items-center justify-center py-5">
+    {reviews.map((r) => (
+      <div key={r.id} className="flex justify-center px-4 h-full"> 
+        <StylishDiv className="max-w-md w-full h-full flex">
+          <div className="bg-gray-900 rounded-2xl shadow-lg border border-gray-800 p-6 hover:shadow-2xl transition flex flex-col h-full w-full">
+            
+            <div className="flex items-center gap-4 mb-4">
+              <img
+                src={r.avatar}
+                alt={r.name}
+                className="w-12 h-12 rounded-full object-cover border border-gray-700"
+              />
+              <div>
+                <p className="font-semibold">{r.name}</p>
+                <p className="text-sm text-gray-400">{r.game}</p>
               </div>
-            ))}
-          </Slider>
-        </div>
+            </div>
+
+            <div className="flex mb-3 mt-6">
+              {[...Array(5)].map((_, i) => (
+                <FaStar
+                  key={i}
+                  className={`h-5 w-5 mx-1 ${
+                    i < r.rating ? 'text-yellow-400' : 'text-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <p className="text-gray-300 sm:text-[16px] text-[14px] leading-relaxed mt-5 flex-grow">
+              {r.review}
+            </p>
+          </div>
+        </StylishDiv>
+      </div>
+    ))}
+  </Slider>
+</div>
+
       </section>
     </div>
   )

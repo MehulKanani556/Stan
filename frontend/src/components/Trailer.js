@@ -46,7 +46,7 @@ const Trailer = () => {
           <div className="flex justify-center xl:h-[900px] lg:h-[850px] md:h-[750px] ms:h-[550px] h-[400px] relative">
             <video 
               ref={(el) => (videoRefs.current[0] = el)}
-              // src={gta}  
+              src={gta}  
               autoPlay  
               muted  
               loop
@@ -66,7 +66,7 @@ const Trailer = () => {
           <div className="flex justify-center xl:h-[900px] lg:h-[850px] md:h-[750px] ms:h-[550px] h-[400px] relative">
             <video 
               ref={(el) => (videoRefs.current[1] = el)}
-              // src={forza}  
+              src={forza}  
               autoPlay  
               muted  
               loop
@@ -87,7 +87,7 @@ const Trailer = () => {
           <div className="flex justify-center xl:h-[900px] lg:h-[850px] md:h-[750px] ms:h-[550px] sm:h-[400px] h-[350px] relative">
             <video 
               ref={(el) => (videoRefs.current[2] = el)}
-              // src={black}  
+              src={black}  
               autoPlay  
               muted  
               loop

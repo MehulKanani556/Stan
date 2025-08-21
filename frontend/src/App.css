@@ -94,6 +94,20 @@ body {
 .ds_review_slider .slick-dots li{
    margin: 0 !important;
 }
+.ds_review_slider .slick-list{
+  padding: 30px 0px 0px 0px;
+}
+.ds_review_slider .ds_height_manage {
+   height: 100%;
+}
+
+/* ********** Single Game Detail *********** */
+.ds_single_slider .slick-slide div{
+   width: 100%;
+}
+.ds_mini_slider .slick-center div div img{
+   border: 2px solid red !important;
+}
 
 /* .ds_review_slider .slick-dots li button{
   height: 30px !important;
@@ -111,7 +125,19 @@ body {
   .ds_review_slider .slick-dots{
     bottom: -30px !important;
   }
+  .ds_review_slider .slick-list{
+    padding: 20px 0px 0px 0px;
+  }
+  .ds_mini_slider .slick-current div div img{
+    border: 2px solid red !important;
+ }
 } 
+
+@media (max-width:426px) {
+ .ds_review_slider .ds_height_manage {
+     padding: 10px;
+  }
+}
 /* chat */
 /* Responsive Chat Application Styles */
 
