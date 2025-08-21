@@ -22,6 +22,9 @@ import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
 import TopGames from '../components/TopGames';
 import ExploreGames from '../images/ExploreGames.webp';
+import Trailer from '../components/Trailer';
+import ReviewHome from '../components/ReviewHome';
+import MultiHome from '../components/MultiHome';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -348,6 +351,10 @@ export default function Home() {
 
 
       </section>
+
+      <Trailer/>
+      <ReviewHome/>
+      <MultiHome/>
     </>
   )
 }
