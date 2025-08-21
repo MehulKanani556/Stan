@@ -67,7 +67,13 @@ function AppContent() {
 }
 
 function App() {
-  return <AppContent />;
+  const { store } = configureStore();
+  
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
+  );
 }
 
 export default App;

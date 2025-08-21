@@ -3,7 +3,7 @@ import Conversation from "../models/conversationModel.js";
 // import Message from "../models/messageModel.js";
 import MessageStan from "../models/messageModel.js";
 import User from "../models/userModel.js";
-import { getReceiverSocketId, io } from "../socket/socket.js";
+import { getReceiverSocketId } from "../socketManager/SocketManager.js";
 import { decryptData } from "../middlewares/incrypt.js";
 
 export const sendMessage = async (req, res) => {
@@ -56,7 +56,7 @@ export const sendMessage = async (req, res) => {
         const receiverSocketId = getReceiverSocketId(receiverId);
 
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", newMessage);
+            global.io.to(receiverSocketId).emit("newMessage", newMessage);
 
             // Fetch sender details to include in notification
             const sender = await User.findById(senderId).select(
@@ -73,7 +73,7 @@ export const sendMessage = async (req, res) => {
             };
 
             // Emit notification event
-            io.to(receiverSocketId).emit("notification", notification);
+            global.io.to(receiverSocketId).emit("notification", notification);
         }
 
         return res.status(201).json({
