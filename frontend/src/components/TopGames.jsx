@@ -14,12 +14,12 @@ import StackCrash3D from '../images/StackCrash3D.jpg';
 import LazyCat from '../images/lazy-cat.png';
 
 const GameCard = ({ image, title, price, status }) => (
-  <div className="flex-none flex-col sm:flex-col xl:flex-row justify-center items-stretch md:items-center gap-4 md:gap-5 p-5  relative rounded-2xl bg-gradient-to-r from-gray-900/80 to-gray-800/80 hover:from-gray-800/90 hover:to-gray-700/90 transition-all duration-300 cursor-pointer group border border-gray-700/50 hover:border-[#ab99e1]/50 hover:shadow-xl hover:shadow-[#ab99e1]/20 hover:-translate-y-1 overflow-hidden h-[290px]">
+  <div className="flex-none flex-col sm:flex-col xl:flex-row justify-center items-stretch md:items-center gap-4 md:gap-5 p-5  relative rounded-2xl bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl border-purple-500/30 hover:from-gray-800/90 hover:to-gray-700/90 transition-all duration-300 cursor-pointer group border hover:shadow-lg hover:shadow-purple-500/40 hover:-translate-y-1 overflow-hidden lg:h-[305px] md:w-full w-full m-auto ">
     <div className="relative overflow-hidden rounded-lg w-full  sm:shrink-0">
       <img
         src={image}
         alt={title}
-        className="w-full  xs:h-40 sm:h-36 md:h-40 lg:h-44 rounded-md object-cover flex-shrink-0 md:group-hover:scale-110 transition-transform duration-500"
+        className="w-full  xs:h-32 sm:h-48 md:h-60 lg:h-44 rounded-md object-cover flex-shrink-0 md:group-hover:scale-110 transition-transform duration-500"
         onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/240x176/2d2d2d/ffffff?text=Game"; }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -35,7 +35,7 @@ const GameCard = ({ image, title, price, status }) => (
     </div>
 
     <div className="min-w-0 flex-1 w-full">
-      <h3 className="text-white text-base sm:text-lg md:text-xl font-bold break-words line-clamp-2 transition-colors duration-300 mb-2 sm:mb-3">{title}</h3>
+      <h3 className="text-white text-base sm:text-lg md:text-xl font-bold break-words line-clamp-2 transition-colors duration-300 mb-2 sm:mb-2 mt-2">{title}</h3>
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {price && (
           price === "Free" ? (
@@ -72,7 +72,7 @@ function TopGames() {
     const initializeSections = () => {
       const newSections = [
         {
-          title: "Top Paid-Ons",
+          title: "Top Sellers",
           items: [
             { image: game1, title: "Bee Positive Pack", price: "₹332" },
             { image: game2, title: "Hexed & Haunted Pack", price: "₹1,332" },
@@ -94,14 +94,14 @@ function TopGames() {
           ],
         },
         {
-          title: "Top New",
+          title: "New Games",
           items: [
-            { image: game6, title: "Battlefield 6 Open Beta", status: "Live Now" , price: "₹899" },
-            { image: game1, title: "Prologue Demo", status: "Live Now" , price: "₹899" },
-            { image: game2, title: "Hell Is Us Demo", status: "Live Now" , price: "₹899" },
-            { image: game3, title: "Half Sword Demo", status: "Try Now" , price: "₹899" },
-            { image: game4, title: "EA SPORTS FC™ 25", status: "Demo" , price: "₹899" },
-            { image: game5, title: "Mystic Forge Demo", status: "Coming Soon" , price: "₹899" },
+            { image: game6, title: "Battlefield 6 Open Beta", status: "Live Now", price: "₹899" },
+            { image: game1, title: "Prologue Demo", status: "Live Now", price: "₹899" },
+            { image: game2, title: "Hell Is Us Demo", status: "Live Now", price: "₹899" },
+            { image: game3, title: "Half Sword Demo", status: "Try Now", price: "₹899" },
+            { image: game4, title: "EA SPORTS FC™ 25", status: "Demo", price: "₹899" },
+            { image: game5, title: "Mystic Forge Demo", status: "Coming Soon", price: "₹899" },
           ],
         },
       ];
@@ -112,8 +112,8 @@ function TopGames() {
   }, []); // Empty dependency array means this runs only once
 
   return (
-    <div className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-12 sm:py-16 md:py-20">
-      <div className=" mx-auto px-4 sm:px-6 md:px-8">
+    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto py-12 sm:py-16 md:py-20">
+      <div className="">
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
@@ -125,10 +125,10 @@ function TopGames() {
         </div>
 
         {/* Games Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:gap-8 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:gap-8 gap-5">
           {sections.map((section, i) => (
             <div key={i}>
-              <div className="bg-gradient-to-br from-gray-950/90 to-gray-900/90 backdrop-blur-sm sm:p-8 rounded-2xl border border-gray-700/50 duration-500 hover:shadow-2xl transition-all ">
+              <div className="">
                 {/* Section Header */}
                 <div className="flex items-center justify-between mb-6 sm:mb-8">
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1]">
@@ -149,8 +149,8 @@ function TopGames() {
                 </div>
 
                 {/* View All Button */}
-                <div className="mt-6 sm:mt-8 pt-6 border-t border-gray-700/50">
-                  <button className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#ab99e1]/20 to-[#b8a8e6]/20 hover:from-[#ab99e1]/30 hover:to-[#b8a8e6]/30 border border-[#ab99e1]/30 text-[#ab99e1] font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                <div className="mt-6 sm:mt-8 pt-6 border-t border-purple-500/30">
+                  <button className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#ab99e1]/20 to-[#b8a8e6]/20 hover:from-[#ab99e1]/30 hover:to-[#b8a8e6]/30 border border-[#ab99e1]/30 text-[#ab99e1] font-semibold transition-all duration-300 hover:shadow-lg">
                     View All {section.title}
                   </button>
                 </div>

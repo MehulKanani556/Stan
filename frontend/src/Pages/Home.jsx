@@ -21,6 +21,11 @@ import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
 import TopGames from '../components/TopGames';
+import ExploreGames from '../images/ExploreGames.webp';
+import Trailer from '../components/Trailer';
+import ReviewHome from '../components/ReviewHome';
+import MultiHome from '../components/MultiHome';
+import StylishDiv from '../components/StylishDiv';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -135,7 +140,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="bg-black ">
+      <section className="">
         <div className="relative w-full">
           <Swiper
             modules={[EffectFade, Pagination, Autoplay]}
@@ -206,7 +211,7 @@ export default function Home() {
           </Swiper>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-0 flex flex-col items-center sm:max-w-full">
+        <div className=" mx-auto flex flex-col items-center sm:max-w-full">
           <div className='py-6 sm:py-8 md:py-10 lg:py-12 xl:py-14 w-full'>
             {/* Tab buttons */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
@@ -233,8 +238,8 @@ export default function Home() {
             </div>
 
             {/* Tab content - Game cards */}
-            <div className="w-full container bg-base-100 rounded-box border border-base-300 mx-auto sm:max-w-[95%]">
-              <div className='py-6 sm:py-8 md:py-10 lg:py-12'>
+            <div className="w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto">
+              <div className=''>
                 <div className="">
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
                     <div>
@@ -258,17 +263,18 @@ export default function Home() {
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
                   >
-                    <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max pb-2 sm:pb-3 md:pb-4 pl-4 sm:pl-0 pr-4 sm:pr-0'>
+                    <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max px-4 py-8'>
                       {gamesByCategory[activeTab]?.map((game) => (
+                        <StylishDiv>
                         <div
                           key={game.id}
-                          className="group relative bg-[#151517] rounded-lg sm:rounded-xl overflow-hidden border border-white/5 hover:border-[#ab99e1]/40 transition-all duration-300 w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 shadow-lg hover:shadow-2xl hover:shadow-[#ab99e1]/20"
+                          className="group relative   overflow-hidden  transition-all duration-300 w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 "
                         >
                           <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
                             <img
                               src={game.image}
                               alt={game.title}
-                              className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
+                              className='w-full h-full object-cover '
                             />
                             <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
 
@@ -308,6 +314,7 @@ export default function Home() {
                             </button>
                           </div>
                         </div>
+                        </StylishDiv>
                       ))}
                     </div>
                   </div>
@@ -320,7 +327,37 @@ export default function Home() {
 
         <TopGames />
 
+        {/* game banner  */}
+        <section className="relative w-full bg-base-600 mx-auto h-[300px] md:h-[400px] lg:h-[450px] overflow-hidden shadow-2xl flex items-center group">
+          <img
+            src={ExploreGames}
+            alt="Ubisoft+ Background"
+            className="absolute inset-0 w-full h-full object-cover z-0 transform transition-transform duration-500 ease-in-out group-hover:scale-105"
+          />
+
+          <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left text-white container">
+            <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 md:mb-3 leading-tight">
+              100+ games, worlds. Explore them all with Stan
+            </h2>
+            <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
+              All of our games, in their most premium editions.
+            </p>
+            <button className="bg-gradient-to-r from-purple-400 to-purple-600
+                hover:from-purple-500 hover:to-purple-700 font-semibold
+                text-sm py-1 px-3 sm:text-base sm:py-2 sm:px-4 md:py-2.5 md:px-6
+                rounded-full shadow-md transition-all duration-300
+                hover:scale-105 active:scale-95">
+              Buy Now
+            </button>
+          </div>
+        </section>
+
+
       </section>
+
+      <Trailer />
+      <ReviewHome />
+      <MultiHome />
     </>
   )
 }
