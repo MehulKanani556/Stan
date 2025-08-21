@@ -99,6 +99,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                     const isOnline = onlineUsers.includes(user._id);
                                     const isSelected = selectedUser?._id === user._id;
 
+                                    return (
                                         <li
                                             key={user._id}
                                             className={`
