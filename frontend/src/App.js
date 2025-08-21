@@ -20,6 +20,7 @@ import TopGames from "./components/TopGames";
 import Profile from "./Pages/Profile";
 import GGTalks from './Pages/GGTalks';
 import { SocketProvider } from './context/SocketContext';
+import SingleGame from './components/SingleGame';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -54,6 +55,7 @@ function AppContent() {
             <Route path="/games/:slug" element={<GamePlay />} />
             <Route path="/TopGames" element={<TopGames />} />
             <Route path="/Profile" element={<Profile />} />
+            <Route path="/single" element={<SingleGame/>} />
           </Routes>
           </SocketProvider>
         </SnackbarProvider>
