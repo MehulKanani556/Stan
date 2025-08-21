@@ -21,6 +21,7 @@ import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
 import TopGames from '../components/TopGames';
+import ExploreGames from '../images/ExploreGames.webp';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -233,8 +234,8 @@ export default function Home() {
             </div>
 
             {/* Tab content - Game cards */}
-            <div className="w-full container bg-base-100 rounded-box border border-base-300 mx-auto sm:max-w-[95%]">
-              <div className='py-6 sm:py-8 md:py-10 lg:py-12'>
+            <div className="w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto">
+              <div className=''>
                 <div className="">
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
                     <div>
@@ -319,6 +320,32 @@ export default function Home() {
         </div>
 
         <TopGames />
+
+        {/* game banner  */}
+        <section className="relative w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto h-[300px] md:h-[400px] lg:h-[450px] rounded-lg overflow-hidden shadow-2xl flex items-center container group">
+          <img
+            src={ExploreGames}
+            alt="Ubisoft+ Background"
+            className="absolute inset-0 w-full h-full object-cover z-0 transform transition-transform duration-500 ease-in-out group-hover:scale-105"
+          />
+
+          <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left text-white">
+            <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 md:mb-3 leading-tight">
+              100+ games, worlds. Explore them all with Stan
+            </h2>
+            <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
+              All of our games, in their most premium editions.
+            </p>
+            <button className="bg-gradient-to-r from-purple-400 to-purple-600 
+               hover:from-purple-500 hover:to-purple-700 font-semibold
+               text-white py-2 px-4 md:py-2.5 md:px-6 
+               rounded-full shadow-md transition-all duration-300 
+               hover:scale-105 active:scale-95">
+              Buy Now
+            </button>
+          </div>
+        </section>
+
 
       </section>
     </>
