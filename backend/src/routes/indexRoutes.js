@@ -4,15 +4,16 @@ import { upload, convertJfifToWebp, handleMulterError } from "../middlewares/ima
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
-import { getMessage, sendMessage,getAllMessageUsers } from "../controllers/messageController.js";
+import { getMessage, sendMessage, getAllMessageUsers } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
+import { createGame, createActionGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";
 
 
 const indexRoutes = express.Router()
 
 //register Routes
 indexRoutes.post("/register", register)
-indexRoutes.get("/getAllUsers", UserAuth,  getAllUsers)
+indexRoutes.get("/getAllUsers", UserAuth, getAllUsers)
 indexRoutes.get("/getUserById/:id", UserAuth, getUserById)
 indexRoutes.put("/editUser/:id", UserAuth, isAdmin, upload.single("profilePic"), convertJfifToWebp, editUser)
 indexRoutes.put("/editProfile/:id", UserAuth, upload.single("profilePic"), convertJfifToWebp, editProfile)
@@ -41,6 +42,50 @@ indexRoutes.get("/free-games", getFreeGames)
 indexRoutes.get("/free-games/:slug", getFreeGameBySlug)
 indexRoutes.put("/free-games/:id", UserAuth, isAdmin, upload.single("image"), handleMulterError, convertJfifToWebp, updateFreeGame)
 indexRoutes.delete("/free-games/:id", UserAuth, isAdmin, deleteFreeGame)
+
+//Game 
+
+indexRoutes.get("/getAllGames", getAllGames);
+indexRoutes.get("/getAllActiveGames", getAllActiveGames);
+indexRoutes.get("/getPopularGames", getPopularGames);
+indexRoutes.post(
+    "/createGame",
+    upload.fields([
+        { name: "cover_image", maxCount: 1 },
+        { name: "video", maxCount: 1 },
+        { name: "windows_file", maxCount: 1 },
+        { name: "ios_file", maxCount: 1 },
+        { name: "android_file", maxCount: 1 },
+        { name: "images", maxCount: 10 },
+    ]),
+    createGame
+);
+indexRoutes.post(
+    "/createActionGame",
+    upload.fields([
+        { name: "cover_image", maxCount: 1 },
+        { name: "video", maxCount: 1 },
+        { name: "windows_file", maxCount: 1 },
+        { name: "ios_file", maxCount: 1 },
+        { name: "android_file", maxCount: 1 },
+        { name: "images", maxCount: 10 },
+    ]),
+    createActionGame
+);
+indexRoutes.put(
+    "/updateGame/:id",
+    upload.fields([
+        { name: "cover_image", maxCount: 1 },
+        { name: "video", maxCount: 1 },
+        { name: "windows_file", maxCount: 1 },
+        { name: "ios_file", maxCount: 1 },
+        { name: "android_file", maxCount: 1 },
+        { name: "images", maxCount: 10 },
+    ]),
+    updateGame
+);
+indexRoutes.delete("/deleteGame/:id", deleteGame);
+indexRoutes.get("/getGameById/:id", getGameById);
 
 
 export default indexRoutes

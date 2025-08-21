@@ -25,46 +25,49 @@ import { SocketProvider } from './context/SocketContext';
 function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
-  const { store } = configureStore();
 
   return (
     <>
       {!isAuthPage && <Header />}
-      <Provider store={store}>
-        <SnackbarProvider
-          maxSnack={3}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          autoHideDuration={3000}
-        >
-          <SocketProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/store" element={<Store />} />
-            <Route path="/rewards" element={<Rewards />} />
-            <Route path="/transaction" element={<Transaction />} />
-            <Route path='/support' element={<Support />} />
-            <Route path='/GGTalks' element={<GGTalks />} />
-            <Route path='/manageAddress' element={<ManageAddress />} />
-            <Route path="/games" element={<Games />} />
-            <Route path="/games/:slug" element={<GamePlay />} />
-            <Route path="/TopGames" element={<TopGames />} />
-            <Route path="/Profile" element={<Profile />} />
-          </Routes>
-          </SocketProvider>
-        </SnackbarProvider>
-      </Provider>
+      <SnackbarProvider
+        maxSnack={3}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        autoHideDuration={3000}
+      >
+        <SocketProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/store" element={<Store />} />
+          <Route path="/rewards" element={<Rewards />} />
+          <Route path="/transaction" element={<Transaction />} />
+          <Route path='/support' element={<Support />} />
+          <Route path='/GGTalks' element={<GGTalks />} />
+          <Route path='/manageAddress' element={<ManageAddress />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/games/:slug" element={<GamePlay />} />
+          <Route path="/TopGames" element={<TopGames />} />
+          <Route path="/Profile" element={<Profile />} />
+        </Routes>
+        </SocketProvider>
+      </SnackbarProvider>
       {!isAuthPage && <Footer />}
     </>
   );
 }
 
 function App() {
-  return <AppContent />;
+  const { store } = configureStore();
+  
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
+  );
 }
 
 export default App;
