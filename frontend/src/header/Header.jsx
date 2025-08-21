@@ -22,6 +22,7 @@ import { BsChatHeartFill, BsChatHeart } from "react-icons/bs";
 import { BiSupport } from "react-icons/bi";
 import { PiQuestionMarkFill } from "react-icons/pi";
 import { MdLogout } from "react-icons/md";
+import { decryptData } from '../Utils/encryption';
 
 
 
@@ -125,15 +126,22 @@ export default function Header() {
                             {/* Right Section */}
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
-                                    <div
-                                        className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
-                                        onClick={toggleDropdown}
-                                    >
-                                        <img
-                                            src={currentUser?.profilePic || authUser?.photo || stanUser}
-                                            className="w-full h-full object-cover object-top"
-                                            alt="User"
-                                        />
+                                    <div className='flex gap-2 item-center'>
+
+                                        <div
+                                            className="w-6 h-6 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
+                                            onClick={toggleDropdown}
+                                        >
+                                            <img
+                                                src={currentUser?.profilePic || authUser?.photo || stanUser}
+                                                className="w-full h-full object-cover object-top"
+                                                alt="User"
+                                            />
+
+                                        </div>
+                                        <p className='text-base'>
+                                            {decryptData(currentUser?.name)}
+                                        </p>
                                     </div>
 
                                     {/* Dropdown Menu */}
@@ -254,7 +262,7 @@ export default function Header() {
                                             <CgNotes />  Transaction
                                         </NavLink>
                                         <NavLink to="/chatter" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
-                                            <BsChatHeartFill />  chat
+                                            <BsChatHeartFill />  GG Talks
                                         </NavLink>
                                         <NavLink to="/support" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
                                             <BiSupport />  Support
@@ -315,7 +323,7 @@ export default function Header() {
                                     ) : (
                                         <BsChatHeart className="size-5 text-gray-400" />
                                     )}
-                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>Chatter</p>
+                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>GG Talks</p>
                                 </>
                             )}
                         </NavLink>

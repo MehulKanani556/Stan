@@ -7,10 +7,31 @@ import { BiSolidMessageRoundedAdd } from "react-icons/bi";
 
 export default function ChatUserList({ showUserList, setShowUserList }) {
     const { allMessageUsers, allUsers } = useSelector((state) => state.user);
-    const { selectedUser } = useSelector((state) => state.manageState);
-    const [showUsers, setShowUsers] = useState(false);
+    const { selectedUser, onlineUsers } = useSelector((state) => state.manageState);
+    const [showUsers,setShowUsers] = useState(false);
     const dispatch = useDispatch();
-    console.log(allUsers);
+    // console.log(allUsers);
+
+    const formatMessageTimestamp = (timestamp) => {
+        const now = new Date();
+        const messageDate = new Date(timestamp);
+        const diffMinutes = Math.round((now - messageDate) / (1000 * 60));
+        const diffDays = Math.round((now - messageDate) / (1000 * 60 * 60 * 24));
+
+        if (diffMinutes < 60) {
+            return `${diffMinutes} minutes ago`;
+        } else if (messageDate.toDateString() === now.toDateString()) {
+            // Same day (today)
+            return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (diffDays < 7) {
+            // Less than 7 days ago
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return days[messageDate.getDay()];
+        } else {
+            // Older than 7 days
+            return messageDate.toLocaleDateString('en-GB'); // dd/mm/yyyy
+        }
+    };
 
     useEffect(() => {
         dispatch(getAllMessageUsers());
@@ -30,11 +51,11 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
             {/* Sidebar: on mobile shows when toggled, on desktop always visible */}
             <aside className={`
                 ${showUserList ? 'block' : 'hidden'} md:block
-                relative md:relative top-0 left-0 h-full md:h-[calc(100vh-64px)] w-full md:w-64 
+                relative md:relative top-0 left-0 h-full h-[calc(100vh-64px)] md:h-[calc(100vh-72px)] w-full md:w-64 
                 bg-gray-900 border-r border-gray-800 z-50 flex flex-col overflow-hidden
             `}>
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b-gray-600 bg-gray-900">
+                <div className="flex items-center border-b border-gray-700 justify-between p-4 py-[18px] border-b-gray-600 bg-gray-900">
                     <h2 className="font-semibold text-white text-lg">GG Talks</h2>
                     <button className={`text-white rounded-md `} onClick={() => setShowUsers(!showUsers)}>
                         <BiSolidMessageRoundedAdd className='text-2xl' />
@@ -57,7 +78,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                     >
                                         <div className="flex items-center gap-3">
                                             {/* Profile photo or initial */}
-                                            <div className="flex-shrink-0">
+                                            <div className="flex-shrink-0 relative">
                                                 {user.profilePhoto ? (
                                                     <img
                                                         src={user.profilePhoto}
@@ -69,6 +90,10 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                         {user.name.charAt(0)}
                                                     </div>
                                                 )}
+                                                 {/* Online indicator */}
+                                                 {onlineUsers.includes(user._id) && (
+                                                    <div className="w-3 h-3 bg-green-400 rounded-full flex-shrink-0 absolute right-0 bottom-1"></div>
+                                                )}
                                             </div>
 
                                             {/* User info */}
@@ -77,15 +102,21 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                     <p className="font-medium text-gray-100 truncate capitalize text-base">
                                                         {user.name}
                                                     </p>
-                                                    {/* Online indicator */}
-                                                    <div className="w-3 h-3 bg-green-400 rounded-full flex-shrink-0"></div>
+                                                   
                                                 </div>
                                                 <p className="text-sm text-gray-400 truncate mt-1">
                                                     {user.messages && user.messages.length > 0
-                                                        ? user.messages[user.messages.length - 1]?.message.slice(0, 30) + "..."
+                                                        ? user.messages[0]?.message.length > 20 ? user.messages[0]?.message.slice(0, 20) + "..." : user.messages[0]?.message
                                                         : "No messages yet."
                                                     }
                                                 </p>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                {user.messages && user.messages.length > 0 && (
+                                                    <p className="text-sm text-gray-400 truncate mt-1">
+                                                        {formatMessageTimestamp(user.messages[0].createdAt)}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
                                     </li>
@@ -116,7 +147,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                         >
                                             <div className="flex items-center gap-3">
                                                 {/* Profile photo or initial */}
-                                                <div className="flex-shrink-0">
+                                                <div className="flex-shrink-0 relative">
                                                     {user.profilePhoto ? (
                                                         <img
                                                             src={user.profilePhoto}
@@ -127,6 +158,9 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                         <div className="w-12 h-12 rounded-full font-bold bg-gray-800 flex items-center justify-center text-gray-300 capitalize text-lg">
                                                             {user.name.charAt(0)}
                                                         </div>
+                                                    )}
+                                                    {onlineUsers.includes(user._id) && (
+                                                        <div className="w-3 h-3 bg-green-400 rounded-full flex-shrink-0 absolute right-0 bottom-1"></div>
                                                     )}
                                                 </div>
 

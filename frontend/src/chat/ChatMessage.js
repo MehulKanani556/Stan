@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllMessageUsers } from '../Redux/Slice/user.slice';
 import { setMessages, setSelectedUser } from '../Redux/Slice/manageState.slice';
 
-export default function ChatMessage() {
+export default function ChatMessage({ isTyping }) {
     const { selectedUser, messages } = useSelector((state) => state.manageState);
     const dispatch = useDispatch();
     const messagesEndRef = useRef(null);
@@ -20,9 +20,9 @@ export default function ChatMessage() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    // useEffect(() => {
-    //     scrollToBottom();
-    // }, [messages]);
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     // Set selected user and their messages when users update or selectedUser changes
     useEffect(() => {
@@ -55,11 +55,11 @@ export default function ChatMessage() {
         if (diffInHours < 24) {
             return messageTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } else {
-            return messageTime.toLocaleDateString([], { 
-                month: 'short', 
+            return messageTime.toLocaleDateString([], {
+                month: 'short',
                 day: 'numeric',
-                hour: '2-digit', 
-                minute: '2-digit' 
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
     };
@@ -67,7 +67,7 @@ export default function ChatMessage() {
     return (
         <div className="flex flex-col h-full bg-gray-950 text-gray-100">
             {selectedUser ? (
-                <div 
+                <div
                     ref={messagesContainerRef}
                     className="flex-1 overflow-y-auto px-3 py-4 space-y-4 bg-gray-950"
                 >
@@ -75,23 +75,22 @@ export default function ChatMessage() {
                         <>
                             {messages.map((msg, index) => {
                                 const isMyMessage = msg.senderId === localStorage.getItem('userId');
-                                const showAvatar = index === 0 || 
+                                const showAvatar = index === 0 ||
                                     messages[index - 1].senderId !== msg.senderId;
 
                                 return (
                                     <div
                                         key={msg._id || index}
-                                        className={`flex items-end gap-2 ${
-                                            isMyMessage ? "justify-end" : "justify-start"
-                                        }`}
+                                        className={`flex items-end gap-2 ${isMyMessage ? "justify-end" : "justify-start"
+                                            }`}
                                     >
                                         {/* Avatar for received messages */}
                                         {!isMyMessage && (
                                             <div className={`w-8 h-8 flex-shrink-0 ${showAvatar ? '' : 'invisible'}`}>
                                                 {selectedUser.profilePhoto ? (
-                                                    <img 
-                                                        src={selectedUser.profilePhoto} 
-                                                        alt="profile" 
+                                                    <img
+                                                        src={selectedUser.profilePhoto}
+                                                        alt="profile"
                                                         className="w-8 h-8 rounded-full object-cover"
                                                     />
                                                 ) : (
@@ -117,15 +116,15 @@ export default function ChatMessage() {
                                             <p className="text-sm sm:text-base leading-relaxed break-words">
                                                 {msg.message}
                                             </p>
-                                            
+
                                             {/* Timestamp */}
                                             <div className={`
                                                 text-xs mt-1 flex items-center gap-1
                                                 ${isMyMessage ? "text-blue-200" : "text-gray-400"}
                                             `}>
                                                 <span>{formatMessageTime(msg.createdAt || msg.time)}</span>
-                                                
-                                               
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -166,6 +165,19 @@ export default function ChatMessage() {
                                 Tap the menu button to view conversations
                             </p>
                         </div>
+                    </div>
+                </div>
+            )}
+            {/* Typing Indicator */}
+            {isTyping && selectedUser && (
+                <div className="px-4 py-2 ms-10 bg-transparent bg-blur-sm">
+                    <div className="flex items-center gap-2  text-sm text-gray-500">
+                        <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
+                        <span>{selectedUser.name} is typing</span>
                     </div>
                 </div>
             )}

@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axiosInstance from "../Utils/axiosInstance";
 import { closeSnackbar, enqueueSnackbar } from "notistack";
-import { addMessage } from "../Redux/Slice/manageState.slice"; // You'll need this action
+import { addMessage, setOnlineUsers } from "../Redux/Slice/manageState.slice"; // You'll need this action
 
 export const SocketContext = createContext();
 export const useSocket = () => useContext(SocketContext);
@@ -77,6 +77,10 @@ export const SocketProvider = ({ children }) => {
         variant: "info",
         autoHideDuration: 3000,
       });
+    });
+    socketRef.current.on("online-users", (users) => {
+      console.log("Online users:", users);
+      dispatch(setOnlineUsers(users));
     });
 
     // Listen for message sent confirmation

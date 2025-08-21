@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSocket } from "../context/SocketContext";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllMessageUsers } from "../Redux/Slice/user.slice";
+import { getAllMessageUsers, getMessageByUserId } from "../Redux/Slice/user.slice";
 import ChatUserList from "../chat/ChatUserList";
 import ChatHeader from "../chat/ChatHeader";
 import ChatMessage from "../chat/ChatMessage";
 import { addMessage, setMessages, setSelectedUser } from "../Redux/Slice/manageState.slice";
-
+import { GrSend } from "react-icons/gr";
 export default function GGTalks() {
     const [newMessage, setNewMessage] = useState("");
     const [showUserList, setShowUserList] = useState(false);
@@ -67,31 +67,25 @@ export default function GGTalks() {
             });
 
             // Handle typing indicators
-            socket.on("userTyping", ({ userId, isTyping: typing }) => {
-                if (selectedUser && userId === selectedUser._id) {
-                    setIsTyping(typing);
+            socket.on("typing", ({ senderId }) => {
+                if (selectedUser && senderId === selectedUser._id) {
+                    setIsTyping(true);
+                }
+            });
+
+            socket.on("stop-typing", ({ senderId }) => {
+                if (selectedUser && senderId === selectedUser._id) {
+                    setIsTyping(false);
                 }
             });
 
             return () => {
                 socket.off("newMessage");
-                socket.off("userTyping");
+                socket.off("typing");
+                socket.off("stop-typing");
             };
         }
     }, [socket, selectedUser, dispatch]);
-
-    // Handle typing indicator
-    useEffect(() => {
-        if (socket && selectedUser && newMessage.trim()) {
-            socket.emit("typing", { receiverId: selectedUser._id, isTyping: true });
-            
-            const typingTimer = setTimeout(() => {
-                socket.emit("typing", { receiverId: selectedUser._id, isTyping: false });
-            }, 2000);
-
-            return () => clearTimeout(typingTimer);
-        }
-    }, [newMessage, socket, selectedUser]);
 
     const handleSendMessage = async () => {
         if (newMessage.trim() && selectedUser && socket) {
@@ -103,9 +97,19 @@ export default function GGTalks() {
             
             socket.emit("sendMessage", messageData);
             setNewMessage("");
-            
             // Stop typing indicator
-            socket.emit("typing", { receiverId: selectedUser._id, isTyping: false });
+            socket.emit("stop-typing", { receiverId: selectedUser._id });
+        }
+    };
+
+    const handleTyping = (e) => {
+        setNewMessage(e.target.value);
+        if (socket && selectedUser) {
+            if (e.target.value.length > 0) {
+                socket.emit("typing", { receiverId: selectedUser._id });
+            } else {
+                socket.emit("stop-typing", { receiverId: selectedUser._id });
+            }
         }
     };
 
@@ -146,21 +150,9 @@ export default function GGTalks() {
 
                 {/* Messages Area */}
                 <div className="flex-1 flex flex-col min-h-0">
-                    <ChatMessage />
+                    <ChatMessage isTyping={isTyping} />
                     
-                    {/* Typing Indicator */}
-                    {isTyping && selectedUser && (
-                        <div className="px-4 py-2 bg-gray-50">
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
-                                <div className="flex space-x-1">
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                                </div>
-                                <span>{selectedUser.name} is typing...</span>
-                            </div>
-                        </div>
-                    )}
+                   
                 </div>
 
                 {/* Message Input */}
@@ -175,8 +167,9 @@ export default function GGTalks() {
                                     placeholder={`Message ${selectedUser.name}...`}
                                     className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200"
                                     value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    onChange={handleTyping}
                                     onKeyPress={handleKeyPress}
+                                    onBlur={() => socket.emit("stop-typing", { receiverId: selectedUser._id })}
                                     rows={1}
                                     style={{
                                         height: 'auto',
@@ -192,7 +185,7 @@ export default function GGTalks() {
 
                             {/* Send button */}
                             <button
-                                className={`flex-shrink-0 p-3 rounded-full shadow-md transition-all duration-200 ${
+                                className={`flex-shrink-0 p-3 rounded-full shadow-md text-xl transition-all duration-200 ${
                                     newMessage.trim() 
                                         ? 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg' 
                                         : 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -200,9 +193,7 @@ export default function GGTalks() {
                                 onClick={handleSendMessage}
                                 disabled={!newMessage.trim()}
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                </svg>
+                               <GrSend />
                             </button>
                         </div>
                         

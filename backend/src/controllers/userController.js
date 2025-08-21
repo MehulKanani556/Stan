@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 import bcrypt from "bcryptjs";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendForbiddenResponse, sendCreatedResponse, sendUnauthorizedResponse, sendNotFoundResponse } from '../utils/ResponseUtils.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
-import { encryptData } from "../middlewares/incrypt.js";
+import { decryptData, encryptData } from "../middlewares/incrypt.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
 
@@ -179,9 +179,9 @@ export const getAllUsers = async (req, res) => {
             return sendUnauthorizedResponse(res, "Authentication required");
         }
 
-        if (!req.user.isAdmin) {
-            return sendForbiddenResponse(res, "Access denied. Only admins can view all users.");
-        }
+        // if (!req.user.isAdmin) {
+        //     return sendForbiddenResponse(res, "Access denied. Only admins can view all users.");
+        // }
 
         // Find all users with role 'user'
         const users = await User.find({ role: 'user' }).select('-password');
@@ -191,8 +191,14 @@ export const getAllUsers = async (req, res) => {
             return sendSuccessResponse(res, "No users found", []);
         }
 
+        const decryptedUsers = users.map(user => ({
+            ...user.toObject(),
+            name: decryptData(user.name),
+            email: decryptData(user.email),
+            // Add other fields you need to decrypt
+        }));
         // Send a success response with the fetched users
-        return sendSuccessResponse(res, "Users fetched successfully", users);
+        return sendSuccessResponse(res, "Users fetched successfully", decryptedUsers);
 
     } catch (error) {
         return ThrowError(res, 500, error.message)

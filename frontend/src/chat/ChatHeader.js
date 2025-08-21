@@ -4,8 +4,8 @@ import { decryptData } from '../Utils/encryption';
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function ChatHeader({ onMenuClick, showUserList }) {
-    const { selectedUser } = useSelector((state) => state.manageState);
-
+    const { selectedUser, onlineUsers } = useSelector((state) => state.manageState);
+    
     return (
         <div className="flex items-center gap-3 px-4 py-[6px] bg-gray-800 text-white shadow-md border-b border-gray-800 h-16">
             {/* Mobile menu button */}
@@ -36,9 +36,11 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                     {/* User info */}
                     <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-lg truncate capitalize">{selectedUser.name}</h3>
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span>Online</span>
+                        <div className="flex items-center gap-2 text-blue-200 text-sm">
+                            {onlineUsers.includes(selectedUser._id) && (
+                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                            )}
+                            <span>{onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}</span>
                         </div>
                     </div>
 
