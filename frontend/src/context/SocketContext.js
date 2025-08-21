@@ -10,7 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axiosInstance from "../Utils/axiosInstance";
 import { closeSnackbar, enqueueSnackbar } from "notistack";
-import { addMessage, setOnlineUsers } from "../Redux/Slice/manageState.slice"; // You'll need this action
+import { addMessage, setOnlineUsers, addTypingUser, removeTypingUser, clearTypingUsers } from "../Redux/Slice/manageState.slice"; // You'll need this action
+import { getAllMessageUsers } from "../Redux/Slice/user.slice"; // <--- Add this line
 
 export const SocketContext = createContext();
 export const useSocket = () => useContext(SocketContext);
@@ -23,6 +24,8 @@ export const SocketProvider = ({ children }) => {
   const [deviceId, setDeviceId] = useState(null);
   const [deviceType, setDeviceType] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+
+  const typingTimeoutRefs = useRef(new Map());
 
   // Helper to get userId/token from storage
   const getAuth = () => ({
@@ -64,6 +67,7 @@ export const SocketProvider = ({ children }) => {
     socketRef.current.on("disconnect", () => {
       console.log("Socket disconnected");
       setIsConnected(false);
+      dispatch(clearTypingUsers());
     });
 
     // Listen for incoming messages
@@ -71,12 +75,15 @@ export const SocketProvider = ({ children }) => {
       console.log("New message received:", message);
       // Add message to Redux store
       dispatch(addMessage(message));
-      
-      // Show notification
-      enqueueSnackbar("New message received!", {
-        variant: "info",
-        autoHideDuration: 3000,
-      });
+
+      dispatch(getAllMessageUsers()); // <--- Add this line
+      dispatch(removeTypingUser(message.senderId));
+
+      const timeoutId = typingTimeoutRefs.current.get(message.senderId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        typingTimeoutRefs.current.delete(message.senderId);
+      }
     });
     socketRef.current.on("online-users", (users) => {
       console.log("Online users:", users);
@@ -88,6 +95,7 @@ export const SocketProvider = ({ children }) => {
       console.log("Message sent successfully:", message);
       // Add message to Redux store for sender
       dispatch(addMessage(message));
+      dispatch(getAllMessageUsers()); // <--- Add this line
     });
 
     // Listen for message errors
@@ -98,7 +106,45 @@ export const SocketProvider = ({ children }) => {
       });
     });
 
+    // Listen for typing events
+    socketRef.current.on("typing", ({ senderId }) => {
+      console.log("User typing:", senderId);
+      dispatch(addTypingUser(senderId));
+      
+      // Clear existing timeout for this user
+      const existingTimeout = typingTimeoutRefs.current.get(senderId);
+      if (existingTimeout) {
+        clearTimeout(existingTimeout);
+      }
+      
+      // Set new timeout to auto-clear typing status after 3 seconds
+      const timeoutId = setTimeout(() => {
+        console.log("Auto-clearing typing status for:", senderId);
+        dispatch(removeTypingUser(senderId));
+        typingTimeoutRefs.current.delete(senderId);
+      }, 3000);
+      
+      typingTimeoutRefs.current.set(senderId, timeoutId);
+    });
+
+    // Listen for stop typing events
+    socketRef.current.on("stop-typing", ({ senderId }) => {
+      console.log("User stopped typing:", senderId);
+      dispatch(removeTypingUser(senderId));
+      
+      // Clear timeout for this user
+      const timeoutId = typingTimeoutRefs.current.get(senderId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        typingTimeoutRefs.current.delete(senderId);
+      }
+    });
+
+
     return () => {
+      typingTimeoutRefs.current.forEach(timeoutId => clearTimeout(timeoutId));
+      typingTimeoutRefs.current.clear();
+
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
@@ -127,6 +173,20 @@ export const SocketProvider = ({ children }) => {
       });
     } else {
       enqueueSnackbar("Not connected to server", { variant: "error" });
+    }
+  };
+
+  // Emit typing event
+  const emitTyping = (receiverId, senderId) => {
+    if (socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit("typing", { receiverId, senderId });
+    }
+  };
+
+  // Emit stop typing event
+  const emitStopTyping = (receiverId, senderId) => {
+    if (socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit("stopTyping", { receiverId, senderId });
     }
   };
 
@@ -200,6 +260,8 @@ export const SocketProvider = ({ children }) => {
         deviceId,
         deviceType,
         sendMessage, // Expose sendMessage function
+        emitTyping,
+        emitStopTyping,
       }}
     >
       {children}

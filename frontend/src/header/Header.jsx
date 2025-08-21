@@ -123,7 +123,6 @@ export default function Header() {
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 item-center'>
-
                                         <div
                                             className="w-6 h-6 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
                                             onClick={toggleDropdown}
@@ -133,7 +132,6 @@ export default function Header() {
                                                 className="w-full h-full object-cover object-top"
                                                 alt="User"
                                             />
-
                                         </div>
                                         <p className='text-base'>
                                             {decryptData(currentUser?.name)}
@@ -206,10 +204,7 @@ export default function Header() {
                                 </label>
                             </div>
                         </div>
-
                     </div>
-
-
 
                     {/* Sidebar Drawer */}
                     <div className="drawer-side">
