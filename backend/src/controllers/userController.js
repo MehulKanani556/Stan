@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 import bcrypt from "bcryptjs";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendForbiddenResponse, sendCreatedResponse, sendUnauthorizedResponse, sendNotFoundResponse } from '../utils/ResponseUtils.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
-import { encryptData, decryptData } from "../middlewares/incrypt.js";
+import { decryptData, encryptData } from "../middlewares/incrypt.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
 
@@ -100,11 +100,12 @@ export const editProfile = async (req, res) => {
         const {
             name,
             username,
-            // email is intentionally ignored to prevent updates via this endpoint
+            email,
             bio,
             gender,
         } = req.body;
 
+        const emailHash = email ? encryptData(email) : undefined;
         const nameHash = name ? encryptData(name) : undefined;
         const bioHash = bio ? encryptData(bio) : undefined;
         const usernameHash = username ? encryptData(username) : undefined;
@@ -120,7 +121,7 @@ export const editProfile = async (req, res) => {
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // Check for unique username (compare against encrypted values and exclude current user)
+        // Check for unique username/email (compare against encrypted values and exclude current user)
         if (username && usernameHash && usernameHash !== existingUser.username) {
             const existingUsername = await User.findOne({ username: usernameHash, _id: { $ne: userId } });
             if (existingUsername) {
@@ -128,9 +129,11 @@ export const editProfile = async (req, res) => {
             }
         }
 
-        // Block email updates explicitly
-        if (typeof req.body.email !== 'undefined') {
-            return sendErrorResponse(res, 400, "Email cannot be updated");
+        if (email && emailHash && emailHash !== existingUser.email) {
+            const existingEmail = await User.findOne({ email: emailHash, _id: { $ne: userId } });
+            if (existingEmail) {
+                return sendErrorResponse(res, 400, "Email already exists");
+            }
         }
 
         // Handle image upload
@@ -155,6 +158,7 @@ export const editProfile = async (req, res) => {
         // Update allowed fields
         if (name) existingUser.name = nameHash;
         if (username) existingUser.username = usernameHash;
+        if (email) existingUser.email = emailHash;
         if (bio) existingUser.bio = bioHash;
         if (gender) existingUser.gender = genderHash;
 
@@ -170,30 +174,30 @@ export const editProfile = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
     try {
-        // Check if user is authenticated
+        // Check if user is authenticated and is admin
         if (!req.user) {
             return sendUnauthorizedResponse(res, "Authentication required");
         }
 
-        const currentUserId = req.user._id;
+        // if (!req.user.isAdmin) {
+        //     return sendForbiddenResponse(res, "Access denied. Only admins can view all users.");
+        // }
 
-        // Find all users except the currently logged-in user
-        const users = await User.find({ _id: { $ne: currentUserId } }).select('-password');
+        // Find all users with role 'user'
+        const users = await User.find({ role: 'user' }).select('-password');
 
         // Check if any users were found
         if (!users || users.length === 0) {
             return sendSuccessResponse(res, "No users found", []);
         }
 
-        // Decrypt necessary user data
         const decryptedUsers = users.map(user => ({
             ...user.toObject(),
             name: decryptData(user.name),
             email: decryptData(user.email),
             // Add other fields you need to decrypt
         }));
-
-        // Send a success response with the fetched and decrypted users
+        // Send a success response with the fetched users
         return sendSuccessResponse(res, "Users fetched successfully", decryptedUsers);
 
     } catch (error) {
@@ -238,7 +242,7 @@ export const editUser = async (req, res) => {
         const {
             name,
             username,
-            // email is intentionally ignored to prevent updates via this endpoint
+            email,
             bio,
             gender,
         } = req.body;
@@ -255,6 +259,7 @@ export const editUser = async (req, res) => {
         // Encrypt values that will be updated
         const nameHash = name ? encryptData(name) : undefined;
         const usernameHash = username ? encryptData(username) : undefined;
+        const emailHash = email ? encryptData(email) : undefined;
         const bioHash = bio ? encryptData(bio) : undefined;
         const genderHash = gender ? encryptData(gender) : undefined;
 
@@ -284,14 +289,17 @@ export const editUser = async (req, res) => {
                 return sendErrorResponse(res, 400, "Username already exists");
             }
         }
-        // Block email updates explicitly
-        if (typeof req.body.email !== 'undefined') {
-            return sendErrorResponse(res, 400, "Email cannot be updated");
+        if (email && emailHash && emailHash !== existingUser.email) {
+            const existingEmail = await User.findOne({ email: emailHash, _id: { $ne: userId } });
+            if (existingEmail) {
+                return sendErrorResponse(res, 400, "Email already exists");
+            }
         }
 
         // Update allowed fields with encrypted values
         if (name) existingUser.name = nameHash;
         if (username) existingUser.username = usernameHash;
+        if (email) existingUser.email = emailHash;
         if (bio) existingUser.bio = bioHash;
         if (gender) existingUser.gender = genderHash;
 

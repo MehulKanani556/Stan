@@ -1,34 +1,51 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import Header from '../header/Header'
 import Footer from '../footer/Footer'
-import { games } from '../data/games'
+import { clearError, getFreeGames } from '../Redux/Slice/freeGame.slice'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 const Games = () => {
+	const dispatch = useDispatch()
+	const { games, loading, error } = useSelector((state) => state.freeGame)
+	
 	const scrollContainerRef = useRef(null)
 	const [canScrollLeft, setCanScrollLeft] = useState(false)
 	const [canScrollRight, setCanScrollRight] = useState(true)
 	const [showAll, setShowAll] = useState(false)
 
 	const VISIBLE_COUNT = 6
-	const displayedGames = games;
-	const additionalGames = showAll ? games : []
+	const safeGames = Array.isArray(games) ? games : []
+	const displayedGames = safeGames
+	const additionalGames = showAll ? safeGames : []
 
 	const cardWidthClass = 'w-64 md:w-64'
 	const cardBaseClass = 'rounded-xl overflow-hidden bg-[#221f2a] ring-1 ring-transparent group-hover:ring-[#ab99e1] transition'
 	const cardImageClass = 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+
+	// Fetch games from Redux
+	useEffect(() => {
+		dispatch(getFreeGames())
+	}, [dispatch])
+
+	// Clear error when component unmounts
+	useEffect(() => {
+		return () => {
+			dispatch(clearError())
+		}
+	}, [dispatch])
 
 	useEffect(() => {
 		updateScrollButtons()
 		if (scrollContainerRef.current) {
 			scrollContainerRef.current.scrollTo({ left: 0, behavior: 'instant' })
 		}
-	}, [showAll])
+	}, [showAll, games])
 
 	useEffect(() => {
 		updateScrollButtons()
-	}, [])
+	}, [games])
 
 	const scroll = (direction) => {
 		if (scrollContainerRef.current) {
@@ -102,7 +119,7 @@ const Games = () => {
 				>
 					{displayedGames.map((game) => (
 						<Link
-							key={game.slug}
+							key={game._id}
 							to={`/games/${game.slug}`}
 							className='group flex-shrink-0'
 						>
@@ -121,7 +138,7 @@ const Games = () => {
 					<div className='mt-6 flex flex-wrap gap-4 md:gap-6'>
 						{additionalGames.map((game) => (
 							<Link
-								key={game.slug}
+								key={game._id}
 								to={`/games/${game.slug}`}
 								className='group'
 							>

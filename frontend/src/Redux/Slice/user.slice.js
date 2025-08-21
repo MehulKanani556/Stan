@@ -86,8 +86,8 @@ export const getAllUsers = createAsyncThunk(
   "user/getAllUsers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/allUsers");
-      return response.data.users;
+      const response = await axiosInstance.get("/getAllUsers");
+      return response.data.result;
     } catch (error) {
       return handleErrors(error, null, rejectWithValue);
     }

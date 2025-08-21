@@ -185,90 +185,90 @@ export default function Support() {
           </div>
         </motion.div>
         {isContactModalOpen && (
-  <>
-    {/* Overlay */}
-    <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-      onClick={() => setIsContactModalOpen(false)}
-    />
+          <>
+            {/* Overlay */}
+            <div
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+              onClick={() => setIsContactModalOpen(false)}
+            />
 
-    {/* Modal */}
-    <div className="fixed bottom-0 left-0 right-0 z-50 w-full sm:bottom-6 sm:right-6 sm:left-auto sm:w-full sm:max-w-sm">
-      <div 
-        className="rounded-none sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[100dvh] sm:h-[70vh] relative 
+            {/* Modal */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 w-full sm:bottom-6 sm:right-6 sm:left-auto sm:w-full sm:max-w-sm">
+              <div
+                className="rounded-none sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[100dvh] sm:h-[70vh] relative 
                    bg-black/50 backdrop-blur-2xl border border-white/10"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0">
-          <button
-            className="text-white hover:scale-110 transition"
-            aria-label="Go back"
-            onClick={() => setIsContactModalOpen(false)}
-          >
-            <IoArrowBack className="w-6 h-6" />
-          </button>
-          <div className="flex flex-col">
-            <span className="text-white font-semibold text-lg">💬 Chat With Us</span>
-            <span className="text-white/70 text-xs">Replies within a few hours</span>
-          </div>
-        </div>
-
-        {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {chatMessages.map(msg => (
-            <div key={msg.id} className={`flex ${msg.author === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className="max-w-[80%] sm:max-w-[75%]">
-                <div
-                  className={`px-4 py-3 rounded-2xl shadow-lg 
-                    ${msg.author === 'user' 
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none' 
-                      : 'bg-white/10 backdrop-blur-md text-gray-200 border border-white/10 rounded-bl-none'}`}
-                >
-                  {msg.author !== 'user' && (
-                    <div className="text-xs text-blue-300 mb-1">Support</div>
-                  )}
-                  <div className="text-sm whitespace-pre-wrap break-words">{msg.text}</div>
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0">
+                  <button
+                    className="text-white hover:scale-110 transition"
+                    aria-label="Go back"
+                    onClick={() => setIsContactModalOpen(false)}
+                  >
+                    <IoArrowBack className="w-6 h-6" />
+                  </button>
+                  <div className="flex flex-col">
+                    <span className="text-white font-semibold text-lg">💬 Chat With Us</span>
+                    <span className="text-white/70 text-xs">Replies within a few hours</span>
+                  </div>
                 </div>
-                <div className={`mt-1 text-[10px] text-gray-400 ${msg.author === 'user' ? 'text-right' : 'text-left'}`}>
-                  {formatMessageTime(msg.at)}
+
+                {/* Chat Messages */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                  {chatMessages.map(msg => (
+                    <div key={msg.id} className={`flex ${msg.author === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className="max-w-[80%] sm:max-w-[75%]">
+                        <div
+                          className={`px-4 py-3 rounded-2xl shadow-lg 
+                    ${msg.author === 'user'
+                              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none'
+                              : 'bg-white/10 backdrop-blur-md text-gray-200 border border-white/10 rounded-bl-none'}`}
+                        >
+                          {msg.author !== 'user' && (
+                            <div className="text-xs text-blue-300 mb-1">Support</div>
+                          )}
+                          <div className="text-sm whitespace-pre-wrap break-words">{msg.text}</div>
+                        </div>
+                        <div className={`mt-1 text-[10px] text-gray-400 ${msg.author === 'user' ? 'text-right' : 'text-left'}`}>
+                          {formatMessageTime(msg.at)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Input */}
+                <div className="border-t border-white/10 p-3 bg-black/40 backdrop-blur-xl sticky bottom-0">
+                  <div className="flex items-center gap-2">
+                    <textarea
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault(); handleSendMessage()
+                        }
+                      }}
+                      placeholder="Type a message..."
+                      className="flex-1 resize-none rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 px-3 py-2 
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-28 text-sm"
+                      rows={1}
+                    />
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!chatInput.trim()}
+                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 
+                         hover:from-blue-500 hover:to-purple-500 text-white px-4 py-2 shadow-lg transition disabled:opacity-50"
+                      aria-label="Send message"
+                    >
+                      <IoSend className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Input */}
-        <div className="border-t border-white/10 p-3 bg-black/40 backdrop-blur-xl sticky bottom-0">
-          <div className="flex items-center gap-2">
-            <textarea
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault(); handleSendMessage()
-                }
-              }}
-              placeholder="Type a message..."
-              className="flex-1 resize-none rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 px-3 py-2 
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-28 text-sm"
-              rows={1}
-            />
-            <button
-              onClick={handleSendMessage}
-              disabled={!chatInput.trim()}
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 
-                         hover:from-blue-500 hover:to-purple-500 text-white px-4 py-2 shadow-lg transition disabled:opacity-50"
-              aria-label="Send message"
-            >
-              <IoSend className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </>
-)}
+          </>
+        )}
 
         {isDeleteModalOpen && (
           <>

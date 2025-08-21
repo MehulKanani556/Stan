@@ -20,6 +20,7 @@ function initializeSocket(io) {
         socket.join(userId);
         
         console.log(`User ${userId} joined with socket ${socket.id}`);
+        io.emit("online-users", Array.from(userSocketMap.keys()));
       }
     });
 
@@ -73,6 +74,23 @@ function initializeSocket(io) {
       }
     });
 
+    // Handle typing indicator
+    socket.on("typing", (data) => {
+      const { receiverId } = data;
+      const receiverSocketId = userSocketMap.get(receiverId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("typing", { senderId: socketUserMap.get(socket.id) });
+      }
+    });
+
+    socket.on("stop-typing", (data) => {
+      const { receiverId } = data;
+      const receiverSocketId = userSocketMap.get(receiverId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("stop-typing", { senderId: socketUserMap.get(socket.id) });
+      }
+    });
+
     // Handle disconnect
     socket.on("disconnect", () => {
       const userId = socketUserMap.get(socket.id);
@@ -80,6 +98,7 @@ function initializeSocket(io) {
         userSocketMap.delete(userId);
         socketUserMap.delete(socket.id);
         console.log(`User ${userId} disconnected`);
+        io.emit("online-users", Array.from(userSocketMap.keys()));
       }
     });
   });
@@ -88,6 +107,10 @@ function initializeSocket(io) {
 // Helper function to get receiver socket ID (export if needed elsewhere)
 export const getReceiverSocketId = (userId) => {
   return userSocketMap.get(userId);
+};
+
+export const getOnlineUsers = () => {
+  return Array.from(userSocketMap.keys());
 };
 
 export default { initializeSocket };

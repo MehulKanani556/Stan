@@ -25,7 +25,8 @@ import SingleGame from './components/SingleGame';
 // Component to conditionally render Header and Footer
 function AppContent() {
   const location = useLocation();
-  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
+  const showFooter  = location.pathname === "/ggtalks"
   const { store } = configureStore();
 
   return (
@@ -60,7 +61,7 @@ function AppContent() {
           </SocketProvider>
         </SnackbarProvider>
       </Provider>
-      {!isAuthPage && <Footer />}
+      {!isAuthPage || !showFooter && <Footer />}
     </>
   );
 }

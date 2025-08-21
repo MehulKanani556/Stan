@@ -4,7 +4,7 @@ const initialState = {
  
   selectedUser: null,
   messages: [],
-
+  onlineUsers: [],
 };
 
 const manageStateSlice = createSlice({
@@ -29,6 +29,9 @@ const manageStateSlice = createSlice({
       }
       state.messages.push(newMessage);
     },
+    setOnlineUsers: (state, action) => {
+      state.onlineUsers = action.payload;
+    },
   },
 });
 
@@ -36,5 +39,6 @@ export const {
   setSelectedUser,
   setMessages,
   addMessage,
+  setOnlineUsers,
 } = manageStateSlice.actions;
 export default manageStateSlice.reducer;

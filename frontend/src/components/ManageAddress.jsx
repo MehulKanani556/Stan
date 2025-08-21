@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IoArrowBack, IoLocation, IoClose, IoTrash, IoPencil } from "react-icons/io5";
 import manageAddress from "../images/manage_addres-1.png"
+import StylishDiv from './StylishDiv';
 
 export default function ManageAddress() {
     const navigate = useNavigate()
@@ -130,242 +131,283 @@ export default function ManageAddress() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between px-2 sm:px-4 py-4 bg-black/30 backdrop-blur-xl sticky top-0 z-20 shadow-lg ">
-                <div className="flex items-center gap-2 sm:gap-3">
+        <section className='bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]'>
+            <div className="min-h-screen max-w-[1480px] m-auto w-full  text-white flex flex-col">
+                {/* Header */}
+                <div className="flex items-center justify-between px-2 sm:px-4 py-4 bg-black/30 backdrop-blur-xl sticky top-0 z-20 shadow-lg ">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <button
+                            className="text-white rounded-full hover:bg-white/10 transition-colors touch-manipulation"
+                            onClick={handleBack}
+                            aria-label="Go back"
+                        >
+                            <IoArrowBack className="w-5 h-5 sm:w-6 sm:h-6" />
+                        </button>
+                        <h1 className="text-base sm:text-lg md:text-xl font-bold tracking-wide bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                            Manage Addresses
+                        </h1>
+                    </div>
+                    {/* Add Address Button */}
                     <button
-                        className="text-white rounded-full hover:bg-white/10 transition-colors touch-manipulation"
-                        onClick={handleBack}
-                        aria-label="Go back"
-                    >
-                        <IoArrowBack className="w-5 h-5 sm:w-6 sm:h-6" />
-                    </button>
-                    <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide">Manage Addresses</h1>
-                </div>
-                {/* Add Address Button */}
-                <button
-                    className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
+                        className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
              hover:from-[#8354f8] hover:to-[#9f78ff] 
              text-white px-4 sm:px-5 py-2.5 rounded-xl 
              flex items-center gap-2 text-sm font-medium 
              transition-all duration-200 shadow-md hover:shadow-xl"
-                    onClick={openModal}
-                >
-                    <IoLocation className="w-4 h-4" />
-                    <span>Add Address</span>
-                </button>
-            </div>
+                        onClick={openModal}
+                    >
+                        <IoLocation className="w-4 h-4" />
+                        <span>Add Address</span>
+                    </button>
+                </div>
 
-            {/* Main Content - Address Cards */}
-            <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
-                {addresses.length === 0 ? (
-                    // Empty state
-                    <div className="flex flex-col items-center justify-center py-12 sm:py-16">
-                        <div className='w-20 h-20 xs:w-24 xs:h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden mb-3 sm:mb-4 md:mb-6 '>
-                            <img src={manageAddress} className='w-full h-full object-cover' alt="Manage Address" />
+                {/* Main Content - Address Cards */}
+                <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
+                    {addresses.length === 0 ? (
+                        // Empty state
+                        <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 relative">
+                            {/* Floating Glow Effects */}
+                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+                                    from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
+                                    animate-pulse"></div>
+                            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+                                    from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
+                                    animate-pulse"></div>
+
+                            {/* Circular Illustration */}
+                            <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
+                                    relative overflow-hidden shadow-lg shadow-purple-500/30">
+                                <img
+                                    src={manageAddress}
+                                    alt="Lazy Cat"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+
+                            {/* No transactions text */}
+                            <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+                                No addresses added!
+                            </h2>
+                            <p className="text-gray-400 text-sm text-center mt-2">
+                                Add your first address to get started
+                            </p>
                         </div>
-                        <div className="text-center px-2 max-w-xs sm:max-w-sm">
-                            <h2 className="text-white text-sm xs:text-base sm:text-lg md:text-xl font-medium mb-1 sm:mb-2">No addresses added!</h2>
-                            <p className="text-gray-400 text-xs xs:text-sm sm:text-base leading-relaxed">Add your first address to get started</p>
-                        </div>
-                    </div>
-                ) : (
-                    // Address cards
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-                        {addresses.map((address) => (
-                            <div key={address.id} className="relative group rounded-3xl overflow-hidden">
-                                <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 blur-[2px]" />
-                                <div className="relative bg-black/40 backdrop-blur-xl rounded-3xl p-4 sm:p-5 shadow-2xl">
+                    ) : (
+                        // Address cards
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+                            {addresses.map((address) => (
+                             <StylishDiv key={address.id}>
+
                                     {/* Default Ribbon */}
                                     {address.isDefault && (
-                                        <div className="pointer-events-none absolute top-0 right-0 w-32 h-24 overflow-hidden">
-                                            <div className="absolute right-[-19px] top-[7px]  rotate-45">
-                                                <span className="bg-[#621df2] text-white text-[10px] font-semibold tracking-wide px-6 py-1 shadow-lg">Default</span>
+                                        <div className="absolute top-0 right-0 w-32 h-24 overflow-hidden pointer-events-none">
+                                            <div className="absolute right-[-19px] top-[7px] rotate-45">
+                                                <span className="bg-[#621df2] text-white text-[10px] font-semibold tracking-wide px-6 py-1 shadow-lg">
+                                                    Default
+                                                </span>
                                             </div>
                                         </div>
                                     )}
 
-                                    {/* Address Content */}
-                                    <div className="space-y-2 sm:space-y-3">
-                                        <h3 className="text-[#cfab9d] font-medium text-sm sm:text-base">{address.name}</h3>
-                                        <p className="text-white text-sm">{address.addressLine1}</p>
-                                        <p className="text-[#7b7b7b] text-sm">{address.addressLine2}</p>
-                                        <div className='flex items-center gap-2 justify-between'>
-                                            <p className="text-gray-300 text-sm">{address.mobile}</p>
-                                            {/* Action Buttons */}
-                                            <div className="flex items-center  gap-2 sm:gap-3 ">
-                                                {/* Delete Button */}
-                                                <button
-                                                    onClick={() => deleteAddress(address.id)}
-                                                    className="bg-red-600 hover:bg-red-700 text-white p-1 sm:p-2.5 rounded transition-colors duration-200"
-                                                    aria-label="Delete address"
-                                                >
-                                                    <IoTrash className="w-4 h-4 sm:w-5 sm:h-5" />
-                                                </button>
-
-                                                {/* Edit Button */}
-                                                <button
-                                                    onClick={() => openEditModal(address)}
-                                                    className="bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-3 py-2 rounded-lg shadow-md flex items-center gap-1 transition-all duration-200"
-                                                >
-                                                    <IoPencil className="w-4 h-4" />
-                                                    <span className="text-sm">Edit</span>
-                                                </button>
+                                    {/* Card Content */}
+                                    <div className="relative z-10 flex flex-col">
+                                        {/* Name & Mobile */}
+                                        <div className="flex items-start justify-between mb-5">
+                                            <div>
+                                                <h3 className="text-white font-bold text-lg tracking-wide">{address.name}</h3>
+                                                <p className="text-gray-400 text-sm">{address.mobile}</p>
                                             </div>
                                         </div>
+
+                                        {/* Address */}
+                                        <div className="mb-6">
+                                            <p className="text-gray-300 text-sm leading-relaxed">{address.addressLine1}</p>
+                                            <p className="text-gray-500 text-sm leading-relaxed">{address.addressLine2}</p>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="flex items-center justify-between mt-auto">
+                                            <button
+                                                onClick={() => deleteAddress(address.id)}
+                                                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium shadow-md hover:shadow-red-500/40 transition-all duration-300 transform hover:scale-105"
+                                            >
+                                                Delete
+                                            </button>
+
+                                            <button
+                                                onClick={() => openEditModal(address)}
+                                                className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+                                            >
+                                                <IoPencil className="w-4 h-4" />
+                                                Edit
+                                            </button>
+                                        </div>
                                     </div>
-
-
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Address Add/Edit Modal */}
-            {(isModalOpen || isEditModalOpen) && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
-                    <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-[90vh] overflow-y-auto">
-                        {/* Modal Header */}
-                        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10">
-                            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
-                                {editingAddress ? 'Edit Address' : 'Add Address'}
-                            </h2>
-                            <button
-                                onClick={closeModal}
-                                className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
-                                aria-label="Close modal"
-                            >
-                                <IoClose className="w-5 h-5 sm:w-6 sm:h-6" />
-                            </button>
+                                    </StylishDiv>
+                            ))}
                         </div>
 
-                        {/* Modal Body */}
-                        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4 sm:space-y-5">
-                            {/* Name Field */}
-                            <div>
-                                <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                    placeholder="Enter your name"
-                                />
-                            </div>
-
-                            {/* Mobile Field */}
-                            <div>
-                                <label htmlFor="mobile" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                    Mobile No.
-                                </label>
-                                <input
-                                    type="tel"
-                                    id="mobile"
-                                    name="mobile"
-                                    value={formData.mobile}
-                                    onChange={handleInputChange} 
-                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                    placeholder="Enter mobile number"
-                                />
-                            </div>
-
-                            {/* Address Line 1 Field */}
-                            <div>
-                                <label htmlFor="addressLine1" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                    Address Line 1
-                                </label>
-                                <input
-                                    type="text"
-                                    id="addressLine1"
-                                    name="addressLine1"
-                                    value={formData.addressLine1}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                    placeholder="Enter address line 1"
-                                />
-                            </div>
-
-                            {/* Address Line 2 Field */}
-                            <div>
-                                <label htmlFor="addressLine2" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                    Address Line 2
-                                </label>
-                                <input
-                                    type="text"
-                                    id="addressLine2"
-                                    name="addressLine2"
-                                    value={formData.addressLine2}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                    placeholder="Enter address line 2 (optional)"
-                                />
-                            </div>
-
-                            {/* Landmark Field */}
-                            <div>
-                                <label htmlFor="landmark" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                    Landmark
-                                </label>
-                                <input
-                                    type="text"
-                                    id="landmark"
-                                    name="landmark"
-                                    value={formData.landmark}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                    placeholder="Enter landmark (optional)"
-                                />
-                            </div>
-
-                            {/* Pincode Field */}
-                            <div>
-                                <label htmlFor="pincode" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                    Pincode
-                                </label>
-                                <input
-                                    type="text"
-                                    id="pincode"
-                                    name="pincode"
-                                    value={formData.pincode}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                    placeholder="Enter pincode"
-                                />
-                            </div>
-
-                            {/* Default Address Checkbox */}
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="checkbox"
-                                    id="isDefault"
-                                    name="isDefault"
-                                    checked={formData.isDefault}
-                                    onChange={handleInputChange}
-                                    className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 bg-white/5 border-white/10 rounded focus:ring-pink-500 focus:ring-2"
-                                />
-                                <label htmlFor="isDefault" className="text-sm sm:text-base text-gray-300 cursor-pointer">
-                                    Set as default address
-                                </label>
-                            </div>
-
-                            {/* Submit Button */}
-                            <button
-                                type="submit"
-                                className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff]             hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 touch-manipulation shadow-lg mt-4 sm:mt-6"
-                            >
-                                {editingAddress ? 'Update Address' : 'Save Address'}
-                            </button>
-                        </form>
-                    </div>
+                    )}
                 </div>
-            )}
-        </div>
+
+                {/* Address Add/Edit Modal */}
+                {(isModalOpen || isEditModalOpen) && (
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
+                        <div className="bg-gradient-to-br from-[#1a1a1d]/80 to-[#2c2c34]/80 
+                    backdrop-blur-2xl border border-white/10 rounded-2xl 
+                    shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fadeIn">
+
+                            {/* Modal Header */}
+                            <div className="flex items-center justify-between p-5 border-b border-white/10">
+                                <h2 className="text-xl md:text-2xl font-semibold text-white tracking-wide">
+                                    {editingAddress ? '✏️ Edit Address' : '➕ Add Address'}
+                                </h2>
+                                <button
+                                    onClick={closeModal}
+                                    className="text-gray-400 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+                                    aria-label="Close modal"
+                                >
+                                    <IoClose className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            {/* Modal Body */}
+                            <form
+                                onSubmit={handleSubmit}
+                                className="p-6 space-y-5"
+                            >
+                                {/* Name */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 
+                       rounded-xl text-white placeholder-gray-400 
+                       focus:outline-none focus:ring-2 focus:ring-violet-500/70 transition-all"
+                                        placeholder="Enter your name"
+                                    />
+                                </div>
+
+                                {/* Mobile */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Mobile No.
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        name="mobile"
+                                        value={formData.mobile}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 
+                       rounded-xl text-white placeholder-gray-400 
+                       focus:outline-none focus:ring-2 focus:ring-violet-500/70 transition-all"
+                                        placeholder="Enter mobile number"
+                                    />
+                                </div>
+
+                                {/* Address Line 1 */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Address Line 1
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="addressLine1"
+                                        value={formData.addressLine1}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 
+                       rounded-xl text-white placeholder-gray-400 
+                       focus:outline-none focus:ring-2 focus:ring-violet-500/70 transition-all"
+                                        placeholder="Enter address line 1"
+                                    />
+                                </div>
+
+                                {/* Address Line 2 */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Address Line 2
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="addressLine2"
+                                        value={formData.addressLine2}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 
+                       rounded-xl text-white placeholder-gray-400 
+                       focus:outline-none focus:ring-2 focus:ring-violet-500/70 transition-all"
+                                        placeholder="Enter address line 2 (optional)"
+                                    />
+                                </div>
+
+                                {/* Landmark */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Landmark
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="landmark"
+                                        value={formData.landmark}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 
+                       rounded-xl text-white placeholder-gray-400 
+                       focus:outline-none focus:ring-2 focus:ring-violet-500/70 transition-all"
+                                        placeholder="Enter landmark (optional)"
+                                    />
+                                </div>
+
+                                {/* Pincode */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Pincode
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="pincode"
+                                        value={formData.pincode}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 
+                       rounded-xl text-white placeholder-gray-400 
+                       focus:outline-none focus:ring-2 focus:ring-violet-500/70 transition-all"
+                                        placeholder="Enter pincode"
+                                    />
+                                </div>
+
+                                {/* Default Address */}
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        id="isDefault"
+                                        checked={formData.isDefault}
+                                        onChange={handleInputChange}
+                                        className="w-5 h-5 text-violet-500 bg-white/10 border-white/20 rounded focus:ring-violet-500"
+                                    />
+                                    <label htmlFor="isDefault" className="text-sm text-gray-300 cursor-pointer">
+                                        Set as default address
+                                    </label>
+                                </div>
+
+                                {/* Submit Button */}
+                                <button
+                                    type="submit"
+                                    className="w-full bg-gradient-to-r from-[#6d28d9] to-[#a78bfa] 
+                     hover:from-[#7c3aed] hover:to-[#c084fc] 
+                     text-white px-6 py-3 rounded-xl text-base font-medium 
+                     transition-all duration-300 shadow-lg hover:shadow-purple-500/30"
+                                >
+                                    {editingAddress ? 'Update Address' : 'Save Address'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+            </div>
+        </section>
     )
 }
