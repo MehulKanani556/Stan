@@ -110,9 +110,38 @@ body {
 .ds_single_slider .slick-slide div{
    width: 100%;
 }
-.ds_mini_slider .slick-center div div img{
-   border: 2px solid red !important;
+/* Highlight the center slide (red border, no overlay) */
+.ds_mini_slider .slick-center div div img {
+  border: 2px solid white !important;
+  position: relative;
+  z-index: 2;
 }
+
+.ds_mini_slider .slick-center div div::after {
+  content: none !important; 
+}
+
+.ds_mini_slider .slick-slide.slick-active div div {
+  position: relative;
+}
+
+.ds_mini_slider .slick-slide div div {
+  position: relative;
+}
+
+.ds_mini_slider .slick-slide div div::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 0.5rem;
+  pointer-events: none;
+}
+
+.ds_mini_slider .slick-center div div {
+  z-index: 3;
+}
+
 
 /* .ds_review_slider .slick-dots li button{
   height: 30px !important;
