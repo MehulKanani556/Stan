@@ -19,7 +19,6 @@ import Header from '../header/Header';
 import Footer from '../footer/Footer';
 import StylishDiv from '../components/StylishDiv';
 
-// Custom CSS for Swiper pagination
 const swiperStyles = `
   .swiper-pagination {
     position: absolute !important;
@@ -66,7 +65,6 @@ export default function Rewards() {
         window.history.back();
     };
 
-    // Inject custom styles
     React.useEffect(() => {
         const style = document.createElement('style');
         style.textContent = swiperStyles;
@@ -83,7 +81,6 @@ export default function Rewards() {
 
                 <div className=''>
                     <div className="flex items-center justify-between text-center text-sm md:text-lg font-medium relative bg-[#1c1c2b] rounded-xl  shadow-lg overflow-hidden">
-                        {/* Redeem & Win */}
                         <div
                             onClick={() => setIsActive("redeem")}
                             className={`w-1/2 py-3 cursor-pointer transition-all duration-500 rounded-lg 
@@ -94,7 +91,6 @@ export default function Rewards() {
                             Redeem & Win
                         </div>
 
-                        {/* FAQs */}
                         <div
                             onClick={() => setIsActive("refer")}
                             className={`w-1/2 py-3 cursor-pointer transition-all duration-500 rounded-lg
@@ -122,7 +118,6 @@ const RedeemAndWin = () => {
     const [showPopup, setShowPopup] = React.useState(false);
     const [showGoUp, setShowGoUp] = React.useState(false);
 
-    // Handle scroll to show/hide go up button
     React.useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 300) {
@@ -231,8 +226,7 @@ const RedeemAndWin = () => {
 
     const displayedTasks = showAllTasks ? taskCards : taskCards.slice(0, 3);
     return (
-        <section className='pb-10 px-4'>
-            {/* Copy Success Popup */}
+        <section className='pb-10 '>
             {showPopup && (
                 <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 animate-bounce">
                     <div className="flex items-center gap-2">
@@ -257,7 +251,7 @@ const RedeemAndWin = () => {
 
 
 
-            <div className='max-w-[1480px] m-auto w-full'>
+            <div className='max-w-[95%] md:max-w-[85%] m-auto '>
                 <div className="flex flex-col w-full items-center justify-center md:pt-20 pt-10">
 
                     <img
@@ -265,21 +259,11 @@ const RedeemAndWin = () => {
                         className="md:w-[150px]  w-[100px] mb-10 opacity-100 hover:opacity-50 duration-500"
                         alt="Gem"
                     />
-                    {/* <img
-                        src={gemesLogo}
-                        className="max-w-[900px] w-[55%] mb-10"
-                        alt="Gemes Logo"
-                    /> */}
-
-                    {/* Balance Card */}
+                   
                     <div className="relative w-full max-w-[520px] rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-500 to-indigo-600 p-6 shadow-xl overflow-hidden group">
-                        {/* Glowing Orbs */}
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
                         <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-cyan-400 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
-
-                        {/* Content */}
                         <div className="flex items-center justify-between gap-4">
-                            {/* Left Side: Gem + Text */}
                             <div className="flex items-center gap-3 md:gap-4">
                                 <img
                                     src={greenGem}
@@ -295,9 +279,7 @@ const RedeemAndWin = () => {
                                     </h3>
                                 </div>
                             </div>
-
-                            {/* Right Side: Button */}
-                            <button className="bg-white z-50 text-black px-3 py-1 md:px-5 md:py-2 rounded-md md:rounded-lg text-xs md:text-base font-semibold shadow hover:bg-gray-200 transition">
+                            <button className="bg-white z-10 text-black px-3 py-1 md:px-5 md:py-2 rounded-md md:rounded-lg text-xs md:text-base font-semibold shadow hover:bg-gray-200 transition">
                                 History
                             </button>
                         </div>
@@ -305,8 +287,8 @@ const RedeemAndWin = () => {
                 </div>
 
                 <div className="py-10 w-full">
-                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6">
-                        ✨ PhonePe E-Gift Vouchers ✨
+                    <h5 className="text-white font-bold text-lg md:text-2xl  mb-6">
+                         PhonePe E-Gift Vouchers 
                     </h5>
 
                     <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
@@ -316,26 +298,22 @@ const RedeemAndWin = () => {
                             modules={[Pagination]}
                             className="mySwiper w-full px-4"
                             breakpoints={{
-                                320: { slidesPerView: 2, spaceBetween: 10 },   // 🔥 mobile (2 cards)
-                                640: { slidesPerView: 2, spaceBetween: 12 },   // tablet
-                                768: { slidesPerView: 3, spaceBetween: 15 },   // small laptop
-                                1024: { slidesPerView: 4, spaceBetween: 20 },  // desktop
-                                1200: { slidesPerView: 5, spaceBetween: 20 },  // desktop
+                                320: { slidesPerView: 2, spaceBetween: 10 },
+                                640: { slidesPerView: 2, spaceBetween: 12 },
+                                768: { slidesPerView: 3, spaceBetween: 15 },
+                                1024: { slidesPerView: 4, spaceBetween: 20 },
+                                1200: { slidesPerView: 5, spaceBetween: 20 },
                             }}
                         >
                             {cards.map((card, index) => (
                                 <SwiperSlide key={index} className="flex justify-center">
-                                    <div className="bg-[#1b1724] hover:bg-[#241c32] transition-all duration-300 
+                                    <div className="bg-black/30  hover:bg-[#241c32] transition-all duration-300 
                            rounded-2xl flex flex-col items-center justify-between 
                            p-5 sm:p-6 shadow-lg hover:shadow-2xl 
                            w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
                            max-h-[300px] sm:h-[320px] group relative overflow-hidden cursor-pointer">
-
-                                        {/* Glow effect */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-purple-600/20 via-transparent to-transparent 
                              opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-
-                                        {/* Logo Section */}
                                         <div className="bg-white overflow-hidden rounded-xl shadow-md flex items-center justify-center w-full   ">
                                             <img
                                                 src={phonePe}
@@ -343,13 +321,9 @@ const RedeemAndWin = () => {
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>
-
-                                        {/* Price */}
                                         <p className="text-white text-xl sm:text-2xl font-bold mt-2">
                                             ₹{card.price}
                                         </p>
-
-                                        {/* Gems */}
                                         <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 
                              rounded-lg px-4 py-1 flex items-center gap-2 mt-4 
                              border border-green-400/40">
@@ -378,11 +352,11 @@ const RedeemAndWin = () => {
                             modules={[Pagination]}
                             className="mySwiper w-full px-4"
                             breakpoints={{
-                                320: { slidesPerView: 2, spaceBetween: 10 },   // 🔥 mobile (2 cards)
-                                640: { slidesPerView: 2, spaceBetween: 12 },   // tablet
-                                768: { slidesPerView: 3, spaceBetween: 15 },   // small laptop
-                                1024: { slidesPerView: 4, spaceBetween: 20 },  // desktop
-                                1200: { slidesPerView: 5, spaceBetween: 20 },  // desktop
+                                320: { slidesPerView: 2, spaceBetween: 10 },
+                                640: { slidesPerView: 2, spaceBetween: 12 },
+                                768: { slidesPerView: 3, spaceBetween: 15 },
+                                1024: { slidesPerView: 4, spaceBetween: 20 },
+                                1200: { slidesPerView: 5, spaceBetween: 20 },
                             }}
                         >
                             {cards.map((card, index) => (
@@ -392,12 +366,8 @@ const RedeemAndWin = () => {
                            p-5 sm:p-6 shadow-lg hover:shadow-2xl 
                            w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
                            max-h-[300px] sm:h-[320px] group relative overflow-hidden cursor-pointer">
-
-                                        {/* Glow effect */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-orange-600/20 via-transparent to-transparent 
                              opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-
-                                        {/* Logo Section */}
                                         <div className="bg-white overflow-hidden rounded-xl shadow-md flex items-center justify-center w-full">
                                             <img
                                                 src={Amazon}
@@ -405,13 +375,9 @@ const RedeemAndWin = () => {
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>
-
-                                        {/* Price */}
                                         <p className="text-white text-xl sm:text-2xl font-bold mt-2">
                                             ₹{card.price}
                                         </p>
-
-                                        {/* Gems */}
                                         <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 
                              rounded-lg px-4 py-1 flex items-center gap-2 mt-4 
                              border border-green-400/40">
@@ -439,12 +405,12 @@ const RedeemAndWin = () => {
                             modules={[Pagination]}
                             className="mySwiper w-full px-4"
                             breakpoints={{
-                                320: { slidesPerView: 1, spaceBetween: 10 },   // 🔥 mobile (1 card)
-                                480: { slidesPerView: 1, spaceBetween: 12 },   // small mobile
-                                640: { slidesPerView: 2, spaceBetween: 14 },   // tablet
-                                768: { slidesPerView: 2, spaceBetween: 16 },   // small laptop
-                                1024: { slidesPerView: 3, spaceBetween: 18 },  // desktop
-                                1280: { slidesPerView: 4, spaceBetween: 20 },  // large desktop
+                                320: { slidesPerView: 1, spaceBetween: 10 },
+                                480: { slidesPerView: 1, spaceBetween: 12 },
+                                640: { slidesPerView: 2, spaceBetween: 14 },
+                                768: { slidesPerView: 2, spaceBetween: 16 },
+                                1024: { slidesPerView: 3, spaceBetween: 18 },
+                                1280: { slidesPerView: 4, spaceBetween: 20 },
                             }}
                         >
                             {coupons.map((card, index) => (
@@ -454,12 +420,8 @@ const RedeemAndWin = () => {
                            p-4 sm:p-5 lg:p-6 shadow-lg hover:shadow-2xl 
                            w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] 
                            group relative overflow-hidden cursor-pointer`}>
-
-                                        {/* Glow effect */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-transparent 
                              opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-
-                                        {/* Small Logo + Name */}
                                         <div className="flex flex-col items-center gap-2 min-w-[50px] sm:min-w-[60px] lg:min-w-[70px] relative z-10">
                                             <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white rounded-lg 
                                             flex items-center justify-center p-1 shadow-md group-hover:shadow-lg transition-all duration-300">
@@ -473,8 +435,6 @@ const RedeemAndWin = () => {
                                                 {card.name}
                                             </span>
                                         </div>
-
-                                        {/* Big Logo */}
                                         <div className="flex-1 flex justify-center relative z-10">
                                             <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 
                                             bg-white rounded-xl flex items-center justify-center p-2 shadow-md group-hover:shadow-lg transition-all duration-300">
@@ -501,13 +461,9 @@ const RedeemAndWin = () => {
                     </h5>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        {/* Refer & Get Card */}
                         <div className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 rounded-2xl p-8 backdrop-blur-xl border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden">
-                            {/* Floating Shapes */}
                             <div className="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500 animate-pulse"></div>
                             <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-gradient-to-br from-green-400 to-blue-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
-
-                            {/* Content */}
                             <div className="relative z-10 flex flex-col">
                                 <h3 className="text-yellow-400 font-extrabold text-2xl mb-3 tracking-wide">
                                     Refer & Get
@@ -519,8 +475,6 @@ const RedeemAndWin = () => {
                                         Per Install <FaInfoCircle className="w-5 h-5 text-gray-400" />
                                     </span>
                                 </div>
-
-                                {/* Invite Code Box */}
                                 <div className="border border-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-3 py-2 flex-1 bg-black/30">
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-300 text-sm lg:text-base">
@@ -535,21 +489,14 @@ const RedeemAndWin = () => {
                                         </button>
                                     </div>
                                 </div>
-
-                                {/* Button */}
                                 <button className="mt-6 w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 transition-all duration-500 transform hover:scale-105 hover:shadow-purple-500/50">
                                     REFER NOW
                                 </button>
                             </div>
                         </div>
-
-                        {/* Earn & Redeem Card */}
                         <div className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 rounded-2xl p-8 backdrop-blur-xl border border-blue-500/30 shadow-lg hover:shadow-blue-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden">
-                            {/* Floating Shapes */}
                             <div className="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
                             <div className="absolute -bottom-12 -left-12 w-28 h-28 bg-gradient-to-br from-green-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
-
-                            {/* Content */}
                             <div className="relative z-10 flex flex-col">
                                 <p className="text-gray-400 text-sm lg:text-base mb-2 italic">
                                     Complete quests and redeem amazing coupons 🎁
@@ -557,8 +504,6 @@ const RedeemAndWin = () => {
                                 <h3 className="text-yellow-400 font-extrabold text-2xl mb-6 tracking-wide">
                                     Earn & Redeem
                                 </h3>
-
-                                {/* Balance Box */}
                                 <div className="bg-[#2a2a3e]/70 rounded-lg p-5 mb-6 border border-gray-600/40">
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-md shadow-green-500/40">
@@ -570,8 +515,6 @@ const RedeemAndWin = () => {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Button */}
                                 <button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 transition-all duration-500 transform hover:scale-105 hover:shadow-purple-500/50">
                                     Redeem
                                 </button>
@@ -580,7 +523,6 @@ const RedeemAndWin = () => {
                     </div>
                 </div>
 
-                {/* Task Cards Section */}
                 <div className="py-14 w-full">
                     <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-10 text-center">
                         🎯 Complete Tasks & Earn
@@ -590,7 +532,6 @@ const RedeemAndWin = () => {
                         {displayedTasks.map((task) => (
                             <StylishDiv>
                                 <div className="relative z-10 flex flex-col">
-                                    {/* Icon & Info */}
                                     <div className="flex items-start justify-between mb-5">
                                         <div
                                             className={`w-14 h-14 ${task.bgColor} rounded-xl flex items-center justify-center shadow-lg shadow-black/30`}
@@ -599,14 +540,10 @@ const RedeemAndWin = () => {
                                         </div>
                                         <FaInfoCircle className="w-5 h-5 text-gray-400 hover:text-yellow-400 transition-colors cursor-pointer" />
                                     </div>
-
-                                    {/* Title & Description */}
                                     <div className="mb-6">
                                         <h4 className="text-white font-bold text-lg mb-2 tracking-wide">{task.title}</h4>
                                         <p className="text-gray-400 text-sm leading-relaxed">{task.description}</p>
                                     </div>
-
-                                    {/* Reward & Claim */}
                                     <div className="flex items-center justify-between mt-auto">
                                         <div className="flex items-center gap-2 text-sm">
                                             <span className="text-gray-300">Earn upto</span>
@@ -630,7 +567,6 @@ const RedeemAndWin = () => {
                             <span className="relative z-10">
                                 {showAllTasks ? "Show Less" : "View More"}
                             </span>
-                            {/* Glow effect */}
                             <span className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 opacity-0 group-hover:opacity-100 blur-xl transition duration-500"></span>
                         </button>
                     </div>
@@ -644,8 +580,8 @@ const RedeemAndWin = () => {
 
 const NeedHelp = () => {
     return (
-        <section className='py-10 px-4'>
-            <div className='flex flex-col gap-4'>
+        <section className='py-10 '>
+            <div className='flex flex-col gap-4 max-w-[95%] md:max-w-[85%] m-auto '>
                 <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">When will I be eligible for a referral reward?</div>
