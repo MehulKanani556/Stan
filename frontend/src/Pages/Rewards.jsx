@@ -12,12 +12,18 @@ import referlcash from "../images/referl-cash.png"
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { MdOutlineContentCopy } from "react-icons/md";
-
 import 'swiper/css';
 import 'swiper/css/pagination';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
 import StylishDiv from '../components/StylishDiv';
+import { BsCart4 } from "react-icons/bs";
+import { RiCoupon2Fill } from "react-icons/ri";
+import { IoRocketOutline } from "react-icons/io5";
+import { MdAddTask } from "react-icons/md";
+import { SiPhonepe } from "react-icons/si";
+
+
 
 const swiperStyles = `
   .swiper-pagination {
@@ -80,12 +86,12 @@ export default function Rewards() {
             <section className='w-full'>
 
                 <div className=''>
-                    <div className="flex items-center justify-between text-center text-sm md:text-lg font-medium relative bg-[#1c1c2b] rounded-xl  shadow-lg overflow-hidden">
+                    <div className="flex items-center justify-between text-center text-sm md:text-lg font-medium relative bg-[#1c1c2b]/10   shadow-lg ">
                         <div
                             onClick={() => setIsActive("redeem")}
-                            className={`w-1/2 py-3 cursor-pointer transition-all duration-500 rounded-lg 
+                            className={`w-1/2 py-3 cursor-pointer transition-all duration-500  
         ${isActive === "redeem"
-                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-105"
+                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-x-105"
                                     : "text-gray-300 hover:text-white hover:bg-white/10"}`}
                         >
                             Redeem & Win
@@ -93,9 +99,9 @@ export default function Rewards() {
 
                         <div
                             onClick={() => setIsActive("refer")}
-                            className={`w-1/2 py-3 cursor-pointer transition-all duration-500 rounded-lg
+                            className={`w-1/2 py-3 cursor-pointer transition-all duration-500 
         ${isActive === "refer"
-                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-105"
+                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-x-105"
                                     : "text-gray-300 hover:text-white hover:bg-white/10"}`}
                         >
                             FAQs
@@ -116,27 +122,7 @@ const RedeemAndWin = () => {
     const [showAllTasks, setShowAllTasks] = React.useState(false);
     const [copySuccess, setCopySuccess] = React.useState(false);
     const [showPopup, setShowPopup] = React.useState(false);
-    const [showGoUp, setShowGoUp] = React.useState(false);
-
-    React.useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 300) {
-                setShowGoUp(true);
-            } else {
-                setShowGoUp(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    };
+  
 
     const copyToClipboard = async (text) => {
         try {
@@ -238,15 +224,7 @@ const RedeemAndWin = () => {
                 </div>
             )}
 
-            {showGoUp && (
-                <button
-                    onClick={scrollToTop}
-                    className="fixed bottom-20 right-6 z-50 p-4 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg animate-pulse hover:animate-none hover:scale-110 transition-all duration-500"
-                    title="Go to top"
-                >
-                    <FaArrowUp className="w-6 h-6" />
-                </button>
-            )}
+           
 
 
 
@@ -259,10 +237,8 @@ const RedeemAndWin = () => {
                         className="md:w-[150px]  w-[100px] mb-10 opacity-100 hover:opacity-50 duration-500"
                         alt="Gem"
                     />
-                   
-                    <div className="relative w-full max-w-[520px] rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-500 to-indigo-600 p-6 shadow-xl overflow-hidden group">
-                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
-                        <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-cyan-400 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+
+                    <StylishDiv>
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3 md:gap-4">
                                 <img
@@ -283,15 +259,15 @@ const RedeemAndWin = () => {
                                 History
                             </button>
                         </div>
-                    </div>
+                    </StylishDiv>
                 </div>
 
                 <div className="py-10 w-full">
-                    <h5 className="text-white font-bold text-lg md:text-2xl  mb-6">
-                         PhonePe E-Gift Vouchers 
+                    <h5 className="text-white font-bold text-lg md:text-2xl  mb-6 flex items-center gap-4">
+                       <SiPhonepe className='text-4xl' /> PhonePe E-Gift Vouchers
                     </h5>
 
-                    <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
+                    <div className=" flex items-center justify-center pt-8 w-full relative  ">
                         <Swiper
                             spaceBetween={12}
                             pagination={{ clickable: true }}
@@ -307,7 +283,7 @@ const RedeemAndWin = () => {
                         >
                             {cards.map((card, index) => (
                                 <SwiperSlide key={index} className="flex justify-center">
-                                    <div className="bg-black/30  hover:bg-[#241c32] transition-all duration-300 
+                                    <div className="bg-black/20  hover:bg-[#241c32]/30 transition-all duration-300 
                            rounded-2xl flex flex-col items-center justify-between 
                            p-5 sm:p-6 shadow-lg hover:shadow-2xl 
                            w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
@@ -341,11 +317,11 @@ const RedeemAndWin = () => {
 
 
                 <div className="py-10 w-full">
-                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6">
-                        🛒 Amazon E-Gift Vouchers 🛒
+                    <h5 className="text-white font-bold text-lg md:text-2xl flex items-center gap-4  mb-6">
+                        <BsCart4 className='text-4xl'/> Amazon E-Gift Vouchers 
                     </h5>
 
-                    <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
+                    <div className=" flex items-center justify-center pt-8 w-full relative  ">
                         <Swiper
                             spaceBetween={12}
                             pagination={{ clickable: true }}
@@ -361,7 +337,7 @@ const RedeemAndWin = () => {
                         >
                             {cards.map((card, index) => (
                                 <SwiperSlide key={index} className="flex justify-center">
-                                    <div className="bg-[#1b1724] hover:bg-[#241c32] transition-all duration-300 
+                                    <div className="bg-black/20  hover:bg-[#241c32]/30 transition-all duration-300 
                            rounded-2xl flex flex-col items-center justify-between 
                            p-5 sm:p-6 shadow-lg hover:shadow-2xl 
                            w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
@@ -394,8 +370,8 @@ const RedeemAndWin = () => {
                 </div>
 
                 <div className="py-10 w-full">
-                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6">
-                        🎁 Exciting Coupons 🎁
+                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6 flex items-center gap-4">
+                        <RiCoupon2Fill className='text-4xl'/> Exciting Coupons 
                     </h5>
 
                     <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
@@ -453,11 +429,11 @@ const RedeemAndWin = () => {
                 </div>
 
 
-               
 
-                <div className="pb-16 w-full">
-                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-8 text-center">
-                        🚀 Earn With
+
+                <div className="py-10 w-full">
+                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-8 flex items-center gap-4">
+                        <IoRocketOutline className='text-4xl'/> Earn With
                     </h5>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -524,8 +500,8 @@ const RedeemAndWin = () => {
                 </div>
 
                 <div className="py-14 w-full">
-                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-10 text-center">
-                        🎯 Complete Tasks & Earn
+                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-10 flex items-center gap-4">
+                        <MdAddTask className='text-4xl'/> Complete Tasks & Earn
                     </h5>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -562,13 +538,11 @@ const RedeemAndWin = () => {
                     <div className="flex justify-center mt-12">
                         <button
                             onClick={() => setShowAllTasks(!showAllTasks)}
-                            className="relative group px-12 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 shadow-lg shadow-purple-600/50 hover:shadow-pink-500/70 transition-all duration-500 overflow-hidden"
+                          className="px-6 py-2 rounded-xl text-sm font-semibold 	bg-white/10 backdrop-blur-md border border-white/20 	text-purple-300 hover:text-white 	hover:bg-purple-500/30 transition-all duration-300 	shadow-lg shadow-purple-900/40"
                         >
-                            <span className="relative z-10">
+                            
                                 {showAllTasks ? "Show Less" : "View More"}
-                            </span>
-                            <span className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 opacity-0 group-hover:opacity-100 blur-xl transition duration-500"></span>
-                        </button>
+                             </button>
                     </div>
 
                 </div>
@@ -582,37 +556,37 @@ const NeedHelp = () => {
     return (
         <section className='py-10 '>
             <div className='flex flex-col gap-4 max-w-[95%] md:max-w-[85%] m-auto '>
-                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a20', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">When will I be eligible for a referral reward?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">You will be eligible for referral reward only when your friend successfully signups using your unique referral code.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a20', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">When does referral reward get credited to my account?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">The referral reward gets credited to your account within 24 hours.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a20', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">What if my friend doesn't use my referral code?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">To ensure you receive your reward, please make sure that your friend uses your referral code during the signup process. Reward will not be granted if the referral code is not used.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a20', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">What should I do if my referral reward is not credited?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">In the event that your referral reward is not credited, please don't hesitate to reach out to our support team. We are here to assist you.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a20', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">Can this referral reward policy change in future?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">Please be aware that this referral reward policy may be subject to change in future. We will notify you of any modifications.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a20', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">Can my referral cash expire?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">No, referral cash does not have an expiration date. However, please be aware that STAN reserves the right to cancel your referral cash if any suspicious activity is detected.</div>
                 </div>
-                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <div className="collapse collapse-arrow" style={{ backgroundColor: '#211f2a20', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
                     <input type="radio" name="my-accordion-2" />
                     <div className="collapse-title font-semibold text-white text-xs md:text-base">How many times in a day can I redeem referral cash?</div>
                     <div className="collapse-content text-xs md:text-sm text-white">There is no limit on the number of times you can redeem referral cash in a day.</div>

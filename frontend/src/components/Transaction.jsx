@@ -3,7 +3,7 @@ import lazyCatImage from '../images/lazy-cat-1.png'
 import { IoArrowBack } from "react-icons/io5"
 import StylishDiv from './StylishDiv';
 
-// FANCoin Component
+
 const FANCoin = () => {
     const [openId, setOpenId] = useState(null);
 
@@ -62,9 +62,9 @@ const FANCoin = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-min">
                 {transactions.map((transaction) => (
                     <StylishDiv key={transaction.id} >
-                        {/* Card Content */}
+                        
                         <div className="relative z-10 flex flex-col">
-                            {/* Title & Amount */}
+                            
                             <div className="flex items-center justify-between mb-4">
                                 <div>
                                     <h3 className="font-bold text-white text-base sm:text-lg">
@@ -84,7 +84,7 @@ const FANCoin = () => {
                                 </span>
                             </div>
 
-                            {/* Details Toggle */}
+                            
                             <div className="mt-4 pt-4 border-t border-white/10">
                                 <div
                                     className="flex items-center justify-between cursor-pointer"
@@ -139,11 +139,11 @@ const FANCoin = () => {
     )
 }
 
-// UPICard Component
+
 const UPICard = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 relative">
-            {/* Floating Glow Effects */}
+            
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
                   from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
                   animate-pulse"></div>
@@ -151,7 +151,7 @@ const UPICard = () => {
                   from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
                   animate-pulse"></div>
 
-            {/* Circular Illustration */}
+            
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
                   relative overflow-hidden shadow-lg shadow-purple-500/30">
                 <img
@@ -161,7 +161,7 @@ const UPICard = () => {
                 />
             </div>
 
-            {/* No transactions text */}
+            
             <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
                 No transactions yet !
             </h2>
@@ -174,11 +174,11 @@ const UPICard = () => {
     )
 }
 
-// PlayStore Component
+
 const PlayStore = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 relative">
-            {/* Floating Glow Effects */}
+            
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
                         from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
                         animate-pulse"></div>
@@ -186,7 +186,7 @@ const PlayStore = () => {
                         from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
                         animate-pulse"></div>
 
-            {/* Circular Illustration */}
+            
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
                         relative overflow-hidden shadow-lg shadow-purple-500/30">
                 <img
@@ -196,7 +196,7 @@ const PlayStore = () => {
                 />
             </div>
 
-            {/* No transactions text */}
+            
             <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
                 No transactions yet !
             </h2>
@@ -211,7 +211,7 @@ export default function Transaction() {
     const [isActive, setIsActive] = useState("fanCoin");
 
     const handleBackClick = () => {
-        // Navigate back to previous page
+        
         window.history.back();
     };
 
@@ -219,10 +219,10 @@ export default function Transaction() {
         <>
             <section className='w-full min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white flex flex-col'>
                 <div className='max-w-[1480px] m-auto w-full'>
-                    {/* Header */}
+                    
                     <div className="flex items-center justify-between px-3 sm:px-5 py-4 
                 bg-black/40 backdrop-blur-xl sticky top-0 z-20 shadow-md border-b border-white/10">
-                        {/* Left Side */}
+                        
                         <div className="flex items-center gap-2 sm:gap-3">
                             <button
                                 className="text-white rounded-full p-2 hover:bg-white/10 transition-all duration-300"
@@ -236,7 +236,7 @@ export default function Transaction() {
                             </h1>
                         </div>
 
-                        {/* Right Side Balance */}
+                        
                         <div className="bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white px-3 sm:px-4 py-1.5 
                   rounded-2xl flex items-center gap-2 text-sm font-semibold shadow-lg">
                             <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
@@ -246,7 +246,7 @@ export default function Transaction() {
                         </div>
                     </div>
 
-                    {/* Tabs */}
+                    
                     <div className="flex items-center justify-between text-center text-sm sm:text-base md:text-lg 
                 bg-black/30 backdrop-blur-lg px-3 sm:px-6 border-b border-white/10">
                         {[
@@ -271,7 +271,7 @@ export default function Transaction() {
                         ))}
                     </div>
 
-                    {/* Content */}
+                    
                     <div className='flex-1 min-h-screen'>
                         {
                             isActive === "fanCoin" ? <FANCoin /> : isActive === "UPI" ? <UPICard /> : <PlayStore />

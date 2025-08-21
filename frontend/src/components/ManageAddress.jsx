@@ -32,13 +32,13 @@ export default function ManageAddress() {
     })
 
     const handleBack = () => {
-        navigate(-1) // Go back to previous page
+        navigate(-1) 
     }
 
     const openModal = () => {
         setIsModalOpen(true)
         setEditingAddress(null)
-        // Reset form data when opening
+        
         setFormData({
             name: '',
             mobile: '',
@@ -82,7 +82,7 @@ export default function ManageAddress() {
         e.preventDefault()
 
         if (editingAddress) {
-            // Update existing address
+            
             const updatedAddresses = addresses.map(addr =>
                 addr.id === editingAddress.id
                     ? { ...formData, id: addr.id, mobile: `+91${formData.mobile}` }
@@ -90,7 +90,7 @@ export default function ManageAddress() {
             )
             setAddresses(updatedAddresses)
         } else {
-            // Add new address
+            
             const newAddress = {
                 ...formData,
                 id: Date.now(),
@@ -98,7 +98,7 @@ export default function ManageAddress() {
                 isDefault: formData.isDefault || addresses.length === 0
             }
 
-            // If this is set as default, remove default from others
+            
             let updatedAddresses = [...addresses]
             if (newAddress.isDefault) {
                 updatedAddresses = updatedAddresses.map(addr => ({ ...addr, isDefault: false }))
@@ -113,7 +113,7 @@ export default function ManageAddress() {
     const deleteAddress = (addressId) => {
         const addressToDelete = addresses.find(addr => addr.id === addressId)
         if (addressToDelete.isDefault && addresses.length > 1) {
-            // If deleting default address and there are others, make first one default
+            
             const updatedAddresses = addresses
                 .filter(addr => addr.id !== addressId)
                 .map((addr, index) => ({ ...addr, isDefault: index === 0 }))
@@ -133,7 +133,7 @@ export default function ManageAddress() {
     return (
         <section className='bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]'>
             <div className="min-h-screen max-w-[1480px] m-auto w-full  text-white flex flex-col">
-                {/* Header */}
+                
                 <div className="flex items-center justify-between px-2 sm:px-4 py-4 bg-black/30 backdrop-blur-xl sticky top-0 z-20 shadow-lg ">
                     <div className="flex items-center gap-2 sm:gap-3">
                         <button
@@ -147,7 +147,7 @@ export default function ManageAddress() {
                             Manage Addresses
                         </h1>
                     </div>
-                    {/* Add Address Button */}
+                    
                     <button
                         className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
              hover:from-[#8354f8] hover:to-[#9f78ff] 
@@ -161,12 +161,12 @@ export default function ManageAddress() {
                     </button>
                 </div>
 
-                {/* Main Content - Address Cards */}
+                
                 <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
                     {addresses.length === 0 ? (
-                        // Empty state
+                        
                         <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 relative">
-                            {/* Floating Glow Effects */}
+                            
                             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
                                     from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
                                     animate-pulse"></div>
@@ -174,7 +174,7 @@ export default function ManageAddress() {
                                     from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
                                     animate-pulse"></div>
 
-                            {/* Circular Illustration */}
+                            
                             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
                                     relative overflow-hidden shadow-lg shadow-purple-500/30">
                                 <img
@@ -184,7 +184,7 @@ export default function ManageAddress() {
                                 />
                             </div>
 
-                            {/* No transactions text */}
+                            
                             <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
                                 No addresses added!
                             </h2>
@@ -193,12 +193,12 @@ export default function ManageAddress() {
                             </p>
                         </div>
                     ) : (
-                        // Address cards
+                        
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                             {addresses.map((address) => (
                              <StylishDiv key={address.id}>
 
-                                    {/* Default Ribbon */}
+                                    
                                     {address.isDefault && (
                                         <div className="absolute top-0 right-0 w-32 h-24 overflow-hidden pointer-events-none">
                                             <div className="absolute right-[-19px] top-[7px] rotate-45">
@@ -209,9 +209,9 @@ export default function ManageAddress() {
                                         </div>
                                     )}
 
-                                    {/* Card Content */}
+                                    
                                     <div className="relative z-10 flex flex-col">
-                                        {/* Name & Mobile */}
+                                        
                                         <div className="flex items-start justify-between mb-5">
                                             <div>
                                                 <h3 className="text-white font-bold text-lg tracking-wide">{address.name}</h3>
@@ -219,13 +219,13 @@ export default function ManageAddress() {
                                             </div>
                                         </div>
 
-                                        {/* Address */}
+                                        
                                         <div className="mb-6">
                                             <p className="text-gray-300 text-sm leading-relaxed">{address.addressLine1}</p>
                                             <p className="text-gray-500 text-sm leading-relaxed">{address.addressLine2}</p>
                                         </div>
 
-                                        {/* Actions */}
+                                        
                                         <div className="flex items-center justify-between mt-auto">
                                             <button
                                                 onClick={() => deleteAddress(address.id)}
@@ -250,14 +250,14 @@ export default function ManageAddress() {
                     )}
                 </div>
 
-                {/* Address Add/Edit Modal */}
+                
                 {(isModalOpen || isEditModalOpen) && (
                     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50">
                         <div className="bg-gradient-to-br from-[#1a1a1d]/80 to-[#2c2c34]/80 
                     backdrop-blur-2xl border border-white/10 rounded-2xl 
                     shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fadeIn">
 
-                            {/* Modal Header */}
+                            
                             <div className="flex items-center justify-between p-5 border-b border-white/10">
                                 <h2 className="text-xl md:text-2xl font-semibold text-white tracking-wide">
                                     {editingAddress ? '✏️ Edit Address' : '➕ Add Address'}
@@ -271,12 +271,12 @@ export default function ManageAddress() {
                                 </button>
                             </div>
 
-                            {/* Modal Body */}
+                            
                             <form
                                 onSubmit={handleSubmit}
                                 className="p-6 space-y-5"
                             >
-                                {/* Name */}
+                                
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Name
@@ -293,7 +293,7 @@ export default function ManageAddress() {
                                     />
                                 </div>
 
-                                {/* Mobile */}
+                                
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Mobile No.
@@ -310,7 +310,7 @@ export default function ManageAddress() {
                                     />
                                 </div>
 
-                                {/* Address Line 1 */}
+                                
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Address Line 1
@@ -327,7 +327,7 @@ export default function ManageAddress() {
                                     />
                                 </div>
 
-                                {/* Address Line 2 */}
+                                
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Address Line 2
@@ -344,7 +344,7 @@ export default function ManageAddress() {
                                     />
                                 </div>
 
-                                {/* Landmark */}
+                                
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Landmark
@@ -361,7 +361,7 @@ export default function ManageAddress() {
                                     />
                                 </div>
 
-                                {/* Pincode */}
+                                
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Pincode
@@ -378,7 +378,7 @@ export default function ManageAddress() {
                                     />
                                 </div>
 
-                                {/* Default Address */}
+                                
                                 <div className="flex items-center gap-3">
                                     <input
                                         type="checkbox"
@@ -392,7 +392,7 @@ export default function ManageAddress() {
                                     </label>
                                 </div>
 
-                                {/* Submit Button */}
+                                
                                 <button
                                     type="submit"
                                     className="w-full bg-gradient-to-r from-[#6d28d9] to-[#a78bfa] 
