@@ -5,12 +5,12 @@ import stanLogo from "../images/stan-logo.svg"
 
 const Footer = () => {
   return (
-    <footer className=" backdrop-blur-lg bg-black/30 text-white px-4">
-      <div className='max-w-[1480px] m-auto w-full'>
+    <footer className=" backdrop-blur-lg bg-black/30 text-white ">
+      <div className='max-w-[95%] md:max-w-[85%] m-auto w-full'>
 
       
       {/* Main Footer Content */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+      <div className="py-8 sm:py-12 lg:py-16">
         <div className="">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             

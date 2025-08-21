@@ -165,6 +165,7 @@ html {
   background: #a8a8a8;
 }
 
+
 /* Animation for typing indicator */
 @keyframes bounce {
   0%, 80%, 100% {
@@ -327,4 +328,17 @@ html {
   100% {
     background-position: -200% 0;
   }
+}
+
+
+/* Force inline SVGs to use currentColor */
+.svg-current-color path,
+.svg-current-color rect,
+.svg-current-color circle,
+.svg-current-color polygon,
+.svg-current-color line,
+.svg-current-color polyline,
+.svg-current-color ellipse {
+  fill: currentColor !important;
+  stroke: currentColor !important;
 }
