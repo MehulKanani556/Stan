@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaWallet } from "react-icons/fa";
-import { HiMenu, HiX } from "react-icons/hi"; // Added close icon
+import { HiMenu, HiX } from "react-icons/hi";
 import { RiHome4Line, RiHome4Fill } from "react-icons/ri";
 import { HiOutlineMicrophone, HiMicrophone } from "react-icons/hi";
 import { IoGameControllerOutline, IoGameController } from "react-icons/io5";
@@ -24,7 +24,7 @@ import { PiQuestionMarkFill } from "react-icons/pi";
 import { MdLogout } from "react-icons/md";
 import { decryptData } from '../Utils/encryption';
 
-import { ReactComponent as YOYO_LOGO } from "../images/YOYO-WITH-TEXT.svg"
+import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
 
 
 export default function Header() {
@@ -80,14 +80,15 @@ export default function Header() {
                 <div className="drawer max-w-[95%] md:max-w-[85%] m-auto w-full  ">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
-                        {/* Navbar */}
-                        <div className="navbar  w-full px-4 justify-between">
-                            {/* Left Section - Logo */}
+                       
+                        <div className="navbar  w-full px-0 justify-between">
+                           
                             <div className="flex items-center gap-2 flex-none">
-                                <YOYO_LOGO className="svg-current-color h-8 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                                <YOYO_LOGO className="svg-current-color h-12 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                                {/* <span className='text-[#ab99e1] font-semibold text-4xl'>YOYO</span> */}
                             </div>
 
-                            {/* Center Section - Menu (Desktop) */}
+                           
                             <div className="flex-1 hidden md:flex justify-center">
                                 <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg">
                                     <li>
@@ -119,7 +120,7 @@ export default function Header() {
                                 </ul>
                             </div>
 
-                            {/* Right Section */}
+                           
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 item-center'>
@@ -138,7 +139,7 @@ export default function Header() {
                                         </p>
                                     </div>
 
-                                    {/* Dropdown Menu */}
+                                   
                                     {isDropdownOpen && (
                                         <div className="absolute right-0 mt-2 w-48 bg-[#221f2a] rounded-lg shadow-lg border border-gray-700 z-50">
                                             <div className="py-2">
@@ -158,7 +159,7 @@ export default function Header() {
                                                             Profile
                                                         </button>
 
-                                                        <button
+                                                        {/* <button
                                                             onClick={() => {
                                                                 setIsDropdownOpen(false);
                                                                 navigate('/settings');
@@ -167,7 +168,7 @@ export default function Header() {
                                                         >
                                                             <MdSettings className="w-5 h-5 text-white" />
                                                             Settings
-                                                        </button>
+                                                        </button> */}
 
                                                         <button
                                                             onClick={handleLogoutClick}
@@ -194,7 +195,7 @@ export default function Header() {
                                     )}
                                 </div>
 
-                                {/* Mobile Menu Icon at far right */}
+                               
                                 <label
                                     htmlFor="my-drawer-3"
                                     aria-label="open sidebar"
@@ -206,24 +207,38 @@ export default function Header() {
                         </div>
                     </div>
 
-                    {/* Sidebar Drawer */}
+
+
+                   
                     <div className="drawer-side">
                         <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay"></label>
-                        <div className="bg-[#151517] min-h-full w-80 p-4 relative ">
+                        <div className="min-h-full w-80 p-4 relative text-white bg-gradient-to-b from-[#100f14]/95 via-[#16141c]/95 to-[#0e0d12]/95 backdrop-blur-xl border-l border-white/5 shadow-[0_10px_40px_-10px_rgba(171,153,225,0.35)]">
+
+                            {/* ambient glows */}
+                            <div aria-hidden className="pointer-events-none absolute -top-10 -left-10 h-40 w-40 bg-[#ab99e1]/20 rounded-full blur-3xl"></div>
+                            <div aria-hidden className="pointer-events-none absolute bottom-24 -right-10 h-48 w-48 bg-[#6b5bcc]/20 rounded-full blur-3xl"></div>
+
+                            {/* brand */}
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <YOYO_LOGO className="svg-current-color h-7 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                                </div>
+                                <span className="text-[10px] tracking-wider text-white/50">v1</span>
+                            </div>
 
                             {isLoggedIn && (
-                                <div onClick={handleProfileClick} className="bg-[#221f2a] px-3 py-2 rounded-lg flex items-center justify-between cursor-pointer">
+                                <div onClick={handleProfileClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[#ab99e1]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
                                     <div className='flex gap-4 items-center'>
-                                        <div className="w-12 h-12 rounded-full border-2 border-white overflow-hidden flex items-center justify-center">
+                                        <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center shadow-[0_0_0_3px_rgba(171,153,225,0.15)_inset]">
                                             <img
                                                 src={currentUser?.profilePic || authUser?.photo || stanUser}
                                                 className="w-full h-full object-cover object-top"
                                                 alt="User"
                                             />
                                         </div>
-                                        <div className='flex flex-col gap-1 '>
+                                        <div className='flex flex-col gap-0.5 '>
                                             <h2 className="text-white text-sm font-medium capitalize">{currentUser?.userName || currentUser?.fullName || authUser?.userName || authUser?.fullName || 'Profile'}</h2>
-                                            <p className="text-white text-xs font-light">View Profile</p>
+                                            <p className="text-white/60 text-[11px]">View Profile</p>
                                         </div>
                                     </div>
                                     <button className='text-[#ebe8f1] text-lg'>
@@ -233,7 +248,7 @@ export default function Header() {
                             )}
 
 
-                            {/* Close Button */}
+                           
                             <label
                                 htmlFor="my-drawer-3"
                                 className="w-full flex mt-3 justify-end cursor-pointer text-white hover:text-[#ab99e1]"
@@ -242,27 +257,27 @@ export default function Header() {
                             </label>
 
                             <div className='w-full flex flex-col gap-5'>
-                                <div className='w-full mt-5'>
+                                <div className='w-full mt-4'>
 
                                     <div className='flex flex-wrap justify-between gap-y-3'>
 
-                                        <NavLink to="/rewards" className='w-[48%] bg-[#221f2a] px-3 py-2 rounded flex items-center gap-2 text-[13px]'>
-                                            <SlBadge /> Rewards Offers
+                                        <NavLink to="/rewards" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <SlBadge className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Rewards Offers
                                         </NavLink>
-                                        <NavLink to="/transaction" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
-                                            <CgNotes />  Transaction
+                                        <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
                                         </NavLink>
-                                        <NavLink to="/chatter" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
-                                            <BsChatHeartFill />  GG Talks
+                                        <NavLink to="/chatter" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
-                                        <NavLink to="/support" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
-                                            <BiSupport />  Support
+                                        <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
                                         </NavLink>
-                                        <NavLink className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
-                                            <PiQuestionMarkFill />  Guides
+                                        <NavLink className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides
                                         </NavLink>
-                                        <NavLink to="/games" className='w-[48%] bg-[#221f2a] px-3 py-2 text-sm rounded flex items-center gap-2'>
-                                            <IoGameController /> Free Games
+                                        <NavLink to="/games" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <IoGameController className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Free Games
                                         </NavLink>
 
                                     </div>
@@ -273,12 +288,12 @@ export default function Header() {
 
                             <div className='absolute bottom-4 left-0 w-full flex items-center justify-center'>
                                 {isLoggedIn ? (
-                                    <button onClick={handleLogoutClick} className="flex items-center justify-center text-md gap-3 cursor-pointer text-white">
-                                        <MdLogout /> Logout
+                                    <button onClick={handleLogoutClick} className="flex items-center justify-center text-sm gap-2 cursor-pointer text-black bg-gradient-to-r from-[#6b5bcc] to-[#ab99e1] px-5 py-2 rounded-full font-medium shadow-[0_10px_30px_-12px_rgba(171,153,225,0.55)] hover:from-[#7a69d9] hover:to-[#b9a9ee] transition-all">
+                                        <MdLogout className='text-black/80' /> Logout
                                     </button>
                                 ) : (
-                                    <button onClick={() => navigate('/login')} className="flex items-center justify-center text-md gap-3 cursor-pointer text-white">
-                                        <MdLogout /> Sign In
+                                    <button onClick={() => navigate('/login')} className="flex items-center justify-center text-sm gap-2 cursor-pointer text-black bg-gradient-to-r from-[#6b5bcc] to-[#ab99e1] px-5 py-2 rounded-full font-medium shadow-[0_10px_30px_-12px_rgba(171,153,225,0.55)] hover:from-[#7a69d9] hover:to-[#b9a9ee] transition-all">
+                                        <MdLogout className='text-black/80' /> Sign In
                                     </button>
                                 )}
                             </div>
@@ -288,7 +303,7 @@ export default function Header() {
                 </div>
             </header>
 
-            <footer className="bg-[#1c1b1e] text-white  py-2 rounded-t-2xl fixed bottom-0 w-full md:hidden block z-50">
+            <footer className="bg-black/30 backdrop-blur-xl text-white  py-2 rounded-t-2xl fixed bottom-0 w-full md:hidden block z-50">
                 <ul className="flex  items-center justify-evenly">
                     <li>
                         <NavLink to="/" className="flex items-center justify-center flex-col gap-1 text-xs">

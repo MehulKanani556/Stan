@@ -61,7 +61,7 @@ function AppContent() {
           </SocketProvider>
         </SnackbarProvider>
       </Provider>
-      {!isAuthPage || !showFooter && <Footer />}
+      {(!isAuthPage || !showFooter) && <Footer />}
     </>
   );
 }
