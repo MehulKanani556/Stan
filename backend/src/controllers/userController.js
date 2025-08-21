@@ -3,7 +3,7 @@ import { ThrowError } from "../utils/ErrorUtils.js"
 import mongoose from "mongoose"
 import bcrypt from "bcryptjs";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendForbiddenResponse, sendCreatedResponse, sendUnauthorizedResponse, sendNotFoundResponse } from '../utils/ResponseUtils.js';
-import { getReceiverSocketId, io } from "../socket/socket.js";
+import { getReceiverSocketId } from "../socketManager/SocketManager.js";
 import { decryptData, encryptData } from "../middlewares/incrypt.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
@@ -488,7 +488,7 @@ export const followOrUnfollow = async (req, res) => {
             const receiverSocketId = getReceiverSocketId(followingUserId);
 
             if (receiverSocketId) {
-                io.to(receiverSocketId).emit("notification", notification);
+                global.io.to(receiverSocketId).emit("notification", notification);
             }
 
             return res.status(200).json({

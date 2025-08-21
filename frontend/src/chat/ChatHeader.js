@@ -1,16 +1,18 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
-import { decryptData } from '../Utils/encryption';
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function ChatHeader({ onMenuClick, showUserList }) {
-    const { selectedUser, onlineUsers } = useSelector((state) => state.manageState);
+    const { selectedUser, onlineUsers, typingUsers } = useSelector((state) => state.manageState);
+    
+    const isUserOnline = selectedUser && onlineUsers.includes(selectedUser._id);
+    const isUserTyping = selectedUser && typingUsers && typingUsers.includes(selectedUser._id);
     
     return (
-        <div className="flex items-center gap-3 px-4 py-[6px] bg-gray-800 text-white shadow-md border-b border-gray-800 h-16">
+        <div className="flex items-center gap-3 px-4 py-[6px] bg-gray-800 text-white shadow-md border-b border-gray-700 h-16">
             {/* Mobile menu button */}
             <button
-                className="md:hidden p-2 -ml-2 rounded-lg hover:bg-gray-800 transition-colors"
+                className="md:hidden p-2 -ml-2 rounded-lg hover:bg-gray-700 transition-colors"
                 onClick={onMenuClick}
             >
                 <IoMdArrowRoundBack className='text-2xl' />
@@ -19,7 +21,7 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
             {selectedUser ? (
                 <div className="flex items-center gap-3 flex-1">
                     {/* User avatar */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 relative">
                         {selectedUser.profilePhoto ? (
                             <img
                                 src={selectedUser.profilePhoto}
@@ -31,42 +33,28 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                                 {selectedUser.name.charAt(0)}
                             </div>
                         )}
+                        {/* Online indicator */}
+                        {isUserOnline && (
+                            <div className="w-3 h-3 bg-green-400 rounded-full absolute -right-0.5 -bottom-0.5 border-2 border-gray-800"></div>
+                        )}
                     </div>
 
                     {/* User info */}
                     <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-lg truncate capitalize">{selectedUser.name}</h3>
-                        <div className="flex items-center gap-2 text-blue-200 text-sm">
-                            {onlineUsers.includes(selectedUser._id) && (
-                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <div className="flex items-center gap-2 text-sm">
+                            {isUserTyping && (
+                                <div className="flex items-center gap-2 text-green-400">
+                                    <div className="flex space-x-1">
+                                        <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-bounce"></div>
+                                        <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                        <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                    </div>
+                                    <span className="font-medium">typing</span>
+                                </div>
                             )}
-                            <span>{onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}</span>
                         </div>
                     </div>
-
-                    {/* Action buttons */}
-                    {/* <div className="flex items-center gap-2">
-                        Video call button
-                        <button className="p-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                        </button>
-                        
-                        Voice call button
-                        <button className="p-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                        </button>
-                        
-                        More options button
-                        <button className="p-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                            </svg>
-                        </button>
-                    </div> */}
                 </div>
             ) : (
                 <div className="flex items-center justify-center flex-1">

@@ -22,20 +22,17 @@ export default function ChatMessage({ isTyping }) {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, isTyping]);
 
     // Set selected user and their messages when users update or selectedUser changes
     useEffect(() => {
         if (allMessageUsers && allMessageUsers.length > 0 && !selectedUser) {
-            // Select the first user by default if none is selected
             dispatch(setSelectedUser(allMessageUsers[0]));
         } else if (selectedUser) {
-            // If a user is selected, find their latest data from allMessageUsers and update messages
             const currentSelectedUser = allMessageUsers.find(
                 (user) => user._id === selectedUser._id
             );
             if (currentSelectedUser) {
-                // Sort messages by createdAt in ascending order to display chronologically
                 const sortedMessages = [...(currentSelectedUser.messages || [])].sort(
                     (a, b) => new Date(a?.createdAt) - new Date(b?.createdAt)
                 );
@@ -108,7 +105,7 @@ export default function ChatMessage({ isTyping }) {
                                                 px-4 py-3 rounded-2xl shadow-sm relative
                                                 ${isMyMessage
                                                     ? "bg-blue-600 text-white rounded-br-md ml-auto"
-                                                    : "bg-gray-900 text-gray-200 rounded-bl-md border border-gray-800"
+                                                    : "bg-gray-800 text-gray-200 rounded-bl-md border border-gray-700"
                                                 }
                                             `}
                                         >
@@ -123,8 +120,6 @@ export default function ChatMessage({ isTyping }) {
                                                 ${isMyMessage ? "text-blue-200" : "text-gray-400"}
                                             `}>
                                                 <span>{formatMessageTime(msg.createdAt || msg.time)}</span>
-
-
                                             </div>
                                         </div>
                                     </div>
@@ -147,9 +142,42 @@ export default function ChatMessage({ isTyping }) {
                             </div>
                         </div>
                     )}
+
+                    {/* Enhanced Typing Indicator */}
+                    {isTyping && selectedUser && (
+                        <div className="flex items-end gap-2 justify-start px-3">
+                            {/* Avatar */}
+                            <div className="w-8 h-8 flex-shrink-0">
+                                {selectedUser.profilePhoto ? (
+                                    <img
+                                        src={selectedUser.profilePhoto}
+                                        alt="profile"
+                                        className="w-8 h-8 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 capitalize text-sm font-medium">
+                                        {selectedUser.name.charAt(0)}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Typing bubble */}
+                            <div className="bg-gray-800 border border-gray-700 px-4 py-3 rounded-2xl rounded-bl-md max-w-[200px]">
+                                <div className="flex items-center gap-2">
+                                    <div className="flex space-x-1">
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                    </div>
+                                    <span className="text-sm text-gray-400">{selectedUser.name} is typing</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <div ref={messagesEndRef} />
                 </div>
             ) : (
-                <div className="flex-1 flex items-center justify-center bg-black">
+                <div className="flex-1 flex items-center justify-center bg-gray-950">
                     <div className="text-center max-w-sm mx-auto px-4">
                         <div className="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-800">
                             <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,19 +193,6 @@ export default function ChatMessage({ isTyping }) {
                                 Tap the menu button to view conversations
                             </p>
                         </div>
-                    </div>
-                </div>
-            )}
-            {/* Typing Indicator */}
-            {isTyping && selectedUser && (
-                <div className="px-4 py-2 ms-10 bg-transparent bg-blur-sm">
-                    <div className="flex items-center gap-2  text-sm text-gray-500">
-                        <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        </div>
-                        <span>{selectedUser.name} is typing</span>
                     </div>
                 </div>
             )}
