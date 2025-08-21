@@ -31,8 +31,8 @@ function AppContent() {
 
   return (
     <>
-      {!isAuthPage && <Header />}
       <Provider store={store}>
+      {!isAuthPage && <Header />}
         <SnackbarProvider
           maxSnack={3}
           anchorOrigin={{
@@ -60,8 +60,8 @@ function AppContent() {
           </Routes>
           </SocketProvider>
         </SnackbarProvider>
-      </Provider>
       {!isAuthPage || !showFooter && <Footer />}
+      </Provider>
     </>
   );
 }
