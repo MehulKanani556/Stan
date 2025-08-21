@@ -5,7 +5,10 @@ import stanLogo from "../images/stan-logo.svg"
 
 const Footer = () => {
   return (
-    <footer className="container bg-black text-white">
+    <footer className=" backdrop-blur-lg bg-black/30 text-white px-4">
+      <div className='max-w-[1480px] m-auto w-full'>
+
+      
       {/* Main Footer Content */}
       <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <div className="">
@@ -103,6 +106,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

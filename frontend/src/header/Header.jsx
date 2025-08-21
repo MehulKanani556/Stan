@@ -75,7 +75,7 @@ export default function Header() {
 
     return (
         <>
-            <header className='bg-black sticky w-full top-0 z-50 '>
+            <header className='bg-black  sticky w-full top-0 z-50 '>
                 <div className="drawer">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
