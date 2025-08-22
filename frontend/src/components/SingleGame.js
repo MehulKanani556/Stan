@@ -12,6 +12,7 @@ import game2 from '../images/game_img3.jpeg'
 import game3 from '../images/game_img4.jpeg'
 import game4 from '../images/game_img5.jpeg'
 import gtav from '../images/gtalogo.avif'
+import { useParams } from 'react-router-dom'
 
 
 const SingleGame = () => {
@@ -22,7 +23,8 @@ const SingleGame = () => {
   let sliderRef2 = useRef(null);
   const videoRefs = useRef([]);
   const [slidesToShow, setSlidesToShow] = useState(5)
-
+  const { id } = useParams()
+  
 
 
   useEffect(() => {

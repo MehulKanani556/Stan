@@ -27,22 +27,39 @@ import ReviewHome from '../components/ReviewHome';
 import MultiHome from '../components/MultiHome';
 import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllGames } from '../Redux/Slice/game.slice';
+import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(null);
   const scrollContainerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const gameData = useSelector((state)=> state?.game?.games)
   const disaptch = useDispatch()
+  const cateData = useSelector((state)=> state?.game?.category)
+  const [mainGameData, setMainGameData] = useState(gameData)
+  const navigate = useNavigate()
 
-  console.log("Hello Bachho" , gameData);
+  // console.log("Hello Bachho" , gameData);
+  // console.log("cateData" , cateData);
 
   useEffect(()=>{
     disaptch(getAllGames())
   },[])
+
+  useEffect(()=>{
+    disaptch(getAllCategories())
+    .then((value)=>{
+      //  console.log("hihi" , );
+      //  setActiveTab(value?.payload[0]?.categoryName)
+    })
+  },[])
+
+  useEffect(()=>{
+    setMainGameData(gameData)
+  },[gameData])
   
 
   const categories = [
@@ -148,7 +165,19 @@ export default function Home() {
     }
   };
 
-
+  const handle = (cate) => {
+     setActiveTab(cate)
+     if(cate === null){
+        setMainGameData(mainGameData)
+     }
+     else{
+       const filter = gameData?.filter((ele)=>{
+          return ele?.category?.categoryName === cate
+       })
+       console.log("YESYE", filter);
+       setMainGameData(filter)
+    }
+  }
 
   return (
     <>
@@ -227,24 +256,24 @@ export default function Home() {
           <div className='py-4 sm:py-6 md:py-8 lg:py-10 w-full'>
             {/* Tab buttons */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
-              {categories.map((category, index) => (
+              {cateData?.map((element) => (
                 <button
-                  key={index}
+                  key={element?._id}
                   className={`
                    px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
                    rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
                    transition-all duration-200 ease-out
                    border border-transparent
                    whitespace-nowrap
-                   ${activeTab === index
+                   ${activeTab === element?.categoryName
                       ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
                       : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
                     }
                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                  `}
-                  onClick={() => setActiveTab(index)}
+                 onClick={() =>  handle(element?.categoryName)}
                 >
-                  {category}
+                  {element?.categoryName}
                 </button>
               ))}
             </div>
@@ -276,10 +305,11 @@ export default function Home() {
                     onMouseMove={handleMouseMove}
                   >
                     <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max px-4 py-8'>
-                      {gameData?.map((element) => (
+                      {mainGameData?.map((element) => (
+                        <div onClick={()=> navigate(`/single/${element?._id}`)}>
                         <StylishDiv>
                         <div
-                          key={element?.id}
+                          key={element?._id}
                           className="group relative   overflow-hidden  transition-all duration-300 w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 "
                         >
                           <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
@@ -327,6 +357,7 @@ export default function Home() {
                           </div>
                         </div>
                         </StylishDiv>
+                        </div>
                       ))}
                     </div>
                   </div>
