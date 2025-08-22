@@ -104,6 +104,19 @@ export const getGameById = createAsyncThunk(
     }
 );
 
+// ********* Category ******
+export const getAllCategories = createAsyncThunk(
+    "game/getAllCategories",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await axiosInstance.get("/getAllCategories");
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || err.message);
+        }
+    }
+);
+
 const gameSlice = createSlice({
     name: "game",
     initialState: {
@@ -114,6 +127,7 @@ const gameSlice = createSlice({
         error: null,
         success: null,
         pagination: null,
+        category:[]
     },
     reducers: {
         clearGameError: (state) => {
@@ -223,7 +237,21 @@ const gameSlice = createSlice({
             .addCase(getGameById.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
+
+            // ********* Category ******
+            .addCase(getAllCategories.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAllCategories.fulfilled, (state, action) => {
+                state.loading = false;
+                state.category = action.payload;
+            })
+            .addCase(getAllCategories.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
     },
 });
 
