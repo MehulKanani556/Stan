@@ -13,9 +13,7 @@ const manageStateSlice = createSlice({
   initialState,
   reducers: {
 
-    setSelectedUser: (state, action) => {
-      console.log("aaaa",action.payload);
-      
+    setSelectedUser: (state, action) => {      
       state.selectedUser = action.payload;
     },
     setMessages: (state, action) => {
