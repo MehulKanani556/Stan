@@ -71,7 +71,7 @@ export default function Header() {
         if (id) {
             dispatch(logoutUser(id));
         }
-        navigate('/login');
+        // navigate('/login');
     };
 
     return (

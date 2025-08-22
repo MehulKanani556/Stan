@@ -118,7 +118,7 @@ function TopGames() {
   }, [game,freeGame]); // Empty dependency array means this runs only once
 
   return (
-    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto py-12 sm:py-16 md:py-20">
+    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-16 md:pb-20">
       <div className="">
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
@@ -136,16 +136,30 @@ function TopGames() {
             <div key={i}>
               <div className="">
                 {/* Section Header */}
-                <div className="flex items-center justify-between mb-6 sm:mb-8">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1]">
-                    {section.title}
-                  </h3>
-                  <div className="w-12 h-12 rounded-full bg-[#ab99e1]/20 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-[#ab99e1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <div className="flex items-center gap-4 mb-6 sm:mb-8">
+                  {/* Icon container */}
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
+                    <svg
+                      className="w-6 h-6 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
                     </svg>
                   </div>
+
+                  {/* Title */}
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1] tracking-wide">
+                    {section.title}
+                  </h3>
                 </div>
+
 
                 {/* Games List */}
                 {console.log(section.items , length)}

@@ -258,7 +258,7 @@ const SingleGame = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div className="bg-black/15 p-6 rounded-lg shadow-lg">
-                      <h3 className="text-xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
+                      <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
                       <div className="flex flex-wrap gap-3">
                         {['Action', 'Adventure', 'Open World'].map((genre, index) => (
                           <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer">
@@ -269,7 +269,7 @@ const SingleGame = () => {
                     </div>
 
                     <div className="bg-black/15 p-6 rounded-lg shadow-lg ">
-                      <h3 className="text-xl font-semibold mb-4 text-[#ab99e1]">Features</h3>
+                      <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Features</h3>
                       <div className="flex flex-wrap gap-3">
                         {['Achievements', 'Co-op', 'Multiplayer', 'Single Player'].map((feature, index) => (
                           <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer">
@@ -281,9 +281,9 @@ const SingleGame = () => {
                   </div>
 
                   <div className="bg-black/15 p-8 rounded-lg shadow-lg mb-8">
-                    <h3 className="text-2xl font-bold mb-2 text-[#ab99e1]">Grand Theft Auto V Enhanced</h3>
+                    <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#ab99e1]">Grand Theft Auto V Enhanced</h3>
                     <p className="mb-4">(also Includes Grand Theft Auto V Legacy)</p>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 text-sm md:text-base">
                       This purchase includes both GTAV Enhanced and GTAV Legacy for PC (included for hardware that does not meet the minimum system requirements needed for the upgrades in GTAV Enhanced.)
                     </p>
                   </div>
@@ -292,7 +292,7 @@ const SingleGame = () => {
 
                 <div className="bg-black/20 p-8 rounded-lg shadow-lg w-full">
                   {/* Header */}
-                  <h3 className="text-xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#ab99e1]">Windows</h3>
+                  <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#ab99e1]">Windows</h3>
                   <h4 className="text-base font-semibold mb-6">Minimum Recommended</h4>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

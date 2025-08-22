@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Header from '../header/Header'
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -26,6 +26,8 @@ import Trailer from '../components/Trailer';
 import ReviewHome from '../components/ReviewHome';
 import MultiHome from '../components/MultiHome';
 import StylishDiv from '../components/StylishDiv';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllGames } from '../Redux/Slice/game.slice';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -33,6 +35,15 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const gameData = useSelector((state)=> state?.game?.games)
+  const disaptch = useDispatch()
+
+  console.log("Hello Bachho" , gameData);
+
+  useEffect(()=>{
+    disaptch(getAllGames())
+  },[])
+  
 
   const categories = [
     "Thriller",
@@ -128,7 +139,6 @@ export default function Home() {
     scrollContainerRef.current.scrollLeft = scrollLeft - walk;
   };
 
-  // Function to scroll to the right
   const scrollRight = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({
@@ -137,6 +147,8 @@ export default function Home() {
       });
     }
   };
+
+
 
   return (
     <>
@@ -212,7 +224,7 @@ export default function Home() {
         </div>
 
         <div className=" mx-auto flex flex-col items-center sm:max-w-full">
-          <div className='py-6 sm:py-8 md:py-10 lg:py-12 xl:py-14 w-full'>
+          <div className='py-4 sm:py-6 md:py-8 lg:py-10 w-full'>
             {/* Tab buttons */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
               {categories.map((category, index) => (
@@ -244,7 +256,7 @@ export default function Home() {
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
                     <div>
                       <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>
-                        Popular {categories[activeTab]} Games
+                         {categories[activeTab]} Games
                       </p>
                     </div>
                     <div
@@ -264,16 +276,16 @@ export default function Home() {
                     onMouseMove={handleMouseMove}
                   >
                     <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max px-4 py-8'>
-                      {gamesByCategory[activeTab]?.map((game) => (
+                      {gameData?.map((element) => (
                         <StylishDiv>
                         <div
-                          key={game.id}
+                          key={element?.id}
                           className="group relative   overflow-hidden  transition-all duration-300 w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 "
                         >
                           <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
                             <img
-                              src={game.image}
-                              alt={game.title}
+                              src={element?.cover_image?.url}
+                              alt=""
                               className='w-full h-full object-cover '
                             />
                             <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
@@ -281,18 +293,18 @@ export default function Home() {
                             <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
                               <div className='flex items-center gap-1.5 sm:gap-2'>
                                 <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-[#221f2a] text-[#ab99e1] tracking-wide font-medium'>
-                                  {game.tag}
+                                  {element?.tags[0]}
                                 </span>
-                                {game.discount > 0 && (
+                                {element.discount > 0 && (
                                   <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-green-500/20 text-green-400 tracking-wide font-medium'>
-                                    -{game.discount}%
+                                    -{element.discount}%
                                   </span>
                                 )}
                               </div>
                             </div>
 
                             <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
-                              <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{game.title}</p>
+                              <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{element?.title}</p>
                             </div>
                           </div>
 
@@ -300,15 +312,15 @@ export default function Home() {
                             <div>
                               <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
                               <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-                                ₹{game.price.toLocaleString('en-IN')}
-                                {game.discount > 0 && (
+                                ₹{element?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                                {/* {element.discount > 0 && (
                                   <span className='ml-2 line-through text-gray-400 text-xs'>
-                                    ₹{(game.price / (1 - game.discount / 100)).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                    ₹{(element?.platforms?.windows?.price / (1 - element?.discount / 100))?.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                                   </span>
-                                )}
+                                )} */}
                               </p>
                             </div>
-                            <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-[#ab99e1] text-black font-medium hover:bg-[#b8a8e6] transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
+                            <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
                               Buy
                               <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
                             </button>
@@ -335,7 +347,7 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover z-0 transform transition-transform duration-500 ease-in-out group-hover:scale-105"
           />
 
-          <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left text-white container">
+          <div className="relative z-10 w-full max-w-[95%] md:max-w-[85%] mx-auto flex flex-col items-center md:items-start text-center md:text-left text-white ">
             <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 md:mb-3 leading-tight">
               100+ games, worlds. Explore them all with Stan
             </h2>

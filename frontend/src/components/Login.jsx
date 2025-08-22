@@ -80,7 +80,7 @@ const Login = () => {
       onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
         try {
           const res = await dispatch(register(values));
-          if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
+          if (res.meta.requestStatus === "fulfilled" && res.payload?.success) {
             navigate("/");
             resetForm();
           } else {
