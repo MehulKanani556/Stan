@@ -633,19 +633,3 @@ export const getPopularGames = function (req, res) {
         }
     })();
 };
-
-// Create a new Action game (ensures the "action" tag is present)
-export const createActionGame = function (req, res) {
-    try {
-        let existingTags = [];
-        if (req.body && req.body.tags) {
-            existingTags = typeof req.body.tags === "string" ? JSON.parse(req.body.tags) : req.body.tags;   
-        }
-        if (!Array.isArray(existingTags)) existingTags = [];
-        if (!existingTags.includes("action")) existingTags.push("action");
-        req.body.tags = JSON.stringify(existingTags);
-    } catch {
-        req.body.tags = JSON.stringify(["action"]);
-    }
-    return createGame(req, res);
-};

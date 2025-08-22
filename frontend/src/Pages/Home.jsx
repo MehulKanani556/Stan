@@ -224,7 +224,7 @@ export default function Home() {
         </div>
 
         <div className=" mx-auto flex flex-col items-center sm:max-w-full">
-          <div className='py-6 sm:py-8 md:py-10 lg:py-12 xl:py-14 w-full'>
+          <div className='py-4 sm:py-6 md:py-8 lg:py-10 w-full'>
             {/* Tab buttons */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
               {categories.map((category, index) => (
@@ -320,7 +320,7 @@ export default function Home() {
                                 )} */}
                               </p>
                             </div>
-                            <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-[#ab99e1] text-black font-medium hover:bg-[#b8a8e6] transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
+                            <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
                               Buy
                               <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
                             </button>
@@ -347,7 +347,7 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover z-0 transform transition-transform duration-500 ease-in-out group-hover:scale-105"
           />
 
-          <div className="relative z-10 w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left text-white container">
+          <div className="relative z-10 w-full max-w-[95%] md:max-w-[85%] mx-auto flex flex-col items-center md:items-start text-center md:text-left text-white ">
             <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 md:mb-3 leading-tight">
               100+ games, worlds. Explore them all with Stan
             </h2>

@@ -66,8 +66,13 @@ body {
 
 @media (max-width:768px) {
   .ds_trailer .swiper-pagination .swiper-pagination-bullet {
-    width: 10px;
-    height: 10px;
+    width: 7px;
+    height: 7px;
+  }
+
+  .ds_trailer .swiper-pagination .swiper-pagination-bullet-active {
+    width: 9px;   
+    height: 9px;
   }
 }
 
@@ -87,12 +92,14 @@ body {
 
 .ds_review_slider .slick-dots li button:before {
   color: rgba(120, 120, 120, 1) !important;
-  font-size: 10px;
-  opacity: 1 !important;
+  font-size: 9px;
+  opacity: 0.6;
+  transition: all 0.3s ease;
 }
 
 .ds_review_slider .slick-dots li.slick-active button:before {
   color: white !important;
+  font-size: 11px;
   opacity: 1 !important;
 }
 

@@ -17,7 +17,7 @@ import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
 import { FaArrowRight } from "react-icons/fa";
-import { createActionGame, getAllGames, getPopularGames } from '../Redux/Slice/game.slice';
+import { getAllGames, getPopularGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 
 
@@ -25,10 +25,9 @@ const Store = () => {
   const dispatch = useDispatch();
   const games = useSelector((state) => state.game.games);
   const PopularGames = useSelector((state) => state.game.popularGames);
-  const ActionGames = useSelector((state) => state.game.actionGames);
 
   // console.log(games);
-  console.log(ActionGames, "ActionGames");
+  console.log(games, "all games");
 
 
   useEffect(() => {
@@ -39,15 +38,10 @@ const Store = () => {
     dispatch(getPopularGames());
   }, []);
 
-  useEffect(() => {
-    dispatch(createActionGame());
-  }, []);
-
 
   const scrollContainerRefs = {
     trending: useRef(null),
     popular: useRef(null),
-    action: useRef(null),
     ps5: useRef(null),
     top: useRef(null),
   };
@@ -79,7 +73,7 @@ const Store = () => {
   };
 
   const GameSection = ({ title, games = [], sectionRef }) => (
-    <div className='py-6 sm:py-8 md:py-10 lg:py-12'>
+    <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
       <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
         <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
         <FaArrowRight
@@ -113,12 +107,12 @@ const Store = () => {
     const priceValue = priceCandidateList.find((p) => typeof p === 'number' && !Number.isNaN(p)) ?? 0;
 
     return (
-      <div className="group relative bg-[#151517] rounded-lg sm:rounded-xl overflow-hidden border border-white/5 hover:border-[#ab99e1]/40 transition-all duration-300 w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 shadow-lg hover:shadow-2xl hover:shadow-[#ab99e1]/20">
+      <div className="group relative bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 hover:shadow-2xl">
         <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
           <img
             src={imageUrl}
             alt={game?.title || 'Game'}
-            className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
+            className='w-full h-full object-cover transition-transform duration-500 '
           />
           <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
 
@@ -175,7 +169,7 @@ const Store = () => {
               ₹{Number(priceValue).toLocaleString('en-IN')}
             </p>
           </div>
-          <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-[#ab99e1] text-black font-medium hover:bg-[#b8a8e6] transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
+          <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
             Buy
             <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
           </button>
@@ -186,7 +180,7 @@ const Store = () => {
 
   return (
     <>
-      <section className="bg-black pt-16">
+      <section className="">
         {/* Hero Swiper */}
         <div className="relative w-full">
           <Swiper
@@ -219,7 +213,7 @@ const Store = () => {
           <GameSection title="Popular Games" games={Array.isArray(PopularGames) ? PopularGames : []} sectionRef={scrollContainerRefs.popular} />
         </div>
         <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
-          <GameSection title="Action Games" games={Array.isArray(ActionGames) ? ActionGames : []} sectionRef={scrollContainerRefs.action} />
+          <GameSection title="Action Games" games={games?.action ?? []} sectionRef={scrollContainerRefs.action} />
         </div>
         {/*<div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
           <GameSection title="PS-5 Games" games={games?.ps5 ?? []} sectionRef={scrollContainerRefs.ps5} />
