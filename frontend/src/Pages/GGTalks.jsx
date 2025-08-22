@@ -67,7 +67,7 @@ export default function GGTalks() {
             socket.on("newMessage", (message) => {
                 if (selectedUser &&
                     ((message.senderId === selectedUser._id && message.receiverId === localStorage.getItem('userId')) ||
-                    (message.senderId === localStorage.getItem('userId') && message.receiverId === selectedUser._id))
+                        (message.senderId === localStorage.getItem('userId') && message.receiverId === selectedUser._id))
                 ) {
                     dispatch(addMessage({
                         ...message,
@@ -75,7 +75,7 @@ export default function GGTalks() {
                     }));
                     dispatch(getAllMessageUsers());
                 }
-                
+
                 // Remove typing indicator when message is received
                 dispatch(removeTypingUser(message.senderId));
             });
@@ -93,13 +93,13 @@ export default function GGTalks() {
                 message: newMessage.trim(),
                 senderId: localStorage.getItem('userId'),
             };
-            
+
             socket.emit("sendMessage", messageData);
             setNewMessage("");
-            
+
             // Stop typing indicator
             socket.emit("stop-typing", { receiverId: selectedUser._id });
-            
+
             // Clear typing timeout
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
@@ -110,17 +110,17 @@ export default function GGTalks() {
 
     const handleTyping = (e) => {
         setNewMessage(e.target.value);
-        
+
         if (socket && selectedUser) {
             if (e.target.value.length > 0) {
                 // Emit typing event
                 socket.emit("typing", { receiverId: selectedUser._id });
-                
+
                 // Clear existing timeout
                 if (typingTimeoutRef.current) {
                     clearTimeout(typingTimeoutRef.current);
                 }
-                
+
                 // Set new timeout to stop typing after 2 seconds of inactivity
                 typingTimeoutRef.current = setTimeout(() => {
                     socket.emit("stop-typing", { receiverId: selectedUser._id });
@@ -128,7 +128,7 @@ export default function GGTalks() {
             } else {
                 // Immediately stop typing if input is empty
                 socket.emit("stop-typing", { receiverId: selectedUser._id });
-                
+
                 if (typingTimeoutRef.current) {
                     clearTimeout(typingTimeoutRef.current);
                     typingTimeoutRef.current = null;
@@ -149,7 +149,7 @@ export default function GGTalks() {
         if (socket && selectedUser) {
             socket.emit("stop-typing", { receiverId: selectedUser._id });
         }
-        
+
         if (typingTimeoutRef.current) {
             clearTimeout(typingTimeoutRef.current);
             typingTimeoutRef.current = null;
@@ -167,7 +167,7 @@ export default function GGTalks() {
         window.addEventListener('resize', handleResize);
         return () => {
             window.removeEventListener('resize', handleResize);
-            
+
             // Cleanup typing timeout on unmount
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
@@ -178,18 +178,20 @@ export default function GGTalks() {
     return (
         <div className="flex bg-gray-950 relative overflow-hidden h-[calc(100vh-64px-56px)] md:h-[calc(100vh-72px)]">
             {/* User List Sidebar */}
-            <ChatUserList 
-                showUserList={showUserList} 
-                setShowUserList={setShowUserList} 
+            <ChatUserList
+                showUserList={showUserList}
+                setShowUserList={setShowUserList}
             />
 
             {/* Main Chat Area */}
             <div className={`min-w-0 flex-1 ${(!selectedUser || showUserList) ? 'hidden' : 'flex'} md:flex flex-col`}>
                 {/* Chat Header */}
-                <ChatHeader 
-                    onMenuClick={() => setShowUserList(!showUserList)}
-                    showUserList={showUserList}
-                />
+                {selectedUser &&
+                    <ChatHeader
+                        onMenuClick={() => setShowUserList(!showUserList)}
+                        showUserList={showUserList}
+                    />
+                }
 
                 {/* Messages Area */}
                 <div className="flex-1 flex flex-col min-h-0">
@@ -202,7 +204,7 @@ export default function GGTalks() {
                         <div className="flex items-end gap-2 sm:gap-3 max-w-[95%] mx-auto">
                             {/* Text input */}
                             <div className="flex-1 relative">
-                                <input  
+                                <input
                                     placeholder={`Message ${selectedUser.name}...`}
                                     className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-dark text-white"
                                     value={newMessage}
@@ -223,15 +225,14 @@ export default function GGTalks() {
 
                             {/* Send button */}
                             <button
-                                className={`flex-shrink-0 p-3 rounded-full shadow-md text-xl transition-all duration-200 ${
-                                    newMessage.trim() 
-                                        ? 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg transform hover:scale-105' 
+                                className={`flex-shrink-0 p-3 rounded-full shadow-md text-xl transition-all duration-200 ${newMessage.trim()
+                                        ? 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg transform hover:scale-105'
                                         : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                }`}
+                                    }`}
                                 onClick={handleSendMessage}
                                 disabled={!newMessage.trim()}
                             >
-                               <GrSend />
+                                <GrSend />
                             </button>
                         </div>
                     </div>

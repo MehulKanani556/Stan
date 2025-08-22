@@ -190,7 +190,10 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                             </div>
                             <ul className="divide-y divide-gray-800">
                                 {allUsers
-                                    .filter(user => user._id !== localStorage.getItem("userId"))
+                                     .filter(user => 
+                                        user._id !== localStorage.getItem("userId") &&  // exclude self
+                                        !allMessageUsers.some(msgUser => msgUser._id === user._id) // exclude already messaged users
+                                      )
                                     .map((user) => {
                                         const userIsTyping = isUserTyping(user._id);
                                         const isOnline = onlineUsers.includes(user._id);
@@ -204,7 +207,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                 ${isSelected ? 'bg-gray-800 border-r-4 border-blue-500' : ''}
                                                 ${userIsTyping ? 'bg-gray-800/30 ring-1 ring-green-400/20' : ''}
                                             `}
-                                                onClick={() => handleUserSelect(user)}
+                                                onClick={() => {handleUserSelect(user); }}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     {/* Profile photo or initial */}
