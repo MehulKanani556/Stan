@@ -3,17 +3,18 @@ import path from 'path';
 import { S3Client } from '@aws-sdk/client-s3';
 import multerS3 from "multer-s3";
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 // Configure S3 storage
 const s3 = new S3Client({
     credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY.trim(),
-        secretAccessKey: process.env.S3_SECRET_KEY.trim()
+      accessKeyId: process.env.S3_ACCESS_KEY?.trim(),
+      secretAccessKey: process.env.S3_SECRET_KEY?.trim(),   
     },
-    region: process.env.S3_REGION || "us-east-1"
-});
+    region: process.env.S3_REGION || "us-east-1",
+  });
+
+  console.log(process.env.S3_ACCESS_KEY?.trim(), process.env.S3_SECRET_KEY?.trim());
 
 const storage = multerS3({
     s3: s3,
