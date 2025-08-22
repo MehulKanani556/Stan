@@ -374,7 +374,7 @@ const RedeemAndWin = () => {
                         <RiCoupon2Fill className='text-4xl'/> Exciting Coupons 
                     </h5>
 
-                    <div className=" flex items-center justify-center pt-8 w-full relative  px-4">
+                    <div className=" flex items-center justify-center pt-8 w-full relative">
                         <Swiper
                             spaceBetween={12}
                             pagination={{ clickable: true }}
