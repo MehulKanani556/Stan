@@ -298,18 +298,18 @@ const SingleGame = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-5">
                     <div>
-                        <p className="text-gray-400 text-sm">Memory</p>
-                        <p className="text-white text-sm">8GB RAM</p>
+                        <p className="text-gray-400 text-sm md:text-base">Memory</p>
+                        <p className="text-white text-sm md:text-base">8GB RAM</p>
                       </div>
 
                       <div>
-                        <p className="text-gray-400 text-sm">Storage</p>
-                        <p className="text-white text-sm">105GB SSD Required</p>
+                        <p className="text-gray-400 text-sm md:text-base">Storage</p>
+                        <p className="text-white text-sm md:text-base">105GB SSD Required</p>
                       </div>
 
                       <div>
-                        <p className="text-gray-400 text-sm">Graphics</p>
-                        <p className="text-white text-sm">
+                        <p className="text-gray-400 text-sm md:text-base">Graphics</p>
+                        <p className="text-white text-sm md:text-base">
                           NVIDIA® GeForce® GTX 1630 (4GB VRAM) <br />
                           AMD Radeon™ RX 6400 (4GB VRAM)
                         </p>
@@ -318,13 +318,13 @@ const SingleGame = () => {
 
                     <div className="space-y-5">
                     <div>
-                        <p className="text-gray-400 text-sm">OS</p>
-                        <p className="text-white text-sm">Windows 10 (latest update)</p>
+                        <p className="text-gray-400 text-sm md:text-base">OS</p>
+                        <p className="text-white text-sm md:text-base">Windows 10 (latest update)</p>
                       </div>
 
                       <div>
-                        <p className="text-gray-400 text-sm">Processor</p>
-                        <p className="text-white text-sm">
+                        <p className="text-gray-400 text-sm md:text-base">Processor</p>
+                        <p className="text-white text-sm md:text-base">
                           Intel® Core™ i7-4770 | AMD FX™-9590
                         </p>
                       </div>
@@ -339,7 +339,7 @@ const SingleGame = () => {
 
           {/* right side copntent */}
           <div className="xl:w-1/4 w-full xl:pl-6 mt-10 xl:mt-0 ">
-            <div className="p-6">
+            <div className="p-6 sticky top-24">
               <div className="flex justify-center mb-6">
                 <img src={gtav} alt="Game Logo" className="w-[180px] h-auto" />
               </div>
