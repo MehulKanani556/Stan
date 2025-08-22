@@ -32,7 +32,7 @@ const Trailer = () => {
   };
 
   return (
-    <div className="bg-black pt-10">
+    <div className="">
       <Swiper className='ds_trailer'
         modules={[Pagination]}
         spaceBetween={50}

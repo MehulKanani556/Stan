@@ -39,7 +39,7 @@ const GameCard = ({ image, title, price, status }) => (
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {price && (
           price === "Free" ? (
-            <span className="bg-gradient-to-r from-[#ab99e1] to-[#b8a8e6] text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">FREE</span>
+            <span className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform">Free</span>
           ) : (
             <span className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">{price}</span>
           )
@@ -112,7 +112,7 @@ function TopGames() {
   }, []); // Empty dependency array means this runs only once
 
   return (
-    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto py-12 sm:py-16 md:py-20">
+    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-16 md:pb-20">
       <div className="">
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
@@ -130,29 +130,36 @@ function TopGames() {
             <div key={i}>
               <div className="">
                 {/* Section Header */}
-                <div className="flex items-center justify-between mb-6 sm:mb-8">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1]">
-                    {section.title}
-                  </h3>
-                  <div className="w-12 h-12 rounded-full bg-[#ab99e1]/20 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-[#ab99e1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <div className="flex items-center gap-4 mb-6 sm:mb-8">
+                  {/* Icon container */}
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
+                    <svg
+                      className="w-6 h-6 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
                     </svg>
                   </div>
+
+                  {/* Title */}
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1] tracking-wide">
+                    {section.title}
+                  </h3>
                 </div>
+
 
                 {/* Games List */}
                 <div className="space-y-4 md:space-y-5 lg:space-y-6">
                   {section.items.map((item, j) => (
                     <GameCard key={j} {...item} />
                   ))}
-                </div>
-
-                {/* View All Button */}
-                <div className="mt-6 sm:mt-8 pt-6 border-t border-purple-500/30">
-                  <button className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#ab99e1]/20 to-[#b8a8e6]/20 hover:from-[#ab99e1]/30 hover:to-[#b8a8e6]/30 border border-[#ab99e1]/30 text-[#ab99e1] font-semibold transition-all duration-300 hover:shadow-lg">
-                    View All {section.title}
-                  </button>
                 </div>
               </div>
             </div>
