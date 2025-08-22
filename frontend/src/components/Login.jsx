@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import loginBg from "../images/login-bg.jpg";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {
   forgotPassword,
   login,
@@ -17,6 +18,11 @@ const Login = () => {
   const [activeForm, setActiveForm] = useState("login"); // login | signup | forgot | otp | reset
   const [resetEmail, setResetEmail] = useState(""); // ✅ store email across steps
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   // All form configs in one place
   const formConfigs = {
@@ -42,10 +48,19 @@ const Login = () => {
       },
       render: () => (
         <>
-          <Field name="email" type="email" placeholder="Email" className="input input-bordered w-full" />
+          <Field name="email" type="email" placeholder="Email" className="input input-bordered w-full text-black" />
           <ErrorMessage name="email" component="div" className="text-red-500" />
 
-          <Field name="password" type="password" placeholder="Password" className="input input-bordered w-full" />
+          <div className="relative">
+            <Field name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="input input-bordered w-full text-black" />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 z-50"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
           <ErrorMessage name="password" component="div" className="text-red-500" />
 
           <p
@@ -94,13 +109,22 @@ const Login = () => {
       },
       render: () => (
         <>
-          <Field name="name" placeholder="Full Name" className="input input-bordered w-full" />
+          <Field name="name" placeholder="Full Name" className="input input-bordered w-full text-black" />
           <ErrorMessage name="name" component="div" className="text-red-500" />
 
-          <Field name="email" placeholder="Email" className="input input-bordered w-full" />
+          <Field name="email" placeholder="Email" className="input input-bordered w-full text-black " />
           <ErrorMessage name="email" component="div" className="text-red-500" />
 
-          <Field name="password" type="password" placeholder="Password" className="input input-bordered w-full" />
+          <div className="relative">
+            <Field name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="input input-bordered w-full text-black" />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 z-50"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
           <ErrorMessage name="password" component="div" className="text-red-500" />
 
           <button type="submit" className="btn w-full bg-[#110B24] text-white">Sign up</button>

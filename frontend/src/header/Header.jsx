@@ -80,15 +80,15 @@ export default function Header() {
                 <div className="drawer max-w-[95%] md:max-w-[85%] m-auto w-full  ">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
-                       
+
                         <div className="navbar  w-full px-0 justify-between">
-                           
+
                             <div className="flex items-center gap-2 flex-none">
                                 <YOYO_LOGO className="svg-current-color h-12 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
                                 {/* <span className='text-[#ab99e1] font-semibold text-4xl'>YOYO</span> */}
                             </div>
 
-                           
+
                             <div className="flex-1 hidden md:flex justify-center">
                                 <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg">
                                     <li>
@@ -101,7 +101,7 @@ export default function Header() {
                                             isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
                                         }>GGTalks</NavLink>
                                     </li>
-                                    
+
                                     <li>
                                         <NavLink to="/games" className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
@@ -120,12 +120,12 @@ export default function Header() {
                                 </ul>
                             </div>
 
-                           
+
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
-                                    <div className='flex gap-2 item-center'>
+                                    <div className='flex gap-2 items-center'>
                                         <div
-                                            className="w-6 h-6 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
+                                            className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
                                             onClick={toggleDropdown}
                                         >
                                             <img
@@ -139,7 +139,7 @@ export default function Header() {
                                         </p>
                                     </div>
 
-                                   
+
                                     {isDropdownOpen && (
                                         <div className="absolute right-0 mt-2 w-48 bg-[#221f2a] rounded-lg shadow-lg border border-gray-700 z-50">
                                             <div className="py-2">
@@ -195,7 +195,7 @@ export default function Header() {
                                     )}
                                 </div>
 
-                               
+
                                 <label
                                     htmlFor="my-drawer-3"
                                     aria-label="open sidebar"
@@ -209,7 +209,7 @@ export default function Header() {
 
 
 
-                   
+
                     <div className="drawer-side">
                         <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay"></label>
                         <div className="min-h-full w-80 p-4 relative text-white bg-gradient-to-b from-[#100f14]/95 via-[#16141c]/95 to-[#0e0d12]/95 backdrop-blur-xl border-l border-white/5 shadow-[0_10px_40px_-10px_rgba(171,153,225,0.35)]">
@@ -223,7 +223,12 @@ export default function Header() {
                                 <div className="flex items-center gap-2">
                                     <YOYO_LOGO className="svg-current-color h-7 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
                                 </div>
-                                <span className="text-[10px] tracking-wider text-white/50">v1</span>
+                                <label
+                                    htmlFor="my-drawer-3"
+                                    className="w-full flex mt-3 justify-end cursor-pointer text-white hover:text-[#ab99e1]"
+                                >
+                                    <HiX className="w-6 h-6 bg-black rounded-full p-[2px] " />
+                                </label>
                             </div>
 
                             {isLoggedIn && (
@@ -248,13 +253,8 @@ export default function Header() {
                             )}
 
 
-                           
-                            <label
-                                htmlFor="my-drawer-3"
-                                className="w-full flex mt-3 justify-end cursor-pointer text-white hover:text-[#ab99e1]"
-                            >
-                                <HiX className="w-6 h-6 bg-black rounded-full p-[2px] " />
-                            </label>
+
+
 
                             <div className='w-full flex flex-col gap-5'>
                                 <div className='w-full mt-4'>
@@ -273,7 +273,7 @@ export default function Header() {
                                         <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
                                         </NavLink>
-                                        <NavLink className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/guides" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides
                                         </NavLink>
                                         <NavLink to="/games" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
@@ -335,7 +335,7 @@ export default function Header() {
                         </NavLink>
                     </li>
 
-                   
+
 
                     <li>
                         <NavLink to="/games" className="flex items-center justify-center flex-col gap-1 text-xs">

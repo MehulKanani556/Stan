@@ -41,9 +41,9 @@ const GamePlay = () => {
     return (
         <>
             <div className='container pt-28 pb-24'>
-                <div className='flex items-center justify-between'>
-                    <h1 className='text-white text-2xl font-semibold'>{game ? game.name : 'Game'}</h1>
-                    <Link to='/games' className='text-[#ab99e1] hover:underline'>Back to Games</Link>
+                <div className='flex items-center justify-between sm:flex-row flex-col gap-4'>
+                    <h1 className='text-white text-2xl font-semibold uppercase'>{game ? game.name : 'Game'}</h1>
+                    <Link to='/games' className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40">Back to Games</Link>
                 </div>
                 {game ? (
                     <div className='mt-4 bg-[#221f2a] rounded-xl overflow-hidden relative'>

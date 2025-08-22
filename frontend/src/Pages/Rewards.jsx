@@ -14,8 +14,6 @@ import { Pagination } from 'swiper/modules';
 import { MdOutlineContentCopy } from "react-icons/md";
 import 'swiper/css';
 import 'swiper/css/pagination';
-import Header from '../header/Header';
-import Footer from '../footer/Footer';
 import StylishDiv from '../components/StylishDiv';
 import { BsCart4 } from "react-icons/bs";
 import { RiCoupon2Fill } from "react-icons/ri";
@@ -91,7 +89,7 @@ export default function Rewards() {
                             onClick={() => setIsActive("redeem")}
                             className={`w-1/2 py-3 cursor-pointer transition-all duration-500  
         ${isActive === "redeem"
-                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-x-105"
+                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md "
                                     : "text-gray-300 hover:text-white hover:bg-white/10"}`}
                         >
                             Redeem & Win
@@ -101,7 +99,7 @@ export default function Rewards() {
                             onClick={() => setIsActive("refer")}
                             className={`w-1/2 py-3 cursor-pointer transition-all duration-500 
         ${isActive === "refer"
-                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md scale-x-105"
+                                    ? "bg-gradient-to-r from-[#7b5cff] to-[#aa98fe] text-white shadow-md  "
                                     : "text-gray-300 hover:text-white hover:bg-white/10"}`}
                         >
                             FAQs
@@ -230,6 +228,7 @@ const RedeemAndWin = () => {
 
 
             <div className='max-w-[95%] md:max-w-[85%] m-auto '>
+
                 <div className="flex flex-col w-full items-center justify-center md:pt-20 pt-10">
 
                     <img
@@ -255,7 +254,8 @@ const RedeemAndWin = () => {
                                     </h3>
                                 </div>
                             </div>
-                            <button className="bg-white z-10 text-black px-3 py-1 md:px-5 md:py-2 rounded-md md:rounded-lg text-xs md:text-base font-semibold shadow hover:bg-gray-200 transition">
+                            <button className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
+                              z-10 text-white px-3 py-1 md:px-5 md:py-2 rounded-md md:rounded-lg text-xs md:text-base font-semibold shadow  transition">
                                 History
                             </button>
                         </div>
@@ -428,9 +428,6 @@ const RedeemAndWin = () => {
                     </div>
                 </div>
 
-
-
-
                 <div className="py-10 w-full">
                     <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-8 flex items-center gap-4">
                         <IoRocketOutline className='text-4xl'/> Earn With
@@ -465,7 +462,7 @@ const RedeemAndWin = () => {
                                         </button>
                                     </div>
                                 </div>
-                                <button className="mt-6 w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 transition-all duration-500 transform hover:scale-105 hover:shadow-purple-500/50">
+                                <button className="mt-6 w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 px-6 rounded-xl   transition-all duration-500 transform hover:scale-105 hover:shadow-[#b191ff]/40 hover:shadow-lg">
                                     REFER NOW
                                 </button>
                             </div>
@@ -475,7 +472,7 @@ const RedeemAndWin = () => {
                             <div className="absolute -bottom-12 -left-12 w-28 h-28 bg-gradient-to-br from-green-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
                             <div className="relative z-10 flex flex-col">
                                 <p className="text-gray-400 text-sm lg:text-base mb-2 italic">
-                                    Complete quests and redeem amazing coupons 🎁
+                                    Complete quests and redeem amazing coupons 
                                 </p>
                                 <h3 className="text-yellow-400 font-extrabold text-2xl mb-6 tracking-wide">
                                     Earn & Redeem
@@ -491,7 +488,7 @@ const RedeemAndWin = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <button className="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 transition-all duration-500 transform hover:scale-105 hover:shadow-purple-500/50">
+                                <button className="w-full bg-gradient-to-r to-[#621df2] from-[#b191ff] text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg  transition-all duration-500 transform hover:scale-105  hover:shadow-[#b191ff]/40">
                                     Redeem
                                 </button>
                             </div>
@@ -526,8 +523,9 @@ const RedeemAndWin = () => {
                                             <FaMoneyBillWave className="w-4 h-4 text-green-500" />
                                             <span className="text-white font-semibold">{task.reward}</span>
                                         </div>
-                                        <button className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-purple-600/40 hover:from-purple-700 hover:to-purple-900 hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105">
-                                            CLAIM
+                                        <button className="bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] 
+                              text-white px-5 py-2 rounded-xl font-medium shadow-md  transition-all duration-300 transform hover:scale-105">
+                                            claim
                                         </button>
                                     </div>
                                 </div>
