@@ -7,6 +7,7 @@ import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, Ve
 import { getMessage, sendMessage,getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
 import { createGame, createActionGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";
+import { createTrailer, deleteTrailer, getAllTrailer, updateTrailer } from "../controllers/HomeTrailerController.js";
 
 
 const indexRoutes = express.Router()
@@ -88,5 +89,10 @@ indexRoutes.put(
 indexRoutes.delete("/deleteGame/:id", deleteGame);
 indexRoutes.get("/getGameById/:id", getGameById);
 
+// hometrailers routes
+indexRoutes.post('/hometrailer',upload.single("trailer"),createTrailer)
+indexRoutes.get('/hometrailer',UserAuth ,getAllTrailer)
+indexRoutes.put("/hometrailer/:id", UserAuth ,upload.single("trailer"), updateTrailer);
+indexRoutes.delete("/hometrailer/:id", UserAuth , deleteTrailer);
 
 export default indexRoutes

@@ -43,6 +43,9 @@ const storage = multerS3({
         } else if (file.fieldname === 'android_file') {
             folder = 'games/android';
         }
+        else if(file.fieldname === 'trailer' ){
+            folder = 'trailer';
+        }
         
         const finalName = `${folder}/${timestamp}-${sanitizedName}`;
         cb(null, finalName);
@@ -93,7 +96,8 @@ const fileFilter = (req, file, cb) => {
         file.fieldname === 'bg_image' ||
         file.fieldname === 'messageImage' ||
         file.fieldname === 'cover_image' ||
-        file.fieldname === 'images'
+        file.fieldname === 'images' ||
+        file.fieldName === 'trailer'
     ) {
         if (!allowedImageExts.includes(ext) || !allowedImageMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid image format. Allowed formats: ${allowedImageExts.join(', ')}`));
@@ -103,6 +107,11 @@ const fileFilter = (req, file, cb) => {
     else if (file.fieldname === 'video') {
         if (!allowedVideoExts.includes(ext) || !allowedVideoMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
+        }
+    }
+    else if (file.fieldname === 'trailer') {
+        if (!allowedVideoExts.includes(ext) || !allowedVideoMimeTypes.includes(file.mimetype)) {
+            return cb(new Error(`Invalid trailer video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
         }
     }
     // Check if it's a platform executable file
