@@ -26,7 +26,7 @@ import SingleGame from './components/SingleGame';
 function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
-  const showFooter  = location.pathname === "/ggtalks"
+  const showFooter  = isAuthPage || location.pathname === "/ggtalks"
   const { store } = configureStore();
 
   return (
@@ -61,7 +61,7 @@ function AppContent() {
           </SocketProvider>
         </SnackbarProvider>
       </Provider>
-      {!isAuthPage || !showFooter && <Footer />}
+      {(!showFooter ) && <Footer />}
     </>
   );
 }

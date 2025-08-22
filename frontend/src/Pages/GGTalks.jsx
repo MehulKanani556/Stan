@@ -34,7 +34,7 @@ export default function GGTalks() {
     useEffect(() => {
         if (allMessageUsers && allMessageUsers.length > 0 && !selectedUser) {
             if (window.innerWidth >= 768) {
-                dispatch(setSelectedUser(allMessageUsers[0]));
+                // dispatch(setSelectedUser(allMessageUsers[0]));
             }
         } else if (selectedUser) {
             const currentSelectedUser = allMessageUsers.find(
@@ -204,7 +204,7 @@ export default function GGTalks() {
                             <div className="flex-1 relative">
                                 <input  
                                     placeholder={`Message ${selectedUser.name}...`}
-                                    className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-white text-gray-900"
+                                    className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-dark text-white"
                                     value={newMessage}
                                     onChange={handleTyping}
                                     onKeyPress={handleKeyPress}
