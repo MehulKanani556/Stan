@@ -26,13 +26,13 @@ import SingleGame from './components/SingleGame';
 function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
-  const showFooter  = location.pathname === "/ggtalks"
+  const showFooter  = isAuthPage || location.pathname === "/ggtalks"
   const { store } = configureStore();
 
   return (
     <>
-      {!isAuthPage && <Header />}
       <Provider store={store}>
+      {!isAuthPage && <Header />}
         <SnackbarProvider
           maxSnack={3}
           anchorOrigin={{
@@ -60,8 +60,8 @@ function AppContent() {
           </Routes>
           </SocketProvider>
         </SnackbarProvider>
+      {(!showFooter ) && <Footer />}
       </Provider>
-      {(!isAuthPage || !showFooter) && <Footer />}
     </>
   );
 }

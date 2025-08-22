@@ -350,3 +350,39 @@ export const getAllMessageUsers = async (req, res) => {
         });
     }
 };
+
+
+export const deleteChat = async (req, res) => {
+    try {
+      const { selectedId } = req.body;
+      const userId = req.user._id;
+  
+      // Find all messages between these users
+      let messages  = await MessageStan.find({
+          $or: [
+            { senderId: userId, receiverId: selectedId },
+            { senderId: selectedId, receiverId: userId },
+          ],
+        });
+        console.log(messages,userId,selectedId);
+        
+      
+      // Add current user to deletedFor array for each message
+      await Promise.all(
+        messages.map(async (message) => {
+          await MessageStan.findByIdAndDelete(message._id);
+        })
+      );
+  
+      return res.status(200).json({
+        status: 200,
+        message: "Chat Delete successfully",
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 500,
+        message: error.message,
+      });
+    }
+  };

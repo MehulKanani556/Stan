@@ -1,13 +1,34 @@
-import React from 'react'
-import { useSelector } from 'react-redux';
+import React, { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { IoMdArrowRoundBack } from "react-icons/io";
-
+import { GoTrash } from "react-icons/go";
+import { TbDotsVertical } from "react-icons/tb";
+import { deleteChat, getAllMessageUsers } from '../Redux/Slice/user.slice';
+import { setSelectedUser } from '../Redux/Slice/manageState.slice';
 export default function ChatHeader({ onMenuClick, showUserList }) {
     const { selectedUser, onlineUsers, typingUsers } = useSelector((state) => state.manageState);
-    
+    const dispatch = useDispatch();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+
     const isUserOnline = selectedUser && onlineUsers.includes(selectedUser._id);
     const isUserTyping = selectedUser && typingUsers && typingUsers.includes(selectedUser._id);
-    
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
     return (
         <div className="flex items-center gap-3 px-4 py-[6px] bg-gray-800 text-white shadow-md border-b border-gray-700 h-16">
             {/* Mobile menu button */}
@@ -54,6 +75,48 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                                 </div>
                             )}
                         </div>
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-5">
+                            <div className="hidden md:block relative" ref={dropdownRef}>
+                                <div className='flex gap-2 item-center'>
+                                    <button
+                                        // className="w-6 h-6 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
+                                        onClick={toggleDropdown}
+                                    >
+                                        <TbDotsVertical className='text-grey-400' />
+                                    </button>
+
+                                </div>
+
+                                {/* Dropdown Menu */}
+                                {isDropdownOpen && (
+                                    <div className="absolute right-0 mt-2 w-40 text-center bg-[#221f2a] rounded-lg shadow-lg border border-gray-700 z-50">
+                                        <div className="py-1">
+
+                                            <button
+                                                onClick={() => {
+                                                    setIsDropdownOpen(false);
+                                                    dispatch(deleteChat({ selectedUserId: selectedUser._id })).then(() => {
+                                                        dispatch(getAllMessageUsers());
+                                                        dispatch(setSelectedUser(null));
+                                                    });
+
+                                                }}
+                                                className="w-full px-4 py-1 text-left text-base text-white hover:bg-[#2d2a35] transition-colors flex items-center gap-3"
+                                            >
+                                                <GoTrash className='text-red-400' />
+                                                Delete Chat
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                        </div>
+                        {/* <button onClick={() => setShowModal(!showModel)}>
+                            <TbDotsVertical className='text-grey-400' />
+                        </button> */}
                     </div>
                 </div>
             ) : (

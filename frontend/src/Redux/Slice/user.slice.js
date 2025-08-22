@@ -428,7 +428,7 @@ export const deleteChat = createAsyncThunk(
   "user/deleteChat",
   async ({ selectedUserId }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/deleteChat", { selectedUserId });
+      const response = await axiosInstance.post("/deleteChat", { selectedId:selectedUserId });
       return response.data;
     } catch (error) {
       return handleErrors(error, null, rejectWithValue);

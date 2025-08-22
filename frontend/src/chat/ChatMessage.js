@@ -27,7 +27,7 @@ export default function ChatMessage({ isTyping }) {
     // Set selected user and their messages when users update or selectedUser changes
     useEffect(() => {
         if (allMessageUsers && allMessageUsers.length > 0 && !selectedUser) {
-            dispatch(setSelectedUser(allMessageUsers[0]));
+            // dispatch(setSelectedUser(allMessageUsers[0]));
         } else if (selectedUser) {
             const currentSelectedUser = allMessageUsers.find(
                 (user) => user._id === selectedUser._id

@@ -4,7 +4,7 @@ import { upload, convertJfifToWebp, handleMulterError } from "../middlewares/ima
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
-import { getMessage, sendMessage, getAllMessageUsers } from "../controllers/messageController.js";
+import { getMessage, sendMessage,getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
 import { createGame, createActionGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";
 
@@ -34,7 +34,8 @@ indexRoutes.post("/followOrUnfollow/:id", UserAuth, isUser, followOrUnfollow)
 
 indexRoutes.post("/sendMessage/:id", UserAuth, isUser, upload.single("messageImage"), handleMulterError, convertJfifToWebp, sendMessage)
 indexRoutes.get("/getMessage/:id", UserAuth, isUser, getMessage)
-indexRoutes.get("/getAllMessageUsers", UserAuth, getAllMessageUsers)
+indexRoutes.get("/getAllMessageUsers", UserAuth, getAllMessageUsers);
+indexRoutes.post("/deleteChat",UserAuth,deleteChat);
 
 // Free Games Routes
 indexRoutes.post("/free-games", UserAuth, isAdmin, upload.single("image"), handleMulterError, convertJfifToWebp, createFreeGame)
