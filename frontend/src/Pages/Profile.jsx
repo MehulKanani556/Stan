@@ -7,15 +7,17 @@ import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
 import { getUserById, editUserProfile } from '../Redux/Slice/user.slice';
 import stanUser from "../images/stan-user.jpg";
 import { decryptData } from "../Utils/encryption";
-import { Dialog,Transition } from '@headlessui/react'
-// import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { Dialog, Transition } from '@headlessui/react'
+
 import { Fragment } from "react";
 import lazyCatImage from '../images/lazy-cat-1.png'
 import { FaUserLarge } from 'react-icons/fa6';
 import { GiTakeMyMoney } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom'
-import {  IoLocation, IoClose, IoTrash, IoPencil } from "react-icons/io5";
+import { IoLocation, IoClose, IoTrash, IoPencil } from "react-icons/io5";
 import manageAddress from "../images/manage_addres-1.png"
+import StylishDiv from '../components/StylishDiv';
+// FANCoin Component
 const FANCoin = () => {
     const [openId, setOpenId] = useState(null);
 
@@ -70,12 +72,12 @@ const FANCoin = () => {
 
     return (
         <div className="px-3 sm:px-4 py-4 sm:py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 3xl:items-start items-strech">
                 {transactions.map((transaction) => (
-                    <div key={transaction.id} className="relative group rounded-3xl overflow-hidden 2xl:min-h-[180px]">
-                        <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 blur-[2px] h-full min-h-[180px]" />
-                        <div className="relative bg-black/30 backdrop-blur-xl rounded-3xl p-4 sm:p-5 shadow-2xl h-full min-h-[180px]">
-                            <div className="flex flex-wrap items-center justify-between">
+                    <StylishDiv key={transaction.id} className="group rounded-3xl overflow-hidden h-full ">
+                        {/* <div className=" opacity-80  h-full min-h-[180px]" /> */}
+                        <div className=" rounded-3xl min-h-[120px]  h-full">
+                            <div className="flex  items-center justify-between">
                                 <div>
                                     <h3 className="font-bold text-white text-base sm:text-lg">{transaction.title}</h3>
                                     <p className="text-gray-300 text-xs sm:text-sm mt-1">{transaction.time}</p>
@@ -122,7 +124,7 @@ const FANCoin = () => {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </StylishDiv>
                 ))}
             </div>
         </div>
@@ -176,7 +178,9 @@ export default function Profile() {
     const [user, setUser] = useState(null);
     const [activeMenu, setActiveMenu] = useState('profile');
     const [isActive, setIsActive] = useState("fanCoin");
+    console.log("aaaaaa",currentUser)
 
+    // user profile handling ------------------------------------------------------------------------------------------
     const [formData, setFormData] = useState({
         name: "",
         username: "",
@@ -184,8 +188,8 @@ export default function Profile() {
         bio: "",
         gender: "",
     });
-    const [profilePicFile, setProfilePicFile] = useState(null);
 
+    const [profilePicFile, setProfilePicFile] = useState(null);
     useEffect(() => {
         // Get current user ID from auth state or localStorage
         const userId = authUser?._id || localStorage.getItem("userId");
@@ -208,7 +212,6 @@ export default function Profile() {
             setUser(null);
         }
     }, [currentUser]);
-    console.log(currentUser, "currentUser");
 
 
     // Handle edit mode toggle
@@ -216,16 +219,19 @@ export default function Profile() {
         setIsEditing(!isEditing);
     };
 
+    // handle  input change 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // handle  dile change 
     const handleFileChange = (e) => {
         const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
         setProfilePicFile(file);
     };
 
+    // handle update profile
     const handleUpdateProfile = async () => {
         const userId = authUser?._id || localStorage.getItem("userId");
         if (!userId) return;
@@ -238,7 +244,15 @@ export default function Profile() {
         }
 
         try {
-            await dispatch(editUserProfile({ userId, userData: payload })).unwrap();
+            await dispatch(editUserProfile({ userId, userData: payload })).unwrap().then((response) => {
+                console.log(response.success);
+                if (response.success) {
+                    const userId = authUser?._id || localStorage.getItem("userId");
+                    if (userId) {
+                        dispatch(getUserById(userId));
+                    }
+                }
+            });
             setIsEditing(false);
         } catch (err) {
             // noop - error snackbar handled in thunk
@@ -247,10 +261,8 @@ export default function Profile() {
 
 
 
-// manage address
-const navigate = useNavigate()
-
-const [isModalOpen, setIsModalOpen] = useState(false)
+    // manage address ----------------------------------------------------------------------------------------------------
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [editingAddress, setEditingAddress] = useState(null)
     const [addresses, setAddresses] = useState([
@@ -265,20 +277,8 @@ const [isModalOpen, setIsModalOpen] = useState(false)
             isDefault: true
         }
     ])
-    const [addformData, setaddFormData] = useState({
-        name: '',
-        mobile: '',
-        addressLine1: '',
-        addressLine2: '',
-        landmark: '',
-        pincode: '',
-        isDefault: false
-    })
 
-    const handleBack = () => {
-        navigate(-1) // Go back to previous page
-    }
-
+    // open add  address modal 
     const openModal = () => {
         setIsModalOpen(true)
         setEditingAddress(null)
@@ -294,12 +294,14 @@ const [isModalOpen, setIsModalOpen] = useState(false)
         })
     }
 
+    //  close add address modal 
     const closeModal = () => {
         setIsModalOpen(false)
         setIsEditModalOpen(false)
         setEditingAddress(null)
     }
 
+    //  open edit address modal
     const openEditModal = (address) => {
         setEditingAddress(address)
         setFormData({
@@ -314,6 +316,7 @@ const [isModalOpen, setIsModalOpen] = useState(false)
         setIsEditModalOpen(true)
     }
 
+    // address change code here
     const handleaddressChange = (e) => {
         const { name, value, type, checked } = e.target
         setFormData(prev => ({
@@ -322,6 +325,7 @@ const [isModalOpen, setIsModalOpen] = useState(false)
         }))
     }
 
+    // add amd edit address submit handler
     const handleSubmit = (e) => {
         e.preventDefault()
 
@@ -354,6 +358,7 @@ const [isModalOpen, setIsModalOpen] = useState(false)
         closeModal()
     }
 
+    // delete addres function 
     const deleteAddress = (addressId) => {
         const addressToDelete = addresses.find(addr => addr.id === addressId)
         if (addressToDelete.isDefault && addresses.length > 1) {
@@ -367,57 +372,43 @@ const [isModalOpen, setIsModalOpen] = useState(false)
         }
     }
 
-    const setDefaultAddress = (addressId) => {
-        setAddresses(addresses.map(addr => ({
-            ...addr,
-            isDefault: addr.id === addressId
-        })))
+
+    // Loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ab99e1] mx-auto mb-4"></div>
+                    <p className="text-[#ab99e1]">Loading profile...</p>
+                </div>
+            </div>
+        );
     }
 
+    // Error state
+    if (error) {
+        return (
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">Error: {error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="bg-[#ab99e1] text-black px-4 py-2 rounded-lg hover:bg-white transition-colors"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
-        // Loading state
-        if (loading) {
-            return (
-                <div className="min-h-screen bg-black text-white flex items-center justify-center">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ab99e1] mx-auto mb-4"></div>
-                        <p className="text-[#ab99e1]">Loading profile...</p>
-                    </div>
-                </div>
-            );
-        }
-    
-        // Error state
-        if (error) {
-            return (
-                <div className="min-h-screen bg-black text-white flex items-center justify-center">
-                    <div className="text-center">
-                        <p className="text-red-500 mb-4">Error: {error}</p>
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="bg-[#ab99e1] text-black px-4 py-2 rounded-lg hover:bg-white transition-colors"
-                        >
-                            Retry
-                        </button>
-                    </div>
-                </div>
-            );
-        }
-    
-        // Local user state is managed via setUser when currentUser changes
-    
-        // Calculate stats
-        const gamesPlayed = 156; // This could come from a separate API
-        const wins = 89;
-        const points = 2400;
-        const winRate = Math.round((wins / gamesPlayed) * 100);
-        const achievements = 12;
-        const friends = user?.followers?.length || 45;
-        const rating = 8.5;
+    // Local user state is managed via setUser when currentUser changes
+
+
     return (
-        <div className=" bg-black text-white max-w-[100%] xl:max-w-[80%] md:max-w-[90%] mx-auto">
+        <div className="  text-white max-w-[100%] xl:max-w-[80%] md:max-w-[90%] mx-auto">
             {/* Header */}
-            <div className="bg-black sticky top-0 z-40 border-b border-gray-800 ">
+            <div className=" sticky top-0 z-40 border-b border-gray-800 ">
                 <div className="flex items-center justify-between px-4 py-3">
                     <NavLink to="/" className="flex items-center gap-2 text-white hover:text-[#ab99e1] transition-colors">
                         <IoIosArrowBack className="w-6 h-6" />
@@ -429,24 +420,73 @@ const [isModalOpen, setIsModalOpen] = useState(false)
 
             {/* Profile Content */}
             <div className='flex flex-col md:flex-row items-stretch min-h-[500px]'>
+                {/* side menu section */}
                 <div className='h-full px-4 py-6'>
                     <div className='xl:w-[300px] md:w-[200px] w-full'>
                         <ul className='p-3 capitalize'>
-                            <li className={`p-3 hover:bg-gray-800 bg-[#221f2a] mt-2 transition-all duration-300 ease-in-out border-b rounded-md backdrop-blur-xl flex items-center  ${activeMenu === "profile" ? "md:w-[105%] border-white   bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 group-hover:opacity-100 " : "w-[100%] border-transparent"}`} onClick={() => { setActiveMenu('profile') }}>
-                                <FaUserLarge className='h-5 w-5  me-3' /><p>
-                                    profile</p></li>
-                            <li className={`p-3 hover:bg-gray-800 bg-[#221f2a] mt-2 transition-all duration-300 ease-in-out border-b rounded-md backdrop-blur-xl flex items-center ${activeMenu === "address" ? "md:w-[105%] border-white bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 group-hover:opacity-100 " : "w-[100%] border-transparent"}`} onClick={() => { setActiveMenu('address') }}><GiTakeMyMoney className='h-5 w-5  me-3' ></GiTakeMyMoney><p>
-                                address</p></li>
-                            <li className={`p-3 hover:bg-gray-800 bg-[#221f2a] mt-2 transition-all duration-300 ease-in-out border-b rounded-md backdrop-blur-xl flex items-center ${activeMenu === "Transaction" ? "md:w-[105%] border-white bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 group-hover:opacity-100 " : "w-[100%] border-transparent"}`} onClick={() => { setActiveMenu('Transaction') }}><GiTakeMyMoney className='h-5 w-5  me-3' ></GiTakeMyMoney><p>
-                                Transaction</p></li>
-                            <li command="show-modal" commandfor="dialog" className={`p-3 hover:bg-gray-800 bg-[#221f2a] mt-2 transition-all duration-300 ease-in-out border-b rounded-md backdrop-blur-xl flex items-center ${activeMenu === "logout" ? "md:w-[105%] border-white bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 group-hover:opacity-100 " : "w-[100%] border-transparent"}`} onClick={() => { setActiveMenu('logout') }}><IoIosLogOut className='h-5 w-5 me-3' ></IoIosLogOut><p>
-                                logout</p></li>
-                            {/* <li className={`p-3 hover:bg-gray-800 bg-[#221f2a] mt-1 ${activeMenu ==='profile' ? 'w-[150%]':null }`} onClick={()=>{setActiveMenu('profile')}}><p>profile</p></li> */}
-
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('profile') }}>
+                                {(() => {
+                                    const Tag = activeMenu === "profile" ? StylishDiv : "div";
+                                    const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#221f2a]";
+                                    return (
+                                        <Tag className={style}>
+                                            <div className="flex items-center">
+                                                <FaUserLarge className="h-5 w-5 me-3" />
+                                                <p>profile</p>
+                                            </div>
+                                        </Tag>
+                                    );
+                                })()}
+                            </li>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('address') }}>
+                                {(() => {
+                                    const Tag = activeMenu === "address" ? StylishDiv : "div";
+                                    const style = activeMenu === "address" ? "w-full" : "p-3  bg-[#221f2a]";
+                                    return (
+                                        <Tag className={style}>
+                                            <div className="flex items-center">
+                                                <IoLocation className="h-5 w-5 me-3" />
+                                                <p>address</p>
+                                            </div>
+                                        </Tag>
+                                    );
+                                })()}
+                            </li>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('Transaction') }}>
+                                {(() => {
+                                    const Tag = activeMenu === "Transaction" ? StylishDiv : "div";
+                                    const style = activeMenu === "Transaction" ? "w-full" : "p-3  bg-[#221f2a]";
+                                    return (
+                                        <Tag className={style}>
+                                            <div className="flex items-center">
+                                                <GiTakeMyMoney className="h-5 w-5 me-3" />
+                                                <p>Transaction</p>
+                                            </div>
+                                        </Tag>
+                                    );
+                                })()}
+                            </li>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "logout" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('logout') }}>
+                                {(() => {
+                                    const Tag = activeMenu === "logout" ? StylishDiv : "div";
+                                    const style = activeMenu === "logout" ? "w-full" : "p-3  bg-[#221f2a]";
+                                    return (
+                                        <Tag className={style}>
+                                            <div className="flex items-center">
+                                                <IoIosLogOut className="h-5 w-5 me-3" />
+                                                <p>logout</p>
+                                            </div>
+                                        </Tag>
+                                    );
+                                })()}
+                            </li>
                         </ul>
                     </div>
-
                 </div>
+
+                {/* content data */}
+
+                {/* profile */}
                 {activeMenu === "profile" && (
                     <div className={`px-4 py-6 w-full`}>
                         {/* Profile Header */}
@@ -522,17 +562,17 @@ const [isModalOpen, setIsModalOpen] = useState(false)
                                     <div className="flex-1">
                                         <div className="text-sm text-gray-400">Email</div>
                                         {/* {isEditing ? (
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter your email"
-                                    className="w-full bg-transparent outline-none text-white placeholder-gray-500"
-                                />
-                            ) : (
-                                <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
-                            )} */}
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                placeholder="Enter your email"
+                                                className="w-full bg-transparent outline-none text-white placeholder-gray-500"
+                                            />
+                                        ) : (
+                                            <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
+                                        )} */}
                                         <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
                                     </div>
                                 </div>
@@ -541,304 +581,250 @@ const [isModalOpen, setIsModalOpen] = useState(false)
                     </div>
                 )}
 
-
-                {/* logout modal */}
-                <Transition appear show={activeMenu === "logout"} as={Fragment}>
-                    <Dialog as="div" className="relative z-50" onClose={() => setActiveMenu("profile")}>
-                        {/* Backdrop */}
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
-                        </Transition.Child>
-
-                        {/* Modal */}
-                        <div className="fixed inset-0 flex items-center justify-center p-4">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0 scale-95 translate-y-4"
-                                enterTo="opacity-100 scale-100 translate-y-0"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100 scale-100 translate-y-0"
-                                leaveTo="opacity-0 scale-95 translate-y-4"
-                            >
-                                <Dialog.Panel className="w-full max-w-md rounded-xl bg-[#221F2A] from-gray-800/90 to-gray-700/70 backdrop-blur-xl p-6 text-white shadow-xl">
-                                    <Dialog.Title className="text-lg font-semibold">
-                                        logout Account
-                                    </Dialog.Title>
-                                    <p className="mt-2 text-sm text-gray-300">
-                                        are you sure ?
-                                    </p>
-
-                                    <div className="mt-5 flex justify-end gap-3">
-                                        <button
-                                            className="px-4 py-2 rounded bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500  text-white"
-                                            onClick={() => setActiveMenu("profile")}
-                                        >
-                                            logout
-                                        </button>
-                                        <button
-                                            className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20"
-                                            onClick={() => setActiveMenu("profile")}
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </Dialog>
-                </Transition>
-
+                {/* address */}
                 {activeMenu === "address" && (
                     <div className={`px-4 py-6 w-full`}>
-                    <div className=" bg-[#221f2a] rounded-2xl sm:p-6 p-1 mb-6 flex flex-col w-full">
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-2 sm:px-4 py-4  backdrop-blur-xl sticky top-0 z-20 shadow-lg ">
-                            <div className="flex items-center gap-2 sm:gap-3">
-                                {/* <button
+                        <div className=" bg-[#221f2a] rounded-2xl sm:p-6 p-1 mb-6 flex flex-col w-full">
+                            {/* Header */}
+                            <div className="flex items-center justify-between px-2 sm:px-4 py-4  backdrop-blur-xl sticky top-0 z-20 shadow-lg ">
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    {/* <button
                                     className="text-white rounded-full hover:bg-white/10 transition-colors touch-manipulation"
                                     onClick={handleBack}
                                     aria-label="Go back"
                                 >
                                     <IoArrowBack className="w-5 h-5 sm:w-6 sm:h-6" />
                                 </button> */}
-                                <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide">Manage Addresses</h1>
-                            </div>
-                            {/* Add Address Button */}
-                            <button
-                                className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
+                                    <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide">Manage Addresses</h1>
+                                </div>
+                                {/* Add Address Button */}
+                                <button
+                                    className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
                              hover:from-[#8354f8] hover:to-[#9f78ff] 
                              text-white px-4 sm:px-5 py-2.5 rounded-xl 
                              flex items-center gap-2 text-sm font-medium 
                              transition-all duration-200 shadow-md hover:shadow-xl"
-                                onClick={openModal}
-                            >
-                                <IoLocation className="w-4 h-4" />
-                                <span>Add Address</span>
-                            </button>
-                        </div>
+                                    onClick={openModal}
+                                >
+                                    <IoLocation className=" w-4 h-4" />
+                                    <span>Add Address</span>
+                                </button>
+                            </div>
 
-                        {/* Main Content - Address Cards */}
-                        <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
-                            {addresses.length === 0 ? (
-                                // Empty state
-                                <div className="flex flex-col items-center justify-center py-12 sm:py-16">
-                                    <div className='w-20 h-20 xs:w-24 xs:h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden mb-3 sm:mb-4 md:mb-6 '>
-                                        <img src={manageAddress} className='w-full h-full object-cover' alt="Manage Address" />
-                                    </div>
-                                    <div className="text-center px-2 max-w-xs sm:max-w-sm">
-                                        <h2 className="text-white text-sm xs:text-base sm:text-lg md:text-xl font-medium mb-1 sm:mb-2">No addresses added!</h2>
-                                        <p className="text-gray-400 text-xs xs:text-sm sm:text-base leading-relaxed">Add your first address to get started</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                // Address cards
-                                <div className="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-                                    {addresses.map((address) => (
-                                        <div key={address.id} className="relative group rounded-3xl overflow-hidden">
-                                            <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 blur-[2px]" />
-                                            <div className="relative bg-black/40 backdrop-blur-xl rounded-3xl p-4 sm:p-5 shadow-2xl">
-                                                {/* Default Ribbon */}
-                                                {address.isDefault && (
-                                                    <div className="pointer-events-none absolute top-0 right-0 w-32 h-24 overflow-hidden">
-                                                        <div className="absolute right-[-19px] top-[7px]  rotate-45">
-                                                            <span className="bg-[#621df2] text-white text-[10px] font-semibold tracking-wide px-6 py-1 shadow-lg">Default</span>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {/* Address Content */}
-                                                <div className="space-y-2 sm:space-y-3">
-                                                    <h3 className="text-[#cfab9d] font-medium text-sm sm:text-base">{address.name}</h3>
-                                                    <p className="text-white text-sm">{address.addressLine1}</p>
-                                                    <p className="text-[#7b7b7b] text-sm">{address.addressLine2}</p>
-                                                    <div className='flex items-center gap-2 justify-between'>
-                                                        <p className="text-gray-300 text-sm">{address.mobile}</p>
-                                                        {/* Action Buttons */}
-                                                        <div className="flex flex-wrap items-center  gap-2 sm:gap-3 ">
-                                                            {/* Delete Button */}
-                                                            <button
-                                                                onClick={() => deleteAddress(address.id)}
-                                                                className="bg-red-600 hover:bg-red-700 text-white p-1 sm:p-2.5 rounded transition-colors duration-200 ms-auto"
-                                                                aria-label="Delete address"
-                                                            >
-                                                                <IoTrash className="w-4 h-4 sm:w-5 sm:h-5" />
-                                                            </button>
-
-                                                            {/* Edit Button */}
-                                                            <button
-                                                                onClick={() => openEditModal(address)}
-                                                                className="bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-3 py-2 rounded-lg shadow-md flex items-center gap-1 transition-all duration-200 ms-auto"
-                                                            >
-                                                                <IoPencil className="w-4 h-4" />
-                                                                <span className="text-sm">Edit</span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
+                            {/* Main Content - Address Cards */}
+                            <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
+                                {addresses.length === 0 ? (
+                                    // Empty state
+                                    <div className="flex flex-col items-center justify-center py-12 sm:py-16">
+                                        <div className='w-20 h-20 xs:w-24 xs:h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden mb-3 sm:mb-4 md:mb-6 '>
+                                            <img src={manageAddress} className='w-full h-full object-cover' alt="Manage Address" />
                                         </div>
-                                    ))}
+                                        <div className="text-center px-2 max-w-xs sm:max-w-sm">
+                                            <h2 className="text-white text-sm xs:text-base sm:text-lg md:text-xl font-medium mb-1 sm:mb-2">No addresses added!</h2>
+                                            <p className="text-gray-400 text-xs xs:text-sm sm:text-base leading-relaxed">Add your first address to get started</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    // Address cards
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+                                        {addresses.map((address) => (
+                                            <StylishDiv key={address.id} className=" group rounded-3xl overflow-hidden">
+                                                {/* <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 blur-[2px]" /> */}
+                                                <div className="">
+                                                    {/* Default Ribbon */}
+                                                    {address.isDefault && (
+                                                        <div className="pointer-events-none absolute top-0 right-0 w-32 h-24 overflow-hidden">
+                                                            <div className="absolute right-[-19px] top-[7px]  rotate-45">
+                                                                <span className="bg-[#621df2] text-white text-[10px] font-semibold tracking-wide px-6 py-1 shadow-lg">Default</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Address Content */}
+                                                    <div className="space-y-2 sm:space-y-3">
+                                                        <h3 className="text-[#cfab9d] font-medium text-sm sm:text-base">{address.name}</h3>
+                                                        <p className="text-white text-sm">{address.addressLine1}</p>
+                                                        <p className="text-[#7b7b7b] text-sm">{address.addressLine2}</p>
+                                                        <div className='flex items-center gap-2 justify-between'>
+                                                            <p className="text-gray-300 text-sm">{address.mobile}</p>
+                                                            {/* Action Buttons */}
+                                                            <div className="flex flex-wrap items-center  gap-2 sm:gap-3 ">
+                                                                {/* Delete Button */}
+                                                                <button
+                                                                    onClick={() => deleteAddress(address.id)}
+                                                                    className="bg-red-600 hover:bg-red-700 text-white p-1 sm:p-2.5 rounded transition-colors duration-200 ms-auto"
+                                                                    aria-label="Delete address"
+                                                                >
+                                                                    <IoTrash className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                                </button>
+
+                                                                {/* Edit Button */}
+                                                                <button
+                                                                    onClick={() => openEditModal(address)}
+                                                                    className="bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-3 py-2 rounded-lg shadow-md flex items-center gap-1 transition-all duration-200 ms-auto"
+                                                                >
+                                                                    <IoPencil className="w-4 h-4" />
+                                                                    <span className="text-sm">Edit</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            </StylishDiv>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Address Add/Edit Modal */}
+                            {(isModalOpen || isEditModalOpen) && (
+                                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
+                                    <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-[90vh] overflow-y-auto">
+                                        {/* Modal Header */}
+                                        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10">
+                                            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
+                                                {editingAddress ? 'Edit Address' : 'Add Address'}
+                                            </h2>
+                                            <button
+                                                onClick={closeModal}
+                                                className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+                                                aria-label="Close modal"
+                                            >
+                                                <IoClose className="w-5 h-5 sm:w-6 sm:h-6" />
+                                            </button>
+                                        </div>
+
+                                        {/* Modal Body */}
+                                        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4 sm:space-y-5">
+                                            {/* Name Field */}
+                                            <div>
+                                                <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                                                    Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="name"
+                                                    name="name"
+                                                    value={formData.name}
+                                                    onChange={handleaddressChange}
+                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+                                                    placeholder="Enter your name"
+                                                />
+                                            </div>
+
+                                            {/* Mobile Field */}
+                                            <div>
+                                                <label htmlFor="mobile" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                                                    Mobile No.
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    id="mobile"
+                                                    name="mobile"
+                                                    value={formData.mobile}
+                                                    onChange={handleaddressChange}
+                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+                                                    placeholder="Enter mobile number"
+                                                />
+                                            </div>
+
+                                            {/* Address Line 1 Field */}
+                                            <div>
+                                                <label htmlFor="addressLine1" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                                                    Address Line 1
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="addressLine1"
+                                                    name="addressLine1"
+                                                    value={formData.addressLine1}
+                                                    onChange={handleaddressChange}
+                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+                                                    placeholder="Enter address line 1"
+                                                />
+                                            </div>
+
+                                            {/* Address Line 2 Field */}
+                                            <div>
+                                                <label htmlFor="addressLine2" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                                                    Address Line 2
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="addressLine2"
+                                                    name="addressLine2"
+                                                    value={formData.addressLine2}
+                                                    onChange={handleaddressChange}
+                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+                                                    placeholder="Enter address line 2 (optional)"
+                                                />
+                                            </div>
+
+                                            {/* Landmark Field */}
+                                            <div>
+                                                <label htmlFor="landmark" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                                                    Landmark
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="landmark"
+                                                    name="landmark"
+                                                    value={formData.landmark}
+                                                    onChange={handleaddressChange}
+                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+                                                    placeholder="Enter landmark (optional)"
+                                                />
+                                            </div>
+
+                                            {/* Pincode Field */}
+                                            <div>
+                                                <label htmlFor="pincode" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                                                    Pincode
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="pincode"
+                                                    name="pincode"
+                                                    value={formData.pincode}
+                                                    onChange={handleaddressChange}
+                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+                                                    placeholder="Enter pincode"
+                                                />
+                                            </div>
+
+                                            {/* Default Address Checkbox */}
+                                            <div className="flex items-center gap-3">
+                                                <input
+                                                    type="checkbox"
+                                                    id="isDefault"
+                                                    name="isDefault"
+                                                    checked={formData.isDefault}
+                                                    onChange={handleaddressChange}
+                                                    className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 bg-white/5 border-white/10 rounded focus:ring-pink-500 focus:ring-2"
+                                                />
+                                                <label htmlFor="isDefault" className="text-sm sm:text-base text-gray-300 cursor-pointer">
+                                                    Set as default address
+                                                </label>
+                                            </div>
+
+                                            {/* Submit Button */}
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff]             hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 touch-manipulation shadow-lg mt-4 sm:mt-6"
+                                            >
+                                                {editingAddress ? 'Update Address' : 'Save Address'}
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             )}
                         </div>
-
-                        {/* Address Add/Edit Modal */}
-                        {(isModalOpen || isEditModalOpen) && (
-                            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
-                                <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-[90vh] overflow-y-auto">
-                                    {/* Modal Header */}
-                                    <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10">
-                                        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
-                                            {editingAddress ? 'Edit Address' : 'Add Address'}
-                                        </h2>
-                                        <button
-                                            onClick={closeModal}
-                                            className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
-                                            aria-label="Close modal"
-                                        >
-                                            <IoClose className="w-5 h-5 sm:w-6 sm:h-6" />
-                                        </button>
-                                    </div>
-
-                                    {/* Modal Body */}
-                                    <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4 sm:space-y-5">
-                                        {/* Name Field */}
-                                        <div>
-                                            <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="name"
-                                                name="name"
-                                                value={formData.name}
-                                                onChange={handleaddressChange}
-                                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                placeholder="Enter your name"
-                                            />
-                                        </div>
-
-                                        {/* Mobile Field */}
-                                        <div>
-                                            <label htmlFor="mobile" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                Mobile No.
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                id="mobile"
-                                                name="mobile"
-                                                value={formData.mobile}
-                                                onChange={handleaddressChange}
-                                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                placeholder="Enter mobile number"
-                                            />
-                                        </div>
-
-                                        {/* Address Line 1 Field */}
-                                        <div>
-                                            <label htmlFor="addressLine1" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                Address Line 1
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="addressLine1"
-                                                name="addressLine1"
-                                                value={formData.addressLine1}
-                                                onChange={handleaddressChange}
-                                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                placeholder="Enter address line 1"
-                                            />
-                                        </div>
-
-                                        {/* Address Line 2 Field */}
-                                        <div>
-                                            <label htmlFor="addressLine2" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                Address Line 2
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="addressLine2"
-                                                name="addressLine2"
-                                                value={formData.addressLine2}
-                                                onChange={handleaddressChange}
-                                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                placeholder="Enter address line 2 (optional)"
-                                            />
-                                        </div>
-
-                                        {/* Landmark Field */}
-                                        <div>
-                                            <label htmlFor="landmark" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                Landmark
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="landmark"
-                                                name="landmark"
-                                                value={formData.landmark}
-                                                onChange={handleaddressChange}
-                                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                placeholder="Enter landmark (optional)"
-                                            />
-                                        </div>
-
-                                        {/* Pincode Field */}
-                                        <div>
-                                            <label htmlFor="pincode" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                Pincode
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="pincode"
-                                                name="pincode"
-                                                value={formData.pincode}
-                                                onChange={handleaddressChange}
-                                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                placeholder="Enter pincode"
-                                            />
-                                        </div>
-
-                                        {/* Default Address Checkbox */}
-                                        <div className="flex items-center gap-3">
-                                            <input
-                                                type="checkbox"
-                                                id="isDefault"
-                                                name="isDefault"
-                                                checked={formData.isDefault}
-                                                onChange={handleaddressChange}
-                                                className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 bg-white/5 border-white/10 rounded focus:ring-pink-500 focus:ring-2"
-                                            />
-                                            <label htmlFor="isDefault" className="text-sm sm:text-base text-gray-300 cursor-pointer">
-                                                Set as default address
-                                            </label>
-                                        </div>
-
-                                        {/* Submit Button */}
-                                        <button
-                                            type="submit"
-                                            className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff]             hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 touch-manipulation shadow-lg mt-4 sm:mt-6"
-                                        >
-                                            {editingAddress ? 'Update Address' : 'Save Address'}
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
-                    </div>
                     </div>
                 )}
 
+                {/* transaction */}
                 {activeMenu === "Transaction" && (
                     <div className='px-4 py-6 w-full'>
                         <section className='w-full  bg-[#221f2a] rounded-2xl  sm:p-6 p-1 text-white flex flex-col'>
@@ -889,6 +875,62 @@ const [isModalOpen, setIsModalOpen] = useState(false)
                         </section>
                     </div>
                 )}
+
+                {/* logout modal */}
+                <Transition appear show={activeMenu === "logout"} as={Fragment}>
+                    <Dialog as="div" className="relative z-50" onClose={() => setActiveMenu("profile")}>
+                        {/* Backdrop */}
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                        </Transition.Child>
+
+                        {/* Modal */}
+                        <div className="fixed inset-0 flex items-center justify-center p-4">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95 translate-y-4"
+                                enterTo="opacity-100 scale-100 translate-y-0"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100 translate-y-0"
+                                leaveTo="opacity-0 scale-95 translate-y-4"
+                            >
+                                <Dialog.Panel className="w-full max-w-md rounded-xl bg-[#221F2A] from-gray-800/90 to-gray-700/70 backdrop-blur-xl p-6 text-white shadow-xl">
+                                    <Dialog.Title className="text-lg font-semibold">
+                                        logout Account
+                                    </Dialog.Title>
+                                    <p className="mt-2 text-sm text-gray-300">
+                                        are you sure ?
+                                    </p>
+
+                                    <div className="mt-5 flex justify-end gap-3">
+                                        <button
+                                            className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] 
+                             hover:from-[#8354f8] hover:to-[#9f78ff]   text-white"
+                                            onClick={() => setActiveMenu("profile")}
+                                        >
+                                            logout
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20"
+                                            onClick={() => setActiveMenu("profile")}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </Dialog>
+                </Transition>
 
             </div>
 
