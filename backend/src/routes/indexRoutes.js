@@ -6,7 +6,6 @@ import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUs
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
 import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
-import { createGame, createActionGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";
 import { createTrailer, deleteTrailer, getAllTrailer, updateTrailer } from "../controllers/HomeTrailerController.js";
 
 import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";

@@ -239,7 +239,6 @@ const gameSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // ********* Category ******
             .addCase(getAllCategories.pending, (state) => {
                 state.loading = true;
                 state.error = null;
