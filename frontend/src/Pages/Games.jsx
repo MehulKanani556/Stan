@@ -1,39 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import Header from '../header/Header'
-import Footer from '../footer/Footer'
 import { clearError, getFreeGames } from '../Redux/Slice/freeGame.slice'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 const Games = () => {
 	const dispatch = useDispatch()
 	const { games, loading, error } = useSelector((state) => state.freeGame)
-	
+
 	const scrollContainerRef = useRef(null)
 	const [canScrollLeft, setCanScrollLeft] = useState(false)
 	const [canScrollRight, setCanScrollRight] = useState(true)
 	const [showAll, setShowAll] = useState(false)
 
-	const VISIBLE_COUNT = 6
 	const safeGames = Array.isArray(games) ? games : []
-	const displayedGames = safeGames
+	const displayedGames = showAll ? [] : safeGames
 	const additionalGames = showAll ? safeGames : []
 
-	const cardWidthClass = 'w-64 md:w-64'
-	const cardBaseClass = 'rounded-xl overflow-hidden bg-[#221f2a] ring-1 ring-transparent group-hover:ring-[#ab99e1] transition'
-	const cardImageClass = 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
-
-	// Fetch games from Redux
+	// Fetch games
 	useEffect(() => {
 		dispatch(getFreeGames())
 	}, [dispatch])
 
-	// Clear error when component unmounts
+	// Clear error on unmount
 	useEffect(() => {
-		return () => {
-			dispatch(clearError())
-		}
+		return () => dispatch(clearError())
 	}, [dispatch])
 
 	useEffect(() => {
@@ -43,22 +34,15 @@ const Games = () => {
 		}
 	}, [showAll, games])
 
-	useEffect(() => {
-		updateScrollButtons()
-	}, [games])
-
 	const scroll = (direction) => {
 		if (scrollContainerRef.current) {
 			const container = scrollContainerRef.current
-			const scrollAmount = 300
-			if (direction === 'left') {
-				container.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
-			} else {
-				container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
-			}
-			setTimeout(() => {
-				updateScrollButtons()
-			}, 300)
+			const scrollAmount = 320
+			container.scrollBy({
+				left: direction === 'left' ? -scrollAmount : scrollAmount,
+				behavior: 'smooth',
+			})
+			setTimeout(updateScrollButtons, 300)
 		}
 	}
 
@@ -70,90 +54,97 @@ const Games = () => {
 		}
 	}
 
-	const toggleShowAll = () => {
-		setShowAll((prev) => !prev)
-	}
-
 	return (
-		<>
-			<div className='container pt-28 pb-24'>
-				<div className='flex items-center justify-between mb-6'>
-					<h2 className='text-white text-2xl font-semibold'>Free Games</h2>
-					<div className='flex items-center gap-4'>
-						<div className='flex items-center gap-2'>
+		<div className="max-w-[95%] md:max-w-[85%] m-auto pt-28 pb-24">
+
+			<div className="flex items-center justify-between mb-8">
+				<h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-wide">
+					Free Games
+				</h2>
+				<div className="flex items-center gap-4">
+					{!showAll && (
+						<div className="flex items-center gap-2">
 							<button
 								onClick={() => scroll('left')}
 								disabled={!canScrollLeft}
-								className={`p-2 rounded-full transition-colors ${canScrollLeft
-										? 'bg-[#ab99e1] hover:bg-[#9a8ad0] text-white'
-										: 'bg-gray-600 text-gray-400 cursor-not-allowed'
+								className={`p-2 rounded-full shadow-lg transition ${canScrollLeft
+									? 'bg-gradient-to-r from-purple-400 to-purple-600  hover:from-purple-500 hover:to-purple-700 text-white hover:scale-110'
+									: 'bg-gray-700 text-gray-500 cursor-not-allowed'
 									}`}
 							>
-								<FaChevronLeft size={16} />
+								<FaChevronLeft size={18} />
 							</button>
 							<button
 								onClick={() => scroll('right')}
 								disabled={!canScrollRight}
-								className={`p-2 rounded-full transition-colors ${canScrollRight
-										? 'bg-[#ab99e1] hover:bg-[#9a8ad0] text-white'
-										: 'bg-gray-600 text-gray-400 cursor-not-allowed'
+								className={`p-2 rounded-full shadow-lg transition ${canScrollRight
+									? 'bg-gradient-to-r from-purple-400 to-purple-600  hover:from-purple-500 hover:to-purple-700 text-white hover:scale-110'
+									: 'bg-gray-700 text-gray-500 cursor-not-allowed'
 									}`}
 							>
-								<FaChevronRight size={16} />
+								<FaChevronRight size={18} />
 							</button>
 						</div>
-						<button
-							onClick={toggleShowAll}
-							className='text-[#ab99e1] hover:text-white hover:underline transition-colors font-medium'
-						>
-							{showAll ? 'View Less' : 'View More'}
-						</button>
-					</div>
-				</div>
+					)}
+					<button
+						onClick={() => setShowAll(!showAll)}
+						className="px-6 py-2 rounded-xl text-sm font-semibold 	bg-white/10 backdrop-blur-md border border-white/20 	text-purple-300 hover:text-white 	hover:bg-purple-500/30 transition-all duration-300 	shadow-lg shadow-purple-900/40"
+					>
+						{showAll ? 'View Less' : 'View More'}
+					</button>
 
-				{/* Top horizontal row - identical card width */}
+				</div>
+			</div>
+
+			{/* Horizontal Row */}
+			{!showAll && (
 				<div
 					ref={scrollContainerRef}
-					className='flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide pb-4'
 					onScroll={updateScrollButtons}
+					className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide"
 				>
 					{displayedGames.map((game) => (
-						<Link
-							key={game._id}
-							to={`/games/${game.slug}`}
-							className='group flex-shrink-0'
-						>
-							<div className={`${cardWidthClass} aspect-[4/3] ${cardBaseClass}`}>
-								<img src={game.image} alt={game.name} className={cardImageClass} />
+						<Link key={game._id} to={`/games/${game.slug}`} className="group flex-shrink-0">
+							<div className="relative w-64 aspect-[4/3] rounded-2xl overflow-hidden 
+								bg-gradient-to-b from-[#2b2737] to-[#1a1823] 
+								shadow-lg shadow-purple-900/40 transform hover:scale-105 
+								transition duration-500">
+								<img
+									src={game.image}
+									alt={game.name}
+									className="w-full h-full object-cover rounded-2xl group-hover:opacity-80 transition"
+								/>
+								<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-3">
+									<p className="text-white font-semibold">{game.name}</p>
+								</div>
 							</div>
-							<p className='mt-2 text-white text-sm md:text-base group-hover:text-[#ab99e1]'>
-								{game.name}
-							</p>
 						</Link>
 					))}
 				</div>
+			)}
 
-				{/* Additional section shown below when View More - same card width, flex-wrap */}
-				{showAll && additionalGames.length > 0 && (
-					<div className='mt-6 flex flex-wrap gap-4 md:gap-6'>
-						{additionalGames.map((game) => (
-							<Link
-								key={game._id}
-								to={`/games/${game.slug}`}
-								className='group'
-							>
-								<div className={`${cardWidthClass} aspect-[4/3] ${cardBaseClass}`}>
-									<img src={game.image} alt={game.name} className={cardImageClass} />
+			{/* Grid Layout */}
+			{showAll && (
+				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+					{additionalGames.map((game) => (
+						<Link key={game._id} to={`/games/${game.slug}`} className="group">
+							<div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden 
+								bg-gradient-to-b from-[#2b2737] to-[#1a1823] 
+								shadow-lg shadow-purple-900/40 hover:scale-105 transition duration-500">
+								<img
+									src={game.image}
+									alt={game.name}
+									className="w-full h-full object-cover rounded-2xl group-hover:opacity-80 transition"
+								/>
+								<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-3">
+									<p className="text-white font-semibold">{game.name}</p>
 								</div>
-								<p className='mt-2 text-white text-sm md:text-base group-hover:text-[#ab99e1]'>
-									{game.name}
-								</p>
-							</Link>
-						))}
-					</div>
-				)}
-			</div>
-		</>
+							</div>
+						</Link>
+					))}
+				</div>
+			)}
+		</div>
 	)
 }
 

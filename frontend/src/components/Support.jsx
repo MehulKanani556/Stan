@@ -7,12 +7,12 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Support() {
   const navigate = useNavigate()
-  // Track only one open card at a time
+  
   const [openKey, setOpenKey] = useState(null)
 
   const toggle = (k) => setOpenKey(prev => (prev === k ? null : k))
 
-  // Chat modal state
+  
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [chatMessages, setChatMessages] = useState([
     {
@@ -24,7 +24,7 @@ export default function Support() {
   ])
   const [chatInput, setChatInput] = useState('')
 
-  // Delete account modal state
+  
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deleteReason, setDeleteReason] = useState('')
   const [otherReasonText, setOtherReasonText] = useState('')
@@ -49,7 +49,7 @@ export default function Support() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white">
 
-      {/* Header */}
+      
       <header className="flex items-center gap-3 px-4 py-4 sticky top-0 z-20 bg-black/30 backdrop-blur-xl shadow-lg">
         <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-white/10">
           <IoArrowBack className="w-6 h-6" />
@@ -57,22 +57,22 @@ export default function Support() {
         <h1 className="text-lg sm:text-2xl font-bold tracking-wide">⚙️ Settings</h1>
       </header>
 
-      {/* Cards Grid */}
+      
       <main className="px-4 py-8 md:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
 
-        {/* Stylish Card Template */}
+        
         <motion.div
           whileHover={{ scale: 1.05, rotateX: 5, rotateY: -5 }}
           transition={{ type: "spring", stiffness: 200, damping: 15 }}
           className="relative group rounded-3xl overflow-hidden cursor-pointer self-start"
         >
-          {/* Neon Border Glow */}
+          
           <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 group-hover:opacity-100 blur-[2px] transition" />
 
-          {/* Inner Card */}
+          
           <div className="relative bg-black/40 backdrop-blur-xl rounded-3xl h-full shadow-2xl flex flex-col">
 
-            {/* Header */}
+            
             <div onClick={() => toggle("myAccount")} className="p-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
@@ -83,7 +83,7 @@ export default function Support() {
               {openKey === 'myAccount' ? <IoChevronUp /> : <IoChevronForward />}
             </div>
 
-            {/* Expanded Content */}
+            
             <AnimatePresence>
               {openKey === 'myAccount' && (
                 <motion.div
@@ -112,7 +112,7 @@ export default function Support() {
           </div>
         </motion.div>
 
-        {/* Payments Card */}
+        
         <motion.div whileHover={{ scale: 1.05, rotateX: -5, rotateY: 5 }}
           className="relative group rounded-3xl overflow-hidden cursor-pointer self-start">
           <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 group-hover:opacity-100 blur-[2px]" />
@@ -147,7 +147,7 @@ export default function Support() {
           </div>
         </motion.div>
 
-        {/* Help Card */}
+        
         <motion.div whileHover={{ scale: 1.05 }}
           className="relative group rounded-3xl overflow-hidden cursor-pointer self-start">
           <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 group-hover:opacity-100 blur-[2px]" />
@@ -186,20 +186,20 @@ export default function Support() {
         </motion.div>
         {isContactModalOpen && (
           <>
-            {/* Overlay */}
+            
             <div
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
               onClick={() => setIsContactModalOpen(false)}
             />
 
-            {/* Modal */}
+            
             <div className="fixed bottom-0 left-0 right-0 z-50 w-full sm:bottom-6 sm:right-6 sm:left-auto sm:w-full sm:max-w-sm">
               <div
                 className="rounded-none sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[100dvh] sm:h-[70vh] relative 
                    bg-black/50 backdrop-blur-2xl border border-white/10"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Header */}
+                
                 <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0">
                   <button
                     className="text-white hover:scale-110 transition"
@@ -214,7 +214,7 @@ export default function Support() {
                   </div>
                 </div>
 
-                {/* Chat Messages */}
+                
                 <div className="flex-1 overflow-y-auto p-4 space-y-3">
                   {chatMessages.map(msg => (
                     <div key={msg.id} className={`flex ${msg.author === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -238,7 +238,7 @@ export default function Support() {
                   ))}
                 </div>
 
-                {/* Input */}
+                
                 <div className="border-t border-white/10 p-3 bg-black/40 backdrop-blur-xl sticky bottom-0">
                   <div className="flex items-center gap-2">
                     <textarea
@@ -272,19 +272,19 @@ export default function Support() {
 
         {isDeleteModalOpen && (
           <>
-            {/* Overlay */}
+            
             <div
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
               onClick={() => setIsDeleteModalOpen(false)}
             />
 
-            {/* Modal Sheet */}
+            
             <div className="fixed bottom-0 left-0 right-0 z-50 w-full sm:bottom-6 sm:right-6 sm:left-auto sm:w-full sm:max-w-sm">
               <div
                 className="rounded-none sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[100dvh] sm:h-[70vh] relative bg-black/50 backdrop-blur-2xl border border-white/10"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Header */}
+                
                 <div className="flex items-center gap-3 px-4 py-3 bg-black/40 border-b border-white/10 sticky top-0">
                   <button
                     className="text-white hover:scale-110 transition"
@@ -296,7 +296,7 @@ export default function Support() {
                   <h2 className="text-white font-semibold text-lg">Account Deletion</h2>
                 </div>
 
-                {/* Content */}
+                
                 <div className="flex-1 overflow-y-auto p-5 space-y-6">
                   <div className="text-white text-xl font-semibold leading-snug">
                     Select a reason for deleting the account
@@ -335,11 +335,11 @@ export default function Support() {
                   </div>
                 </div>
 
-                {/* Footer */}
+                
                 <div className="p-4 bg-black/40 border-t border-white/10 sticky bottom-0">
                   <button
                     onClick={() => {
-                      // Placeholder: integrate actual delete flow here
+                      
                       console.log('Delete requested with reason:', deleteReason, otherReasonText)
                       setIsDeleteModalOpen(false)
                     }}
