@@ -61,22 +61,6 @@ export const createGame = createAsyncThunk(
     }
 );
 
-// CREATE ACTION GAME (tags will include "action")
-export const createActionGame = createAsyncThunk(
-    "game/createActionGame",
-    async (formData, { rejectWithValue }) => {
-        try {
-            const res = await axiosInstance.post("/createActionGame", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            enqueueSnackbar("Action Game Add successful", { variant: "success" });
-            return res.data;
-        } catch (err) {
-            return rejectWithValue(err.response?.data?.message || err.message);
-        }
-    }
-);
-
 // UPDATE GAME
 export const updateGame = createAsyncThunk(
     "game/updateGame",
@@ -125,7 +109,6 @@ const gameSlice = createSlice({
     initialState: {
         games: [],
         popularGames: [],
-        actionGames: [],
         singleGame: null,
         loading: false,
         error: null,
@@ -194,21 +177,6 @@ const gameSlice = createSlice({
                 state.games.unshift(action.payload); // add new game to top
             })
             .addCase(createGame.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
-            // CREATE ACTION GAME
-            .addCase(createActionGame.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-                state.success = null;
-            })
-            .addCase(createActionGame.fulfilled, (state, action) => {
-                state.loading = false;
-                state.success = "Action game created successfully";
-                state.games.unshift(action.payload);
-            })
-            .addCase(createActionGame.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

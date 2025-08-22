@@ -80,8 +80,6 @@ const Login = () => {
       onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
         try {
           const res = await dispatch(register(values));
-          console.log(res);
-          
           if (res.meta.requestStatus === "fulfilled" && res.payload?.success) {
             navigate("/");
             resetForm();
