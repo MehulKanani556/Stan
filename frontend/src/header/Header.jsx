@@ -50,7 +50,7 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        const userId = authUser?._id || localStorage.getItem("userId");
+        const userId = authUser?._id || localStorage.getItem("userId"); 
         if (userId && !currentUser) {
             dispatch(getUserById(userId));
         }
