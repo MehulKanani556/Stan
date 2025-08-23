@@ -140,26 +140,18 @@ export const resetPassword = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (id, { dispatch, rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/logout/${id}`);
-      if (response.data.success) {
+
+     
         localStorage.removeItem("userId");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
-        if (window.persistor) {
-          window.persistor.purge();
-        }
+
         // dispatch(setAlert({ text: response.data.message, color: 'success' }));
-        enqueueSnackbar(response.data.message || "Logged out successfully", { variant: "success" });
-        return response.data;
+        enqueueSnackbar( "Logged out successfully", { variant: "success" });
+        return ;
       }
-    } catch (error) {
-      enqueueSnackbar(error.response?.data?.message || "Logout failed", {
-        variant: "error",
-      });
-      // return handleErrors(error, dispatch, rejectWithValue);
-    }
-  }
+    
+  
 );
 
 export const googleLogin = createAsyncThunk(

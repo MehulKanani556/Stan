@@ -7,7 +7,6 @@ import { getReceiverSocketId } from "../socketManager/SocketManager.js";
 import { decryptData, encryptData } from "../middlewares/incrypt.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 // Configure S3 client

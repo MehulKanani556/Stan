@@ -57,6 +57,7 @@ function AppContent() {
             <Route path="/TopGames" element={<TopGames />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/single" element={<SingleGame/>} />
+            <Route path="/single/:id" element={<SingleGame/>} />
           </Routes>
           </SocketProvider>
         </SnackbarProvider>
