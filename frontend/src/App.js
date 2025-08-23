@@ -21,6 +21,7 @@ import Profile from "./Pages/Profile";
 import GGTalks from './Pages/GGTalks';
 import { SocketProvider } from './context/SocketContext';
 import SingleGame from './components/SingleGame';
+import ChatWidget from './components/ChatWidget';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -58,8 +59,10 @@ function AppContent() {
             <Route path="/Profile" element={<Profile />} />
             <Route path="/single" element={<SingleGame/>} />
           </Routes>
+          <ChatWidget />
           </SocketProvider>
         </SnackbarProvider>
+
       {(!showFooter ) && <Footer />}
       </Provider>
     </>
