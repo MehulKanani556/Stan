@@ -149,6 +149,11 @@ body {
   z-index: 3;
 }
 
+.ds_mini_slider .slick-slide > div:first-child {
+   width: 100%;
+   padding: 0px 10px;
+}
+
 
 /* .ds_review_slider .slick-dots li button{
   height: 30px !important;
@@ -171,7 +176,9 @@ body {
     padding: 20px 0px 0px 0px;
   }
   .ds_mini_slider .slick-current div div img{
-    border: 2px solid red !important;
+    border: 2px solid white !important;
+    position: relative;
+    z-index: 2;
  }
 } 
 
