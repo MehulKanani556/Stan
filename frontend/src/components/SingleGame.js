@@ -353,7 +353,7 @@ const SingleGame = () => {
 
           {/* right side copntent */}
           <div className="xl:w-1/4 w-full xl:pl-6 mt-10 xl:mt-0 ">
-            <div className="p-6">
+            <div className="p-6 sticky top-24">
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
               </div>

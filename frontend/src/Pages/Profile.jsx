@@ -601,7 +601,7 @@ export default function Profile() {
                                 <button
                                     className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
                              hover:from-[#8354f8] hover:to-[#9f78ff] 
-                             text-white px-4 sm:px-5 py-2.5 rounded-xl 
+                             text-white px-2 sm:px-5 py-2.5 rounded-xl 
                              flex items-center gap-2 text-sm font-medium 
                              transition-all duration-200 shadow-md hover:shadow-xl"
                                     onClick={openModal}
