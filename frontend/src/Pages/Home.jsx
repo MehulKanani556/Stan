@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Header from '../header/Header'
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -26,12 +26,44 @@ import Trailer from '../components/Trailer';
 import ReviewHome from '../components/ReviewHome';
 import MultiHome from '../components/MultiHome';
 import StylishDiv from '../components/StylishDiv';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState(0);
   const categorySwiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const [activeTab, setActiveTab] = useState(null);
+  const scrollContainerRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const gameData = useSelector((state)=> state?.game?.games)
+  const disaptch = useDispatch()
+  const cateData = useSelector((state)=> state?.game?.category)
+  const [mainGameData, setMainGameData] = useState(gameData)
+  const navigate = useNavigate()
+
+  // console.log("Hello Bachho" , gameData);
+  // console.log("cateData" , cateData);
+
+  useEffect(()=>{
+    disaptch(getAllGames())
+  },[])
+
+  useEffect(()=>{
+    disaptch(getAllCategories())
+    .then((value)=>{
+      //  console.log("hihi" , );
+      //  setActiveTab(value?.payload[0]?.categoryName)
+    })
+  },[])
+
+  useEffect(()=>{
+    setMainGameData(gameData)
+  },[gameData])
+  
 
   const categories = [
     "Thriller",
@@ -110,8 +142,51 @@ export default function Home() {
     ]
   ];
 
-  // Programmatic control for category swiper
-  const scrollRight = () => categorySwiperRef.current?.slideNext();
+  // Mouse drag functionality for horizontal scrolling
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll speed multiplier
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: 300,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handle = (cate) => {
+     setActiveTab(cate)
+     if(cate === null){
+        setMainGameData(mainGameData)
+     }
+     else{
+       const filter = gameData?.filter((ele)=>{
+          return ele?.category?.categoryName === cate
+       })
+       console.log("YESYE", filter);
+       setMainGameData(filter)
+    }
+  }
 
   return (
     <>
@@ -190,24 +265,24 @@ export default function Home() {
           <div className='py-4 sm:py-6 md:py-8 lg:py-10 w-full'>
             {/* Tab buttons */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
-              {categories.map((category, index) => (
+              {cateData?.map((element) => (
                 <button
-                  key={index}
+                  key={element?._id}
                   className={`
                    px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
                    rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
                    transition-all duration-200 ease-out
                    border border-transparent
                    whitespace-nowrap
-                   ${activeTab === index
+                   ${activeTab === element?.categoryName
                       ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
                       : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
                     }
                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                  `}
-                  onClick={() => setActiveTab(index)}
+                 onClick={() =>  handle(element?.categoryName)}
                 >
-                  {category}
+                  {element?.categoryName}
                 </button>
               ))}
             </div>
@@ -219,7 +294,7 @@ export default function Home() {
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
                     <div>
                       <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>
-                        Popular {categories[activeTab]} Games
+                         {categories[activeTab]} Games
                       </p>
                     </div>
                     <button
@@ -261,64 +336,77 @@ export default function Home() {
                       padding: '20px 4px'
                     }}
                   >
-                    {gamesByCategory[activeTab]?.map((game) => (
-                      <SwiperSlide key={game.id} className='cursor-pointer'>
-                        <div className='relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] overflow-hidden ds_height_manage'>
-                          <div className="group relative overflow-hidden  transition-all duration-300 w-full">
-                            <div className='relative w-full h-40 sm:h-44 md:h-48 lg:h-56 overflow-hidden'>
-                              <img
-                                src={game.image}
-                                alt={game.title}
-                                className='w-full h-full object-cover '
-                              />
-                              <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
+                    <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max px-4 py-8'>
+                      {mainGameData?.map((element) => (
+                        <div onClick={()=> navigate(`/single/${element?._id}`)}>
+                        <StylishDiv>
+                        <div
+                          key={element?._id}
+                          className="group relative   overflow-hidden  transition-all duration-300 w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 "
+                        >
+                          <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
+                            <img
+                              src={element?.cover_image?.url}
+                              alt=""
+                              className='w-full h-full object-cover '
+                            />
+                            <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
 
-                              <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-                                <div className='flex items-center gap-1.5 sm:gap-2'>
-                                  <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-[#221f2a] text-[#ab99e1] tracking-wide font-medium'>
-                                    {game.tag}
+                            <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
+                              {/* <div className='flex items-center gap-1.5 sm:gap-2'>
+                                <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-[#221f2a] text-[#ab99e1] tracking-wide font-medium'>
+                                  {element?.tags[0]}
+                                </span>
+                                {element.discount > 0 && (
+                                  <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-green-500/20 text-green-400 tracking-wide font-medium'>
+                                    -{element.discount}%
                                   </span>
                                   {game.discount > 0 && (
                                     <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-green-500/20 text-green-400 tracking-wide font-medium'>
                                       -{game.discount}%
                                     </span>
                                   )}
-                                </div>
+                                </div> */}
                               </div>
 
                               <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
-                                <p className='text-white font-semibold text-sm sm:text-base md:text-base lg:text-lg'>{game.title}</p>
+                                {/* <p className='text-white font-semibold text-sm sm:text-base md:text-base lg:text-lg'>{game.title}</p> */}
                               </div>
                             </div>
 
-                            <div className='p-3 sm:p-3.5 md:p-4 flex items-center justify-between'>
-                              <div>
-                                <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
-                                <p className='text-white font-semibold text-sm sm:text-base md:text-base'>
-                                  ₹{game.price.toLocaleString('en-IN')}
-                                  {game.discount > 0 && (
-                                    <span className='ml-2 line-through text-gray-400 text-xs'>
-                                      ₹{(game.price / (1 - game.discount / 100)).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                                    </span>
-                                  )}
-                                </p>
-                              </div>
-                              <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-3.5 py-1.5 sm:py-1.5 md:py-2 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-sm shadow-md hover:shadow-lg transform hover:-translate-y-0.5'>
-                                Buy
-                                <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-                              </button>
+                            <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
+                              <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{element?.title}</p>
                             </div>
                           </div>
+
+                          <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
+                            <div>
+                              <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
+                              <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
+                                ₹{element?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                                {/* {element.discount > 0 && (
+                                  <span className='ml-2 line-through text-gray-400 text-xs'>
+                                    ₹{(element?.platforms?.windows?.price / (1 - element?.discount / 100))?.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                                  </span>
+                                )} */}
+                              </p>
+                            </div>
+                            <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
+                              Buy
+                              <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
+                            </button>
+                          </div>
+                        </StylishDiv>
                         </div>
-                      </SwiperSlide>
-                    ))}
+                      ))}
+                        </div>
                   </Swiper>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-          </div>
-        </div>
 
         <TopGames />
 

@@ -17,7 +17,7 @@ import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
 import { FaArrowRight } from "react-icons/fa";
-import { createActionGame, getAllGames, getPopularGames } from '../Redux/Slice/game.slice';
+import { getAllGames, getPopularGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 
 
@@ -25,10 +25,9 @@ const Store = () => {
   const dispatch = useDispatch();
   const games = useSelector((state) => state.game.games);
   const PopularGames = useSelector((state) => state.game.popularGames);
-  const ActionGames = useSelector((state) => state.game.actionGames);
 
   // console.log(games);
-  console.log(ActionGames, "ActionGames");
+  console.log(games, "all games");
 
 
   useEffect(() => {
@@ -39,15 +38,10 @@ const Store = () => {
     dispatch(getPopularGames());
   }, []);
 
-  useEffect(() => {
-    dispatch(createActionGame());
-  }, []);
-
 
   const scrollContainerRefs = {
     trending: useRef(null),
     popular: useRef(null),
-    action: useRef(null),
     ps5: useRef(null),
     top: useRef(null),
   };
@@ -219,7 +213,7 @@ const Store = () => {
           <GameSection title="Popular Games" games={Array.isArray(PopularGames) ? PopularGames : []} sectionRef={scrollContainerRefs.popular} />
         </div>
         <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
-          <GameSection title="Action Games" games={Array.isArray(ActionGames) ? ActionGames : []} sectionRef={scrollContainerRefs.action} />
+          <GameSection title="Action Games" games={games?.action ?? []} sectionRef={scrollContainerRefs.action} />
         </div>
         {/*<div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
           <GameSection title="PS-5 Games" games={games?.ps5 ?? []} sectionRef={scrollContainerRefs.ps5} />

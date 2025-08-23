@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FaChevronLeft, FaChevronRight, FaPlay, FaStar } from 'react-icons/fa'
+import { FaChevronLeft, FaChevronRight, FaPlay, FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa'
 
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -12,6 +12,9 @@ import game2 from '../images/game_img3.jpeg'
 import game3 from '../images/game_img4.jpeg'
 import game4 from '../images/game_img5.jpeg'
 import gtav from '../images/gtalogo.avif'
+import { useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { getGameById } from '../Redux/Slice/game.slice'
 
 
 const SingleGame = () => {
@@ -22,13 +25,25 @@ const SingleGame = () => {
   let sliderRef2 = useRef(null);
   const videoRefs = useRef([]);
   const [slidesToShow, setSlidesToShow] = useState(5)
+  const { id } = useParams()
+  const dispatch = useDispatch()
+  const single = useSelector((state)=> state?.game?.singleGame)
 
-
-
+  console.log("HIHIHI" , single);
+  
   useEffect(() => {
     setNav1(sliderRef1);
     setNav2(sliderRef2);
   }, []);
+
+  useEffect(()=>{
+    dispatch(getGameById(id))
+  },[])
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+  
 
   const handleSlideChange = (oldIndex, newIndex) => {
     videoRefs.current.forEach((video, index) => {
@@ -181,20 +196,29 @@ const SingleGame = () => {
     return () => window.removeEventListener("resize", updateSlides);
   }, []);
 
-
-
+  const rating = single?.ratings?.reduce((ele , sec)=> ele?.rating + sec?.rating) / single?.ratings?.length
+  const fullStars = Math.floor(rating);       
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  
 
   return (
     <div className=''>
       <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
         <div>
-          <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5'>Grand Theft Auto V Enhanced</h2>
+          <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5'>{single?.title}</h2>
           <div className="flex mb-3 mt-2">
-            <FaStar className={`h-5 w-5 mx-1 ${'text-white'}`} />
-            <FaStar className={`h-5 w-5 mx-1 ${'text-white'}`} />
-            <FaStar className={`h-5 w-5 mx-1 ${'text-white'}`} />
-            <FaStar className={`h-5 w-5 mx-1 ${'text-white'}`} />
-            <FaStar className={`h-5 w-5 mx-1 ${'text-white'}`} />
+            {Array.from({ length: fullStars }).map((_, i) => (
+             <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
+            ))}
+
+            {hasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-5 w-5 mx-0.5" />}
+
+            {Array.from({ length: emptyStars }).map((_, i) => (
+              <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
+            ))}
+
+            <span className="ml-2 text-white font-medium">{rating?.toFixed(1)}</span>
           </div>
         </div>
 
@@ -202,35 +226,31 @@ const SingleGame = () => {
           <div className='xl:w-3/4 w-full '>
             <div>
               <Slider {...mainSettings} className='ds_single_slider'>
-                <div>
-                  <video ref={(el) => (videoRefs.current[0] = el)}
-                    src={gta}
-                    autoPlay muted loop className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover  shadow-lg bg-black" />
-                </div>
-                <div>
-                  <img src={game} alt="" className=" w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover rounded-lg" />
-                </div>
-                <div>
-                  <img src={game1} alt="" className=" w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover rounded-lg" />
-                </div>
-                <div>
-                  <img src={game2} alt="" className=" w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover rounded-lg" />
-                </div>
-                <div>
-                  <img src={game3} alt="" className=" w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover rounded-lg" />
-                </div>
-                <div>
-                  <img src={game4} alt="" className=" w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover rounded-lg" />
-                </div>
+                {single?.images?.map((element)=>{
+                  return(
+                    
+                   <div>
+                     {/* { <video ref={(el) => (videoRefs.current[0] = el)} src={element?.url}autoPlay muted loop className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover  shadow-lg bg-black" />} */}
+                       <img src={element?.url} alt="" className=" w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg" />
+                   </div>
+                  )
+                })}
+                
+              
               </Slider>
 
               <div className='px-5'>
                 <Slider {...thumbSettings} className='mt-3 ds_mini_slider' >
-                  <div className="flex justify-center px-2 relative">
-                    <img src={gta5} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                    <FaPlay className="absolute inset-0 m-auto text-white text-4xl transition" />
-                  </div>
-                  <div className="flex justify-center px-2">
+                  {single?.images?.map((element)=>{
+                     return(
+                      <div className="flex justify-center  relative">
+                         {/* <img src={gta5} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
+                         <FaPlay className="absolute inset-0 m-auto text-white text-4xl transition" /> */}
+                         <img src={element?.url} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
+                      </div>
+                     )
+                   })}
+                  {/* <div className="flex justify-center px-2">
                     <img src={game} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
                   </div>
                   <div className="flex justify-center px-2">
@@ -244,7 +264,7 @@ const SingleGame = () => {
                   </div>
                   <div className="flex justify-center px-2">
                     <img src={game4} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                  </div>
+                  </div> */}
                 </Slider>
               </div>
 
@@ -253,14 +273,14 @@ const SingleGame = () => {
               <div className="py-10 md:px-4">
                 <div className="">
                   <h2 className="text-base md:text-lg mb-12 text-left">
-                    Experience entertainment blockbusters Grand Theft Auto V and Grand Theft Auto Online — now upgraded for a new generation with stunning visuals, faster loading, 3D audio, and more, plus exclusive content for GTA Online players.
+                     {single?.description}
                   </h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div className="bg-black/15 p-6 rounded-lg shadow-lg">
                       <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
                       <div className="flex flex-wrap gap-3">
-                        {['Action', 'Adventure', 'Open World'].map((genre, index) => (
+                        {single?.tags?.map((genre, index) => (
                           <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer">
                             {genre}
                           </span>
@@ -281,10 +301,10 @@ const SingleGame = () => {
                   </div>
 
                   <div className="bg-black/15 p-8 rounded-lg shadow-lg mb-8">
-                    <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#ab99e1]">Grand Theft Auto V Enhanced</h3>
-                    <p className="mb-4">(also Includes Grand Theft Auto V Legacy)</p>
+                    <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#ab99e1]">{single?.title}</h3>
+                    <p className="mb-4">(also Includes {single?.title} Legacy)</p>
                     <p className="text-gray-300 text-sm md:text-base">
-                      This purchase includes both GTAV Enhanced and GTAV Legacy for PC (included for hardware that does not meet the minimum system requirements needed for the upgrades in GTAV Enhanced.)
+                       {single?.description}
                     </p>
                   </div>
                 </div>
@@ -293,40 +313,34 @@ const SingleGame = () => {
                 <div className="bg-black/20 p-8 rounded-lg shadow-lg w-full">
                   {/* Header */}
                   <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#ab99e1]">Windows</h3>
-                  <h4 className="text-base font-semibold mb-6">Minimum Recommended</h4>
-
+                  <h4 className="text-base font-semibold mb-6">System Requirements</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-5">
                     <div>
                         <p className="text-gray-400 text-sm">Memory</p>
-                        <p className="text-white text-sm">8GB RAM</p>
+                        <p className="text-white text-sm">{single?.platforms?.windows?.system_requirements?.memory}</p>
                       </div>
 
                       <div>
                         <p className="text-gray-400 text-sm">Storage</p>
-                        <p className="text-white text-sm">105GB SSD Required</p>
+                        <p className="text-white text-sm">{single?.platforms?.windows?.system_requirements?.storage}</p>
                       </div>
 
                       <div>
                         <p className="text-gray-400 text-sm">Graphics</p>
-                        <p className="text-white text-sm">
-                          NVIDIA® GeForce® GTX 1630 (4GB VRAM) <br />
-                          AMD Radeon™ RX 6400 (4GB VRAM)
-                        </p>
+                        <p className="text-white text-sm">({single?.platforms?.windows?.system_requirements?.graphics})</p>
                       </div>
                     </div>
 
                     <div className="space-y-5">
                     <div>
                         <p className="text-gray-400 text-sm">OS</p>
-                        <p className="text-white text-sm">Windows 10 (latest update)</p>
+                        <p className="text-white text-sm capitalize">{single?.platforms?.windows?.system_requirements?.os}</p>
                       </div>
 
                       <div>
                         <p className="text-gray-400 text-sm">Processor</p>
-                        <p className="text-white text-sm">
-                          Intel® Core™ i7-4770 | AMD FX™-9590
-                        </p>
+                        <p className="text-white text-sm capitalize">{single?.platforms?.windows?.system_requirements?.processor}</p>
                       </div>
                       
                     </div>
@@ -341,9 +355,9 @@ const SingleGame = () => {
           <div className="xl:w-1/4 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6">
               <div className="flex justify-center mb-6">
-                <img src={gtav} alt="Game Logo" className="w-[180px] h-auto" />
+                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
               </div>
-              <p className="text-xl font-bold text-white mb-6">$2,499</p>
+              <p className="text-xl font-bold text-white mb-6">₹{single?.platforms?.windows?.price}</p>
 
               <div className="space-y-3">
                 <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
@@ -351,6 +365,11 @@ const SingleGame = () => {
                 </button>
               </div>
 
+              <div className="mb-2 flex justify-between">
+                <h4 className="text-base text-gray-400 mb-3">Game Size</h4>
+                <p className="text-white text-base">{single?.platforms?.windows?.size}</p>
+              </div>
+              <hr className="mb-4 border-gray-700 !mt-0" />
               <div className="mb-2 flex justify-between">
                 <h4 className="text-base text-gray-400 mb-3">Epic Rewards</h4>
                 <p className="text-white text-base">Earn 20% Back</p>
@@ -386,9 +405,9 @@ const SingleGame = () => {
               <div>
                 <h4 className="text-xl font-bold text-white mb-3">Platform</h4>
                 <div className="flex space-x-2">
-                  <span className="bg-gray-800 text-white px-3 py-1 rounded">PC</span>
-                  <span className="bg-gray-800 text-white px-3 py-1 rounded">PS5</span>
-                  <span className="bg-gray-800 text-white px-3 py-1 rounded">XBOX</span>
+                  <span className="bg-gray-800 text-white px-3 py-1 rounded">Windows</span>
+                  {/* <span className="bg-gray-800 text-white px-3 py-1 rounded">PS5</span> */}
+                  {/* <span className="bg-gray-800 text-white px-3 py-1 rounded">XBOX</span> */}
                 </div>
               </div>
             </div>

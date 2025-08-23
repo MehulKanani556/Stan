@@ -60,13 +60,8 @@ body {
 
 
 .ds_trailer .swiper-pagination .swiper-pagination-bullet {
-  width: 9px;
-  height: 9px;
-}
-
-.ds_trailer .swiper-pagination .swiper-pagination-bullet-active {
-  width: 11px;   
-  height: 11px;
+  width: 10px;
+  height: 10px;
 }
 
 @media (max-width:768px) {

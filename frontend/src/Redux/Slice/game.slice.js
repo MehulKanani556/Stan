@@ -61,22 +61,6 @@ export const createGame = createAsyncThunk(
     }
 );
 
-// CREATE ACTION GAME (tags will include "action")
-export const createActionGame = createAsyncThunk(
-    "game/createActionGame",
-    async (formData, { rejectWithValue }) => {
-        try {
-            const res = await axiosInstance.post("/createActionGame", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            enqueueSnackbar("Action Game Add successful", { variant: "success" });
-            return res.data;
-        } catch (err) {
-            return rejectWithValue(err.response?.data?.message || err.message);
-        }
-    }
-);
-
 // UPDATE GAME
 export const updateGame = createAsyncThunk(
     "game/updateGame",
@@ -120,17 +104,30 @@ export const getGameById = createAsyncThunk(
     }
 );
 
+// ********* Category ******
+export const getAllCategories = createAsyncThunk(
+    "game/getAllCategories",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await axiosInstance.get("/getAllCategories");
+            return res.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || err.message);
+        }
+    }
+);
+
 const gameSlice = createSlice({
     name: "game",
     initialState: {
         games: [],
         popularGames: [],
-        actionGames: [],
         singleGame: null,
         loading: false,
         error: null,
         success: null,
         pagination: null,
+        category:[]
     },
     reducers: {
         clearGameError: (state) => {
@@ -197,21 +194,6 @@ const gameSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-            // CREATE ACTION GAME
-            .addCase(createActionGame.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-                state.success = null;
-            })
-            .addCase(createActionGame.fulfilled, (state, action) => {
-                state.loading = false;
-                state.success = "Action game created successfully";
-                state.games.unshift(action.payload);
-            })
-            .addCase(createActionGame.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
             // UPDATE
             .addCase(updateGame.pending, (state) => {
                 state.loading = true;
@@ -255,7 +237,20 @@ const gameSlice = createSlice({
             .addCase(getGameById.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
+
+            .addCase(getAllCategories.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAllCategories.fulfilled, (state, action) => {
+                state.loading = false;
+                state.category = action.payload;
+            })
+            .addCase(getAllCategories.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
     },
 });
 
