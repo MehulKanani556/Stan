@@ -4,10 +4,12 @@ import { upload, convertJfifToWebp, handleMulterError } from "../middlewares/ima
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
-import { getMessage, sendMessage,getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
+import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
-import { createGame, createActionGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";
+import { createTrailer, deleteTrailer, getAllTrailer, updateTrailer } from "../controllers/HomeTrailerController.js";
 
+import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";
+import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
 
 const indexRoutes = express.Router()
 
@@ -35,7 +37,7 @@ indexRoutes.post("/followOrUnfollow/:id", UserAuth, isUser, followOrUnfollow)
 indexRoutes.post("/sendMessage/:id", UserAuth, isUser, upload.single("messageImage"), handleMulterError, convertJfifToWebp, sendMessage)
 indexRoutes.get("/getMessage/:id", UserAuth, isUser, getMessage)
 indexRoutes.get("/getAllMessageUsers", UserAuth, getAllMessageUsers);
-indexRoutes.post("/deleteChat",UserAuth,deleteChat);
+indexRoutes.post("/deleteChat", UserAuth, deleteChat);
 
 // Free Games Routes
 indexRoutes.post("/free-games", UserAuth, isAdmin, upload.single("image"), handleMulterError, convertJfifToWebp, createFreeGame)
@@ -61,18 +63,7 @@ indexRoutes.post(
     ]),
     createGame
 );
-indexRoutes.post(
-    "/createActionGame",
-    upload.fields([
-        { name: "cover_image", maxCount: 1 },
-        { name: "video", maxCount: 1 },
-        { name: "windows_file", maxCount: 1 },
-        { name: "ios_file", maxCount: 1 },
-        { name: "android_file", maxCount: 1 },
-        { name: "images", maxCount: 10 },
-    ]),
-    createActionGame
-);
+
 indexRoutes.put(
     "/updateGame/:id",
     upload.fields([
@@ -87,6 +78,26 @@ indexRoutes.put(
 );
 indexRoutes.delete("/deleteGame/:id", deleteGame);
 indexRoutes.get("/getGameById/:id", getGameById);
+
+// hometrailers routes
+indexRoutes.post('/hometrailer',upload.single("trailer"),createTrailer)
+indexRoutes.get('/hometrailer',UserAuth ,getAllTrailer)
+indexRoutes.put("/hometrailer/:id", UserAuth ,upload.single("trailer"), updateTrailer);
+indexRoutes.delete("/hometrailer/:id", UserAuth , deleteTrailer);
+// category
+indexRoutes.post(
+    "/createCategory",
+    upload.single("category_image"),
+    createCategory
+);
+indexRoutes.get("/getCategoryById/:id", getCategoryById);
+indexRoutes.get("/getAllCategories", getAllCategories);
+indexRoutes.put(
+    "/updateCategory/:id",
+    upload.single("category_image"),
+    updateCategory
+);
+indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
 
 export default indexRoutes

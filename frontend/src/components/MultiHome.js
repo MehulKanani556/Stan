@@ -6,7 +6,7 @@ import tap from '../images/tap.jpg'
 
 const MultiHome = () => {
   return (
-    <div className='pt-11 md:mt-4 mt-9'>
+    <div className='py-11 md:mt-4 mt-9'>
         <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
             <div className="flex lg:flex-nowrap flex-wrap gap-x-6 sm:px-0 px-1">
                 <div className="lg:w-2/5 w-full">

@@ -22,6 +22,7 @@ import GGTalks from './Pages/GGTalks';
 import { SocketProvider } from './context/SocketContext';
 import SingleGame from './components/SingleGame';
 import ChatWidget from './components/ChatWidget';
+import Guides from './components/Guides';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -58,6 +59,8 @@ function AppContent() {
             <Route path="/TopGames" element={<TopGames />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/single" element={<SingleGame/>} />
+            <Route path="/guides" element={<Guides/>} />
+            <Route path="/single/:id" element={<SingleGame/>} />
           </Routes>
           <ChatWidget />
           </SocketProvider>

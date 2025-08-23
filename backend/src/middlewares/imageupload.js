@@ -3,17 +3,18 @@ import path from 'path';
 import { S3Client } from '@aws-sdk/client-s3';
 import multerS3 from "multer-s3";
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 // Configure S3 storage
 const s3 = new S3Client({
     credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY.trim(),
-        secretAccessKey: process.env.S3_SECRET_KEY.trim()
+      accessKeyId: process.env.S3_ACCESS_KEY?.trim(),
+      secretAccessKey: process.env.S3_SECRET_KEY?.trim(),   
     },
-    region: process.env.S3_REGION || "us-east-1"
-});
+    region: process.env.S3_REGION || "us-east-1",
+  });
+
+  console.log(process.env.S3_ACCESS_KEY?.trim(), process.env.S3_SECRET_KEY?.trim());
 
 const storage = multerS3({
     s3: s3,
@@ -42,6 +43,9 @@ const storage = multerS3({
             folder = 'games/ios';
         } else if (file.fieldname === 'android_file') {
             folder = 'games/android';
+        }
+        else if(file.fieldname === 'trailer' ){
+            folder = 'trailer';
         }
         
         const finalName = `${folder}/${timestamp}-${sanitizedName}`;
@@ -93,7 +97,8 @@ const fileFilter = (req, file, cb) => {
         file.fieldname === 'bg_image' ||
         file.fieldname === 'messageImage' ||
         file.fieldname === 'cover_image' ||
-        file.fieldname === 'images'
+        file.fieldname === 'images' ||
+        file.fieldName === 'trailer'
     ) {
         if (!allowedImageExts.includes(ext) || !allowedImageMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid image format. Allowed formats: ${allowedImageExts.join(', ')}`));
@@ -103,6 +108,11 @@ const fileFilter = (req, file, cb) => {
     else if (file.fieldname === 'video') {
         if (!allowedVideoExts.includes(ext) || !allowedVideoMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
+        }
+    }
+    else if (file.fieldname === 'trailer') {
+        if (!allowedVideoExts.includes(ext) || !allowedVideoMimeTypes.includes(file.mimetype)) {
+            return cb(new Error(`Invalid trailer video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
         }
     }
     // Check if it's a platform executable file
