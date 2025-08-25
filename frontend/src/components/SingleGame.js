@@ -381,11 +381,17 @@ const SingleGame = () => {
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
               </div>
-              <p className="text-xl font-bold text-white mb-6">₹{single?.platforms?.windows?.price}</p>
+              <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
 
-              <div className="space-y-3">
+              <div className="">
                 <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Buy Now
+                </button>
+                <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                  Add To Cart
+                </button>
+                <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                  Add To WishList
                 </button>
               </div>
 
