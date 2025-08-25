@@ -44,7 +44,7 @@ export default function Home() {
   const [mainGameData, setMainGameData] = useState(gameData)
   const navigate = useNavigate()
 
-  // console.log("Hello Bachho" , gameData);
+  console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
 
   useEffect(()=>{

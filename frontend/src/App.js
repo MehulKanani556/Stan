@@ -31,7 +31,8 @@ import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
-  const showFooter  = isAuthPage || location.pathname === "/ggtalks"
+  const showFooter  = isAuthPage || location.pathname === "/ggtalks";
+  const chatwidegt = location.pathname === "/ggtalks";
   const { store } = configureStore();
 
   return (
@@ -68,7 +69,7 @@ function AppContent() {
             <Route path="/terms" element={<TermsService/>} />
             <Route path="/privacy" element={<PrivacyPolicy/>} />
           </Routes>
-          <ChatWidget />
+           { !chatwidegt &&<ChatWidget />}
           </SocketProvider>
         </SnackbarProvider>
 

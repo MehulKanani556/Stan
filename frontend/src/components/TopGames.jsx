@@ -18,7 +18,8 @@ import { getFreeGames } from '../Redux/Slice/freeGame.slice';
 import { Link, Links } from 'react-router-dom';
 
 const GameCard = (item) => (
-  <div  className="flex-none flex-col sm:flex-col xl:flex-row justify-center items-stretch md:items-center gap-4 md:gap-5 p-5  relative rounded-2xl bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl border-purple-500/30 hover:from-gray-800/90 hover:to-gray-700/90 transition-all duration-300 cursor-pointer group border hover:shadow-lg hover:shadow-purple-500/40 hover:-translate-y-1 overflow-hidden lg:h-[305px] md:w-full w-full m-auto ">
+  <Link to={`${!item?.platforms?.windows?.price ? `/games` : `/single/${item?._id}`}`} className='block mb-6' >
+   <div className="flex-none flex-col sm:flex-col xl:flex-row justify-center items-stretch md:items-center gap-4 md:gap-5 p-5  relative rounded-2xl bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl border-purple-500/30 hover:from-gray-800/90 hover:to-gray-700/90 transition-all duration-300 cursor-pointer group border hover:shadow-lg hover:shadow-purple-500/40 hover:-translate-y-1 overflow-hidden lg:h-[305px] md:w-full w-full m-auto ">
     <div className="relative overflow-hidden rounded-lg w-full  sm:shrink-0">
       <img
         src={item?.cover_image?.url || item?.image}
@@ -28,10 +29,10 @@ const GameCard = (item) => (
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-      {item.status && (
+      {item?.status && (
         <div className="absolute top-2 right-2">
           <span className="px-2 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-[#ab99e1] text-black shadow-lg">
-            {item.status}
+            {item?.status}
           </span>
         </div>
       )}
@@ -43,7 +44,7 @@ const GameCard = (item) => (
         {!item?.platforms?.windows?.price ? (
             <span className="bg-gradient-to-r from-[#ab99e1] to-[#b8a8e6] text-black px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">FREE</span>
           ) : (
-            <span className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">{item?.platforms?.windows?.price}</span>
+            <span className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">${item?.platforms?.windows?.price}</span>
           )
         }
       </div>
@@ -54,7 +55,8 @@ const GameCard = (item) => (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </div>  */}
-  </div>
+    </div>
+  </Link>
 );
 
 function TopGames() {
