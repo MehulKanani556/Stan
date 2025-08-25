@@ -15,7 +15,7 @@ const SupportPage = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-purple-700 via-purple-900/60 to-[#332a77] text-center py-20 px-6">
+      <section className="relative bg-gradient-to-r from-purple-800 via-purple-900/60 to-[#332a77] text-center py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-6 drop-shadow-lg">
             Game Guides
@@ -35,7 +35,7 @@ const SupportPage = () => {
         img={guide1}
         items={[
           { title: "Browse Games", text: "Search or filter to discover new titles and reviews." },
-          { title: "Purchase Games", text: "Add to cart and pay securely with cards or digital wallets." },
+          { title: "Purchase Games", text: "pay securely with cards or digital wallets." },
           { title: "Download & Install", text: "Head to your Library, hit download, and start playing." },
         ]}
         // First section - image on the right
@@ -67,74 +67,71 @@ const SupportPage = () => {
         flip={true}
       />
 
-<section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-800 via-[#1e1b4b] to-black overflow-hidden">
-  <div className="absolute inset-0 bg-purple-500/10 blur-3xl" />
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 bg-purple-500/10 blur-3xl" />
 
-  <div className="relative max-w-5xl mx-auto text-center text-white">
-    <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4 tracking-wide">
-      Still Need Help?{" "}
-      <span className="text-purple-400">We’ve Got You</span>
-    </h2>
-    <p className="text-gray-300 max-w-2xl mx-auto mb-12 text-base sm:text-lg">
-      Our team is here to get you back in the game quickly. Choose the option that works best for you:
-    </p>
-
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 text-left">
-      <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1">
-        <h3 className="font-semibold text-lg md:text-xl mb-3">
-          Email
-        </h3>
-        <a
-          href="mailto:support@gamestore.com"
-          className="text-purple-400 group-hover:text-purple-300 font-medium hover:underline break-all"
-        >
-          support@gamestore.com
-        </a>
-      </div>
-
-      <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
-        <div>
-          <h3 className="font-semibold text-lg md:text-xl mb-3">
-            Live Chat
-          </h3>
-          <p className="text-gray-400 text-sm mb-4">
-            Available Mon–Fri, 9 AM – 5 PM
+        <div className="relative max-w-5xl mx-auto text-center text-white">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-extrabold mb-4 tracking-wide">
+            Still Need Help?{" "}
+            <span className="text-purple-400">We’ve Got You</span>
+          </h2>
+          <p className="text-gray-300 max-w-2xl mx-auto mb-12 text-base sm:text-lg">
+            Our team is here to get you back in the game quickly. Choose the option that works best for you:
           </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 text-left">
+            <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1">
+              <h3 className="font-semibold text-lg md:text-xl mb-3">
+                Email
+              </h3>
+              <a
+                href="mailto:support@gamestore.com"
+                className="text-purple-400 group-hover:text-purple-300 font-medium hover:underline break-all"
+              >
+                support@gamestore.com
+              </a>
+            </div>
+
+            <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
+              <div>
+                <h3 className="font-semibold text-lg md:text-xl mb-3">
+                  Chat With Us
+                </h3>
+                <p className="text-gray-400 text-sm mb-4">
+                  You will have all answers of your questions
+                </p>
+              </div>
+              <button className="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition">
+                Start Chat
+              </button>
+            </div>
+
+            <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
+              <div>
+                <h3 className="font-semibold text-lg md:text-xl mb-3">
+                  FAQs
+                </h3>
+                <p className="text-gray-400 text-sm mb-4">
+                  Find answers to common questions
+                </p>
+              </div>
+              <a
+                href="/faqs"
+                className="w-full text-center py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition inline-block"
+              >
+                View FAQs
+              </a>
+            </div>
+          </div>
         </div>
-        <button className="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition">
-          Start Chat
-        </button>
-      </div>
-
-      <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
-        <div>
-          <h3 className="font-semibold text-lg md:text-xl mb-3">
-            FAQs
-          </h3>
-          <p className="text-gray-400 text-sm mb-4">
-            Find answers to common questions
-          </p>
-        </div>
-        <a
-          href="#"
-          className="w-full text-center py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition inline-block"
-        >
-          View FAQs
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
+      </section>
     </div>
   );
 };
 
 const SectionWrapper = ({ title, description, img, items, flip }) => {
   return (
-    <section className="py-16 px-3 md:px-6 border-b border-purple-500/30">
+    <section className="py-16 px-3 md:px-6 border-purple-500/30">
       <div className={`w-full max-w-[95%] md:max-w-[85%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center ${flip ? "md:grid-flow-dense" : ""}`}>
 
         {/* Content */}

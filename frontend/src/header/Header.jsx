@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { FaWallet } from "react-icons/fa";
+import { FaHeart, FaShoppingCart, FaWallet } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import { RiHome4Line, RiHome4Fill } from "react-icons/ri";
 import { HiOutlineMicrophone, HiMicrophone } from "react-icons/hi";
@@ -123,6 +123,12 @@ export default function Header() {
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 items-center'>
+                                       <div className='me-2'>
+                                          <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                        </div>
+                                        <div className='me-2'>
+                                          <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                        </div>
                                         <div
                                             className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
                                             onClick={toggleDropdown}
@@ -133,7 +139,10 @@ export default function Header() {
                                                 alt="User"
                                             />
                                         </div>
-                                        <p className='text-base'>
+                                        <p 
+                                            className='text-base cursor-pointer hover:text-[#ab99e1] transition-colors'
+                                            onClick={toggleDropdown}
+                                        >
                                             {decryptData(currentUser?.name)}
                                         </p>
                                     </div>

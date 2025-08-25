@@ -53,7 +53,7 @@ const ChatWidget = () => {
         "yoyo_chat_messages",
         JSON.stringify(messages.slice(-50))
       );
-    } catch (_) {}
+    } catch (_) { }
   }, [messages]);
   useEffect(() => {
     try {
@@ -64,7 +64,7 @@ const ChatWidget = () => {
           setMessages(parsed);
         }
       }
-    } catch (_) {}
+    } catch (_) { }
   }, []);
 
   // Fetch welcome message from backend
@@ -86,7 +86,7 @@ const ChatWidget = () => {
             },
           ]);
         }
-      } catch (_) {}
+      } catch (_) { }
     };
     if (
       isContactModalOpen &&
@@ -189,7 +189,7 @@ const ChatWidget = () => {
       {!isContactModalOpen && (
         <button
           onClick={() => setIsContactModalOpen(true)}
-          className="fixed bottom-6 right-6 z-40 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"
+          className="fixed bottom-12 md:bottom-6 right-6 z-50 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"
         >
           💬
         </button>
@@ -235,18 +235,16 @@ const ChatWidget = () => {
                 {messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`flex ${
-                      m.role === "user" ? "justify-end" : "justify-start"
-                    }`}
+                    className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
+                      }`}
                   >
                     <div className="max-w-[80%] sm:max-w-[75%]">
                       <div
                         className={`px-4 py-3 rounded-2xl shadow-lg whitespace-pre-wrap
-                        ${
-                          m.role === "user"
+                        ${m.role === "user"
                             ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
                             : "bg-white/10 backdrop-blur-md text-gray-200 border border-white/10 rounded-bl-none"
-                        }`}
+                          }`}
                       >
                         {m.role !== "user" && (
                           <div className="text-xs text-blue-300 mb-1">
