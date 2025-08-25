@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FaChevronLeft, FaChevronRight, FaPlay, FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa'
+import { FaChevronLeft, FaChevronRight, FaPlay, FaRegStar, FaStar, FaStarHalfAlt, FaWindows } from 'react-icons/fa'
 
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -204,11 +204,6 @@ const SingleGame = () => {
   const hasHalfStar = rating % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
-  const NewFunction = () => {
-     let a = 10;
-     let b = 22;
-     return a + b;
-  }
   
 
   return (
@@ -216,23 +211,10 @@ const SingleGame = () => {
       <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
         <div>
           <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize'>{single?.title}</h2>
-          <div className="flex mb-3 mt-2">
-            {Array.from({ length: fullStars }).map((_, i) => (
-             <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
-            ))}
-
-            {hasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-5 w-5 mx-0.5" />}
-
-            {Array.from({ length: emptyStars }).map((_, i) => (
-              <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
-            ))}
-
-            <span className="ml-2 text-white font-medium">{rating?.toFixed(1)}</span>
-          </div>
         </div>
 
         <div className="flex flex-col-reverse xl:flex-row md:mt-11">
-          <div className='xl:w-3/4 w-full '>
+          <div className='2xl:w-3/4 xl:w-2/3 w-full '>
             <div>
             <Slider {...mainSettings} className='ds_single_slider'>
                   {single?.video?.url ? (
@@ -360,7 +342,7 @@ const SingleGame = () => {
                   </div>
                 </div>
 
-               {single?.instructions ? <div className='mt-5 pt-2'>
+               {single?.instructions?.length > 0 ? <div className='mt-5 pt-2'>
                 <div className="bg-black/20 p-8 rounded-lg shadow-lg w-full">
                   {/* Header */}
                   <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#ab99e1]">Instructions</h3>
@@ -376,7 +358,7 @@ const SingleGame = () => {
           </div>
 
           {/* right side copntent */}
-          <div className="xl:w-1/4 w-full xl:pl-6 mt-10 xl:mt-0 ">
+          <div className="2xl:w-1/4 xl:w-1/3 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24">
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
@@ -395,6 +377,29 @@ const SingleGame = () => {
                 </button>
               </div>
 
+              <div className='mb-5'>
+                <h4 className="text-xl font-bold text-white mb-3">Platform</h4>
+                <div className="flex flex-wrap space-x-2">
+                  <span className="bg-gray-800 text-white px-3 py-1 rounded flex items-center"><FaWindows className='me-2' /> Windows</span>
+                  {/* <span className="bg-gray-800 text-white px-3 py-1 rounded">PS5</span> */}
+                  {/* <span className="bg-gray-800 text-white px-3 py-1 rounded">XBOX</span> */}
+                </div>
+              </div>
+                 <div>
+                     <h4 className="text-xl font-bold text-white mb-3">Rating</h4>
+                     <div className="flex mb-5 mt-2">
+                         {Array.from({ length: fullStars }).map((_, i) => (
+                          <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
+                         ))}
+            
+                         {hasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-5 w-5 mx-0.5" />}
+            
+                         {Array.from({ length: emptyStars }).map((_, i) => (
+                           <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
+                         ))}
+                       <span className="ml-2 text-white font-medium">{rating?.toFixed(1)}</span>
+                      </div>
+                 </div>
               <div className="mb-2 flex justify-between">
                 <h4 className="text-base text-gray-400 mb-3">Game Size</h4>
                 <p className="text-white text-base">{single?.platforms?.windows?.size}</p>
@@ -439,14 +444,7 @@ const SingleGame = () => {
               </div>
               <hr className="my-6 border-gray-700 !mt-0" />
 
-              <div>
-                <h4 className="text-xl font-bold text-white mb-3">Platform</h4>
-                <div className="flex space-x-2">
-                  <span className="bg-gray-800 text-white px-3 py-1 rounded">Windows</span>
-                  {/* <span className="bg-gray-800 text-white px-3 py-1 rounded">PS5</span> */}
-                  {/* <span className="bg-gray-800 text-white px-3 py-1 rounded">XBOX</span> */}
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
