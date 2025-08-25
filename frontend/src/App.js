@@ -66,7 +66,7 @@ function AppContent() {
             <Route path="/TopGames" element={<TopGames />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/single" element={<SingleGame/>} />
-            {/* <Route path="/guides" element={<Guides/>} /> */}
+            <Route path="/guides" element={<Guides/>} />
             <Route path="/single/:id" element={<SingleGame/>} />
             <Route path="/faqs" element={<FAQs/>} />
             <Route path="/terms" element={<TermsService/>} />

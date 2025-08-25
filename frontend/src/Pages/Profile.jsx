@@ -624,7 +624,7 @@ export default function Profile() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg">
+                                <div className="flex items-center  gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg">
                                     <MdEmail className="text-[#ab99e1] w-5 h-5" />
                                     <div className="flex-1">
                                         <div className="text-sm text-gray-400">Email</div>
@@ -640,7 +640,7 @@ export default function Profile() {
                                         ) : (
                                             <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
                                         )} */}
-                                        <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
+                                        <div className="text-white   ">{decryptData(user?.email) || "example@gmail.com"}</div>
                                     </div>
                                 </div>
                             </div>
