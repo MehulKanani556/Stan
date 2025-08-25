@@ -78,7 +78,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
             <aside className={`
                 ${showUserList ? 'block' : 'hidden'} md:block
                 relative md:relative top-0 left-0 h-full h-[calc(100vh-64px)] md:h-[calc(100vh-72px)] w-full md:w-64 
-                bg-gray-900 border-r border-gray-800 z-50 flex flex-col overflow-hidden
+                bg-gray-900 border-r border-gray-800 z-40 flex flex-col overflow-hidden
             `}>
                 {/* Header */}
                 <div className="flex items-center border-b border-gray-700 justify-between p-4 py-[18px] border-b-gray-600 bg-gray-900">

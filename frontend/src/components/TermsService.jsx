@@ -5,8 +5,8 @@ export default function TermsService() {
   return (
     <div className="min-h-screen  text-white">
       <div className=" mx-auto md:max-w-[85%] max-w-[95%]  py-10 ">
-        {/* Header */}
-        <div className="text-center mb-12">
+        
+        <div className="text-center mb-12 ">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Terms of Service
           </h1>
@@ -15,10 +15,10 @@ export default function TermsService() {
           </p>
         </div>
 
-        {/* Introduction */}
+        
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-3">
-            <FaShieldAlt className="text-purple-400" />
+            <FaShieldAlt className="" />
             Welcome to YOYO Gaming Platform
           </h2>
           <p className="text-gray-300 leading-relaxed">
@@ -28,9 +28,9 @@ export default function TermsService() {
           </p>
         </div>
 
-        {/* Table of Contents */}
+        
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
-          <h3 className="text-xl font-semibold mb-4 text-purple-300">Table of Contents</h3>
+          <h3 className="text-xl font-semibold mb-4 ">Table of Contents</h3>
           <ul className="space-y-2 text-gray-300">
             <li>• <a href="#definitions" className="text-blue-400 hover:text-blue-300">Definitions</a></li>
             <li>• <a href="#account" className="text-blue-400 hover:text-blue-300">Account Registration & Management</a></li>
@@ -47,7 +47,7 @@ export default function TermsService() {
           </ul>
         </div>
 
-        {/* Definitions */}
+        
         <div id="definitions" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 text-purple-300">1. Definitions</h3>
           <div className="space-y-3 text-gray-300">
@@ -59,9 +59,9 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Account Registration */}
+        
         <div id="account" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
-          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3">
+          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3 text-purple-300">
             <FaUser className="text-purple-400" />
             2. Account Registration & Management
           </h3>
@@ -87,9 +87,9 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Games & Content */}
+        
         <div id="games" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
-          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3">
+          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3 text-purple-300">
             <FaGamepad className="text-purple-400" />
             3. Games & Content
           </h3>
@@ -115,7 +115,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Payments & Transactions */}
+        
         <div id="payments" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3">
             <FaCreditCard className="text-purple-400" />
@@ -143,9 +143,9 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Chat & Communication */}
+        
         <div id="chat" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
-          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3">
+          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3 text-purple-300">
             <FaComments className="text-purple-400" />
             5. Chat & Communication
           </h3>
@@ -171,7 +171,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Rewards & Loyalty */}
+        
         <div id="rewards" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 text-purple-300">6. Rewards & Loyalty Program</h3>
           <div className="space-y-4 text-gray-300">
@@ -196,9 +196,9 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* User Conduct */}
+        
         <div id="conduct" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
-          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3">
+          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-3 text-purple-300">
             <FaExclamationTriangle className="text-red-400" />
             7. User Conduct
           </h3>
@@ -225,7 +225,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Intellectual Property */}
+        
         <div id="intellectual" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 text-purple-300">8. Intellectual Property</h3>
           <div className="space-y-4 text-gray-300">
@@ -241,7 +241,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Privacy & Data */}
+        
         <div id="privacy" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 text-purple-300">9. Privacy & Data Protection</h3>
           <div className="space-y-4 text-gray-300">
@@ -257,7 +257,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Termination */}
+        
         <div id="termination" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 text-purple-300">10. Account Termination</h3>
           <div className="space-y-4 text-gray-300">
@@ -277,7 +277,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Disclaimers */}
+        
         <div id="disclaimer" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 text-purple-300">11. Disclaimers & Limitations</h3>
           <div className="space-y-4 text-gray-300">
@@ -298,7 +298,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Contact Information */}
+        
         <div id="contact" className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-700">
           <h3 className="text-2xl font-semibold mb-4 text-purple-300">12. Contact Information</h3>
           <div className="space-y-4 text-gray-300">
@@ -313,7 +313,7 @@ export default function TermsService() {
           </div>
         </div>
 
-        {/* Final Notice */}
+        
         <div className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30">
           <h3 className="text-2xl font-semibold mb-4 text-center text-purple-200">Important Notice</h3>
           <p className="text-gray-300 text-center leading-relaxed">
