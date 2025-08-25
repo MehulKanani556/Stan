@@ -8,6 +8,8 @@ import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../cont
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
 import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames } from "../controllers/game.controller.js";
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
+import { chatWidGetController } from "../controllers/chatWidGet.controller.js";
+
 
 const indexRoutes = express.Router()
 
@@ -93,5 +95,6 @@ indexRoutes.put(
 );
 indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
+indexRoutes.get("/chatWidget",chatWidGetController);
 
 export default indexRoutes

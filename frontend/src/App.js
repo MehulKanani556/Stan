@@ -28,7 +28,8 @@ import Guides from './components/Guides';
 function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
-  const showFooter  = isAuthPage || location.pathname === "/ggtalks"
+  const showFooter  = isAuthPage || location.pathname === "/ggtalks";
+  const chatwidegt = location.pathname === "/ggtalks";
   const { store } = configureStore();
 
   return (
@@ -62,7 +63,7 @@ function AppContent() {
             <Route path="/guides" element={<Guides/>} />
             <Route path="/single/:id" element={<SingleGame/>} />
           </Routes>
-          <ChatWidget />
+           { !chatwidegt &&<ChatWidget />}
           </SocketProvider>
         </SnackbarProvider>
 

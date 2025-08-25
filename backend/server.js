@@ -5,6 +5,7 @@ import indexRouter from './src/routes/indexRoutes.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import socketManager from "./src/socketManager/SocketManager.js";
+
 const app = express();
 
 // Middleware
@@ -17,10 +18,8 @@ app.use(cors({
 }));
 app.use('/public', express.static('public'));
 
-
 // router
 app.use("/api", indexRouter)
-
 
 // Create single HTTP server from Express
 const server = http.createServer(app);
@@ -30,7 +29,6 @@ const io = new Server(server, {
   cors: {
     origin: "*",
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    // allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
   },
   transports: ['websocket', 'polling'],
@@ -44,7 +42,6 @@ global.io = io;
 
 // Initialize socket manager
 socketManager.initializeSocket(io);
-
 
 // Connect to database
 connectDB();
