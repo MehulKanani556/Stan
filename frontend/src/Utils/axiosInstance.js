@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "./baseUrl";
-import { logoutUser } from "../Redux/Slice/auth.slice";
+import { logoutUser } from "../Redux/Slice/user.slice";
 
 const userId = localStorage.getItem("userId");
 

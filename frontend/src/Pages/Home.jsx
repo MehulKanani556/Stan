@@ -38,30 +38,34 @@ export default function Home() {
   const gameSwiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
-  const gameData = useSelector((state)=> state?.game?.games)
-  const disaptch = useDispatch()
-  const cateData = useSelector((state)=> state?.game?.category)
+  const gameData = useSelector((state) => state?.game?.games)
+  const dispatch = useDispatch()
+  const cateData = useSelector((state) => state?.game?.category)
   const [mainGameData, setMainGameData] = useState(gameData)
   const navigate = useNavigate()
 
   console.log("Hello Bachho" , gameData);
+  const { games } = useSelector((state) => state.game);
+  // console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
 
-  useEffect(()=>{
-    disaptch(getAllGames())
-  },[])
 
-  useEffect(()=>{
-    disaptch(getAllCategories())
-    .then((value)=>{
-      //  console.log("hihi" , );
-      //  setActiveTab(value?.payload[0]?.categoryName)
-    })
-  },[])
 
-  useEffect(()=>{
+  useEffect(() => {
+    dispatch(getAllCategories())
+      .then((value) => {
+        //  console.log("hihi" , );
+        //  setActiveTab(value?.payload[0]?.categoryName)
+      })
+  }, [])
+
+  useEffect(() => {
+    dispatch(getAllGames());
+  }, [dispatch]);
+
+  useEffect(() => {
     setMainGameData(gameData)
-  },[gameData])
+  }, [gameData])
 
   // Add CSS to hide scrollbars
   useEffect(() => {
@@ -83,7 +87,7 @@ export default function Home() {
       }
     `;
     document.head.appendChild(style);
-    
+
     return () => {
       document.head.removeChild(style);
     };
@@ -101,15 +105,15 @@ export default function Home() {
     };
 
     window.addEventListener('resize', handleResize);
-    
+
     // Initial check after component mounts
     setTimeout(handleResize, 500);
-    
+
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-  
+
 
   const categories = [
     "Thriller",
@@ -189,16 +193,16 @@ export default function Home() {
   ];
 
   const handle = (cate) => {
-     setActiveTab(cate)
-     if(cate === null){
-        setMainGameData(gameData)
-     }
-     else{
-       const filter = gameData?.filter((ele)=>{
-          return ele?.category?.categoryName === cate
-       })
-       console.log("YESYE", filter);
-       setMainGameData(filter)
+    setActiveTab(cate)
+    if (cate === null) {
+      setMainGameData(gameData)
+    }
+    else {
+      const filter = gameData?.filter((ele) => {
+        return ele?.category?.categoryName === cate
+      })
+      console.log("YESYE", filter);
+      setMainGameData(filter)
     }
   }
 
@@ -218,68 +222,27 @@ export default function Home() {
             effect="fade"
             speed={1200}
             slidesPerView={1}
-            pagination={{
-              clickable: true
-            }}
-            autoplay={{
-              delay: 5000
-            }}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 5000 }}
             loop={true}
             className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
-            <SwiperSlide>
-              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
-                <img
-                  src={ad1}
-                  alt="Game 1"
-                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
-                <img
-                  src={ad5}
-                  alt="Game 1"
-                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
-                <img
-                  src={ad2}
-                  alt="Game 2"
-                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
-                <img
-                  src={ad3}
-                  alt="Game 3"
-                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
-                <img
-                  src={ad4}
-                  alt="Game 4"
-                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              </div>
-            </SwiperSlide>
+            {games && games.length > 0 ? (
+              games.slice(-6).map((game, index) => (
+                <SwiperSlide key={index}>
+                  <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
+                    <img
+                      src={game?.cover_image?.url || game1}
+                      alt={game.title || `Game ${index + 1}`}
+                      className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                  </div>
+                </SwiperSlide>
+              ))
+            ) : (
+              <p className="text-center text-white py-10">Loading...</p>
+            )}
           </Swiper>
         </div>
 
@@ -305,7 +268,7 @@ export default function Home() {
               >
                 All Games
               </button>
-              
+
               {cateData?.map((element) => (
                 <button
                   key={element?._id}
@@ -316,12 +279,12 @@ export default function Home() {
                    border border-transparent
                    whitespace-nowrap
                    ${activeTab === element?.categoryName
-                     ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                     : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                   }
+                      ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                    }
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                  `}
-                  onClick={() =>  handle(element?.categoryName)}
+                  onClick={() => handle(element?.categoryName)}
                 >
                   {element?.categoryName}
                 </button>
@@ -335,7 +298,7 @@ export default function Home() {
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
                     <div>
                       <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>
-                         {activeTab ? `${activeTab} Games` : 'All Games'}
+                        {activeTab ? `${activeTab} Games` : 'All Games'}
                       </p>
                     </div>
                     <div className="flex gap-2">
@@ -346,11 +309,10 @@ export default function Home() {
                           }
                         }}
                         disabled={isBeginning}
-                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
-                          isBeginning
-                            ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                            : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
-                        } text-white rotate-180`}
+                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
+                          ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                          : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+                          } text-white rotate-180`}
                       >
                         <FaArrowRight size={16} />
                       </button>
@@ -361,11 +323,10 @@ export default function Home() {
                           }
                         }}
                         disabled={isEnd}
-                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
-                          isEnd
-                            ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                            : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
-                        } text-white`}
+                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
+                          ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                          : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+                          } text-white`}
                       >
                         <FaArrowRight size={16} />
                       </button>
@@ -416,7 +377,7 @@ export default function Home() {
                   >
                     {mainGameData?.map((element) => (
                       <SwiperSlide key={element?._id}>
-                        <div 
+                        <div
                           onClick={() => navigate(`/single/${element?._id}`)}
                           className="w-64 sm:w-72 md:w-80 lg:w-96 cursor-pointer"
                         >
