@@ -135,32 +135,32 @@ const FANCoin = () => {
 const UPICard = () => {
     return (
         <div className="flex flex-col items-center justify-center  px-4 relative">
-            
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
               from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
               animate-pulse"></div>
-        <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
               from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
               animate-pulse"></div>
 
-        
-        <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
-              relative overflow-hidden shadow-lg shadow-purple-500/30">
-            <img
-                src={lazyCatImage}
-                alt="Lazy Cat"
-                className="w-full h-full object-cover"
-            />
-        </div>
 
-        
-        <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
-            No transactions yet !
-        </h2>
-        <p className="text-gray-400 text-sm text-center mt-2">
-            Complete tasks or purchases to see them here ✨
-        </p>
-    </div>
+            <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
+              relative overflow-hidden shadow-lg shadow-purple-500/30">
+                <img
+                    src={lazyCatImage}
+                    alt="Lazy Cat"
+                    className="w-full h-full object-cover"
+                />
+            </div>
+
+
+            <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+                No transactions yet !
+            </h2>
+            <p className="text-gray-400 text-sm text-center mt-2">
+                Complete tasks or purchases to see them here ✨
+            </p>
+        </div>
     )
 }
 
@@ -168,7 +168,7 @@ const UPICard = () => {
 const PlayStore = () => {
     return (
         <div className="flex flex-col items-center justify-center  px-4 relative">
-            
+
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
                   from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
                   animate-pulse"></div>
@@ -176,7 +176,7 @@ const PlayStore = () => {
                   from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
                   animate-pulse"></div>
 
-            
+
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
                   relative overflow-hidden shadow-lg shadow-purple-500/30">
                 <img
@@ -186,7 +186,7 @@ const PlayStore = () => {
                 />
             </div>
 
-            
+
             <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
                 No transactions yet !
             </h2>
