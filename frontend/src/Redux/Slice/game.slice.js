@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../Utils/axiosInstance";
 import { enqueueSnackbar } from "notistack";
+import axios from "axios";
 
 // GET ALL GAMES
 export const getAllGames = createAsyncThunk(
@@ -146,6 +147,53 @@ export const getTopGames = createAsyncThunk(
   }
 );
 
+// ********* WishList ******
+export const getWishlist = createAsyncThunk(
+  "game/getWishlist",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("/wishlist");
+      return res.data || [];
+    } catch (err) {
+      console.error("getWishlist API error:", err);
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+export const createWishlist = createAsyncThunk(
+  "game/createWishlist",
+  async (wishlistData, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token"); 
+
+      const response = await axiosInstance.post(
+        "/wishlist",
+        {
+          gameId: wishlistData?.gameId,
+          note: wishlistData?.note || "",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Create Wishlist Response:", response);
+      return response?.data;
+    } catch (error) {
+      console.error("Create Wishlist Error:", error.message);
+      return rejectWithValue(
+        error.response?.data || { message: "Unexpected error occurred" }
+      );
+    }
+  }
+);
+
+
+
+
 const gameSlice = createSlice({
   name: "game",
   initialState: {
@@ -159,6 +207,7 @@ const gameSlice = createSlice({
     pagination: null,
     category: [],
     trailer: [],
+    wishData:[]
   },
   reducers: {
     clearGameError: (state) => {
@@ -308,6 +357,20 @@ const gameSlice = createSlice({
         state.trailer = action.payload;
       })
       .addCase(getHomeTrailer.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ********* WishList ******
+      .addCase(getWishlist.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getWishlist.fulfilled, (state, action) => {
+        state.loading = false;
+        state.wishData = action.payload;
+      })
+      .addCase(getWishlist.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

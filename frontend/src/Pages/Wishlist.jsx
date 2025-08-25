@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaWindows } from "react-icons/fa";
 import { MdWorkspacePremium } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -6,6 +6,8 @@ import { FaShoppingCart } from "react-icons/fa";
 import game1 from "../images/game1.jpg";
 import game2 from "../images/game2.jpg";
 import game3 from "../images/game3.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import { getWishlist } from "../Redux/Slice/game.slice";
 
 const Wishlist = () => {
     const [cartItems, setCartItems] = useState([
@@ -47,6 +49,9 @@ const Wishlist = () => {
         },
     ]);
 
+
+
+
     const totalPrice = cartItems.reduce((sum, item) => sum + item.oldPrice, 0);
     const totalDiscount = cartItems.reduce(
         (sum, item) => sum + (item.oldPrice - item.price),
@@ -57,6 +62,8 @@ const Wishlist = () => {
     const handleRemove = (id) => {
         setCartItems(cartItems.filter((item) => item.id !== id));
     };
+
+
 
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
