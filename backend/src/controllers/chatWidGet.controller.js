@@ -21,7 +21,7 @@ export const chatWidGetController = async (req, res) => {
     if (!q) {
         return res.json({
             reply:
-                "Hi! 👋 I can help with everything on this site: find games, list categories, list all games, show cheap games, latest games, and answer privacy, terms, or support questions.",
+                "👋 Welcome! How can I help you today?",
             suggestions,
             results: [],
         });
@@ -38,7 +38,7 @@ export const chatWidGetController = async (req, res) => {
     if (query.includes("list categories")) {
         const categories = await Category.find(
             {},
-            "categoryName category_description"
+            "categoryName category_description category_image"
         );
         if (categories.length > 0) {
             reply =
@@ -49,11 +49,14 @@ export const chatWidGetController = async (req, res) => {
             results = categories.map((cat) => ({
                 title: cat.categoryName,
                 description: cat.category_description,
-                _id:cat._id
+                _id: cat._id,
+                imageUrl: cat.category_image?.url,
+
             }));
         } else {
             reply = "No categories found.";
         }
+
     }
 
 
@@ -137,7 +140,7 @@ export const chatWidGetController = async (req, res) => {
 
     }
     // 🔹 Find Games by Keyword
-    else if (query.includes("find games") ) {
+    else if (query.includes("find games")) {
         const searchKeyword = query.replace(/find games|game|games/g, "").trim();
 
         // Free games
@@ -166,7 +169,7 @@ export const chatWidGetController = async (req, res) => {
                     description: "Play now!",
                     imageUrl: game.image,
                     link: game.iframeSrc,
-                    _id:game._id
+                    _id: game._id
                 }));
             } else {
                 reply = `No free games found for "${searchKeyword}".`;
@@ -202,7 +205,7 @@ export const chatWidGetController = async (req, res) => {
                     description: game.description,
                     imageUrl: game.cover_image.url,
                     platforms: game.platforms,
-                    _id:game._id
+                    _id: game._id
                 }));
             } else {
                 reply = `No games found for "${searchKeyword}".`;
@@ -232,7 +235,7 @@ export const chatWidGetController = async (req, res) => {
                 description: game.description,
                 imageUrl: game.cover_image.url,
                 platforms: game.platforms,
-                _id:game._id
+                _id: game._id
 
             }));
         } else {
@@ -285,7 +288,7 @@ export const chatWidGetController = async (req, res) => {
                 description: game.description,
                 imageUrl: game.cover_image.url,
                 platforms: game.platforms,
-                _id:game._id
+                _id: game._id
 
             }));
         } else {

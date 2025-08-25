@@ -184,6 +184,50 @@ export default function Support() {
             </AnimatePresence>
           </div>
         </motion.div>
+
+        {/* Legal Section */}
+        <motion.div whileHover={{ scale: 1.05 }}
+          className="relative group rounded-3xl overflow-hidden cursor-pointer self-start">
+          <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-green-500 to-blue-500 opacity-80 group-hover:opacity-100 blur-[2px]" />
+          <div className="relative bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl flex flex-col">
+            <div onClick={() => toggle("legal")} className="p-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center shadow-lg">
+                  <FaRegListAlt className="w-5 h-5 text-white" />
+                </div>
+                <span className="font-semibold text-lg">Legal & Privacy</span>
+              </div>
+              {openKey === 'legal' ? <IoChevronUp /> : <IoChevronForward />}
+            </div>
+            <AnimatePresence>
+              {openKey === 'legal' && (
+                
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="px-5 pb-5 space-y-2"
+                >
+                  <NavLink to="/terms" className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                    <div className="flex items-center gap-2">
+                      <FaRegListAlt className="w-5 h-5 text-white" />
+                      <span>Terms of Service</span>
+                    </div>
+                    <IoChevronForward />
+                  </NavLink>
+                  <NavLink to="/privacy" className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                    <div className="flex items-center gap-2">
+                      <FaRegListAlt className="w-5 h-5 text-white" />
+                      <span>Privacy Policy</span>
+                    </div>
+                    <IoChevronForward />
+                  </NavLink>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
         {isContactModalOpen && (
           <>
             

@@ -23,6 +23,9 @@ import { SocketProvider } from './context/SocketContext';
 import SingleGame from './components/SingleGame';
 import ChatWidget from './components/ChatWidget';
 import Guides from './components/Guides';
+import FAQs from './components/FAQs';
+import TermsService from './components/TermsService.jsx';
+import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -39,9 +42,10 @@ function AppContent() {
         <SnackbarProvider
           maxSnack={3}
           anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: "bottom",
+            horizontal: "left",
           }}
+
           autoHideDuration={3000}
         >
           <SocketProvider>
@@ -62,6 +66,9 @@ function AppContent() {
             <Route path="/single" element={<SingleGame/>} />
             <Route path="/guides" element={<Guides/>} />
             <Route path="/single/:id" element={<SingleGame/>} />
+            <Route path="/faqs" element={<FAQs/>} />
+            <Route path="/terms" element={<TermsService/>} />
+            <Route path="/privacy" element={<PrivacyPolicy/>} />
           </Routes>
            { !chatwidegt &&<ChatWidget />}
           </SocketProvider>
