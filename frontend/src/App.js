@@ -22,7 +22,7 @@ import GGTalks from './Pages/GGTalks';
 import { SocketProvider } from './context/SocketContext';
 import SingleGame from './components/SingleGame';
 import ChatWidget from './components/ChatWidget';
-import Guides from './components/Guides';
+import Guides from './Pages/Guides';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
