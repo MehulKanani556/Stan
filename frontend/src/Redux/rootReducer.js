@@ -4,6 +4,7 @@ import userSlice from "./Slice/user.slice";
 import manageStateSlice from "./Slice/manageState.slice";
 import freeGameSlice from "./Slice/freeGame.slice";
 import gameSlice from "./Slice/game.slice";
+import categorySlice from "./Slice/category.slice";
 
 export const rootReducer = combineReducers({
   auth: authSlice,
@@ -11,4 +12,5 @@ export const rootReducer = combineReducers({
   manageState: manageStateSlice,
   freeGame: freeGameSlice,
   game: gameSlice,
+  category: categorySlice,
 });

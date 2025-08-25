@@ -6,9 +6,7 @@ import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUs
 import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
 import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
-import { createTrailer, deleteTrailer, getAllTrailer, updateTrailer } from "../controllers/HomeTrailerController.js";
-
-import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames } from "../controllers/game.controller.js";
+import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames } from "../controllers/game.controller.js";
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
 
 const indexRoutes = express.Router()
@@ -51,6 +49,7 @@ indexRoutes.delete("/free-games/:id", UserAuth, isAdmin, deleteFreeGame)
 indexRoutes.get("/getAllGames", getAllGames);
 indexRoutes.get("/getAllActiveGames", getAllActiveGames);
 indexRoutes.get("/getPopularGames", getPopularGames);
+indexRoutes.get("/getTopGames", getTopGames);
 indexRoutes.post(
     "/createGame",
     upload.fields([
@@ -79,11 +78,6 @@ indexRoutes.put(
 indexRoutes.delete("/deleteGame/:id", deleteGame);
 indexRoutes.get("/getGameById/:id", getGameById);
 
-// hometrailers routes
-indexRoutes.post('/hometrailer',upload.single("trailer"),createTrailer)
-indexRoutes.get('/hometrailer',UserAuth ,getAllTrailer)
-indexRoutes.put("/hometrailer/:id", UserAuth ,upload.single("trailer"), updateTrailer);
-indexRoutes.delete("/hometrailer/:id", UserAuth , deleteTrailer);
 // category
 indexRoutes.post(
     "/createCategory",

@@ -85,6 +85,23 @@ const gameSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        // Reviews and ratings
+        reviews: {
+            count: {
+                type: Number,
+                default: 0,
+            },
+            averageRating: {
+                type: Number,
+                default: 0,
+                min: 0,
+                max: 5,
+            },
+            totalRating: {
+                type: Number,
+                default: 0,
+            },
+        },
         tags: [{
             type: String,
         }],

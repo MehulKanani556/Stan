@@ -39,7 +39,7 @@ export const SocketProvider = ({ children }) => {
   // Connect socket when component mounts
   useEffect(() => {
     // Connect socket immediately when user visits the site
-    socketRef.current = io("http://localhost:8000", {
+            socketRef.current = io("http://localhost:5000", {
       transports: ["websocket", "polling"],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

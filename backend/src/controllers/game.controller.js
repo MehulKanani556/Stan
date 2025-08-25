@@ -588,18 +588,13 @@ export const getPopularGames = function (req, res) {
         try {
             const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
             const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1);
-            const sortBy = ["views", "downloads", "createdAt"].includes(req.query.sortBy)
-                ? req.query.sortBy
-                : "views";
+            // Always sort by downloads (most downloaded). Allow optional order param.
             const orderParam = (req.query.order || "desc").toLowerCase();
             const sortOrder = orderParam === "asc" ? 1 : -1;
 
             const filter = { isActive: true };
 
-            const sort = { [sortBy]: sortOrder };
-            if (sortBy !== "createdAt") {
-                sort.createdAt = -1;
-            }
+            const sort = { downloads: sortOrder, createdAt: -1 };
 
             let findQuery = Game.find(filter)
                 .sort(sort)
@@ -627,6 +622,84 @@ export const getPopularGames = function (req, res) {
                     total,
                     totalPages: Math.ceil(total / limit),
                 },
+            });
+        } catch (error) {
+            return ThrowError(res, 500, error.message);
+        }
+    })();
+};
+
+// Get top games with multiple ranking criteria and pagination
+export const getTopGames = function (req, res) {
+    (async function () {
+        try {
+            const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+            const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1);
+            const sortBy = (req.query.sortBy || "rating").toLowerCase();
+            const orderParam = (req.query.order || "desc").toLowerCase();
+            const sortOrder = orderParam === "asc" ? 1 : -1;
+            const category = req.query.category; // Optional category filter
+
+            console.log("getTopGames called with:", { page, limit, sortBy, orderParam, category });
+
+            const filter = { isActive: true };
+
+            // Add category filter if provided
+            if (category && mongoose.Types.ObjectId.isValid(category)) {
+                filter.category = category;
+            }
+
+            // Define sorting criteria based on sortBy parameter
+            let sort = {};
+            switch (sortBy) {
+                case "rating":
+                    sort = { "reviews.averageRating": sortOrder, "reviews.count": -1, createdAt: -1 };
+                    break;
+                case "reviews":
+                    sort = { "reviews.count": sortOrder, "reviews.averageRating": -1, createdAt: -1 };
+                    break;
+                default:
+                    sort = { "reviews.averageRating": sortOrder, "reviews.count": -1, createdAt: -1 };
+            }
+
+            let findQuery = Game.find(filter)
+                .sort(sort)
+                .skip((page - 1) * limit)
+                .limit(limit);
+
+            // Populate category information if available
+            if (mongoose.modelNames().includes("category")) {
+                findQuery = findQuery.populate("category");
+            }
+
+            const [games, total] = await Promise.all([
+                findQuery.exec(),
+                Game.countDocuments(filter),
+            ]);
+
+            if (!games || games.length === 0) {
+                return ThrowError(res, 404, "No top games found");
+            }
+
+            // No additional metrics (downloads/views/trending) are calculated
+            const gamesWithMetrics = games.map(game => game.toObject());
+
+            return res.status(200).json({
+                success: true,
+                data: gamesWithMetrics,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit),
+                },
+                sorting: {
+                    sortBy,
+                    order: orderParam,
+                },
+                filters: {
+                    category: category || null,
+                }
             });
         } catch (error) {
             return ThrowError(res, 500, error.message);

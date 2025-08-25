@@ -17,17 +17,28 @@ import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
 import { FaArrowRight } from "react-icons/fa";
-import { getAllGames, getPopularGames } from '../Redux/Slice/game.slice';
+import { getAllGames, getPopularGames, getTopGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
+import { getAllCategories } from '../Redux/Slice/category.slice';
 
 
 const Store = () => {
   const dispatch = useDispatch();
   const games = useSelector((state) => state.game.games);
   const PopularGames = useSelector((state) => state.game.popularGames);
+  // const Category = useSelector((state) => state.game.category);
+  const topGames = useSelector((state) => state.game.topGames);
+  const loading = useSelector((state) => state.game.loading);
+  const error = useSelector((state) => state.game.error);
 
   // console.log(games);
   console.log(games, "all games");
+  console.log("topGames:", topGames);
+  console.log("topGames length:", topGames?.length);
+  console.log("topGames isArray:", Array.isArray(topGames));
+  console.log("loading:", loading);
+  console.log("error:", error);
+  console.log("Redux state:", { games, PopularGames, topGames, loading, error });
 
 
   useEffect(() => {
@@ -38,12 +49,24 @@ const Store = () => {
     dispatch(getPopularGames());
   }, []);
 
+  useEffect(() => {
+    dispatch(getAllCategories());
+  }, []);
+
+  useEffect(() => {
+    try {
+      dispatch(getTopGames());
+    } catch (error) {
+      console.error("Error dispatching getTopGames:", error);
+    }
+  }, []);
 
   const scrollContainerRefs = {
     trending: useRef(null),
     popular: useRef(null),
+    action: useRef(null),
     ps5: useRef(null),
-    top: useRef(null),
+    topGames: useRef(null),
   };
 
   const handleMouseDown = (e, ref) => {
@@ -88,9 +111,15 @@ const Store = () => {
         onMouseDown={(e) => handleMouseDown(e, sectionRef)}
       >
         <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max pb-2 sm:pb-3 md:pb-4 pl-4 sm:pl-0 pr-4 sm:pr-0'>
-          {games.map((game) => (
-            <GameCard key={game._id || game.id} game={game} />
-          ))}
+          {games && games.length > 0 ? (
+            games.map((game) => (
+              <GameCard key={game._id || game.id} game={game} />
+            ))
+          ) : (
+            <div className="text-gray-400 text-center py-8">
+              No games available
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -183,6 +212,8 @@ const Store = () => {
       <section className="">
         {/* Hero Swiper */}
         <div className="relative w-full">
+
+
           <Swiper
             modules={[EffectFade, Navigation, Pagination, Autoplay]}
             effect="fade"
@@ -194,32 +225,94 @@ const Store = () => {
             loop={true}
             className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px]"
           >
-            {[game1, game2, game3, game4, game5, game6].map((game, index) => (
-              <SwiperSlide key={index}>
-                <div className="relative w-full h-full">
-                  <img src={game} alt={`Game ${index + 1}`} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                </div>
-              </SwiperSlide>
-            ))}
+            {Array.isArray(games) && games.length > 0 ? (
+              games.slice(0, 6).map((game, index) => (
+                <SwiperSlide key={game._id || index}>
+                  <div className="relative w-full h-full">
+                    <img
+                      src={game?.cover_image?.url || game1}
+                      alt={game?.title || `Game ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h2 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
+                        {game?.title || `Game ${index + 1}`}
+                      </h2>
+                      <p className="text-white/80 text-sm sm:text-base md:text-lg">
+                        {game?.description?.substring(0, 100)}...
+                      </p>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))
+            ) : (
+              // Fallback to local images if no games from API
+              [game1, game2, game3, game4, game5, game6].map((game, index) => (
+                <SwiperSlide key={index}>
+                  <div className="relative w-full h-full">
+                    <img src={game} alt={`Game ${index + 1}`} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  </div>
+                </SwiperSlide>
+              ))
+            )}
           </Swiper>
         </div>
 
         {/* All Games Section (from API) */}
         <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
-          <GameSection title="Trending Games" games={Array.isArray(games) ? games : []} sectionRef={scrollContainerRefs.trending} />
+          <GameSection
+            title="Trending Games"
+            games={Array.isArray(games) ? games : []}
+            sectionRef={scrollContainerRefs.trending}
+            loading={loading}
+            error={error}
+          />
         </div>
         <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
-          <GameSection title="Popular Games" games={Array.isArray(PopularGames) ? PopularGames : []} sectionRef={scrollContainerRefs.popular} />
+          <GameSection
+            title="Popular Games"
+            games={Array.isArray(PopularGames) ? PopularGames : []}
+            sectionRef={scrollContainerRefs.popular}
+            loading={loading}
+            error={error}
+          />
         </div>
         <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
-          <GameSection title="Action Games" games={games?.action ?? []} sectionRef={scrollContainerRefs.action} />
+          <GameSection
+            title="Action Games"
+            games={Array.isArray(games) ? games.filter((g) => {
+              const byCategory = (g?.category?.categoryName || "").toLowerCase() === "action";
+              const byTag = Array.isArray(g?.tags) && g.tags.some((t) => String(t).toLowerCase() === "action");
+              return byCategory || byTag;
+            }) : []}
+            sectionRef={scrollContainerRefs.action}
+            loading={loading}
+            error={error}
+          />
         </div>
         {/*<div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
           <GameSection title="PS-5 Games" games={games?.ps5 ?? []} sectionRef={scrollContainerRefs.ps5} />
         </div>*/}
         <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
-          <GameSection title="Top Games" games={games?.top ?? []} sectionRef={scrollContainerRefs.top} />
+          <GameSection
+            title="Top Games"
+            games={Array.isArray(topGames) ? topGames : []}
+            sectionRef={scrollContainerRefs.topGames}
+            loading={loading}
+            error={error}
+          />
+          {error && (
+            <div className="text-red-500 text-center py-4">
+              Error loading top games: {error}
+            </div>
+          )}
+          {!loading && (!topGames || topGames.length === 0) && (
+            <div className="text-gray-400 text-center py-4">
+              No top games available
+            </div>
+          )}
         </div>
       </section>
     </>

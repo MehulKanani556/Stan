@@ -125,6 +125,21 @@ export const getHomeTrailer = createAsyncThunk(
             const res = await axiosInstance.get("/hometrailer");
             return res.data;
         } catch (err) {
+
+        }
+    }
+)
+
+export const getTopGames = createAsyncThunk(
+    "game/getTopGames",
+    async (_, { rejectWithValue }) => {
+        try {
+            console.log("Calling getTopGames API...");
+            const res = await axiosInstance.get("/getTopGames");
+            console.log("getTopGames API response:", res.data);
+            return res.data;
+        } catch (err) {
+            console.error("getTopGames API error:", err);
             return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
@@ -135,6 +150,7 @@ const gameSlice = createSlice({
     initialState: {
         games: [],
         popularGames: [],
+        topGames: [],
         singleGame: null,
         loading: false,
         error: null,
@@ -236,6 +252,20 @@ const gameSlice = createSlice({
                 state.games = state.games.filter((g) => g._id !== action.payload._id);
             })
             .addCase(deleteGame.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(getTopGames.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.success = null;
+            })
+            .addCase(getTopGames.fulfilled, (state, action) => {
+                state.loading = false;
+                state.topGames = action.payload?.data || [];
+            })
+            .addCase(getTopGames.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

@@ -32,7 +32,7 @@ export default function ChatMessage({ isTyping }) {
             const currentSelectedUser = allMessageUsers.find(
                 (user) => user._id === selectedUser._id
             );
-            console.log(currentSelectedUser);
+            // console.log(currentSelectedUser);
             if (currentSelectedUser) {
                 const sortedMessages = [...(currentSelectedUser.messages || [])].sort(
                     (a, b) => new Date(a?.createdAt) - new Date(b?.createdAt)
