@@ -22,7 +22,7 @@ import GGTalks from './Pages/GGTalks';
 import { SocketProvider } from './context/SocketContext';
 import SingleGame from './components/SingleGame';
 import ChatWidget from './components/ChatWidget';
-import Guides from './components/Guides';
+// import Guides from './components/Guides';
 import FAQs from './components/FAQs';
 import TermsService from './components/TermsService.jsx';
 import PrivacyPolicy from './components/PrivacyPolicy.jsx';
@@ -63,7 +63,7 @@ function AppContent() {
             <Route path="/TopGames" element={<TopGames />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/single" element={<SingleGame/>} />
-            <Route path="/guides" element={<Guides/>} />
+            {/* <Route path="/guides" element={<Guides/>} /> */}
             <Route path="/single/:id" element={<SingleGame/>} />
             <Route path="/faqs" element={<FAQs/>} />
             <Route path="/terms" element={<TermsService/>} />

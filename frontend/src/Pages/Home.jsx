@@ -125,72 +125,6 @@ export default function Home() {
     "Puzzle"
   ];
 
-  const gamesByCategory = [
-    // Thriller games (index 0)
-    [
-      { id: 1, title: "Resident Evil Village", price: 2999, discount: 15, tag: "Horror", image: game1 },
-      { id: 2, title: "The Last of Us Part II", price: 3499, discount: 10, tag: "Survival", image: game2 },
-      { id: 3, title: "Dead Space Remake", price: 3999, discount: 0, tag: "Sci-Fi", image: game3 },
-      { id: 4, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game4 },
-      { id: 29, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game5 },
-      { id: 30, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game6 },
-      { id: 1, title: "Resident Evil Village", price: 2999, discount: 15, tag: "Horror", image: game1 },
-      { id: 2, title: "The Last of Us Part II", price: 3499, discount: 10, tag: "Survival", image: game2 },
-      { id: 3, title: "Dead Space Remake", price: 3999, discount: 0, tag: "Sci-Fi", image: game3 },
-      { id: 4, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game4 },
-      { id: 29, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game5 },
-      { id: 30, title: "Alan Wake 2", price: 3299, discount: 5, tag: "Psychological", image: game6 },
-    ],
-
-    // Racing games (index 1)
-    [
-      { id: 5, title: "Forza Horizon 5", price: 3499, discount: 20, tag: "Open World", image: game4 },
-      { id: 6, title: "Need for Speed Unbound", price: 2999, discount: 25, tag: "Arcade", image: game2 },
-      { id: 7, title: "Gran Turismo 7", price: 3799, discount: 10, tag: "Simulation", image: game1 },
-      { id: 8, title: "Gran Turismo 7", price: 3799, discount: 10, tag: "Simulation", image: game3 },
-      { id: 31, title: "F1 2023", price: 3599, discount: 15, tag: "Simulation", image: game4 }
-    ],
-
-    // Fighting games (index 2)
-    [
-      { id: 9, title: "Street Fighter 6", price: 3499, discount: 0, tag: "Competitive", image: game5 },
-      { id: 10, title: "Mortal Kombat 1", price: 3999, discount: 5, tag: "Gore", image: game2 },
-      { id: 11, title: "Tekken 8", price: 3799, discount: 0, tag: "3D Fighter", image: game6 },
-      { id: 12, title: "Dragon Ball FighterZ", price: 1999, discount: 30, tag: "Anime", image: game1 }
-    ],
-
-    // Adventure games (index 3)
-    [
-      { id: 13, title: "The Legend of Zelda: Tears of the Kingdom", price: 4999, discount: 0, tag: "Open World", image: game3 },
-      { id: 14, title: "God of War Ragnarök", price: 3999, discount: 10, tag: "Action", image: game1 },
-      { id: 15, title: "Hogwarts Legacy", price: 4499, discount: 15, tag: "RPG", image: game2 },
-      { id: 16, title: "Elden Ring", price: 3499, discount: 20, tag: "Souls-like", image: game6 }
-    ],
-
-    // Strategy games (index 4)
-    [
-      { id: 17, title: "Civilization VI", price: 1999, discount: 50, tag: "Turn-based", image: game5 },
-      { id: 18, title: "Total War: Warhammer III", price: 3499, discount: 25, tag: "RTS", image: game2 },
-      { id: 19, title: "XCOM 2", price: 1499, discount: 60, tag: "Tactical", image: game6 },
-      { id: 20, title: "Age of Empires IV", price: 2499, discount: 30, tag: "Historical", image: game4 }
-    ],
-
-    // Sports games (index 5)
-    [
-      { id: 21, title: "EA Sports FC 24", price: 3999, discount: 10, tag: "Football", image: game1 },
-      { id: 22, title: "NBA 2K24", price: 4499, discount: 15, tag: "Basketball", image: game2 },
-      { id: 23, title: "WWE 2K23", price: 3499, discount: 20, tag: "Wrestling", image: game4 },
-      { id: 24, title: "FIFA 23", price: 2999, discount: 40, tag: "Football", image: game3 }
-    ],
-
-    // Puzzle games (index 6)
-    [
-      { id: 25, title: "Portal 2", price: 999, discount: 75, tag: "First-person", image: game3 },
-      { id: 26, title: "The Witness", price: 1499, discount: 50, tag: "Exploration", image: game6 },
-      { id: 27, title: "Tetris Effect: Connected", price: 1999, discount: 30, tag: "Classic", image: game4 },
-      { id: 28, title: "It Takes Two", price: 2499, discount: 20, tag: "Co-op", image: game2 }
-    ]
-  ];
 
   const handle = (cate) => {
     setActiveTab(cate)
@@ -340,7 +274,8 @@ export default function Home() {
                     slidesPerView={1.1}
                     breakpoints={{
                       320: { slidesPerView: 1, spaceBetween: 8 },
-                      500: { slidesPerView: 1.5, spaceBetween: 10 },
+                      425: { slidesPerView: 2, spaceBetween: 10 },
+                      500: { slidesPerView: 2, spaceBetween: 10 },
                       640: { slidesPerView: 2, spaceBetween: 12 },
                       768: { slidesPerView: 2.5, spaceBetween: 14 },
                       1024: { slidesPerView: 3, spaceBetween: 14 },
@@ -383,7 +318,7 @@ export default function Home() {
                         >
                           <StylishDiv>
                             <div className="group relative overflow-hidden  transition-all duration-300 w-full">
-                              <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
+                              <div className='relative w-full h-40 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
                                 <img
                                   src={element?.cover_image?.url}
                                   alt={element?.title}
