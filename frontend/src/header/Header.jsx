@@ -11,8 +11,7 @@ import { IoBagOutline, IoBag } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
 import stanUser from "../images/stan-user.jpg"
 import stanLogo from "../images/stan-logo.svg"
-import { getUserById } from "../Redux/Slice/user.slice"
-import { logoutUser } from "../Redux/Slice/auth.slice"
+import { getUserById, logoutUser } from "../Redux/Slice/user.slice"
 import { MdRocketLaunch, MdSettings } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
@@ -129,12 +128,12 @@ export default function Header() {
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 items-center'>
-                                        <div className='me-2'>
-                                            <FaHeart className='lg:text-2xl text-xl text-[#d1d5db] cursor-pointer' />
-                                        </div>
-                                        <div className='me-2'>
-                                            <FaShoppingCart className='lg:text-2xl text-xl text-[#d1d5db] cursor-pointer' />
-                                        </div>
+                                       <NavLink to="/wishlist" className='me-2'>
+                                          <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                        </NavLink>
+                                        <NavLink to="/cart" className='me-2'>
+                                          <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                        </NavLink>
                                         <div
                                             className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
                                             onClick={toggleDropdown}
@@ -145,7 +144,10 @@ export default function Header() {
                                                 alt="User"
                                             />
                                         </div>
-                                        <p className='text-base'>
+                                        <p 
+                                            className='text-base cursor-pointer hover:text-[#ab99e1] transition-colors'
+                                            onClick={toggleDropdown}
+                                        >
                                             {decryptData(currentUser?.name)}
                                         </p>
                                     </div>

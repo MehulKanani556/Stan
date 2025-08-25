@@ -137,22 +137,6 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-export const logoutUser = createAsyncThunk(
-  "auth/logoutUser",
-  async (id, { dispatch, rejectWithValue }) => {
-
-     
-        localStorage.removeItem("userId");
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-
-        // dispatch(setAlert({ text: response.data.message, color: 'success' }));
-        enqueueSnackbar( "Logged out successfully", { variant: "success" });
-        return ;
-      }
-    
-  
-);
 
 export const googleLogin = createAsyncThunk(
   "auth/google-login",
@@ -275,18 +259,7 @@ const authSlice = createSlice({
         state.error = action.payload.message;
         state.message = action.payload?.message || "Reset Password Failed";
       })
-      .addCase(logoutUser.fulfilled, (state, action) => {
-        state.user = null;
-        state.isAuthenticated = false;
-        state.loggedIn = false;
-        state.isLoggedOut = true;
-        window.sessionStorage.clear();
-        state.message = action.payload?.message || "Logged out successfully";
-      })
-      .addCase(logoutUser.rejected, (state, action) => {
-        state.error = action.payload.message;
-        state.message = action.payload?.message || "Logout Failed";
-      })
+     
       .addCase(googleLogin.fulfilled, (state, action) => {
         if (action.payload && action.payload.user) {
           if (!action.payload.user.role) {

@@ -9,6 +9,10 @@ export const configureStore = () => {
         key: "root",
         storage,
         whitelist: ['auth'],
+        // Add transforms to handle state clearing
+        transforms: [],
+        // Ensure state is properly cleared on logout
+        serialize: false,
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);

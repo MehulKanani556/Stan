@@ -54,9 +54,9 @@ const Footer = () => {
                   <a
                     key={i}
                     href={href}
-                    className="p-2 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300"
+                    className="p-2 sm:p-3 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300 flex items-center justify-center"
                   >
-                    <Icon size={18} />
+                    <Icon className="text-sm sm:text-base md:text-lg lg:text-xl" />
                   </a>
                 ))}
               </div>

@@ -184,51 +184,31 @@ const Store = () => {
       <section className="">
         {/* Hero Swiper */}
         <div className="relative w-full">
-
-
           <Swiper
-            modules={[EffectFade, Navigation, Pagination, Autoplay]}
+            modules={[EffectFade, Pagination, Autoplay]}
             effect="fade"
-            fadeEffect={{ crossFade: true }}
-            speed={1000}
+            speed={1200}
             slidesPerView={1}
-            pagination={{ clickable: true, dynamicBullets: true }}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 5000 }}
             loop={true}
-            className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px]"
+            className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
-            {Array.isArray(games) && games.length > 0 ? (
-              games.slice(0, 6).map((game, index) => (
-                <SwiperSlide key={game._id || index}
-                onClick={() => navigate(`/single/${game?._id}`)}> 
+            {games && games.length > 0 ? (
+              games.slice(-6).map((game, index) => (
+                <SwiperSlide key={index}>
                   <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
                     <img
                       src={game?.cover_image?.url || game1}
-                      alt={game?.title || `Game ${index + 1}`}
-                      className="w-full h-full object-cover object-top"
+                      alt={game.title || `Game ${index + 1}`}
+                      className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h2 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
-                        {game?.title || `Game ${index + 1}`}
-                      </h2>
-                      <p className="text-white/80 text-sm sm:text-base md:text-lg">
-                        {game?.description?.substring(0, 100)}...
-                      </p>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                   </div>
                 </SwiperSlide>
               ))
             ) : (
-              // Fallback to local images if no games from API
-              [game1, game2, game3, game4, game5, game6].map((game, index) => (
-                <SwiperSlide key={index}>
-                  <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
-                    <img src={game} alt={`Game ${index + 1}`}  className="w-full h-full object-cover object-top" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  </div>
-                </SwiperSlide>
-              ))
+              <p className="text-center text-white py-10">Loading...</p>
             )}
           </Swiper>
         </div>

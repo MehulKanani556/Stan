@@ -20,7 +20,7 @@ const ChatWidget = () => {
     {
       role: "assistant",
       content:
-        "Hi! I can help with everything on this site: find games, list categories, prices/platforms, latest games, and answer questions about wishlist, cart, payments, privacy and terms.",
+        "👋 Welcome! How can I help you today?",
       results: [],
       suggestions: [
         "Recommend some games",
@@ -53,7 +53,7 @@ const ChatWidget = () => {
         "yoyo_chat_messages",
         JSON.stringify(messages.slice(-50))
       );
-    } catch (_) {}
+    } catch (_) { }
   }, [messages]);
   useEffect(() => {
     try {
@@ -64,7 +64,7 @@ const ChatWidget = () => {
           setMessages(parsed);
         }
       }
-    } catch (_) {}
+    } catch (_) { }
   }, []);
 
   // Fetch welcome message from backend
@@ -86,7 +86,7 @@ const ChatWidget = () => {
             },
           ]);
         }
-      } catch (_) {}
+      } catch (_) { }
     };
     if (
       isContactModalOpen &&
@@ -110,13 +110,29 @@ const ChatWidget = () => {
     setInput("");
     setIsLoading(true);
     try {
-      const res = await axiosInstance.get(`/chatWidget`, {
-        params: { q: effectiveQ, page: opts.page || 1, limit: 6 },
+      let params = { q: effectiveQ, page: opts.page || 1, limit: 6 };
+      let endpoint = '/chatWidget';
+
+      const websiteInfoKeywords = ["privacy", "terms", "faq", "about us", "website", "platform"];
+      const isWebsiteInfoQuery = websiteInfoKeywords.some(keyword => effectiveQ.toLowerCase().includes(keyword));
+
+      if (isWebsiteInfoQuery) {
+        endpoint = '/website/website-info';
+        params = { query: effectiveQ }; // For website info, use 'query' parameter
+      } else if (effectiveQ.toLowerCase() === "free game") {
+        params.type = "freegamestan";
+      }
+
+      const res = await axiosInstance.get(endpoint, {
+        params: params,
       });
       const data = res?.data || {};
       setLastQuery(data.q || effectiveQ);
       setPage(data.page || 1);
       setHasMore(Boolean(data.hasMore));
+
+      const messageContent = (endpoint === '/website/website-info') ? data.answer : data.reply;
+
       if (opts.append) {
         setMessages((prev) => {
           const copy = [...prev];
@@ -124,7 +140,7 @@ const ChatWidget = () => {
             if (copy[i].role === "assistant") {
               copy[i] = {
                 ...copy[i],
-                content: data.reply || copy[i].content,
+                content: messageContent || copy[i].content,
                 results: [
                   ...(Array.isArray(copy[i].results) ? copy[i].results : []),
                   ...(Array.isArray(data.results) ? data.results : []),
@@ -140,7 +156,7 @@ const ChatWidget = () => {
             ...copy,
             {
               role: "assistant",
-              content: data.reply || "",
+              content: messageContent || "",
               results: Array.isArray(data.results) ? data.results : [],
               suggestions: Array.isArray(data.suggestions)
                 ? data.suggestions
@@ -154,7 +170,7 @@ const ChatWidget = () => {
           ...prev,
           {
             role: "assistant",
-            content: data.reply || "",
+            content: messageContent || "",
             results: Array.isArray(data.results) ? data.results : [],
             suggestions: Array.isArray(data.suggestions) ? data.suggestions : [],
             id: Date.now() + "a",
@@ -189,7 +205,7 @@ const ChatWidget = () => {
       {!isContactModalOpen && (
         <button
           onClick={() => setIsContactModalOpen(true)}
-          className="fixed bottom-6 right-6 z-40 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"
+          className="fixed md:bottom-6 right-6 bottom-16 z-50 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"
         >
           💬
         </button>
@@ -235,29 +251,28 @@ const ChatWidget = () => {
                 {messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`flex ${
-                      m.role === "user" ? "justify-end" : "justify-start"
-                    }`}
+                    className={`flex ${m.role === "user" ? "justify-end" : "justify-start"
+                      }`}
                   >
                     <div className="max-w-[80%] sm:max-w-[75%]">
                       <div
                         className={`px-4 py-3 rounded-2xl shadow-lg whitespace-pre-wrap
-                        ${
-                          m.role === "user"
+                        ${m.role === "user"
                             ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
                             : "bg-white/10 backdrop-blur-md text-gray-200 border border-white/10 rounded-bl-none"
-                        }`}
+                          }`}
                       >
                         {m.role !== "user" && (
                           <div className="text-xs text-blue-300 mb-1">
                             Support
                           </div>
                         )}
-                        {m.content}
+                        <span dangerouslySetInnerHTML={{ __html: m.content.replace(/(\*\*(.*?)\*\*)/g, '<strong>$2</strong>') }} />
+
                         {m.results && m.results.length > 0 && (
                           <div className="mt-3 grid grid-cols-1 gap-2">
                             {m.results.map((result, idx) => (
-                              <div key={idx} className="bg-white/10 p-2 rounded-lg flex items-center" onClick={()=>navigate(`/single/${result?._id}`)}>
+                              <div key={idx} className="bg-white/10 p-2 rounded-lg flex items-center" >
                                 {result.imageUrl && (
                                   <img src={result.imageUrl} alt={result.title} className="w-16 h-16 object-cover rounded-md mr-3" />
                                 )}
@@ -270,17 +285,17 @@ const ChatWidget = () => {
                           </div>
                         )}
                         {m.suggestions && m.suggestions.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                                {m.suggestions.map((suggestion, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => sendMessage({ q: suggestion })}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-full"
-                                    >
-                                        {suggestion}
-                                    </button>
-                                ))}
-                            </div>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {m.suggestions.map((suggestion, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => sendMessage({ q: suggestion })}
+                                className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-full"
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
                         )}
                       </div>
                     </div>

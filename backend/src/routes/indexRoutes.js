@@ -13,6 +13,9 @@ import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, up
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
 import { chatWidGetController } from "../controllers/chatWidGet.controller.js";
 import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateTrailer } from "../controllers/HomeTrailerController.js";
+import { addToCart, clearCart, getCart, removeFromCart, updateCartItem } from "../controllers/cart.controller.js";
+import { addToWishlist, checkWishlistStatus, getWishlist, removeFromWishlist } from "../controllers/wishlist.controller.js";
+import websiteInfoRoutes from "./websiteInfo.routes.js";
 
 
 const indexRoutes = express.Router();
@@ -92,6 +95,7 @@ indexRoutes.get("/getAllGames", getAllGames);
 indexRoutes.get("/getAllActiveGames", getAllActiveGames);
 indexRoutes.get("/getPopularGames", getPopularGames);
 indexRoutes.get("/getTopGames", getTopGames);
+indexRoutes.get("/games-by-category", getTopGames);
 indexRoutes.post(
   "/createGame",
   upload.fields([
@@ -132,6 +136,19 @@ indexRoutes.put(
 );
 indexRoutes.delete("/hometrailer/:id", UserAuth, deleteTrailer);
 
+// cart
+indexRoutes.get("/cart", UserAuth, getCart);
+indexRoutes.post("/cart/add", UserAuth, addToCart);
+indexRoutes.put("/cart/update", UserAuth, updateCartItem);
+indexRoutes.post("/cart/remove", UserAuth, removeFromCart);
+indexRoutes.post("/cart/clear", UserAuth, clearCart);
+
+// wishlist
+indexRoutes.get("/wishlist", UserAuth, getWishlist);
+indexRoutes.post("/wishlist/add", UserAuth, addToWishlist);
+indexRoutes.post("/wishlist/remove", UserAuth, removeFromWishlist);
+indexRoutes.get("/wishlist/check/:gameId", UserAuth, checkWishlistStatus);
+
 // category
 indexRoutes.post(
   "/createCategory",
@@ -147,6 +164,7 @@ indexRoutes.put(
 );
 indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
-indexRoutes.get("/chatWidget",chatWidGetController);
+indexRoutes.get("/chatWidget", chatWidGetController);
+indexRoutes.use('/website', websiteInfoRoutes);
 
 export default indexRoutes

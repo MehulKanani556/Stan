@@ -461,6 +461,22 @@ export const muteChat = createAsyncThunk(
 );
 
 
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (id, { dispatch, rejectWithValue }) => {
+
+     
+        localStorage.removeItem("userId");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+
+        // dispatch(setAlert({ text: response.data.message, color: 'success' }));
+        enqueueSnackbar( "Logged out successfully", { variant: "success" });
+        return ;
+      }
+    
+  
+);
 
 const userSlice = createSlice({
   name: "user",
@@ -731,7 +747,20 @@ const userSlice = createSlice({
         state.message = action.payload?.message || "Failed to muteChat chat";
       })
     
+      .addCase(logoutUser.fulfilled, (state, action) => {
 
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loggedIn = false;
+        state.isLoggedOut = true;
+        state.currentUser = null;
+        window.sessionStorage.clear();
+        state.message = action.payload?.message || "Logged out successfully";
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.error = action.payload.message;
+        state.message = action.payload?.message || "Logout Failed";
+      })
       // GetUserById cases
       .addCase(getUserById.pending, (state) => {
         state.loading = true;
