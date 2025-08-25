@@ -134,30 +134,51 @@ const FANCoin = () => {
 // UPICard Component
 const UPICard = () => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[5vh] px-4">
-            {/* Circular Illustration */}
-            <div className="w-64 h-64  overflow-visible rounded-full flex items-center justify-center mb-8 relative">
-                {/* Lazy Cat Image */}
-                <img
-                    src={lazyCatImage}
-                    alt="Lazy Cat"
-                    className="w-full h-full object-cover "
-                />
-            </div>
+        <div className="flex flex-col items-center justify-center  px-4 relative">
+            
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+              from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
+              animate-pulse"></div>
+        <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+              from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
+              animate-pulse"></div>
 
-            {/* No transactions text */}
-            <h2 className="text-white text-xl font-semibold">No transactions yet !</h2>
+        
+        <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
+              relative overflow-hidden shadow-lg shadow-purple-500/30">
+            <img
+                src={lazyCatImage}
+                alt="Lazy Cat"
+                className="w-full h-full object-cover"
+            />
         </div>
+
+        
+        <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+            No transactions yet !
+        </h2>
+        <p className="text-gray-400 text-sm text-center mt-2">
+            Complete tasks or purchases to see them here ✨
+        </p>
+    </div>
     )
 }
 
 // PlayStore Component
 const PlayStore = () => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[50vh] px-4">
-            {/* Circular Illustration */}
-            <div className="w-64 h-64  overflow-visible rounded-full flex items-center justify-center mb-8 relative">
-                {/* Lazy Cat Image */}
+        <div className="flex flex-col items-center justify-center  px-4 relative">
+            
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+                  from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
+                  animate-pulse"></div>
+            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+                  from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
+                  animate-pulse"></div>
+
+            
+            <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
+                  relative overflow-hidden shadow-lg shadow-purple-500/30">
                 <img
                     src={lazyCatImage}
                     alt="Lazy Cat"
@@ -165,8 +186,13 @@ const PlayStore = () => {
                 />
             </div>
 
-            {/* No transactions text */}
-            <h2 className="text-white text-xl font-semibold">No transactions yet !</h2>
+            
+            <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+                No transactions yet !
+            </h2>
+            <p className="text-gray-400 text-sm text-center mt-2">
+                Complete tasks or purchases to see them here ✨
+            </p>
         </div>
     )
 }
@@ -178,7 +204,7 @@ export default function Profile() {
     const [user, setUser] = useState(null);
     const [activeMenu, setActiveMenu] = useState('profile');
     const [isActive, setIsActive] = useState("fanCoin");
-    console.log("aaaaaa",currentUser)
+    console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
     const [formData, setFormData] = useState({
@@ -406,7 +432,7 @@ export default function Profile() {
 
 
     return (
-        <div className="  text-white max-w-[100%] xl:max-w-[80%] md:max-w-[90%] mx-auto">
+        <div className="  text-white md:max-w-[85%] max-w-[95%] mx-auto">
             {/* Header */}
             <div className=" sticky top-0 z-40 border-b border-gray-800 ">
                 <div className="flex items-center justify-between px-4 py-3">
@@ -424,10 +450,10 @@ export default function Profile() {
                 <div className='h-full px-4 py-6'>
                     <div className='xl:w-[300px] md:w-[200px] w-full'>
                         <ul className='p-3 capitalize'>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('profile') }}>
+                            <li className={` mt-2 transition-all  duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('profile') }}>
                                 {(() => {
                                     const Tag = activeMenu === "profile" ? StylishDiv : "div";
-                                    const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#221f2a]";
+                                    const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -438,10 +464,10 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('address') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('address') }}>
                                 {(() => {
                                     const Tag = activeMenu === "address" ? StylishDiv : "div";
-                                    const style = activeMenu === "address" ? "w-full" : "p-3  bg-[#221f2a]";
+                                    const style = activeMenu === "address" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -452,10 +478,10 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('Transaction') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Transaction') }}>
                                 {(() => {
                                     const Tag = activeMenu === "Transaction" ? StylishDiv : "div";
-                                    const style = activeMenu === "Transaction" ? "w-full" : "p-3  bg-[#221f2a]";
+                                    const style = activeMenu === "Transaction" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -466,10 +492,10 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "logout" ? "md:w-[105%]   " : "w-[100%] "}`} onClick={() => { setActiveMenu('logout') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "logout" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('logout') }}>
                                 {(() => {
                                     const Tag = activeMenu === "logout" ? StylishDiv : "div";
-                                    const style = activeMenu === "logout" ? "w-full" : "p-3  bg-[#221f2a]";
+                                    const style = activeMenu === "logout" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -488,9 +514,9 @@ export default function Profile() {
 
                 {/* profile */}
                 {activeMenu === "profile" && (
-                    <div className={`px-4 py-6 w-full`}>
+                    <div className={`px-4 py-6 w-full `}>
                         {/* Profile Header */}
-                        <div className="bg-[#221f2a] rounded-2xl p-6 mb-6">
+                        <div className=" rounded-2xl p-6 mb-6 border border-white/25">
                             <div className='flex justify-end'>
 
                                 {isEditing ? (
@@ -532,13 +558,13 @@ export default function Profile() {
                         </div>
 
                         {/* Profile Details */}
-                        <div className="bg-[#221f2a] rounded-2xl p-6 mb-6">
+                        <div className=" rounded-2xl p-6 mb-6 border border-white/25">
                             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                                 <FaUser className="text-[#ab99e1]" />
                                 Personal Information
                             </h3>
                             <div className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 bg-[#2d2a35] rounded-lg">
+                                <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg">
                                     <FaUser className="text-[#ab99e1] w-5 h-5" />
                                     <div className="flex-1">
                                         <div className="text-sm text-gray-400">Name</div>
@@ -557,7 +583,7 @@ export default function Profile() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3 p-3 bg-[#2d2a35] rounded-lg">
+                                <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg">
                                     <MdEmail className="text-[#ab99e1] w-5 h-5" />
                                     <div className="flex-1">
                                         <div className="text-sm text-gray-400">Email</div>
@@ -584,9 +610,9 @@ export default function Profile() {
                 {/* address */}
                 {activeMenu === "address" && (
                     <div className={`px-4 py-6 w-full`}>
-                        <div className=" bg-[#221f2a] rounded-2xl sm:p-6 p-1 mb-6 flex flex-col w-full">
+                        <div className=" border border-white/10 rounded-2xl sm:p-6 p-1 mb-6 flex flex-col w-full">
                             {/* Header */}
-                            <div className="flex items-center justify-between px-2 sm:px-4 py-4  backdrop-blur-xl sticky top-0 z-20 shadow-lg ">
+                            <div className="flex items-center justify-between px-2 sm:px-4 py-4   sticky top-0 z-20 border-b border-white/10 ">
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     {/* <button
                                     className="text-white rounded-full hover:bg-white/10 transition-colors touch-manipulation"
@@ -614,15 +640,32 @@ export default function Profile() {
                             {/* Main Content - Address Cards */}
                             <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
                                 {addresses.length === 0 ? (
-                                    // Empty state
-                                    <div className="flex flex-col items-center justify-center py-12 sm:py-16">
-                                        <div className='w-20 h-20 xs:w-24 xs:h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden mb-3 sm:mb-4 md:mb-6 '>
-                                            <img src={manageAddress} className='w-full h-full object-cover' alt="Manage Address" />
+                                    <div className="flex flex-col items-center justify-center  px-4 relative">
+
+                                        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+         from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
+         animate-pulse"></div>
+                                        <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+         from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
+         animate-pulse"></div>
+
+
+                                        <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
+         relative overflow-hidden shadow-lg shadow-purple-500/30">
+                                            <img
+                                                src={manageAddress}
+                                                alt="Lazy Cat"
+                                                className="w-full h-full object-cover"
+                                            />
                                         </div>
-                                        <div className="text-center px-2 max-w-xs sm:max-w-sm">
-                                            <h2 className="text-white text-sm xs:text-base sm:text-lg md:text-xl font-medium mb-1 sm:mb-2">No addresses added!</h2>
-                                            <p className="text-gray-400 text-xs xs:text-sm sm:text-base leading-relaxed">Add your first address to get started</p>
-                                        </div>
+
+
+                                        <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+                                            No addresses added!
+                                        </h2>
+                                        <p className="text-gray-400 text-sm text-center mt-2">
+                                            Add your first address to get started
+                                        </p>
                                     </div>
                                 ) : (
                                     // Address cards
@@ -827,10 +870,10 @@ export default function Profile() {
                 {/* transaction */}
                 {activeMenu === "Transaction" && (
                     <div className='px-4 py-6 w-full'>
-                        <section className='w-full  bg-[#221f2a] rounded-2xl  sm:p-6 p-1 text-white flex flex-col'>
+                        <section className='w-full  border border-white/25 rounded-2xl  sm:p-6 p-1 text-white flex flex-col'>
                             <div className=''>
                                 {/* Header */}
-                                <div className='flex items-center justify-between px-2 sm:px-4 py-4  backdrop-blur-xl sticky top-0 z-20 shadow-lg'>
+                                <div className='flex items-center justify-between px-2 sm:px-4 py-4  backdrop-blur-xl sticky top-0 z-20 border-b border-white/25'>
                                     <div className='flex items-center gap-2 sm:gap-3'>
                                         {/* <button
                                              className='text-white rounded-full p-2 hover:bg-white/10 transition-colors'
@@ -903,7 +946,7 @@ export default function Profile() {
                                 leaveFrom="opacity-100 scale-100 translate-y-0"
                                 leaveTo="opacity-0 scale-95 translate-y-4"
                             >
-                                <Dialog.Panel className="w-full max-w-md rounded-xl bg-[#221F2A] from-gray-800/90 to-gray-700/70 backdrop-blur-xl p-6 text-white shadow-xl">
+                                <Dialog.Panel className="w-full max-w-md rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl">
                                     <Dialog.Title className="text-lg font-semibold">
                                         logout Account
                                     </Dialog.Title>

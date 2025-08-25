@@ -15,6 +15,7 @@ import gtav from '../images/gtalogo.avif'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getGameById } from '../Redux/Slice/game.slice'
+import { GoDotFill } from "react-icons/go";
 
 
 const SingleGame = () => {
@@ -29,7 +30,7 @@ const SingleGame = () => {
   const dispatch = useDispatch()
   const single = useSelector((state)=> state?.game?.singleGame)
 
-  console.log("HIHIHI" , single);
+  // console.log("HIHIHI" , single);
   
   useEffect(() => {
     setNav1(sliderRef1);
@@ -196,17 +197,25 @@ const SingleGame = () => {
     return () => window.removeEventListener("resize", updateSlides);
   }, []);
 
-  const rating = single?.ratings?.reduce((ele , sec)=> ele?.rating + sec?.rating) / single?.ratings?.length
+  const ratings = single?.ratings || [];
+  const total = ratings.reduce((sum, r) => sum + (r?.rating || 0), 0);
+  const rating = ratings.length ? total / ratings.length : 0;
   const fullStars = Math.floor(rating);       
   const hasHalfStar = rating % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+  const NewFunction = () => {
+     let a = 10;
+     let b = 22;
+     return a + b;
+  }
   
 
   return (
     <div className=''>
       <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
         <div>
-          <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5'>{single?.title}</h2>
+          <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize'>{single?.title}</h2>
           <div className="flex mb-3 mt-2">
             {Array.from({ length: fullStars }).map((_, i) => (
              <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
@@ -225,46 +234,50 @@ const SingleGame = () => {
         <div className="flex flex-col-reverse xl:flex-row md:mt-11">
           <div className='xl:w-3/4 w-full '>
             <div>
-              <Slider {...mainSettings} className='ds_single_slider'>
-                {single?.images?.map((element)=>{
-                  return(
-                    
-                   <div>
-                     {/* { <video ref={(el) => (videoRefs.current[0] = el)} src={element?.url}autoPlay muted loop className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover  shadow-lg bg-black" />} */}
-                       <img src={element?.url} alt="" className=" w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg" />
-                   </div>
-                  )
-                })}
+            <Slider {...mainSettings} className='ds_single_slider'>
+                  {single?.video?.url ? (
+                    <div>
+                      <video 
+                        src={single.video.url}
+                        autoPlay
+                        muted
+                        loop
+                        controls
+                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
+                      />
+                    </div>
+                  ): ""}
                 
-              
-              </Slider>
+                  {single?.images?.map((element) => (
+                    <div key={element._id}>
+                      <img 
+                        src={element.url} 
+                        alt="" 
+                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg"
+                      />
+                    </div>
+                  ))}
+            </Slider>
 
               <div className='px-5'>
                 <Slider {...thumbSettings} className='mt-3 ds_mini_slider' >
+
+                  {single?.video?.url ? (
+                    <div className="flex justify-center  relative w-full">
+                       <video src={single?.video?.url}  muted   className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
+                       <FaPlay className="absolute inset-0 m-auto text-white text-4xl transition" />
+                    </div>
+                  ) : ""}
+
                   {single?.images?.map((element)=>{
                      return(
-                      <div className="flex justify-center  relative">
+                      <div className="flex justify-center  relative w-full">
                          {/* <img src={gta5} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
                          <FaPlay className="absolute inset-0 m-auto text-white text-4xl transition" /> */}
                          <img src={element?.url} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
                       </div>
                      )
                    })}
-                  {/* <div className="flex justify-center px-2">
-                    <img src={game} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                  </div>
-                  <div className="flex justify-center px-2">
-                    <img src={game1} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                  </div>
-                  <div className="flex justify-center px-2">
-                    <img src={game2} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                  </div>
-                  <div className="flex justify-center px-2">
-                    <img src={game3} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                  </div>
-                  <div className="flex justify-center px-2">
-                    <img src={game4} alt="" className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                  </div> */}
                 </Slider>
               </div>
 
@@ -281,7 +294,7 @@ const SingleGame = () => {
                       <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
                       <div className="flex flex-wrap gap-3">
                         {single?.tags?.map((genre, index) => (
-                          <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer">
+                          <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer capitalize">
                             {genre}
                           </span>
                         ))}
@@ -301,7 +314,7 @@ const SingleGame = () => {
                   </div>
 
                   <div className="bg-black/15 p-8 rounded-lg shadow-lg mb-8">
-                    <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#ab99e1]">{single?.title}</h3>
+                    <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#ab99e1] capitalize">{single?.title}</h3>
                     <p className="mb-4">(also Includes {single?.title} Legacy)</p>
                     <p className="text-gray-300 text-sm md:text-base">
                        {single?.description}
@@ -347,6 +360,17 @@ const SingleGame = () => {
                   </div>
                 </div>
 
+               {single?.instructions ? <div className='mt-5 pt-2'>
+                <div className="bg-black/20 p-8 rounded-lg shadow-lg w-full">
+                  {/* Header */}
+                  <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#ab99e1]">Instructions</h3>
+                    {single?.instructions?.map((element , index)=>{
+                      return (
+                        <div key={index} className='flex items-center mb-1'><GoDotFill className='me-2 text-[12px]' />{element} </div>  
+                      )
+                    })}
+                </div>
+               </div> : ""}
               </div>
             </div>
           </div>
@@ -399,6 +423,13 @@ const SingleGame = () => {
                   <p className="text-base text-gray-400 mb-3">Release Date</p>
                   <p className="text-white text-base">03/04/25</p>
                 </div>
+                <hr className="my-6 border-gray-700 !mt-0" />
+
+                <div className="flex justify-between">
+                  <p className="text-base text-gray-400 mb-3">Total Download</p>
+                  <p className="text-white text-base">{single?.downloads || 0}</p>
+                </div>
+                <hr className="my-6 border-gray-700 !mt-0" />
               </div>
               <hr className="my-6 border-gray-700 !mt-0" />
 

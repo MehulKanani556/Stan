@@ -1,17 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import Header from '../header/Header'
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-import { EffectFade, Navigation, Pagination, Autoplay, Parallax } from 'swiper/modules';
+
+import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
 
 import ad1 from '../images/ad1.jpg';
 import ad2 from '../images/ad2.webp';
 import ad3 from '../images/ad3.jpg';
 import ad4 from '../images/ad4.jpg';
+import ad5 from '../images/game2.jpg';
 import { FaArrowRight } from "react-icons/fa";
 
 import game1 from '../images/game1.jpg';
@@ -32,13 +34,10 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
+  const [activeTab, setActiveTab] = useState(null);
+  const gameSwiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
-  const [activeTab, setActiveTab] = useState(null);
-  const scrollContainerRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const gameData = useSelector((state)=> state?.game?.games)
   const disaptch = useDispatch()
   const cateData = useSelector((state)=> state?.game?.category)
@@ -63,6 +62,53 @@ export default function Home() {
   useEffect(()=>{
     setMainGameData(gameData)
   },[gameData])
+
+  // Add CSS to hide scrollbars
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .game-slider::-webkit-scrollbar {
+        display: none;
+      }
+      .game-slider {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .game-swiper .swiper-button-next,
+      .game-swiper .swiper-button-prev {
+        display: none !important;
+      }
+      .game-swiper .swiper-pagination {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // Handle window resize for better mobile button states
+  useEffect(() => {
+    const handleResize = () => {
+      if (gameSwiperRef.current) {
+        setTimeout(() => {
+          setIsBeginning(gameSwiperRef.current.isBeginning);
+          setIsEnd(gameSwiperRef.current.isEnd);
+        }, 200);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Initial check after component mounts
+    setTimeout(handleResize, 500);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   
 
   const categories = [
@@ -142,42 +188,10 @@ export default function Home() {
     ]
   ];
 
-  // Mouse drag functionality for horizontal scrolling
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll speed multiplier
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: 300,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   const handle = (cate) => {
      setActiveTab(cate)
      if(cate === null){
-        setMainGameData(mainGameData)
+        setMainGameData(gameData)
      }
      else{
        const filter = gameData?.filter((ele)=>{
@@ -188,6 +202,13 @@ export default function Home() {
     }
   }
 
+  // Set initial state to show all games
+  useEffect(() => {
+    if (gameData && gameData.length > 0) {
+      setMainGameData(gameData);
+    }
+  }, [gameData]);
+
   return (
     <>
       <section className="">
@@ -195,65 +216,66 @@ export default function Home() {
           <Swiper
             modules={[EffectFade, Pagination, Autoplay]}
             effect="fade"
-            fadeEffect={{
-              crossFade: true,
-              duration: 1000
-            }}
             speed={1200}
             slidesPerView={1}
             pagination={{
-              clickable: true,
-              dynamicBullets: true,
-              renderBullet: (index, className) => {
-                return `<span class="${className} bg-white/50 hover:bg-white transition-all duration-300"></span>`;
-              }
+              clickable: true
             }}
             autoplay={{
-              delay: 5000,
-              disableOnInteraction: false
+              delay: 5000
             }}
             loop={true}
-            className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px]"
+            className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
             <SwiperSlide>
-              <div className="relative w-full h-full overflow-hidden">
+              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
                 <img
                   src={ad1}
                   alt="Game 1"
-                  className="w-full h-full object-cover"
+                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
+                <img
+                  src={ad5}
+                  alt="Game 1"
+                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               </div>
             </SwiperSlide>
 
             <SwiperSlide>
-              <div className="relative w-full h-full overflow-hidden">
+              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
                 <img
                   src={ad2}
                   alt="Game 2"
-                  className="w-full h-full object-cover"
+                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               </div>
             </SwiperSlide>
 
             <SwiperSlide>
-              <div className="relative w-full h-full overflow-hidden">
+              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
                 <img
                   src={ad3}
                   alt="Game 3"
-                  className="w-full h-full object-cover"
+                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               </div>
             </SwiperSlide>
 
             <SwiperSlide>
-              <div className="relative w-full h-full overflow-hidden">
+              <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
                 <img
                   src={ad4}
                   alt="Game 4"
-                  className="w-full h-full object-cover"
+                  className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
               </div>
@@ -264,7 +286,26 @@ export default function Home() {
         <div className=" mx-auto flex flex-col items-center sm:max-w-full">
           <div className='py-4 sm:py-6 md:py-8 lg:py-10 w-full'>
             {/* Tab buttons */}
-            <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 w-full max-w-4xl mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
+            <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10  max-w-[95%] md:max-w-[85%]  mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
+              {/* All Categories Button */}
+              <button
+                className={`
+                  px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                  rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                  transition-all duration-200 ease-out
+                  border border-transparent
+                  whitespace-nowrap
+                  ${activeTab === null
+                    ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                    : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                  }
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                `}
+                onClick={() => handle(null)}
+              >
+                All Games
+              </button>
+              
               {cateData?.map((element) => (
                 <button
                   key={element?._id}
@@ -275,12 +316,12 @@ export default function Home() {
                    border border-transparent
                    whitespace-nowrap
                    ${activeTab === element?.categoryName
-                      ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                    }
-                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                     ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                     : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                   }
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                  `}
-                 onClick={() =>  handle(element?.categoryName)}
+                  onClick={() =>  handle(element?.categoryName)}
                 >
                   {element?.categoryName}
                 </button>
@@ -294,119 +335,133 @@ export default function Home() {
                   <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
                     <div>
                       <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>
-                         {categories[activeTab]} Games
+                         {activeTab ? `${activeTab} Games` : 'All Games'}
                       </p>
                     </div>
-                    <button
-                      onClick={scrollRight}
-                      disabled={isEnd}
-                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
-                        isEnd
-                          ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                          : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
-                      } text-white`}
-                    >
-                      <FaArrowRight size={16} />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          if (gameSwiperRef.current && typeof gameSwiperRef.current.slidePrev === 'function') {
+                            gameSwiperRef.current.slidePrev();
+                          }
+                        }}
+                        disabled={isBeginning}
+                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
+                          isBeginning
+                            ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                            : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+                        } text-white rotate-180`}
+                      >
+                        <FaArrowRight size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (gameSwiperRef.current && typeof gameSwiperRef.current.slideNext === 'function') {
+                            gameSwiperRef.current.slideNext();
+                          }
+                        }}
+                        disabled={isEnd}
+                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
+                          isEnd
+                            ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                            : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+                        } text-white`}
+                      >
+                        <FaArrowRight size={16} />
+                      </button>
+                    </div>
                   </div>
 
+                  {/* Game Cards Container */}
                   <Swiper
                     modules={[Navigation]}
-                    onSwiper={(swiper) => {
-                      categorySwiperRef.current = swiper;
-                      setIsBeginning(swiper.isBeginning);
-                      setIsEnd(swiper.isEnd);
-                    }}
-                    onSlideChange={(swiper) => {
-                      setIsBeginning(swiper.isBeginning);
-                      setIsEnd(swiper.isEnd);
-                    }}
                     spaceBetween={12}
                     slidesPerView={1.1}
-                    
                     breakpoints={{
-                      320: { slidesPerView: 1.4, spaceBetween: 8 },
-                      500: { slidesPerView: 1.8, spaceBetween: 12 },
-                      640: { slidesPerView: 2.2, spaceBetween: 12 },
-                      768: { slidesPerView: 2.8, spaceBetween: 14 },
-                      1024: { slidesPerView: 3.5, spaceBetween: 16 },
-                      1280: { slidesPerView: 4.2, spaceBetween: 16 }
+                      320: { slidesPerView: 1, spaceBetween: 8 },
+                      500: { slidesPerView: 1.5, spaceBetween: 10 },
+                      640: { slidesPerView: 2, spaceBetween: 12 },
+                      768: { slidesPerView: 2.5, spaceBetween: 14 },
+                      1024: { slidesPerView: 3, spaceBetween: 14 },
+                      1280: { slidesPerView: 3.5, spaceBetween: 14 },
+                      1480: { slidesPerView: 4.2, spaceBetween: 16 }
                     }}
                     style={{
                       padding: '20px 4px'
                     }}
+                    className="game-swiper"
+                    ref={gameSwiperRef}
+                    onSwiper={(swiper) => {
+                      gameSwiperRef.current = swiper;
+                      // Delay the initial state check to ensure proper initialization
+                      setTimeout(() => {
+                        setIsBeginning(swiper.isBeginning);
+                        setIsEnd(swiper.isEnd);
+                      }, 100);
+                    }}
+                    onSlideChange={(swiper) => {
+                      // Add a small delay to ensure accurate state detection
+                      setTimeout(() => {
+                        setIsBeginning(swiper.isBeginning);
+                        setIsEnd(swiper.isEnd);
+                      }, 50);
+                    }}
+                    onResize={(swiper) => {
+                      // Recalculate states when screen size changes
+                      setTimeout(() => {
+                        setIsBeginning(swiper.isBeginning);
+                        setIsEnd(swiper.isEnd);
+                      }, 100);
+                    }}
                   >
-                    <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max px-4 py-8'>
-                      {mainGameData?.map((element) => (
-                        <div onClick={()=> navigate(`/single/${element?._id}`)}>
-                        <StylishDiv>
-                        <div
-                          key={element?._id}
-                          className="group relative   overflow-hidden  transition-all duration-300 w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 "
+                    {mainGameData?.map((element) => (
+                      <SwiperSlide key={element?._id}>
+                        <div 
+                          onClick={() => navigate(`/single/${element?._id}`)}
+                          className="w-64 sm:w-72 md:w-80 lg:w-96 cursor-pointer"
                         >
-                          <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
-                            <img
-                              src={element?.cover_image?.url}
-                              alt=""
-                              className='w-full h-full object-cover '
-                            />
-                            <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
+                          <StylishDiv>
+                            <div className="group relative overflow-hidden  transition-all duration-300 w-full">
+                              <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
+                                <img
+                                  src={element?.cover_image?.url}
+                                  alt={element?.title}
+                                  className='w-full h-full object-cover'
+                                />
+                                <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
 
-                            <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-                              {/* <div className='flex items-center gap-1.5 sm:gap-2'>
-                                <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-[#221f2a] text-[#ab99e1] tracking-wide font-medium'>
-                                  {element?.tags[0]}
-                                </span>
-                                {element.discount > 0 && (
-                                  <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-green-500/20 text-green-400 tracking-wide font-medium'>
-                                    -{element.discount}%
-                                  </span>
-                                  {game.discount > 0 && (
-                                    <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-green-500/20 text-green-400 tracking-wide font-medium'>
-                                      -{game.discount}%
-                                    </span>
-                                  )}
-                                </div> */}
+                                <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
+                                  {/* Tags can be added here if needed */}
+                                </div>
+
+                                <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
+                                  <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{element?.title}</p>
+                                </div>
                               </div>
 
-                              <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
-                                {/* <p className='text-white font-semibold text-sm sm:text-base md:text-base lg:text-lg'>{game.title}</p> */}
+                              <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
+                                <div>
+                                  <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
+                                  <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
+                                    ₹{element?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                                  </p>
+                                </div>
+                                <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
+                                  Buy
+                                  <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
+                                </button>
                               </div>
                             </div>
-
-                            <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
-                              <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{element?.title}</p>
-                            </div>
-                          </div>
-
-                          <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
-                            <div>
-                              <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
-                              <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-                                ₹{element?.platforms?.windows?.price?.toLocaleString('en-IN')}
-                                {/* {element.discount > 0 && (
-                                  <span className='ml-2 line-through text-gray-400 text-xs'>
-                                    ₹{(element?.platforms?.windows?.price / (1 - element?.discount / 100))?.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                                  </span>
-                                )} */}
-                              </p>
-                            </div>
-                            <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
-                              Buy
-                              <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-                            </button>
-                          </div>
-                        </StylishDiv>
+                          </StylishDiv>
                         </div>
-                      ))}
-                        </div>
+                      </SwiperSlide>
+                    ))}
                   </Swiper>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
-
+          </div>
+        </div>
 
         <TopGames />
 
@@ -434,8 +489,6 @@ export default function Home() {
             </button>
           </div>
         </section>
-
-
       </section>
 
       <Trailer />

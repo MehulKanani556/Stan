@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 
@@ -8,10 +8,21 @@ import black from '../images/Myth.mp4'
 
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { getHomeTrailer } from '../Redux/Slice/game.slice';
    
 const Trailer = () => {
   const swiperRef = useRef(null);
-  const videoRefs = useRef([]);     
+  const videoRefs = useRef([]); 
+  const trailerData = useSelector((state)=>state?.game?.trailer)
+  const dispatch = useDispatch()    
+
+  // console.log("HIHIHI" , trailerData);
+  
+
+  useEffect(()=>{
+    //  dispatch(getHomeTrailer())
+  },[])
 
   const handleSlideChange = (swiper) => {
     videoRefs.current.forEach((video, index) => {

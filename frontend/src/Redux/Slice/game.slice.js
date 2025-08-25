@@ -117,6 +117,19 @@ export const getAllCategories = createAsyncThunk(
     }
 );
 
+// ********* Game Trailer ******
+export const getHomeTrailer = createAsyncThunk(
+    "game/getHomeTrailer",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await axiosInstance.get("/hometrailer");
+            return res.data;
+        } catch (err) {
+
+        }
+    }
+)
+
 export const getTopGames = createAsyncThunk(
     "game/getTopGames",
     async (_, { rejectWithValue }) => {
@@ -143,7 +156,8 @@ const gameSlice = createSlice({
         error: null,
         success: null,
         pagination: null,
-        category: []
+        category:[],
+        trailer:[]
     },
     reducers: {
         clearGameError: (state) => {
@@ -269,6 +283,7 @@ const gameSlice = createSlice({
                 state.error = action.payload;
             })
 
+            // ******* Category *******
             .addCase(getAllCategories.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -281,6 +296,21 @@ const gameSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+
+            // ********* Game Trailer ******
+            .addCase(getHomeTrailer.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getHomeTrailer.fulfilled, (state, action) => {
+                state.loading = false;
+                state.trailer = action.payload;
+            })
+            .addCase(getHomeTrailer.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
     },
 });
 
