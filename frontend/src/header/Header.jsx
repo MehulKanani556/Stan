@@ -11,8 +11,7 @@ import { IoBagOutline, IoBag } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
 import stanUser from "../images/stan-user.jpg"
 import stanLogo from "../images/stan-logo.svg"
-import { getUserById } from "../Redux/Slice/user.slice"
-import { logoutUser } from "../Redux/Slice/auth.slice"
+import { getUserById, logoutUser } from "../Redux/Slice/user.slice"
 import { MdRocketLaunch, MdSettings } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
@@ -267,7 +266,7 @@ export default function Header() {
                                         <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
                                         </NavLink>
-                                        <NavLink to="/chatter" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/ggtalks" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
                                         <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
@@ -321,7 +320,7 @@ export default function Header() {
                     </li>
 
                     <li>
-                        <NavLink to="/chatter" className="flex items-center justify-center flex-col gap-1 text-xs">
+                        <NavLink to="/ggtalks" className="flex items-center justify-center flex-col gap-1 text-xs">
                             {({ isActive }) => (
                                 <>
                                     {isActive ? (

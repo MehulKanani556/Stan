@@ -20,7 +20,7 @@ const ChatWidget = () => {
     {
       role: "assistant",
       content:
-        "Hi! I can help with everything on this site: find games, list categories, prices/platforms, latest games, and answer questions about wishlist, cart, payments, privacy and terms.",
+        "👋 Welcome! How can I help you today?",
       results: [],
       suggestions: [
         "Recommend some games",
