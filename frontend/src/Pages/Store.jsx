@@ -20,6 +20,8 @@ import { FaArrowRight } from "react-icons/fa";
 import { getAllGames, getPopularGames, getTopGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../Redux/Slice/category.slice';
+import { useNavigate } from 'react-router-dom';
+import StylishDiv from '../components/StylishDiv';
 
 
 const Store = () => {
@@ -30,6 +32,7 @@ const Store = () => {
   const topGames = useSelector((state) => state.game.topGames);
   const loading = useSelector((state) => state.game.loading);
   const error = useSelector((state) => state.game.error);
+  const navigate = useNavigate();
 
   // console.log(games);
   console.log(games, "all games");
@@ -107,10 +110,10 @@ const Store = () => {
 
       <div
         ref={sectionRef}
-        className='overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing'
+        className='overflow-x-auto scrollbar-hide '
         onMouseDown={(e) => handleMouseDown(e, sectionRef)}
       >
-        <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max pb-2 sm:pb-3 md:pb-4 pl-4 sm:pl-0 pr-4 sm:pr-0'>
+        <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max py-4 px-2 '>
           {games && games.length > 0 ? (
             games.map((game) => (
               <GameCard key={game._id || game.id} game={game} />
@@ -127,7 +130,6 @@ const Store = () => {
 
   const GameCard = ({ game }) => {
     const imageUrl = game?.cover_image?.url || game1;
-    const tag = (game?.tags && game.tags.length > 0) ? game.tags[0] : 'Game';
     const priceCandidateList = [
       game?.platforms?.windows?.price,
       game?.platforms?.ios?.price,
@@ -136,73 +138,43 @@ const Store = () => {
     const priceValue = priceCandidateList.find((p) => typeof p === 'number' && !Number.isNaN(p)) ?? 0;
 
     return (
-      <div className="group relative bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0 hover:shadow-2xl">
-        <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
-          <img
-            src={imageUrl}
-            alt={game?.title || 'Game'}
-            className='w-full h-full object-cover transition-transform duration-500 '
-          />
-          <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
+      <div 
+        onClick={() => navigate(`/single/${game?._id}`)}
+        className="w-64 sm:w-72 md:w-80 lg:w-96 cursor-pointer"
+      >
+        <StylishDiv>
+          <div className="group relative overflow-hidden transition-all duration-300 w-full">
+            <div className='relative w-full h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
+              <img
+                src={imageUrl}
+                alt={game?.title || 'Game'}
+                className='w-full h-full object-cover'
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
 
+              <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
+                {/* Tags can be added here if needed */}
+              </div>
 
-          {/* <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-          <div className='flex items-center gap-1.5 sm:gap-2'>
-            <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-[#221f2a] text-[#ab99e1] tracking-wide font-medium'>
-              {game.tag}
-            </span>
-            {game.discount > 0 && (
-              <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-green-500/20 text-green-400 tracking-wide font-medium'>
-                -{game.discount}%
-              </span>
-            )}
-          </div>
-        </div> */}
-          {/* <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-            <div className='flex items-center gap-1.5 sm:gap-2'>
-              <span className='px-2 py-1 rounded-full text-[8px] sm:text-[10px] uppercase bg-[#221f2a] text-[#ab99e1] tracking-wide font-medium'>
-                {tag}
-              </span>
+              <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
+                <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{game?.title}</p>
+              </div>
             </div>
-          </div> */}
 
-          <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
-            <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{game?.title}</p>
+            <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
+              <div>
+                <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
+                <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
+                  ₹{Number(priceValue).toLocaleString('en-IN')}
+                </p>
+              </div>
+              <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
+                Buy
+                <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
+              </button>
+            </div>
           </div>
-        </div>
-
-
-        {/* <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
-        <div>
-          <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
-          <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-            ₹{game.price.toLocaleString('en-IN')}
-            {game.discount > 0 && (
-              <span className='ml-2 line-through text-gray-400 text-xs'>
-                ₹{(game.price / (1 - game.discount / 100)).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-              </span>
-            )}
-          </p>
-        </div>
-        <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-[#ab99e1] text-black font-medium hover:bg-[#b8a8e6] transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
-          Buy
-          <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-        </button>
-      </div>
-    </div>
-  ); */}
-        <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
-          <div>
-            <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
-            <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-              ₹{Number(priceValue).toLocaleString('en-IN')}
-            </p>
-          </div>
-          <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
-            Buy
-            <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-          </button>
-        </div>
+        </StylishDiv>
       </div>
     );
   };
@@ -227,12 +199,13 @@ const Store = () => {
           >
             {Array.isArray(games) && games.length > 0 ? (
               games.slice(0, 6).map((game, index) => (
-                <SwiperSlide key={game._id || index}>
-                  <div className="relative w-full h-full">
+                <SwiperSlide key={game._id || index}
+                onClick={() => navigate(`/single/${game?._id}`)}> 
+                  <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
                     <img
                       src={game?.cover_image?.url || game1}
                       alt={game?.title || `Game ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-top"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                     <div className="absolute bottom-4 left-4 right-4">
@@ -250,8 +223,8 @@ const Store = () => {
               // Fallback to local images if no games from API
               [game1, game2, game3, game4, game5, game6].map((game, index) => (
                 <SwiperSlide key={index}>
-                  <div className="relative w-full h-full">
-                    <img src={game} alt={`Game ${index + 1}`} className="w-full h-full object-cover" />
+                  <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
+                    <img src={game} alt={`Game ${index + 1}`}  className="w-full h-full object-cover object-top" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                   </div>
                 </SwiperSlide>
@@ -261,7 +234,7 @@ const Store = () => {
         </div>
 
         {/* All Games Section (from API) */}
-        <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
+        <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Trending Games"
             games={Array.isArray(games) ? games : []}
@@ -270,7 +243,7 @@ const Store = () => {
             error={error}
           />
         </div>
-        <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
+         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Popular Games"
             games={Array.isArray(PopularGames) ? PopularGames : []}
@@ -279,7 +252,7 @@ const Store = () => {
             error={error}
           />
         </div>
-        <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
+         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Action Games"
             games={Array.isArray(games) ? games.filter((g) => {
@@ -292,10 +265,10 @@ const Store = () => {
             error={error}
           />
         </div>
-        {/*<div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
+        {/* <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection title="PS-5 Games" games={games?.ps5 ?? []} sectionRef={scrollContainerRefs.ps5} />
         </div>*/}
-        <div className="container px-4 sm:px-6 md:px-8 lg:px-0 mt-8">
+         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Top Games"
             games={Array.isArray(topGames) ? topGames : []}
