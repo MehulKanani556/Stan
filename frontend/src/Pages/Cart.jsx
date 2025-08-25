@@ -3,6 +3,8 @@ import { FaWindows } from "react-icons/fa";
 import { MdWorkspacePremium } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
 import game1 from "../images/game1.jpg";
 import game2 from "../images/game2.jpg";
 import game3 from "../images/game3.jpg";
@@ -62,6 +64,44 @@ const Cart = () => {
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
             <h1 className="text-4xl font-extrabold mb-8">My Cart</h1>
 
+            {/* wishlist empty */}
+            {/* <div className="flex items-center justify-center min-h-[60vh] text-center">
+                <div className=" rounded-2xl p-10 w-full max-w-2xl ">
+                    <FaHeart className="mx-auto text-gray-400 text-6xl mb-6" />
+
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        Your wishlist is empty
+                    </h2>
+
+                    <p className="text-gray-400 mb-6 font-semibold">
+                        Start adding games to your wishlist to see them here.
+                    </p>
+
+                    <button className=" bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold px-6 py-3 my-2 rounded-md active:scale-105 transition w-fit">
+                        Explore Games
+                    </button>
+                </div>
+            </div> */}
+
+            {/* cart empty */}
+             {/* <div className="flex items-center justify-center min-h-[60vh] text-center">
+                <div className=" rounded-2xl p-10 w-full max-w-2xl ">
+                    <FaShoppingCart className="mx-auto text-gray-400 text-6xl mb-6" />
+
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        Your cart is empty
+                    </h2>
+
+                    <p className="text-gray-400 mb-6 font-semibold">
+                        Explore our collection and add some games to your cart.
+                    </p>
+
+                    <button className=" bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold px-6 py-3 my-2 rounded-md active:scale-105 transition w-fit">
+                        Continue Shoping
+                    </button>
+                </div>
+            </div> */}
+
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {cartItems.length > 0 ? (
@@ -106,7 +146,7 @@ const Cart = () => {
                                             >
                                                 <RiDeleteBin6Line />
                                             </button>
-                                            <button className="text-blue-400 hover:text-blue-500 transition text-xl">
+                                            <button className="text-[#7c63b3] transition text-xl">
                                                 <FaRegHeart />
                                             </button>
                                         </div>
@@ -114,7 +154,7 @@ const Cart = () => {
                                 </div>
 
                                 <div className="flex flex-col items-end justify-between min-w-[120px]">
-                                    <div className="bg-[#26bbff] text-black text-xs px-3 py-1 rounded-full">
+                                    <div className="bg-[#7c63b3] text-white text-xs px-3 py-1 rounded-full">
                                         -{item.discount}%
                                     </div>
                                     <div className="text-right">
@@ -127,14 +167,14 @@ const Cart = () => {
                                     </div>
                                 </div>
                             </div>
-                            
+
                         ))
                     ) : (
                         <p className="text-gray-400">Your cart is empty.</p>
                     )}
                 </div>
 
-                <div className=" rounded-2xl p-6 flex flex-col gap-6">
+                <div className=" rounded-2xl p-8 flex flex-col gap-6 h-fit bg-black/15">
                     <div className="flex justify-between items-center">
                         <h2 className="font-bold text-xl">Order Summary</h2>
                         <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300">
@@ -162,9 +202,17 @@ const Cart = () => {
                         <span>₹{subtotal.toLocaleString()}</span>
                     </div>
 
-                    <button className="w-full bg-[#00AEEF] text-black font-semibold py-3 rounded-xl hover:bg-[#00cfff] transition">
-                        Proceed to Checkout
-                    </button>
+                    <div className="gap-4">
+                        <button className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
+                            Proceed to Checkout
+                        </button>
+                        <button className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl">
+                            Clear Cart
+                        </button>
+                        <button className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl">
+                            Continue Shopping
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
