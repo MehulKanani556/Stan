@@ -62,7 +62,7 @@ const Wishlist = () => {
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
             <h1 className="text-4xl font-extrabold mb-8">My Wishlist</h1>
 
-            <div className=" gap-8">
+            <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {cartItems.length > 0 ? (
                         cartItems.map((item) => (
@@ -70,7 +70,7 @@ const Wishlist = () => {
                                 key={item.id}
                                 className="bg-black/15 p-4 md:p-8 rounded-lg shadow-lg mb-3 flex flex-col lg:flex-row gap-6 hover:shadow-lg transition"
                             >
-                                <div className="w-full lg:w-60 h-48 shrink-0">
+                                <div className="w-full lg:w-36 h-48 shrink-0">
                                     <img
                                         src={item.image}
                                         alt={item.title}
@@ -99,23 +99,24 @@ const Wishlist = () => {
                                         <span className="text-gray-400 flex items-center gap-2 text-sm">
                                             <FaWindows /> Playable on PC
                                         </span>
-                                        <div className="flex gap-4 text-sm">
-                                            <button
-                                                onClick={() => handleRemove(item.id)}
-                                                className="text-red-400 hover:text-red-500 transition text-xl"
-                                            >
-                                                <RiDeleteBin6Line />
-                                            </button>
-                                            <button className="text-blue-400 hover:text-blue-500 transition text-xl">
-                                                <FaShoppingCart />
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col items-end justify-between min-w-[120px]">
-                                    <div className="bg-[#26bbff] text-black text-xs px-3 py-1 rounded-full">
+                                    {/* <div className="bg-[#621df2] text-white text-xs px-3 py-1 rounded-full">
                                         -{item.discount}%
+                                    </div> */}
+                                    <div className="flex gap-4 text-sm  py-2">
+
+                                        <button className="text-[#7c63b3] transition text-xl">
+                                            <FaShoppingCart />
+                                        </button>
+                                        <button
+                                            onClick={() => handleRemove(item.id)}
+                                            className="text-red-400 hover:text-red-500 transition text-xl"
+                                        >
+                                            <RiDeleteBin6Line />
+                                        </button>
                                     </div>
                                     <div className="text-right">
                                         <p className="line-through text-gray-500 text-sm">
@@ -131,6 +132,29 @@ const Wishlist = () => {
                     ) : (
                         <p className="text-gray-400">Your cart is empty.</p>
                     )}
+                </div>
+
+                <div className=" rounded-2xl p-8 flex flex-col gap-6 h-fit bg-black/15">
+                    <div className="flex justify-between items-center">
+                        <h2 className="font-bold text-xl">Total Items</h2>
+                        <span className="text-xl font-bold">
+                            3
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between text-base font-semibold text-gray-300">
+                        <p>Keep Trake of Games Your're Intrested In</p>
+                    </div>
+
+                    <div className="gap-4">
+                        <button className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
+                            Explore More Games
+                        </button>
+                        <button className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl">
+                            View Cart
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
