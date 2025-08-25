@@ -163,16 +163,12 @@ export const getWishlist = createAsyncThunk(
 
 export const createWishlist = createAsyncThunk(
   "game/createWishlist",
-  async (wishlistData, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token"); 
 
       const response = await axiosInstance.post(
-        "/wishlist",
-        {
-          gameId: wishlistData?.gameId,
-          note: wishlistData?.note || "",
-        },
+        `/wishlist/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

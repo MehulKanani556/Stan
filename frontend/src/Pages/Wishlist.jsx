@@ -49,8 +49,14 @@ const Wishlist = () => {
         },
     ]);
 
+    const wishData = useSelector((state)=> state)
+    const dispatch = useDispatch() 
 
-
+    console.log("HIHIHI" , wishData); 
+    useEffect(()=>{
+         dispatch(getWishlist()) 
+    },[])
+  
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.oldPrice, 0);
     const totalDiscount = cartItems.reduce(
@@ -68,6 +74,25 @@ const Wishlist = () => {
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
             <h1 className="text-4xl font-extrabold mb-8">My Wishlist</h1>
+
+            {/* wishlist empty */}
+            {/* <div className="flex items-center justify-center min-h-[60vh] text-center">
+                <div className=" rounded-2xl p-10 w-full max-w-2xl ">
+                    <FaHeart className="mx-auto text-gray-400 text-6xl mb-6" />
+
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        Your wishlist is empty
+                    </h2>
+
+                    <p className="text-gray-400 mb-6 font-semibold">
+                        Start adding games to your wishlist to see them here.
+                    </p>
+
+                    <button className=" bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold px-6 py-3 my-2 rounded-md active:scale-105 transition w-fit">
+                        Explore Games
+                    </button>
+                </div>
+            </div> */}
 
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
