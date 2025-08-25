@@ -21,16 +21,16 @@ const Footer = () => {
       {showGoUp && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-20 right-6 z-50 p-3 md:p-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
+          className="fixed bottom-24 md:bottom-20  right-6 z-50 p-3 md:p-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
           title="Go to top"
         >
           <FaArrowUp className="w-5 h-5" />
         </button>
       )}
 
-
-      <footer className="relative overflow-hidden bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] text-white">
-
+      {/* Footer */}
+      <footer className="relative overflow-hidden bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] mb-14 md:mb-0 text-white">
+        {/* Glowing circles background */}
         <div className="absolute top-0 left-0 w-72 h-72 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-500 rounded-full blur-3xl opacity-20"></div>
 
@@ -43,7 +43,7 @@ const Footer = () => {
               <p className="text-gray-300 text-sm leading-relaxed">
                 Your ultimate gaming destination. Discover, play, and connect with gamers worldwide.
               </p>
-              <div className="flex space-x-4">
+              <div className="flex justify-center md:justify-start gap-3 sm:gap-4 md:gap-5 flex-wrap">
                 {[
                   { Icon: FaFacebook, href: "#" },
                   { Icon: FaTwitter, href: "#" },
@@ -54,9 +54,9 @@ const Footer = () => {
                   <a
                     key={i}
                     href={href}
-                    className="p-2 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300"
+                    className="p-2 sm:p-3 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300 flex items-center justify-center"
                   >
-                    <Icon size={18} />
+                    <Icon className="text-sm sm:text-base md:text-lg lg:text-xl" />
                   </a>
                 ))}
               </div>

@@ -140,7 +140,10 @@ export default function Header() {
                                                 alt="User"
                                             />
                                         </div>
-                                        <p className='text-base'>
+                                        <p 
+                                            className='text-base cursor-pointer hover:text-[#ab99e1] transition-colors'
+                                            onClick={toggleDropdown}
+                                        >
                                             {decryptData(currentUser?.name)}
                                         </p>
                                     </div>
