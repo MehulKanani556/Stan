@@ -48,6 +48,9 @@ const manageStateSlice = createSlice({
     },
     clearTypingUsers: (state) => {
       state.typingUsers = [];
+    },
+    clearMessages: (state) => {
+      state.messages = [];
     }
   },
 });
@@ -60,6 +63,7 @@ export const {
   addTypingUser,
   removeTypingUser,
   setTypingUsers,
-  clearTypingUsers
+  clearTypingUsers,
+  clearMessages
 } = manageStateSlice.actions;
 export default manageStateSlice.reducer;

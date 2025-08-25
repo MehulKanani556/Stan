@@ -194,4 +194,6 @@ indexRoutes.put(
 );
 indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
-export default indexRoutes;
+indexRoutes.get("/chatWidget",chatWidGetController);
+
+export default indexRoutes

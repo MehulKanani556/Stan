@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../Utils/axiosInstance";
 import { useSnackbar } from "notistack";
 
@@ -15,6 +15,7 @@ const ChatWidget = () => {
   const [actionLoading, setActionLoading] = useState("");
   const [selectedPlatformById, setSelectedPlatformById] = useState({});
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -70,7 +71,7 @@ const ChatWidget = () => {
   useEffect(() => {
     const fetchWelcome = async () => {
       try {
-        const res = await axiosInstance.get(`/chat`);
+        const res = await axiosInstance.get(`/chatWidget`);
         const data = res?.data || {};
         if (data?.reply || data?.suggestions) {
           setMessages([
@@ -109,7 +110,7 @@ const ChatWidget = () => {
     setInput("");
     setIsLoading(true);
     try {
-      const res = await axiosInstance.get(`/chat`, {
+      const res = await axiosInstance.get(`/chatWidget`, {
         params: { q: effectiveQ, page: opts.page || 1, limit: 6 },
       });
       const data = res?.data || {};
@@ -253,6 +254,34 @@ const ChatWidget = () => {
                           </div>
                         )}
                         {m.content}
+                        {m.results && m.results.length > 0 && (
+                          <div className="mt-3 grid grid-cols-1 gap-2">
+                            {m.results.map((result, idx) => (
+                              <div key={idx} className="bg-white/10 p-2 rounded-lg flex items-center" onClick={()=>navigate(`/single/${result?._id}`)}>
+                                {result.imageUrl && (
+                                  <img src={result.imageUrl} alt={result.title} className="w-16 h-16 object-cover rounded-md mr-3" />
+                                )}
+                                <div>
+                                  <p className="text-white font-semibold">{result.title}</p>
+                                  {result.description && <p className="text-gray-400 text-sm line-clamp-2">{result.description}</p>}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {m.suggestions && m.suggestions.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {m.suggestions.map((suggestion, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => sendMessage({ q: suggestion })}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-full"
+                                    >
+                                        {suggestion}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                       </div>
                     </div>
                   </div>
