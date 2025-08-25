@@ -165,7 +165,7 @@ const SingleGame = () => {
           centerMode: false,
         },
       },
-    ], 
+    ],  
   };
 
   useEffect(() => {
