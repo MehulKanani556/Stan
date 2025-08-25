@@ -18,7 +18,7 @@ const Footer = () => {
 
   return (
     <>
-      {showGoUp && (
+      {/* {showGoUp && (
         <button
           onClick={scrollToTop}
           className="fixed bottom-24 md:bottom-20  right-6 z-50 p-3 md:p-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
@@ -26,7 +26,7 @@ const Footer = () => {
         >
           <FaArrowUp className="w-5 h-5" />
         </button>
-      )}
+      )} */}
 
       {/* Footer */}
       <footer className="relative overflow-hidden bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] mb-14 md:mb-0 text-white">

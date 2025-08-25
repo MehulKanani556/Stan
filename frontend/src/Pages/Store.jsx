@@ -132,8 +132,8 @@ const Store = () => {
     const imageUrl = game?.cover_image?.url || game1;
     const priceCandidateList = [
       game?.platforms?.windows?.price,
-      game?.platforms?.ios?.price,
-      game?.platforms?.android?.price,
+      // game?.platforms?.ios?.price,
+      // game?.platforms?.android?.price,
     ];
     const priceValue = priceCandidateList.find((p) => typeof p === 'number' && !Number.isNaN(p)) ?? 0;
 

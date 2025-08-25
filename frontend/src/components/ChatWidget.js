@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaPaperPlane } from "react-icons/fa";
+import { FaArrowUp, FaPaperPlane } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../Utils/axiosInstance";
@@ -14,8 +14,8 @@ const ChatWidget = () => {
   const [hasMore, setHasMore] = useState(false);
   const [actionLoading, setActionLoading] = useState("");
   const [selectedPlatformById, setSelectedPlatformById] = useState({});
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
+
+  
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -198,6 +198,17 @@ const ChatWidget = () => {
       sendMessage();
     }
   };
+  const [showGoUp, setShowGoUp] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => setShowGoUp(window.scrollY > 300);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div>
@@ -208,6 +219,15 @@ const ChatWidget = () => {
           className="fixed md:bottom-6 right-6 bottom-16 z-50 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"
         >
           💬
+        </button>
+      )}
+       {(showGoUp && !isContactModalOpen) && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 md:bottom-20  right-6 z-50 p-3 md:p-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
+          title="Go to top"
+        >
+          <FaArrowUp className="w-5 h-5" />
         </button>
       )}
 
