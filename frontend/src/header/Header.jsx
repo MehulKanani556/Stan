@@ -49,7 +49,7 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        const userId = authUser?._id || localStorage.getItem("userId"); 
+        const userId = authUser?._id || localStorage.getItem("userId");
         if (userId && !currentUser) {
             dispatch(getUserById(userId));
         }
@@ -62,6 +62,11 @@ export default function Header() {
     const handleProfileClick = () => {
         setIsDropdownOpen(false);
         navigate('/profile');
+    };
+
+    const handleSigninClick = () => {
+        setIsDropdownOpen(false);
+        navigate('/login');
     };
 
     const handleLogoutClick = () => {
@@ -88,32 +93,32 @@ export default function Header() {
                             </div>
 
 
-                            <div className="flex-1 hidden md:flex justify-center">
-                                <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg">
+                            <div className=" hidden md:flex justify-center">
+                                <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg px-0">
                                     <li>
-                                        <NavLink to="/" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
+                                        <NavLink to="/" className={ ({ isActive }) =>
+                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Home</NavLink>
                                     </li>
                                     <li>
                                         <NavLink to="/ggtalks" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
+                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>GGTalks</NavLink>
                                     </li>
 
                                     <li>
                                         <NavLink to="/games" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
+                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Games</NavLink>
                                     </li>
                                     <li>
                                         <NavLink to="/rewards" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
+                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Rewards</NavLink>
                                     </li>
                                     <li>
                                         <NavLink to="/store" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1]" : "hover:text-[#ab99e1]"
+                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Store</NavLink>
                                     </li>
                                 </ul>
@@ -239,7 +244,7 @@ export default function Header() {
                                 </label>
                             </div>
 
-                            {isLoggedIn && (
+                            {isLoggedIn ? (
                                 <div onClick={handleProfileClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[#ab99e1]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
                                     <div className='flex gap-4 items-center'>
                                         <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center shadow-[0_0_0_3px_rgba(171,153,225,0.15)_inset]">
@@ -258,7 +263,28 @@ export default function Header() {
                                         <IoIosArrowForward />
                                     </button>
                                 </div>
-                            )}
+                            )
+                        :
+                        <div onClick={handleSigninClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[#ab99e1]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
+                                    <div className='flex gap-4 items-center'>
+                                        <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center shadow-[0_0_0_3px_rgba(171,153,225,0.15)_inset]">
+                                            <img
+                                                src={ stanUser}
+                                                className="w-full h-full object-cover object-top"
+                                                alt="User"
+                                            />
+                                        </div>
+                                        <div className='flex flex-col gap-0.5 '>
+                                            <h2 className="text-white text-base font-medium capitalize">Signin</h2>
+                                            
+                                        </div>
+                                    </div>
+                                    <button className='text-[#ebe8f1] text-lg'>
+                                        <IoIosArrowForward />
+                                    </button>
+                                </div>
+
+                        }
 
 
 
@@ -272,24 +298,40 @@ export default function Header() {
                                         <NavLink to="/rewards" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <SlBadge className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Rewards Offers
                                         </NavLink>
+                                                 
                                         <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
                                         </NavLink>
-                                        <NavLink to="/ggtalks" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+
+                                        <NavLink to="/GGTalks" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
+                                                 
                                         <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
                                         </NavLink>
+
                                         <NavLink to="/guides" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides
                                         </NavLink>
+                                                 
                                         <NavLink to="/games" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <IoGameController className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Free Games
                                         </NavLink>
 
+                                        <NavLink to="/wishlist" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <FaHeart className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Wishlist
+                                        </NavLink>
+                                                 
+                                        <NavLink to="/cart" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+
+                                            <FaShoppingCart className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Cart
+                                        </NavLink>
+                              
+
                                     </div>
                                 </div>
+
 
 
                             </div>
@@ -329,7 +371,7 @@ export default function Header() {
                     </li>
 
                     <li>
-                        <NavLink to="/ggtalks" className="flex items-center justify-center flex-col gap-1 text-xs">
+                        <NavLink to="/GGTalks" className="flex items-center justify-center flex-col gap-1 text-xs">
                             {({ isActive }) => (
                                 <>
                                     {isActive ? (
