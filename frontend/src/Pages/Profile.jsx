@@ -72,61 +72,93 @@ const FANCoin = () => {
 
     return (
         <div className="px-3 sm:px-4 py-4 sm:py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 3xl:items-start items-strech">
-                {transactions.map((transaction) => (
-                    <StylishDiv key={transaction.id} className="group rounded-3xl overflow-hidden h-full ">
-                        {/* <div className=" opacity-80  h-full min-h-[180px]" /> */}
-                        <div className=" rounded-3xl min-h-[120px]  h-full">
-                            <div className="flex  items-center justify-between">
-                                <div>
-                                    <h3 className="font-bold text-white text-base sm:text-lg">{transaction.title}</h3>
-                                    <p className="text-gray-300 text-xs sm:text-sm mt-1">{transaction.time}</p>
-                                </div>
-                                <span className={`font-bold text-base sm:text-lg ${transaction.type === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
-                                    {transaction.amount}
-                                </span>
-                            </div>
-                            <div className="mt-4 pt-4 border-t border-white/10">
-                                <div
-                                    className="flex items-center justify-between cursor-pointer"
-                                    onClick={() => toggleDetails(transaction.id)}
-                                >
-                                    <div className="flex items-center">
-                                        <span className="text-white text-sm">Details</span>
-                                        <svg
-                                            className={`w-4 h-4 text-white ml-1 transition-transform duration-300 ${openId === transaction.id ? 'rotate-180' : ''}`}
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                        </svg>
+            {transactions.length > 0 ?
+                <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 3xl:items-start items-strech">
+
+                    {transactions.map((transaction) => (
+                        <StylishDiv key={transaction.id} className="group rounded-3xl overflow-hidden h-full ">
+                            {/* <div className=" opacity-80  h-full min-h-[180px]" /> */}
+                            <div className=" rounded-3xl min-h-[120px]  h-full">
+                                <div className="flex  items-center justify-between">
+                                    <div>
+                                        <h3 className="font-bold text-white text-base sm:text-lg">{transaction.title}</h3>
+                                        <p className="text-gray-300 text-xs sm:text-sm mt-1">{transaction.time}</p>
                                     </div>
+                                    <span className={`font-bold text-base sm:text-lg ${transaction.type === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
+                                        {transaction.amount}
+                                    </span>
                                 </div>
-                                {openId === transaction.id && (
-                                    <div className="mt-3 space-y-2">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-300">Before Fan Coins:</span>
-                                            <span className="text-white">0</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-300">After Fan Coins:</span>
-                                            <span className="text-white">50</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-300">Before Bonus Fan Coins:</span>
-                                            <span className="text-white">0</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-300">After Bonus Fan Coins:</span>
-                                            <span className="text-white">50</span>
+                                <div className="mt-4 pt-4 border-t border-white/10">
+                                    <div
+                                        className="flex items-center justify-between cursor-pointer"
+                                        onClick={() => toggleDetails(transaction.id)}
+                                    >
+                                        <div className="flex items-center">
+                                            <span className="text-white text-sm">Details</span>
+                                            <svg
+                                                className={`w-4 h-4 text-white ml-1 transition-transform duration-300 ${openId === transaction.id ? 'rotate-180' : ''}`}
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                            </svg>
                                         </div>
                                     </div>
-                                )}
+                                    {openId === transaction.id && (
+                                        <div className="mt-3 space-y-2">
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-gray-300">Before Fan Coins:</span>
+                                                <span className="text-white">0</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-gray-300">After Fan Coins:</span>
+                                                <span className="text-white">50</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-gray-300">Before Bonus Fan Coins:</span>
+                                                <span className="text-white">0</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-gray-300">After Bonus Fan Coins:</span>
+                                                <span className="text-white">50</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    </StylishDiv>
-                ))}
-            </div>
+                        </StylishDiv>
+                    ))}
+                </div>
+                :
+                <div className="flex flex-col items-center justify-center  relative">
+
+                    <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+               from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
+               animate-pulse"></div>
+                    <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+               from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
+               animate-pulse"></div>
+
+
+                    <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
+               relative overflow-hidden shadow-lg shadow-purple-500/30">
+                        <img
+                            src={lazyCatImage}
+                            alt="Lazy Cat"
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+
+
+                    <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+                        No transactions yet !
+                    </h2>
+                    <p className="text-gray-400 text-sm text-center mt-2">
+                        Complete tasks or purchases to see them here ✨
+                    </p>
+                </div>
+            }
+
         </div>
     )
 }
@@ -134,41 +166,41 @@ const FANCoin = () => {
 // UPICard Component
 const UPICard = () => {
     return (
-        <div className="flex flex-col items-center justify-center  px-4 relative">
-            
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+        <div className="flex flex-col items-center justify-center  px-3 sm:px-4 py-4 sm:py-6 relative">
+
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
               from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
               animate-pulse"></div>
-        <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
               from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
               animate-pulse"></div>
 
-        
-        <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
-              relative overflow-hidden shadow-lg shadow-purple-500/30">
-            <img
-                src={lazyCatImage}
-                alt="Lazy Cat"
-                className="w-full h-full object-cover"
-            />
-        </div>
 
-        
-        <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
-            No transactions yet !
-        </h2>
-        <p className="text-gray-400 text-sm text-center mt-2">
-            Complete tasks or purchases to see them here ✨
-        </p>
-    </div>
+            <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
+              relative overflow-hidden shadow-lg shadow-purple-500/30">
+                <img
+                    src={lazyCatImage}
+                    alt="Lazy Cat"
+                    className="w-full h-full object-cover"
+                />
+            </div>
+
+
+            <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+                No transactions yet !
+            </h2>
+            <p className="text-gray-400 text-sm text-center mt-2">
+                Complete tasks or purchases to see them here ✨
+            </p>
+        </div>
     )
 }
 
 // PlayStore Component
 const PlayStore = () => {
     return (
-        <div className="flex flex-col items-center justify-center  px-4 relative">
-            
+        <div className="flex flex-col items-center justify-center px-3 sm:px-4 py-4 sm:py-6 relative">
+
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
                   from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
                   animate-pulse"></div>
@@ -176,7 +208,7 @@ const PlayStore = () => {
                   from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
                   animate-pulse"></div>
 
-            
+
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
                   relative overflow-hidden shadow-lg shadow-purple-500/30">
                 <img
@@ -186,7 +218,7 @@ const PlayStore = () => {
                 />
             </div>
 
-            
+
             <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
                 No transactions yet !
             </h2>
@@ -285,118 +317,127 @@ export default function Profile() {
         }
     };
 
+    // const handleLogoutClick = () => {
+       
+    //     const id = authUser?._id || currentUser?._id || localStorage.getItem("userId");
+    //     if (id) {
+    //         dispatch(logoutUser(id));
+    //     }
+    //     // navigate('/login');
+    // };
 
 
-    // manage address ----------------------------------------------------------------------------------------------------
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    const [editingAddress, setEditingAddress] = useState(null)
-    const [addresses, setAddresses] = useState([
-        {
-            id: 1,
-            name: 'Vaibhav Gohil',
-            mobile: '+917567058384',
-            addressLine1: 'Hirabag, Surat',
-            addressLine2: 'Surat, 395006',
-            landmark: '',
-            pincode: '395006',
-            isDefault: true
-        }
-    ])
 
-    // open add  address modal 
-    const openModal = () => {
-        setIsModalOpen(true)
-        setEditingAddress(null)
-        // Reset form data when opening
-        setFormData({
-            name: '',
-            mobile: '',
-            addressLine1: '',
-            addressLine2: '',
-            landmark: '',
-            pincode: '',
-            isDefault: false
-        })
-    }
+    // // manage address ----------------------------------------------------------------------------------------------------
+    // const [isModalOpen, setIsModalOpen] = useState(false)
+    // const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    // const [editingAddress, setEditingAddress] = useState(null)
+    // const [addresses, setAddresses] = useState([
+    //     {
+    //         id: 1,
+    //         name: 'Vaibhav Gohil',
+    //         mobile: '+917567058384',
+    //         addressLine1: 'Hirabag, Surat',
+    //         addressLine2: 'Surat, 395006',
+    //         landmark: '',
+    //         pincode: '395006',
+    //         isDefault: true
+    //     }
+    // ])
 
-    //  close add address modal 
-    const closeModal = () => {
-        setIsModalOpen(false)
-        setIsEditModalOpen(false)
-        setEditingAddress(null)
-    }
+    // // open add  address modal 
+    // const openModal = () => {
+    //     setIsModalOpen(true)
+    //     setEditingAddress(null)
+    //     // Reset form data when opening
+    //     setFormData({
+    //         name: '',
+    //         mobile: '',
+    //         addressLine1: '',
+    //         addressLine2: '',
+    //         landmark: '',
+    //         pincode: '',
+    //         isDefault: false
+    //     })
+    // }
 
-    //  open edit address modal
-    const openEditModal = (address) => {
-        setEditingAddress(address)
-        setFormData({
-            name: address.name,
-            mobile: address.mobile.replace('+91', ''),
-            addressLine1: address.addressLine1,
-            addressLine2: address.addressLine2,
-            landmark: address.landmark,
-            pincode: address.pincode,
-            isDefault: address.isDefault
-        })
-        setIsEditModalOpen(true)
-    }
+    // //  close add address modal 
+    // const closeModal = () => {
+    //     setIsModalOpen(false)
+    //     setIsEditModalOpen(false)
+    //     setEditingAddress(null)
+    // }
 
-    // address change code here
-    const handleaddressChange = (e) => {
-        const { name, value, type, checked } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }))
-    }
+    // //  open edit address modal
+    // const openEditModal = (address) => {
+    //     setEditingAddress(address)
+    //     setFormData({
+    //         name: address.name,
+    //         mobile: address.mobile.replace('+91', ''),
+    //         addressLine1: address.addressLine1,
+    //         addressLine2: address.addressLine2,
+    //         landmark: address.landmark,
+    //         pincode: address.pincode,
+    //         isDefault: address.isDefault
+    //     })
+    //     setIsEditModalOpen(true)
+    // }
 
-    // add amd edit address submit handler
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    // // address change code here
+    // const handleaddressChange = (e) => {
+    //     const { name, value, type, checked } = e.target
+    //     setFormData(prev => ({
+    //         ...prev,
+    //         [name]: type === 'checkbox' ? checked : value
+    //     }))
+    // }
 
-        if (editingAddress) {
-            // Update existing address
-            const updatedAddresses = addresses.map(addr =>
-                addr.id === editingAddress.id
-                    ? { ...formData, id: addr.id, mobile: `+91${formData.mobile}` }
-                    : addr
-            )
-            setAddresses(updatedAddresses)
-        } else {
-            // Add new address
-            const newAddress = {
-                ...formData,
-                id: Date.now(),
-                mobile: `+91${formData.mobile}`,
-                isDefault: formData.isDefault || addresses.length === 0
-            }
+    // // add amd edit address submit handler
+    // const handleSubmit = (e) => {
+    //     e.preventDefault()
 
-            // If this is set as default, remove default from others
-            let updatedAddresses = [...addresses]
-            if (newAddress.isDefault) {
-                updatedAddresses = updatedAddresses.map(addr => ({ ...addr, isDefault: false }))
-            }
+    //     if (editingAddress) {
+    //         // Update existing address
+    //         const updatedAddresses = addresses.map(addr =>
+    //             addr.id === editingAddress.id
+    //                 ? { ...formData, id: addr.id, mobile: `+91${formData.mobile}` }
+    //                 : addr
+    //         )
+    //         setAddresses(updatedAddresses)
+    //     } else {
+    //         // Add new address
+    //         const newAddress = {
+    //             ...formData,
+    //             id: Date.now(),
+    //             mobile: `+91${formData.mobile}`,
+    //             isDefault: formData.isDefault || addresses.length === 0
+    //         }
 
-            setAddresses([...updatedAddresses, newAddress])
-        }
+    //         // If this is set as default, remove default from others
+    //         let updatedAddresses = [...addresses]
+    //         if (newAddress.isDefault) {
+    //             updatedAddresses = updatedAddresses.map(addr => ({ ...addr, isDefault: false }))
+    //         }
 
-        closeModal()
-    }
+    //         setAddresses([...updatedAddresses, newAddress])
+    //     }
 
-    // delete addres function 
-    const deleteAddress = (addressId) => {
-        const addressToDelete = addresses.find(addr => addr.id === addressId)
-        if (addressToDelete.isDefault && addresses.length > 1) {
-            // If deleting default address and there are others, make first one default
-            const updatedAddresses = addresses
-                .filter(addr => addr.id !== addressId)
-                .map((addr, index) => ({ ...addr, isDefault: index === 0 }))
-            setAddresses(updatedAddresses)
-        } else {
-            setAddresses(addresses.filter(addr => addr.id !== addressId))
-        }
-    }
+    //     closeModal()
+    // }
+
+    // // delete addres function 
+    // const deleteAddress = (addressId) => {
+    //     const addressToDelete = addresses.find(addr => addr.id === addressId)
+    //     if (addressToDelete.isDefault && addresses.length > 1) {
+    //         // If deleting default address and there are others, make first one default
+    //         const updatedAddresses = addresses
+    //             .filter(addr => addr.id !== addressId)
+    //             .map((addr, index) => ({ ...addr, isDefault: index === 0 }))
+    //         setAddresses(updatedAddresses)
+    //     } else {
+    //         setAddresses(addresses.filter(addr => addr.id !== addressId))
+    //     }
+    // }
 
 
     // Loading state
@@ -434,13 +475,13 @@ export default function Profile() {
     return (
         <div className="  text-white md:max-w-[85%] max-w-[95%] mx-auto">
             {/* Header */}
-            <div className=" sticky top-0 z-40 border-b border-gray-800 ">
+            <div className=" sticky top-0 z-40 border-b border-white/25 ">
                 <div className="flex items-center justify-between px-4 py-3">
                     <NavLink to="/" className="flex items-center gap-2 text-white hover:text-[#ab99e1] transition-colors">
                         <IoIosArrowBack className="w-6 h-6" />
                         <span className="text-lg font-medium">Back</span>
                     </NavLink>
-                    <h1 className="text-xl font-bold text-[#ab99e1] mx-auto">Profile</h1>
+                    
                 </div>
             </div>
 
@@ -464,7 +505,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('address') }}>
+                            {/* <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('address') }}>
                                 {(() => {
                                     const Tag = activeMenu === "address" ? StylishDiv : "div";
                                     const style = activeMenu === "address" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
@@ -477,7 +518,7 @@ export default function Profile() {
                                         </Tag>
                                     );
                                 })()}
-                            </li>
+                            </li> */}
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Transaction') }}>
                                 {(() => {
                                     const Tag = activeMenu === "Transaction" ? StylishDiv : "div";
@@ -607,265 +648,7 @@ export default function Profile() {
                     </div>
                 )}
 
-                {/* address */}
-                {activeMenu === "address" && (
-                    <div className={`px-4 py-6 w-full`}>
-                        <div className=" border border-white/10 rounded-2xl sm:p-6 p-1 mb-6 flex flex-col w-full">
-                            {/* Header */}
-                            <div className="flex items-center justify-between px-2 sm:px-4 py-4   sticky top-0 z-20 border-b border-white/10 ">
-                                <div className="flex items-center gap-2 sm:gap-3">
-                                    {/* <button
-                                    className="text-white rounded-full hover:bg-white/10 transition-colors touch-manipulation"
-                                    onClick={handleBack}
-                                    aria-label="Go back"
-                                >
-                                    <IoArrowBack className="w-5 h-5 sm:w-6 sm:h-6" />
-                                </button> */}
-                                    <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide">Manage Addresses</h1>
-                                </div>
-                                {/* Add Address Button */}
-                                <button
-                                    className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
-                             hover:from-[#8354f8] hover:to-[#9f78ff] 
-                             text-white px-2 sm:px-5 py-2.5 rounded-xl 
-                             flex items-center gap-2 text-sm font-medium 
-                             transition-all duration-200 shadow-md hover:shadow-xl"
-                                    onClick={openModal}
-                                >
-                                    <IoLocation className=" w-4 h-4" />
-                                    <span>Add Address</span>
-                                </button>
-                            </div>
 
-                            {/* Main Content - Address Cards */}
-                            <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
-                                {addresses.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center  px-4 relative">
-
-                                        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
-         from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
-         animate-pulse"></div>
-                                        <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
-         from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
-         animate-pulse"></div>
-
-
-                                        <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
-         relative overflow-hidden shadow-lg shadow-purple-500/30">
-                                            <img
-                                                src={manageAddress}
-                                                alt="Lazy Cat"
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-
-
-                                        <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
-                                            No addresses added!
-                                        </h2>
-                                        <p className="text-gray-400 text-sm text-center mt-2">
-                                            Add your first address to get started
-                                        </p>
-                                    </div>
-                                ) : (
-                                    // Address cards
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-                                        {addresses.map((address) => (
-                                            <StylishDiv key={address.id} className=" group rounded-3xl overflow-hidden">
-                                                {/* <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 blur-[2px]" /> */}
-                                                <div className="">
-                                                    {/* Default Ribbon */}
-                                                    {address.isDefault && (
-                                                        <div className="pointer-events-none absolute top-0 right-0 w-32 h-24 overflow-hidden">
-                                                            <div className="absolute right-[-19px] top-[7px]  rotate-45">
-                                                                <span className="bg-[#621df2] text-white text-[10px] font-semibold tracking-wide px-6 py-1 shadow-lg">Default</span>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Address Content */}
-                                                    <div className="space-y-2 sm:space-y-3">
-                                                        <h3 className="text-[#cfab9d] font-medium text-sm sm:text-base">{address.name}</h3>
-                                                        <p className="text-white text-sm">{address.addressLine1}</p>
-                                                        <p className="text-[#7b7b7b] text-sm">{address.addressLine2}</p>
-                                                        <div className='flex items-center gap-2 justify-between'>
-                                                            <p className="text-gray-300 text-sm">{address.mobile}</p>
-                                                            {/* Action Buttons */}
-                                                            <div className="flex flex-wrap items-center  gap-2 sm:gap-3 ">
-                                                                {/* Delete Button */}
-                                                                <button
-                                                                    onClick={() => deleteAddress(address.id)}
-                                                                    className="bg-red-600 hover:bg-red-700 text-white p-1 sm:p-2.5 rounded transition-colors duration-200 ms-auto"
-                                                                    aria-label="Delete address"
-                                                                >
-                                                                    <IoTrash className="w-4 h-4 sm:w-5 sm:h-5" />
-                                                                </button>
-
-                                                                {/* Edit Button */}
-                                                                <button
-                                                                    onClick={() => openEditModal(address)}
-                                                                    className="bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-3 py-2 rounded-lg shadow-md flex items-center gap-1 transition-all duration-200 ms-auto"
-                                                                >
-                                                                    <IoPencil className="w-4 h-4" />
-                                                                    <span className="text-sm">Edit</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                </div>
-                                            </StylishDiv>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Address Add/Edit Modal */}
-                            {(isModalOpen || isEditModalOpen) && (
-                                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
-                                    <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-[90vh] overflow-y-auto">
-                                        {/* Modal Header */}
-                                        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10">
-                                            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
-                                                {editingAddress ? 'Edit Address' : 'Add Address'}
-                                            </h2>
-                                            <button
-                                                onClick={closeModal}
-                                                className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
-                                                aria-label="Close modal"
-                                            >
-                                                <IoClose className="w-5 h-5 sm:w-6 sm:h-6" />
-                                            </button>
-                                        </div>
-
-                                        {/* Modal Body */}
-                                        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4 sm:space-y-5">
-                                            {/* Name Field */}
-                                            <div>
-                                                <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                    Name
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="name"
-                                                    name="name"
-                                                    value={formData.name}
-                                                    onChange={handleaddressChange}
-                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                    placeholder="Enter your name"
-                                                />
-                                            </div>
-
-                                            {/* Mobile Field */}
-                                            <div>
-                                                <label htmlFor="mobile" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                    Mobile No.
-                                                </label>
-                                                <input
-                                                    type="tel"
-                                                    id="mobile"
-                                                    name="mobile"
-                                                    value={formData.mobile}
-                                                    onChange={handleaddressChange}
-                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                    placeholder="Enter mobile number"
-                                                />
-                                            </div>
-
-                                            {/* Address Line 1 Field */}
-                                            <div>
-                                                <label htmlFor="addressLine1" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                    Address Line 1
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="addressLine1"
-                                                    name="addressLine1"
-                                                    value={formData.addressLine1}
-                                                    onChange={handleaddressChange}
-                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                    placeholder="Enter address line 1"
-                                                />
-                                            </div>
-
-                                            {/* Address Line 2 Field */}
-                                            <div>
-                                                <label htmlFor="addressLine2" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                    Address Line 2
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="addressLine2"
-                                                    name="addressLine2"
-                                                    value={formData.addressLine2}
-                                                    onChange={handleaddressChange}
-                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                    placeholder="Enter address line 2 (optional)"
-                                                />
-                                            </div>
-
-                                            {/* Landmark Field */}
-                                            <div>
-                                                <label htmlFor="landmark" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                    Landmark
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="landmark"
-                                                    name="landmark"
-                                                    value={formData.landmark}
-                                                    onChange={handleaddressChange}
-                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                    placeholder="Enter landmark (optional)"
-                                                />
-                                            </div>
-
-                                            {/* Pincode Field */}
-                                            <div>
-                                                <label htmlFor="pincode" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-                                                    Pincode
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    id="pincode"
-                                                    name="pincode"
-                                                    value={formData.pincode}
-                                                    onChange={handleaddressChange}
-                                                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-                                                    placeholder="Enter pincode"
-                                                />
-                                            </div>
-
-                                            {/* Default Address Checkbox */}
-                                            <div className="flex items-center gap-3">
-                                                <input
-                                                    type="checkbox"
-                                                    id="isDefault"
-                                                    name="isDefault"
-                                                    checked={formData.isDefault}
-                                                    onChange={handleaddressChange}
-                                                    className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 bg-white/5 border-white/10 rounded focus:ring-pink-500 focus:ring-2"
-                                                />
-                                                <label htmlFor="isDefault" className="text-sm sm:text-base text-gray-300 cursor-pointer">
-                                                    Set as default address
-                                                </label>
-                                            </div>
-
-                                            {/* Submit Button */}
-                                            <button
-                                                type="submit"
-                                                className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff]             hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 touch-manipulation shadow-lg mt-4 sm:mt-6"
-                                            >
-                                                {editingAddress ? 'Update Address' : 'Save Address'}
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
 
                 {/* transaction */}
                 {activeMenu === "Transaction" && (
@@ -980,3 +763,265 @@ export default function Profile() {
         </div>
     );
 }
+
+
+
+
+//  {activeMenu === "address" && (
+//     <div className={`px-4 py-6 w-full`}>
+//         <div className=" border border-white/10 rounded-2xl sm:p-6 p-1 mb-6 flex flex-col w-full">
+//             {/* Header */}
+//             <div className="flex items-center justify-between px-2 sm:px-4 py-4   sticky top-0 z-20 border-b border-white/10 ">
+//                 <div className="flex items-center gap-2 sm:gap-3">
+//                     {/* <button
+//                     className="text-white rounded-full hover:bg-white/10 transition-colors touch-manipulation"
+//                     onClick={handleBack}
+//                     aria-label="Go back"
+//                 >
+//                     <IoArrowBack className="w-5 h-5 sm:w-6 sm:h-6" />
+//                 </button> */}
+//                     <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide">Manage Addresses</h1>
+//                 </div>
+//                 {/* Add Address Button */}
+//                 <button
+//                     className="bg-gradient-to-r from-[#621df2] to-[#b191ff]
+//              hover:from-[#8354f8] hover:to-[#9f78ff]
+//              text-white px-2 sm:px-5 py-2.5 rounded-xl
+//              flex items-center gap-2 text-sm font-medium
+//              transition-all duration-200 shadow-md hover:shadow-xl"
+//                     onClick={openModal}
+//                 >
+//                     <IoLocation className=" w-4 h-4" />
+//                     <span>Add Address</span>
+//                 </button>
+//             </div>
+
+//             {/* Main Content - Address Cards */}
+//             <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
+//                 {addresses.length === 0 ? (
+//                     <div className="flex flex-col items-center justify-center  px-4 relative">
+
+//                         <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br
+// from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20
+// animate-pulse"></div>
+//                         <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br
+// from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20
+// animate-pulse"></div>
+
+
+//                         <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8
+// relative overflow-hidden shadow-lg shadow-purple-500/30">
+//                             <img
+//                                 src={manageAddress}
+//                                 alt="Lazy Cat"
+//                                 className="w-full h-full object-cover"
+//                             />
+//                         </div>
+
+
+//                         <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+//                             No addresses added!
+//                         </h2>
+//                         <p className="text-gray-400 text-sm text-center mt-2">
+//                             Add your first address to get started
+//                         </p>
+//                     </div>
+//                 ) : (
+//                     // Address cards
+//                     <div className="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+//                         {addresses.map((address) => (
+//                             <StylishDiv key={address.id} className=" group rounded-3xl overflow-hidden">
+//                                 {/* <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 blur-[2px]" /> */}
+//                                 <div className="">
+//                                     {/* Default Ribbon */}
+//                                     {address.isDefault && (
+//                                         <div className="pointer-events-none absolute top-0 right-0 w-32 h-24 overflow-hidden">
+//                                             <div className="absolute right-[-19px] top-[7px]  rotate-45">
+//                                                 <span className="bg-[#621df2] text-white text-[10px] font-semibold tracking-wide px-6 py-1 shadow-lg">Default</span>
+//                                             </div>
+//                                         </div>
+//                                     )}
+
+//                                     {/* Address Content */}
+//                                     <div className="space-y-2 sm:space-y-3">
+//                                         <h3 className="text-[#cfab9d] font-medium text-sm sm:text-base">{address.name}</h3>
+//                                         <p className="text-white text-sm">{address.addressLine1}</p>
+//                                         <p className="text-[#7b7b7b] text-sm">{address.addressLine2}</p>
+//                                         <div className='flex items-center gap-2 justify-between'>
+//                                             <p className="text-gray-300 text-sm">{address.mobile}</p>
+//                                             {/* Action Buttons */}
+//                                             <div className="flex flex-wrap items-center  gap-2 sm:gap-3 ">
+//                                                 {/* Delete Button */}
+//                                                 <button
+//                                                     onClick={() => deleteAddress(address.id)}
+//                                                     className="bg-red-600 hover:bg-red-700 text-white p-1 sm:p-2.5 rounded transition-colors duration-200 ms-auto"
+//                                                     aria-label="Delete address"
+//                                                 >
+//                                                     <IoTrash className="w-4 h-4 sm:w-5 sm:h-5" />
+//                                                 </button>
+
+//                                                 {/* Edit Button */}
+//                                                 <button
+//                                                     onClick={() => openEditModal(address)}
+//                                                     className="bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-3 py-2 rounded-lg shadow-md flex items-center gap-1 transition-all duration-200 ms-auto"
+//                                                 >
+//                                                     <IoPencil className="w-4 h-4" />
+//                                                     <span className="text-sm">Edit</span>
+//                                                 </button>
+//                                             </div>
+//                                         </div>
+//                                     </div>
+
+
+//                                 </div>
+//                             </StylishDiv>
+//                         ))}
+//                     </div>
+//                 )}
+//             </div>
+
+//             {/* Address Add/Edit Modal */}
+//             {(isModalOpen || isEditModalOpen) && (
+//                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
+//                     <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-[90vh] overflow-y-auto">
+//                         {/* Modal Header */}
+//                         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10">
+//                             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
+//                                 {editingAddress ? 'Edit Address' : 'Add Address'}
+//                             </h2>
+//                             <button
+//                                 onClick={closeModal}
+//                                 className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+//                                 aria-label="Close modal"
+//                             >
+//                                 <IoClose className="w-5 h-5 sm:w-6 sm:h-6" />
+//                             </button>
+//                         </div>
+
+//                         {/* Modal Body */}
+//                         <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4 sm:space-y-5">
+//                             {/* Name Field */}
+//                             <div>
+//                                 <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+//                                     Name
+//                                 </label>
+//                                 <input
+//                                     type="text"
+//                                     id="name"
+//                                     name="name"
+//                                     value={formData.name}
+//                                     onChange={handleaddressChange}
+//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+//                                     placeholder="Enter your name"
+//                                 />
+//                             </div>
+
+//                             {/* Mobile Field */}
+//                             <div>
+//                                 <label htmlFor="mobile" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+//                                     Mobile No.
+//                                 </label>
+//                                 <input
+//                                     type="tel"
+//                                     id="mobile"
+//                                     name="mobile"
+//                                     value={formData.mobile}
+//                                     onChange={handleaddressChange}
+//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+//                                     placeholder="Enter mobile number"
+//                                 />
+//                             </div>
+
+//                             {/* Address Line 1 Field */}
+//                             <div>
+//                                 <label htmlFor="addressLine1" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+//                                     Address Line 1
+//                                 </label>
+//                                 <input
+//                                     type="text"
+//                                     id="addressLine1"
+//                                     name="addressLine1"
+//                                     value={formData.addressLine1}
+//                                     onChange={handleaddressChange}
+//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+//                                     placeholder="Enter address line 1"
+//                                 />
+//                             </div>
+
+//                             {/* Address Line 2 Field */}
+//                             <div>
+//                                 <label htmlFor="addressLine2" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+//                                     Address Line 2
+//                                 </label>
+//                                 <input
+//                                     type="text"
+//                                     id="addressLine2"
+//                                     name="addressLine2"
+//                                     value={formData.addressLine2}
+//                                     onChange={handleaddressChange}
+//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+//                                     placeholder="Enter address line 2 (optional)"
+//                                 />
+//                             </div>
+
+//                             {/* Landmark Field */}
+//                             <div>
+//                                 <label htmlFor="landmark" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+//                                     Landmark
+//                                 </label>
+//                                 <input
+//                                     type="text"
+//                                     id="landmark"
+//                                     name="landmark"
+//                                     value={formData.landmark}
+//                                     onChange={handleaddressChange}
+//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+//                                     placeholder="Enter landmark (optional)"
+//                                 />
+//                             </div>
+
+//                             {/* Pincode Field */}
+//                             <div>
+//                                 <label htmlFor="pincode" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+//                                     Pincode
+//                                 </label>
+//                                 <input
+//                                     type="text"
+//                                     id="pincode"
+//                                     name="pincode"
+//                                     value={formData.pincode}
+//                                     onChange={handleaddressChange}
+//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
+//                                     placeholder="Enter pincode"
+//                                 />
+//                             </div>
+
+//                             {/* Default Address Checkbox */}
+//                             <div className="flex items-center gap-3">
+//                                 <input
+//                                     type="checkbox"
+//                                     id="isDefault"
+//                                     name="isDefault"
+//                                     checked={formData.isDefault}
+//                                     onChange={handleaddressChange}
+//                                     className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 bg-white/5 border-white/10 rounded focus:ring-pink-500 focus:ring-2"
+//                                 />
+//                                 <label htmlFor="isDefault" className="text-sm sm:text-base text-gray-300 cursor-pointer">
+//                                     Set as default address
+//                                 </label>
+//                             </div>
+
+//                             {/* Submit Button */}
+//                             <button
+//                                 type="submit"
+//                                 className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff]             hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 touch-manipulation shadow-lg mt-4 sm:mt-6"
+//                             >
+//                                 {editingAddress ? 'Update Address' : 'Save Address'}
+//                             </button>
+//                         </form>
+//                     </div>
+//                 </div>
+//             )}
+//         </div>
+//     </div>
+// )}

@@ -86,11 +86,12 @@ const Login = () => {
 
     signup: {
       title: "Sign Up",
-      initialValues: { name: "", email: "", password: "" },
+      initialValues: { name: "", email: "", password: "", agreeToTerms: false },
       validationSchema: Yup.object({
         name: Yup.string().required("Name is required"),
         email: Yup.string().email("Invalid email").required("Required"),
         password: Yup.string().min(6, "Min 6 characters").required("Required"),
+        agreeToTerms: Yup.boolean().oneOf([true], "You must agree to the Terms of Service"),
       }),
       onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
         try {
@@ -124,6 +125,26 @@ const Login = () => {
             </button>
           </div>
           <ErrorMessage name="password" component="div" className="text-red-500" />
+
+          <div className="flex items-start space-x-2 mt-4">
+            <Field
+              name="agreeToTerms"
+              type="checkbox"
+              className="checkbox checkbox-sm mt-1"
+            />
+            <label className="text-sm text-gray-300">
+              I agree to the{" "}
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-300 hover:text-blue-200 underline"
+              >
+                Terms of Service
+              </a>
+            </label>
+          </div>
+          <ErrorMessage name="agreeToTerms" component="div" className="text-red-500" />
 
           <button type="submit" className="btn w-full bg-[#110B24] text-white">Sign up</button>
           <p
