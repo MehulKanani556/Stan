@@ -15,7 +15,7 @@ const ReviewHome = () => {
   const reviews = [
     {
       id: 1,
-      name: 'Alex Johnson',
+      name: 'Parth',
       avatar: 'https://i.pravatar.cc/150?img=1',
       game: 'Resident Evil Village',
       rating: 5,
@@ -24,7 +24,7 @@ const ReviewHome = () => {
     },
     {
       id: 2,
-      name: 'Maria Gomez',
+      name: 'Jay',
       avatar: 'https://i.pravatar.cc/150?img=2',
       game: 'The Last of Us Part II',
       rating: 4,
@@ -33,7 +33,7 @@ const ReviewHome = () => {
     },
     {
       id: 3,
-      name: 'James Lee',
+      name: 'Akshay',
       avatar: 'https://i.pravatar.cc/150?img=3',
       game: 'Minecraft',
       rating: 5,
@@ -42,7 +42,7 @@ const ReviewHome = () => {
     },
     {
       id: 4,
-      name: 'Sophia Turner',
+      name: 'Darshit',
       avatar: 'https://i.pravatar.cc/150?img=4',
       game: 'Elden Ring',
       rating: 5,
@@ -90,53 +90,53 @@ const ReviewHome = () => {
 
   return (
     <div className=" pt-11">
-    <section className="md:py-12 text-white">
-      <h2 className="md:text-[35px] text-[28px] font-bold  text-center">
-        Player Reviews
-      </h2>
-      <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
-        <Slider {...settings} className="ds_review_slider flex items-center justify-center py-5">
-          {reviews.map((r) => (
-            <div key={r.id} className="flex justify-center px-4 h-full">
-              <StylishDiv className="max-w-md w-full h-full flex">
-                <div className=" rounded-2xl   transition flex flex-col h-full w-full">
+      <section className="md:py-12 text-white">
+        <h2 className="md:text-[35px] text-[28px] font-bold  text-center">
+          Player Reviews
+        </h2>
+        <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
+          <Slider {...settings} className="ds_review_slider flex items-center justify-center py-5">
+            {reviews.map((r) => (
+              <div key={r.id} className="flex justify-center px-4 h-full">
+                <StylishDiv className="max-w-md w-full h-full flex">
+                  <div className=" rounded-2xl   transition flex flex-col h-full w-full">
 
-                  <div className="flex items-center gap-4 mb-4">
-                    <img
-                      src={r.avatar}
-                      alt={r.name}
-                      className="w-12 h-12 rounded-full object-cover border border-gray-700"
-                    />
-                    <div>
-                      <p className="font-semibold">{r.name}</p>
-                      <p className="text-sm text-gray-400">{r.game}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex mb-3 mt-6">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar
-                        key={i}
-                        className={`h-5 w-5 mx-1 ${i < r.rating ? 'text-yellow-400' : 'text-gray-600'
-                          }`}
+                    <div className="flex items-center gap-4 mb-4">
+                      <img
+                        src={r.avatar}
+                        alt={r.name}
+                        className="w-12 h-12 rounded-full object-cover border border-gray-700"
                       />
-                    ))}
+                      <div>
+                        <p className="font-semibold">{r.name}</p>
+                        <p className="text-sm text-gray-400">{r.game}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex mb-3 mt-6">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          className={`h-5 w-5 mx-1 ${i < r.rating ? 'text-yellow-400' : 'text-gray-600'
+                            }`}
+                        />
+                      ))}
+                    </div>
+
+                    <p className="text-gray-300 sm:text-[16px] text-[14px] leading-relaxed mt-5 flex-grow">
+                      {r.review}
+                    </p>
                   </div>
+                </StylishDiv>
+              </div>
+            ))}
+          </Slider>
+        </div>
 
-                  <p className="text-gray-300 sm:text-[16px] text-[14px] leading-relaxed mt-5 flex-grow">
-                    {r.review}
-                  </p>
-                </div>
-              </StylishDiv>
-            </div>
-          ))}
-        </Slider>
-      </div>
+      </section>
+    </div>
+  )
 
-    </section>
-  </div>
-)
-  
 }
 
 export default ReviewHome
