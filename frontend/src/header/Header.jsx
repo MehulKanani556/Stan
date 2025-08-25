@@ -123,12 +123,12 @@ export default function Header() {
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 items-center'>
-                                       <div className='me-2'>
+                                       <NavLink to="/wishlist" className='me-2'>
                                           <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
-                                        </div>
-                                        <div className='me-2'>
+                                        </NavLink>
+                                        <NavLink to="/cart" className='me-2'>
                                           <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
-                                        </div>
+                                        </NavLink>
                                         <div
                                             className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
                                             onClick={toggleDropdown}
