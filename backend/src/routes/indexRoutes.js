@@ -5,62 +5,15 @@ import {
   handleMulterError,
 } from "../middlewares/imageupload.js";
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
-import {
-  deleteUser,
-  editProfile,
-  editUser,
-  followOrUnfollow,
-  getAllUsers,
-  getUserById,
-  register,
-  searchUsers,
-  suggestedUsers,
-} from "../controllers/userController.js";
-import {
-  changePassword,
-  forgotPassword,
-  resetPassword,
-  userLogin,
-  VerifyOtp,
-  VerifyPhone,
-} from "../controllers/loginController.js";
-import {
-  getMessage,
-  sendMessage,
-  getAllMessageUsers,
-  deleteChat,
-} from "../controllers/messageController.js";
-import {
-  createFreeGame,
-  getFreeGames,
-  getFreeGameBySlug,
-  updateFreeGame,
-  deleteFreeGame,
-} from "../controllers/freeGamesController.js";
-import {
-  createGame,
-  deleteGame,
-  getAllActiveGames,
-  getAllGames,
-  getGameById,
-  updateGame,
-  getPopularGames,
-  getTopGames,
-} from "../controllers/game.controller.js";
-import {
-  createCategory,
-  deleteCategory,
-  getAllCategories,
-  getCategoryById,
-  updateCategory,
-} from "../controllers/Category.Controller.js";
-import {
-  createTrailer,
-  deleteTrailer,
-  getAllTrailer,
-  updateTrailer,
-  getPublicTrailers,
-} from "../controllers/HomeTrailerController.js";
+import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
+import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
+import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
+import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
+import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames } from "../controllers/game.controller.js";
+import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
+import { chatWidGetController } from "../controllers/chatWidGet.controller.js";
+import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateTrailer } from "../controllers/HomeTrailerController.js";
+
 
 const indexRoutes = express.Router();
 
