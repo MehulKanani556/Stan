@@ -138,10 +138,10 @@ indexRoutes.delete("/hometrailer/:id", UserAuth, deleteTrailer);
 
 // cart
 indexRoutes.get("/cart", UserAuth, getCart);
-indexRoutes.post("/cart", UserAuth, addToCart);
+indexRoutes.post("/cart/add", UserAuth, addToCart);
 indexRoutes.put("/cart", UserAuth, updateCartItem);
-indexRoutes.delete("/cart", UserAuth, removeFromCart);
-indexRoutes.delete("/cart/clear", UserAuth, clearCart);
+indexRoutes.post("/cart/remove", UserAuth, removeFromCart);
+indexRoutes.post("/cart/clear", UserAuth, clearCart);
 
 // wishlist
 indexRoutes.get("/wishlist", UserAuth, getWishlist);

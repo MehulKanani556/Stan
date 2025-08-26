@@ -20,7 +20,10 @@ export const addToCart = createAsyncThunk(
     async ({ gameId, platform, qty }, { rejectWithValue }) => {
         try {
             const res = await axiosInstance.post("/cart/add", { gameId, platform, qty });
-            enqueueSnackbar("Added to cart", { variant: "success" });
+         
+            if(res.data.success){                
+                enqueueSnackbar("Added to cart", { variant: "success" });
+            }
             return res.data.cart || [];
         } catch (err) {
             // Show specific warning for duplicate items
