@@ -31,6 +31,7 @@ export default function Header() {
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state) => state.user);
     const { user: authUser } = useSelector((state) => state.auth);
+    const cartItems = useSelector((state) => state.cart.cart);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
@@ -131,8 +132,13 @@ export default function Header() {
                                        <NavLink to="/wishlist" className='me-2'>
                                           <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
                                         </NavLink>
-                                        <NavLink to="/cart" className='me-2'>
+                                        <NavLink to="/cart" className='me-2 relative'>
                                           <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                          {cartItems.length > 0 && (
+                                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                              {cartItems.length}
+                                            </span>
+                                          )}
                                         </NavLink>
                                         <div
                                             className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"

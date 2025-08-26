@@ -8,55 +8,24 @@ import { FaShoppingCart } from "react-icons/fa";
 import game1 from "../images/game1.jpg";
 import game2 from "../images/game2.jpg";
 import game3 from "../images/game3.jpg";
-import { addToCart } from "../Redux/Slice/cart.slice";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFromCartLocal, clearCartLocal } from "../Redux/Slice/cart.slice";
 
 const Cart = () => {
 
     const dispatch = useDispatch();
+    const cartItems = useSelector((state) => state.cart.cart);
 
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            title: "GTA V",
-            image: game1,
-            type: "Base Game",
-            reward: "Earn a boosted 20% back in Rewards, offer ends Aug 31.",
-            refundable: true,
-            discount: 20,
-            oldPrice: 2999.0,
-            price: 2399.20,
-            saleEnds: "Sale ends 9/4/2025 at 10:30 PM",
-        },
-        {
-            id: 2,
-            title: "Battlefield™ 2042",
-            image: game2,
-            type: "Base Game",
-            reward: "Earn a boosted 20% back in Rewards, offer ends Aug 31.",
-            refundable: true,
-            discount: 95,
-            oldPrice: 2999.0,
-            price: 149.95,
-            saleEnds: "Sale ends 9/2/2025 at 10:30 PM",
-        },
-        {
-            id: 3,
-            title: "Minecraft",
-            image: game3,
-            type: "Base Game",
-            reward: "Earn a boosted 20% back in Rewards, offer ends Aug 31.",
-            refundable: true,
-            discount: 50,
-            oldPrice: 2599.0,
-            price: 1299.05,
-            saleEnds: "Sale ends 9/8/2025 at 10:30 PM",
-        },
-    ]);
+    // Add debugging to see what's happening with cart data
+    useEffect(() => {
+        console.log("Cart component mounted");
+        console.log("Current cart state:", cartItems);
+        console.log("Cart length:", cartItems.length);
+    }, []);
 
     useEffect(() => {
-        dispatch(addToCart())
-    }, [dispatch])
+        console.log("Cart items changed:", cartItems);
+    }, [cartItems]);
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.oldPrice, 0);
     const totalDiscount = cartItems.reduce(
@@ -66,7 +35,16 @@ const Cart = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
 
     const handleRemove = (id) => {
-        setCartItems(cartItems.filter((item) => item.id !== id));
+        dispatch(removeFromCartLocal({ gameId: id }));
+    };
+
+    const handleClearCart = () => {
+        dispatch(clearCartLocal());
+    };
+
+    const handleContinueShopping = () => {
+        // You can add navigation logic here if needed
+        console.log("Continue shopping clicked");
     };
 
     return (
@@ -205,10 +183,16 @@ const Cart = () => {
                         <button className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
                             Proceed to Checkout
                         </button>
-                        <button className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl">
+                        <button 
+                            onClick={handleClearCart}
+                            className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
+                        >
                             Clear Cart
                         </button>
-                        <button className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl">
+                        <button 
+                            onClick={handleContinueShopping}
+                            className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
+                        >
                             Continue Shopping
                         </button>
                     </div>

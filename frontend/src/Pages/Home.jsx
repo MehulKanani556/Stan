@@ -31,6 +31,7 @@ import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
 import { useNavigate } from 'react-router-dom';
+import { addToCart, addToCartLocal } from '../Redux/Slice/cart.slice';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
@@ -50,6 +51,10 @@ export default function Home() {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [velocity, setVelocity] = useState(0);
   const [lastX, setLastX] = useState(0);
+  const [showAddedToCart, setShowAddedToCart] = useState(false);
+  const [addedGameTitle, setAddedGameTitle] = useState("");
+  const cartItems = useSelector((state) => state.cart.cart);
+  const prevCartLengthRef = useRef(0);
 
   // Momentum effect after mouse up
   useEffect(() => {
@@ -68,28 +73,28 @@ export default function Home() {
   }, [isDragging, velocity]);
 
   const onMouseDown = (e) => {
-      setIsDragging(true);
-      setStartX(e.pageX - categorySwiperRef.current.offsetLeft);
-      setScrollLeft(categorySwiperRef.current.scrollLeft);
-      setLastX(e.pageX);
+    setIsDragging(true);
+    setStartX(e.pageX - categorySwiperRef.current.offsetLeft);
+    setScrollLeft(categorySwiperRef.current.scrollLeft);
+    setLastX(e.pageX);
   };
 
   const onMouseLeave = () => setIsDragging(false);
   const onMouseUp = () => setIsDragging(false);
 
   const onMouseMove = (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const x = e.pageX - categorySwiperRef.current.offsetLeft;
-      const walk = (x - startX) * 1.5; // drag speed multiplier
-      categorySwiperRef.current.scrollLeft = scrollLeft - walk;
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - categorySwiperRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // drag speed multiplier
+    categorySwiperRef.current.scrollLeft = scrollLeft - walk;
 
-      // calculate velocity for momentum
-      setVelocity(e.pageX - lastX);
-      setLastX(e.pageX);
+    // calculate velocity for momentum
+    setVelocity(e.pageX - lastX);
+    setLastX(e.pageX);
   };
 
-  console.log("Hello Bachho" , gameData);
+  console.log("Hello Bachho", gameData);
   const { games } = useSelector((state) => state.game);
   // console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
@@ -101,8 +106,8 @@ export default function Home() {
       .then((value) => {
         //  console.log("hihi" , );
         //  setActiveTab(value?.payload[0]?.categoryName)
-      })
-  }, [])
+      });
+  }, []);
 
   useEffect(() => {
     dispatch(getAllGames());
@@ -111,6 +116,11 @@ export default function Home() {
   useEffect(() => {
     setMainGameData(gameData)
   }, [gameData])
+
+
+  useEffect(() => {
+    dispatch(addToCart());
+  }, [dispatch]);
 
   // Add CSS to hide scrollbars
   useEffect(() => {
@@ -192,8 +202,30 @@ export default function Home() {
     }
   }, [gameData]);
 
+  // Track cart changes for notifications
+  useEffect(() => {
+    if (cartItems.length > prevCartLengthRef.current && prevCartLengthRef.current > 0) {
+      // A new item was added
+      const newItem = cartItems[cartItems.length - 1];
+      setAddedGameTitle(newItem.title + " added to cart!");
+      setShowAddedToCart(true);
+      setTimeout(() => setShowAddedToCart(false), 3000);
+    }
+    prevCartLengthRef.current = cartItems.length;
+  }, [cartItems]);
+
   return (
     <>
+      {/* Success Notification */}
+      {showAddedToCart && (
+        <div className="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 animate-slide-in">
+          <div className="flex items-center gap-2">
+            <FaShoppingCart />
+            <span>{addedGameTitle} added to cart!</span>
+          </div>
+        </div>
+      )}
+      
       <section className="">
         <div className="relative w-full">
           <Swiper
@@ -399,8 +431,37 @@ export default function Home() {
                                   <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
                                     <FaHeart size={16} className="text-white" />
                                   </button>
-                                  <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
-                                    <FaShoppingCart size={16} className="text-white" />
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const gameData = {
+                                        id: element?._id,
+                                        title: element?.title,
+                                        image: element?.cover_image?.url,
+                                        type: "Base Game",
+                                        reward: "Earn a boosted 20% back in Rewards, offer ends Aug 31.",
+                                        refundable: true,
+                                        discount: 20,
+                                        oldPrice: element?.platforms?.windows?.price || 2999.0,
+                                        price: (element?.platforms?.windows?.price || 2999.0) * 0.8,
+                                        saleEnds: "Sale ends 9/4/2025 at 10:30 PM",
+                                      };
+                                      dispatch(addToCartLocal({ game: gameData }));
+                                    }}
+                                    className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
+                                      cartItems.some(item => item.id === element?._id) 
+                                        ? 'bg-green-600 hover:bg-green-700' 
+                                        : 'bg-black/50 hover:bg-black/70'
+                                    }`}
+                                  >
+                                    <FaShoppingCart 
+                                      size={16} 
+                                      className={`${
+                                        cartItems.some(item => item.id === element?._id) 
+                                          ? 'text-white' 
+                                          : 'text-white'
+                                      }`} 
+                                    />
                                   </button>
                                 </div>
                               </div>

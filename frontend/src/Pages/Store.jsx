@@ -16,7 +16,7 @@ import game3 from '../images/game3.jpg';
 import game4 from '../images/game4.webp';
 import game5 from '../images/game5.jpg';
 import game6 from '../images/game6.jpg';
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart } from "react-icons/fa";
 import { getAllGames, getPopularGames, getTopGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../Redux/Slice/category.slice';
@@ -138,7 +138,7 @@ const Store = () => {
     const priceValue = priceCandidateList.find((p) => typeof p === 'number' && !Number.isNaN(p)) ?? 0;
 
     return (
-      <div 
+      <div
         onClick={() => navigate(`/single/${game?._id}`)}
         className="w-64 sm:w-72 md:w-80 lg:w-96 cursor-pointer"
       >
@@ -168,10 +168,14 @@ const Store = () => {
                   ${Number(priceValue).toLocaleString('en-IN')}
                 </p>
               </div>
-              <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
-                Buy
-                <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-              </button>
+              <div className='flex items-center gap-2'>
+                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
+                  <FaHeart size={16} className="text-white" />
+                </button>
+                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
+                  <FaShoppingCart size={16} className="text-white" />
+                </button>
+              </div>
             </div>
           </div>
         </StylishDiv>
@@ -223,7 +227,7 @@ const Store = () => {
             error={error}
           />
         </div>
-         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
+        <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Popular Games"
             games={Array.isArray(PopularGames) ? PopularGames : []}
@@ -232,7 +236,7 @@ const Store = () => {
             error={error}
           />
         </div>
-         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
+        <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Action Games"
             games={Array.isArray(games) ? games.filter((g) => {
@@ -248,7 +252,7 @@ const Store = () => {
         {/* <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection title="PS-5 Games" games={games?.ps5 ?? []} sectionRef={scrollContainerRefs.ps5} />
         </div>*/}
-         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
+        <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Top Games"
             games={Array.isArray(topGames) ? topGames : []}
