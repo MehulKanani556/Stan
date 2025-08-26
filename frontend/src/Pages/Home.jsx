@@ -32,7 +32,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
 import { useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
-import { addToCart, addToCartLocal } from '../Redux/Slice/cart.slice';
+import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
@@ -45,8 +45,7 @@ export default function Home() {
   const cateData = useSelector((state) => state?.game?.category)
   const wishlist = useSelector((state)=> state.wishlist.items)
   const [mainGameData, setMainGameData] = useState(gameData)
-  const navigate = useNavigate()
-  console.log("wishlist",wishlist);
+  const navigate = useNavigate();
   const { wishlistStatus } = useSelector((state) => state.wishlist);
   
 
@@ -59,6 +58,9 @@ export default function Home() {
   const [showAddedToCart, setShowAddedToCart] = useState(false);
   const [addedGameTitle, setAddedGameTitle] = useState("");
   const cartItems = useSelector((state) => state.cart.cart);
+  console.log("cart",cartItems);
+
+  
   const prevCartLengthRef = useRef(0);
 
   // Momentum effect after mouse up
@@ -113,10 +115,12 @@ export default function Home() {
         //  setActiveTab(value?.payload[0]?.categoryName)
       })
       dispatch(fetchWishlist())
+      dispatch(fetchCart())
   }, [])
 
   useEffect(() => {
     dispatch(getAllGames());
+
   }, [dispatch]);
 
   useEffect(() => {
@@ -124,9 +128,9 @@ export default function Home() {
   }, [gameData])
 
 
-  useEffect(() => {
-    dispatch(addToCart());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(addToCart());
+  // }, [dispatch]);
 
   // Add CSS to hide scrollbars
   useEffect(() => {
@@ -217,16 +221,11 @@ export default function Home() {
     dispatch(removeFromWishlist({ gameId }));
   };
   // Track cart changes for notifications
-  useEffect(() => {
-    if (cartItems.length > prevCartLengthRef.current && prevCartLengthRef.current > 0) {
-      // A new item was added
-      const newItem = cartItems[cartItems.length - 1];
-      setAddedGameTitle(newItem.title + " added to cart!");
-      setShowAddedToCart(true);
-      setTimeout(() => setShowAddedToCart(false), 3000);
-    }
-    prevCartLengthRef.current = cartItems.length;
-  }, [cartItems]);
+
+
+  const handleAddToCart = (ele) => {
+    dispatch(addToCart({ gameId: ele._id, platform: "windows", qty:1 }));
+  }
 
   return (
     <>
@@ -465,33 +464,19 @@ export default function Home() {
                                   <button 
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      const gameData = {
-                                        id: element?._id,
-                                        title: element?.title,
-                                        image: element?.cover_image?.url,
-                                        type: "Base Game",
-                                        reward: "Earn a boosted 20% back in Rewards, offer ends Aug 31.",
-                                        refundable: true,
-                                        discount: 20,
-                                        oldPrice: element?.platforms?.windows?.price || 2999.0,
-                                        price: (element?.platforms?.windows?.price || 2999.0) * 0.8,
-                                        saleEnds: "Sale ends 9/4/2025 at 10:30 PM",
-                                      };
-                                      dispatch(addToCartLocal({ game: gameData }));
+                                      handleAddToCart(element);                                  
+                                    
                                     }}
                                     className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
-                                      cartItems.some(item => item.id === element?._id) 
+                                      cartItems.some(item => item.game._id === element?._id) 
                                         ? 'bg-green-600 hover:bg-green-700' 
                                         : 'bg-black/50 hover:bg-black/70'
                                     }`}
                                   >
+
                                     <FaShoppingCart 
                                       size={16} 
-                                      className={`${
-                                        cartItems.some(item => item.id === element?._id) 
-                                          ? 'text-white' 
-                                          : 'text-white'
-                                      }`} 
+                                    
                                     />
                                   </button>
                                 </div>

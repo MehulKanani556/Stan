@@ -13,7 +13,9 @@ export const getCart = async (req, res) => {
         }
         const user = await User.findById(userId).populate({
             path: 'cart.game',
-            select: 'title cover_image platforms',
+            populate: {
+                path: 'category'
+            }
         });
         if (!user) return sendError(res, 404, 'User not found');
 
@@ -35,6 +37,7 @@ export const addToCart = async (req, res) => {
     try {
         const userId = req.user?._id;
         const { gameId, platform, qty } = req.body;
+        
         if (!mongoose.Types.ObjectId.isValid(gameId)) {
             return sendError(res, 400, 'Invalid game id');
         }
@@ -49,14 +52,15 @@ export const addToCart = async (req, res) => {
         }
         const price = Number(platformData.price || 0);
         const quantity = Math.max(1, Number(qty || 1));
-
+        
         const user = await User.findById(userId);
         if (!user) return sendError(res, 404, 'User not found');
-
+        
         // Check if this exact game+platform combination already exists
         const existingIndex = (user.cart || []).findIndex(
             (c) => String(c.game) === String(gameId) && c.platform === platform
         );
+
         if (existingIndex >= 0) {
             return res.status(400).json({
                 success: false,
@@ -70,7 +74,9 @@ export const addToCart = async (req, res) => {
         await user.save();
         const populated = await User.findById(userId).populate({
             path: 'cart.game',
-            select: 'title cover_image platforms',
+            populate: {
+                path: 'category'
+            }
         });
         return res.status(200).json({ success: true, message: 'Added to cart', cart: populated.cart });
     } catch (err) {
@@ -103,7 +109,9 @@ export const updateCartItem = async (req, res) => {
         await user.save();
         const populated = await User.findById(userId).populate({
             path: 'cart.game',
-            select: 'title cover_image platforms',
+            populate: {
+                path: 'category'
+            }
         });
         // Ensure price present in response
         const responseCart = (populated.cart || []).map((c) => {
@@ -127,12 +135,16 @@ export const removeFromCart = async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return sendError(res, 404, 'User not found');
         user.cart = (user.cart || []).filter(
-            (c) => !(String(c.game) === String(gameId) && c.platform === platform)
+            (c) => !(String(c._id) == String(gameId) && c.platform == platform)
         );
         await user.save();
+        console.log(user.cart,gameId,platform);
+        
         const populated = await User.findById(userId).populate({
             path: 'cart.game',
-            select: 'title cover_image platforms',
+            populate: {
+                path: 'category'
+            }
         });
         return res.status(200).json({ success: true, message: 'Removed from cart', cart: populated.cart });
     } catch (err) {

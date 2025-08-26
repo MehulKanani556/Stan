@@ -9,25 +9,20 @@ import game1 from "../images/game1.jpg";
 import game2 from "../images/game2.jpg";
 import game3 from "../images/game3.jpg";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCartLocal, clearCartLocal } from "../Redux/Slice/cart.slice";
+import { removeFromCartLocal, clearCartLocal, fetchCart, removeFromCart, clearCart } from "../Redux/Slice/cart.slice";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
 
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart.cart);
+    const navigate = useNavigate();    
 
-    // Add debugging to see what's happening with cart data
-    useEffect(() => {
-        console.log("Cart component mounted");
-        console.log("Current cart state:", cartItems);
-        console.log("Cart length:", cartItems.length);
-    }, []);
+    useEffect (()=>{
+        dispatch(fetchCart());
+    },[])
 
-    useEffect(() => {
-        console.log("Cart items changed:", cartItems);
-    }, [cartItems]);
-
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.oldPrice, 0);
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
     const totalDiscount = cartItems.reduce(
         (sum, item) => sum + (item.oldPrice - item.price),
         0
@@ -35,72 +30,36 @@ const Cart = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
 
     const handleRemove = (id) => {
-        dispatch(removeFromCartLocal({ gameId: id }));
+        // alert(id)
+        dispatch(removeFromCart({ gameId: id,platform:"windows" }));
     };
 
     const handleClearCart = () => {
-        dispatch(clearCartLocal());
+        dispatch(clearCart());
     };
+
 
     const handleContinueShopping = () => {
         // You can add navigation logic here if needed
-        console.log("Continue shopping clicked");
+        navigate("/store")
     };
 
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
-            <h1 className="text-4xl font-extrabold mb-8">My Cart</h1>
-
-            {/* wishlist empty */}
-            {/* <div className="flex items-center justify-center min-h-[60vh] text-center">
-                <div className=" rounded-2xl p-10 w-full max-w-2xl ">
-                    <FaHeart className="mx-auto text-gray-400 text-6xl mb-6" />
-
-                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                        Your wishlist is empty
-                    </h2>
-
-                    <p className="text-gray-400 mb-6 font-semibold">
-                        Start adding games to your wishlist to see them here.
-                    </p>
-
-                    <button className=" bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold px-6 py-3 my-2 rounded-md active:scale-105 transition w-fit">
-                        Explore Games
-                    </button>
-                </div>
-            </div> */}
-
-            {/* cart empty */}
-            {/* <div className="flex items-center justify-center min-h-[60vh] text-center">
-                <div className=" rounded-2xl p-10 w-full max-w-2xl ">
-                    <FaShoppingCart className="mx-auto text-gray-400 text-6xl mb-6" />
-
-                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                        Your cart is empty
-                    </h2>
-
-                    <p className="text-gray-400 mb-6 font-semibold">
-                        Explore our collection and add some games to your cart.
-                    </p>
-
-                    <button className=" bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold px-6 py-3 my-2 rounded-md active:scale-105 transition w-fit">
-                        Continue Shoping
-                    </button>
-                </div>
-            </div> */}
+            <h1 className="text-4xl font-extrabold mb-8">My Cart</h1>     
 
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {cartItems.length > 0 ? (
                         cartItems.map((item) => (
                             <div
-                                key={item.id}
+                            key={item.game._id}
                                 className="bg-black/15 border border-white/10 p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-6"
                             >
                                 <div className="w-full lg:w-40 h-48 lg:h-40 shrink-0">
                                     <img
-                                        src={item.image}
-                                        alt={item.title}
+                                       src={item.game.cover_image.url}
+                                       alt={item.game.title}
                                         className="w-full h-full object-cover rounded-lg"
                                     />
                                 </div>
@@ -108,10 +67,10 @@ const Cart = () => {
                                 <div className="flex-1 flex flex-col justify-between">
                                     <div>
                                         <span className="text-xs bg-[#525050] px-2 py-1 rounded tracking-wide">
-                                            {item.type}
+                                        {item.game.category.categoryName}
                                         </span>
 
-                                        <h2 className="text-xl font-semibold mt-2">{item.title}</h2>
+                                        <h2 className="text-xl font-semibold mt-2">{item.game.title}</h2>
 
                                         <span className="text-gray-400 flex items-center gap-2 text-sm">
                                             <FaWindows /> Playable on PC
@@ -121,7 +80,7 @@ const Cart = () => {
 
                                     <div className=" items-center mt-4">
                                         <p className="text-xl font-bold text-white">
-                                            ₹{item.price.toLocaleString()}
+                                            ${item.price.toLocaleString()}
                                         </p>
                                     </div>
                                 </div>
@@ -129,7 +88,7 @@ const Cart = () => {
                                 <div className="flex flex-col items-end justify-between min-w-[120px]">
                                     <div className="text-white text-xs px-3 py-1 rounded-full">
                                         <button
-                                            onClick={() => handleRemove(item.id)}
+                                            onClick={() => handleRemove(item._id)}
                                             className="text-red-400 hover:text-red-500 transition text-xl mr-4"
                                         >
                                             <RiDeleteBin6Line />
@@ -156,11 +115,11 @@ const Cart = () => {
 
                     <div className=" flex flex-col gap-3 border-b border-gray-700 pb-4 text-base">
                         <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300 w-[40%]">
-                            Rewards: ₹0.00
+                            Rewards: $0.00
                         </span>
                         <div className="flex justify-between">
                             <span>Price</span>
-                            <span>₹{totalPrice.toLocaleString()}</span>
+                            <span>${totalPrice.toLocaleString()}</span>
                         </div>
 
                         <div className="flex justify-between text-gray-400">
@@ -171,7 +130,7 @@ const Cart = () => {
 
                     <div className="flex justify-between text-lg font-bold">
                         <span>Subtotal</span>
-                        <span>₹{subtotal.toLocaleString()}</span>
+                        <span>${subtotal.toLocaleString()}</span>
                     </div>
 
                     <div className="gap-4">
