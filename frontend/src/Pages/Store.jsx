@@ -165,7 +165,7 @@ const Store = () => {
               <div>
                 <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
                 <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-                  ₹{Number(priceValue).toLocaleString('en-IN')}
+                  ${Number(priceValue).toLocaleString('en-IN')}
                 </p>
               </div>
               <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>

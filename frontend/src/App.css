@@ -436,3 +436,8 @@ html {
       background-position: -200% 0;
     }
   }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
