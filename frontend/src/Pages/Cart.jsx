@@ -95,9 +95,9 @@ const Cart = () => {
                         cartItems.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-black/15 p-8 rounded-lg shadow-lg mb-3 flex flex-col lg:flex-row gap-6 hover:shadow-lg transition"
+                                className="bg-black/15 border border-white/10 p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-6"
                             >
-                                <div className="w-full lg:w-36 h-48 shrink-0">
+                                <div className="w-full lg:w-40 h-48 lg:h-40 shrink-0">
                                     <img
                                         src={item.image}
                                         alt={item.title}
@@ -113,15 +113,16 @@ const Cart = () => {
 
                                         <h2 className="text-xl font-semibold mt-2">{item.title}</h2>
 
-                                        <p className="text-[#f8d886] text-base mt-3 flex items-center gap-2"> <span className="text-lg"> <MdWorkspacePremium /> </span> {item.description}</p>
-
-                                    </div>
-
-                                    <div className="flex items-center justify-between mt-4">
                                         <span className="text-gray-400 flex items-center gap-2 text-sm">
                                             <FaWindows /> Playable on PC
                                         </span>
 
+                                    </div>
+
+                                    <div className=" items-center mt-4">
+                                        <p className="text-xl font-bold text-white">
+                                            ₹{item.price.toLocaleString()}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -133,17 +134,9 @@ const Cart = () => {
                                         >
                                             <RiDeleteBin6Line />
                                         </button>
-                                        <button className="text-[#7c63b3] transition text-xl">
+                                        {/* <button className="text-[#7c63b3] transition text-xl">
                                             <FaRegHeart />
-                                        </button>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="line-through text-gray-500 text-sm">
-                                            ₹{item.oldPrice.toLocaleString()}*
-                                        </p>
-                                        <p className="text-xl font-bold text-white">
-                                            ₹{item.price.toLocaleString()}
-                                        </p>
+                                        </button> */}
                                     </div>
                                 </div>
                             </div>
@@ -157,12 +150,14 @@ const Cart = () => {
                 <div className=" rounded-2xl p-8 flex flex-col gap-6 h-fit bg-black/15">
                     <div className="flex justify-between items-center">
                         <h2 className="font-bold text-xl">Order Summary</h2>
-                        <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300">
-                            Rewards: ₹0.00
-                        </span>
+                        <span className="text-xl font-bold text-purple-400">{cartItems.length}</span>
+
                     </div>
 
                     <div className=" flex flex-col gap-3 border-b border-gray-700 pb-4 text-base">
+                        <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300 w-[40%]">
+                            Rewards: ₹0.00
+                        </span>
                         <div className="flex justify-between">
                             <span>Price</span>
                             <span>₹{totalPrice.toLocaleString()}</span>
@@ -183,13 +178,13 @@ const Cart = () => {
                         <button className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
                             Proceed to Checkout
                         </button>
-                        <button 
+                        <button
                             onClick={handleClearCart}
                             className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
                         >
                             Clear Cart
                         </button>
-                        <button 
+                        <button
                             onClick={handleContinueShopping}
                             className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
                         >
