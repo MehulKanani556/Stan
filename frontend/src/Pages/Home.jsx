@@ -14,7 +14,7 @@ import ad2 from '../images/ad2.webp';
 import ad3 from '../images/ad3.jpg';
 import ad4 from '../images/ad4.jpg';
 import ad5 from '../images/game2.jpg';
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart } from "react-icons/fa";
 
 import game1 from '../images/game1.jpg';
 import game2 from '../images/game2.jpg';
@@ -44,7 +44,7 @@ export default function Home() {
   const [mainGameData, setMainGameData] = useState(gameData)
   const navigate = useNavigate()
 
-  console.log("Hello Bachho" , gameData);
+  console.log("Hello Bachho", gameData);
   const { games } = useSelector((state) => state.game);
   // console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
@@ -327,7 +327,7 @@ export default function Home() {
                                 <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
 
                                 <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-                                  {/* Tags can be added here if needed */}
+
                                 </div>
 
                                 <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
@@ -342,10 +342,14 @@ export default function Home() {
                                     ₹{element?.platforms?.windows?.price?.toLocaleString('en-IN')}
                                   </p>
                                 </div>
-                                <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
-                                  Buy
-                                  <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-                                </button>
+                                <div className='flex items-center gap-2'>
+                                  <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
+                                    <FaHeart size={16} className="text-white" />
+                                  </button>
+                                  <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
+                                    <FaShoppingCart size={16} className="text-white" />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </StylishDiv>

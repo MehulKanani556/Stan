@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaWindows } from "react-icons/fa";
 import { MdWorkspacePremium } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -8,8 +8,13 @@ import { FaShoppingCart } from "react-icons/fa";
 import game1 from "../images/game1.jpg";
 import game2 from "../images/game2.jpg";
 import game3 from "../images/game3.jpg";
+import { addToCart } from "../Redux/Slice/cart.slice";
+import { useDispatch } from "react-redux";
 
 const Cart = () => {
+
+    const dispatch = useDispatch();
+
     const [cartItems, setCartItems] = useState([
         {
             id: 1,
@@ -49,6 +54,10 @@ const Cart = () => {
         },
     ]);
 
+    useEffect(() => {
+        dispatch(addToCart())
+    }, [dispatch])
+
     const totalPrice = cartItems.reduce((sum, item) => sum + item.oldPrice, 0);
     const totalDiscount = cartItems.reduce(
         (sum, item) => sum + (item.oldPrice - item.price),
@@ -84,7 +93,7 @@ const Cart = () => {
             </div> */}
 
             {/* cart empty */}
-             {/* <div className="flex items-center justify-center min-h-[60vh] text-center">
+            {/* <div className="flex items-center justify-center min-h-[60vh] text-center">
                 <div className=" rounded-2xl p-10 w-full max-w-2xl ">
                     <FaShoppingCart className="mx-auto text-gray-400 text-6xl mb-6" />
 
@@ -126,36 +135,29 @@ const Cart = () => {
 
                                         <h2 className="text-xl font-semibold mt-2">{item.title}</h2>
 
-                                        <p className="text-[#f8d886] text-base mt-3 flex items-center gap-2"> <span className="text-lg"> <MdWorkspacePremium /> </span> {item.reward}</p>
+                                        <p className="text-[#f8d886] text-base mt-3 flex items-center gap-2"> <span className="text-lg"> <MdWorkspacePremium /> </span> {item.description}</p>
 
-                                        {item.refundable && (
-                                            <p className="text-gray-400 text-sm mt-1">
-                                                Self-Refundable
-                                            </p>
-                                        )}
                                     </div>
 
                                     <div className="flex items-center justify-between mt-4">
                                         <span className="text-gray-400 flex items-center gap-2 text-sm">
                                             <FaWindows /> Playable on PC
                                         </span>
-                                        <div className="flex gap-4 text-sm">
-                                            <button
-                                                onClick={() => handleRemove(item.id)}
-                                                className="text-red-400 hover:text-red-500 transition text-xl"
-                                            >
-                                                <RiDeleteBin6Line />
-                                            </button>
-                                            <button className="text-[#7c63b3] transition text-xl">
-                                                <FaRegHeart />
-                                            </button>
-                                        </div>
+
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col items-end justify-between min-w-[120px]">
-                                    <div className="bg-[#7c63b3] text-white text-xs px-3 py-1 rounded-full">
-                                        -{item.discount}%
+                                    <div className="text-white text-xs px-3 py-1 rounded-full">
+                                        <button
+                                            onClick={() => handleRemove(item.id)}
+                                            className="text-red-400 hover:text-red-500 transition text-xl mr-4"
+                                        >
+                                            <RiDeleteBin6Line />
+                                        </button>
+                                        <button className="text-[#7c63b3] transition text-xl">
+                                            <FaRegHeart />
+                                        </button>
                                     </div>
                                     <div className="text-right">
                                         <p className="line-through text-gray-500 text-sm">
@@ -187,10 +189,7 @@ const Cart = () => {
                             <span>Price</span>
                             <span>₹{totalPrice.toLocaleString()}</span>
                         </div>
-                        <div className="flex justify-between text-white">
-                            <span>Discount</span>
-                            <span>-₹{totalDiscount.toLocaleString()}</span>
-                        </div>
+
                         <div className="flex justify-between text-gray-400">
                             <span>Taxes</span>
                             <span>Calculated at Checkout</span>
