@@ -45,6 +45,51 @@ export default function Home() {
   const navigate = useNavigate()
 
   console.log("Hello Bachho", gameData);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [velocity, setVelocity] = useState(0);
+  const [lastX, setLastX] = useState(0);
+
+  // Momentum effect after mouse up
+  useEffect(() => {
+    let animationFrame;
+    const momentum = () => {
+      if (Math.abs(velocity) > 0.1) {
+        categorySwiperRef.current.scrollLeft -= velocity;
+        setVelocity(velocity * 0.95); // friction
+        animationFrame = requestAnimationFrame(momentum);
+      }
+    };
+    if (!isDragging && Math.abs(velocity) > 0.1) {
+      animationFrame = requestAnimationFrame(momentum);
+    }
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isDragging, velocity]);
+
+  const onMouseDown = (e) => {
+      setIsDragging(true);
+      setStartX(e.pageX - categorySwiperRef.current.offsetLeft);
+      setScrollLeft(categorySwiperRef.current.scrollLeft);
+      setLastX(e.pageX);
+  };
+
+  const onMouseLeave = () => setIsDragging(false);
+  const onMouseUp = () => setIsDragging(false);
+
+  const onMouseMove = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - categorySwiperRef.current.offsetLeft;
+      const walk = (x - startX) * 1.5; // drag speed multiplier
+      categorySwiperRef.current.scrollLeft = scrollLeft - walk;
+
+      // calculate velocity for momentum
+      setVelocity(e.pageX - lastX);
+      setLastX(e.pageX);
+  };
+
+  console.log("Hello Bachho" , gameData);
   const { games } = useSelector((state) => state.game);
   // console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
@@ -183,46 +228,54 @@ export default function Home() {
         <div className=" mx-auto flex flex-col items-center sm:max-w-full">
           <div className='py-4 sm:py-6 md:py-8 lg:py-10 w-full'>
             {/* Tab buttons */}
-            <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10  max-w-[95%] md:max-w-[85%]  mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
-              {/* All Categories Button */}
-              <button
-                className={`
-                  px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                  rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                  transition-all duration-200 ease-out
-                  border border-transparent
-                  whitespace-nowrap
-                  ${activeTab === null
-                    ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                    : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                  }
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                `}
-                onClick={() => handle(null)}
+            <div className="relative max-w-[95%] md:max-w-[85%] mx-auto  mb-6 sm:mb-8 md:mb-10 ">
+              {/* Scrollable + Draggable Categories */}
+              <div
+                ref={categorySwiperRef}
+                className="flex flex-nowrap overflow-x-auto no-scrollbar gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0 cursor-grab active:cursor-grabbing select-none"
+                onMouseDown={onMouseDown}
+                onMouseLeave={onMouseLeave}
+                onMouseUp={onMouseUp}
+                onMouseMove={onMouseMove}
               >
-                All Games
-              </button>
-
-              {cateData?.map((element) => (
+                {/* All Games Button */}
                 <button
-                  key={element?._id}
                   className={`
-                   px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                   rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                   transition-all duration-200 ease-out
-                   border border-transparent
-                   whitespace-nowrap
-                   ${activeTab === element?.categoryName
+                    px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                    rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                    transition-all duration-200 ease-out
+                    border border-transparent
+                    whitespace-nowrap
+                    ${activeTab === null
                       ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
                       : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
                     }
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                 `}
-                  onClick={() => handle(element?.categoryName)}
+                  `}
+                  onClick={() => handle(null)}
                 >
-                  {element?.categoryName}
+                  All Games
                 </button>
-              ))}
+
+                {cateData?.map((element) => (
+                  <button
+                    key={element?._id}
+                    className={`
+                      px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                      rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                      transition-all duration-200 ease-out
+                      border border-transparent
+                      whitespace-nowrap
+                      ${activeTab === element?.categoryName
+                        ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                        : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                      }
+                    `}
+                    onClick={() => handle(element?.categoryName)}
+                  >
+                    {element?.categoryName}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Tab content - Game cards */}
@@ -339,7 +392,7 @@ export default function Home() {
                                 <div>
                                   <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
                                   <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-                                    ₹{element?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                                    ${element?.platforms?.windows?.price?.toLocaleString('en-IN')}
                                   </p>
                                 </div>
                                 <div className='flex items-center gap-2'>
