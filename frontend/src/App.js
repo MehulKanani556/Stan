@@ -1,9 +1,7 @@
 import './App.css';
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
-import { configureStore } from "./Redux/Store";
 import Header from "./header/Header";
 import Footer from "./footer/Footer";
 import Home from "./Pages/Home";
@@ -35,11 +33,9 @@ function AppContent() {
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
   const showFooter  = isAuthPage || location.pathname === "/ggtalks";
   const chatwidegt = location.pathname === "/ggtalks";
-  const { store } = configureStore();
 
   return (
     <>
-      <Provider store={store}>
       {!isAuthPage && <Header />}
         <SnackbarProvider
           maxSnack={3}
@@ -79,19 +75,12 @@ function AppContent() {
         </SnackbarProvider>
 
       {(!showFooter ) && <Footer />}
-      </Provider>
     </>
   );
 }
 
 function App() {
-  const { store } = configureStore();
-  
-  return (
-    <Provider store={store}>
-      <AppContent />
-    </Provider>
-  );
+  return <AppContent />;
 }
 
 export default App;

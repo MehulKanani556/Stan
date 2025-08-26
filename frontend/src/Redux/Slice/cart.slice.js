@@ -1,200 +1,138 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../Utils/axiosInstance";
+import { enqueueSnackbar } from "notistack";
 
 // Async thunks for API calls
-export const getCart = createAsyncThunk(
-    "cart/getCart",
+export const fetchCart = createAsyncThunk(
+    "cart/fetch",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get("/cart");
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data || "Failed to fetch cart");
+            const res = await axiosInstance.get("/cart");
+            return res.data.cart || [];
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
 );
 
 export const addToCart = createAsyncThunk(
-    "cart/addToCart",
-    async ({ gameId, platform, qty = 1 }, { rejectWithValue }) => {
+    "cart/add",
+    async ({ gameId, platform, qty }, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.post("/cart", {
-                gameId,
-                platform,
-                qty,
-            });
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data || "Failed to add to cart");
+            const res = await axiosInstance.post("/cart/add", { gameId, platform, qty });
+            enqueueSnackbar("Added to cart", { variant: "success" });
+            return res.data.cart || [];
+        } catch (err) {
+            // Show specific warning for duplicate items
+            if (err.response?.status === 400) {
+                enqueueSnackbar(err.response?.data?.message || "Game already in cart for this platform", { variant: "warning" });
+            } else if (err.response?.status === 401) {
+                enqueueSnackbar("Please login first to add items to cart", { variant: "error" });
+            } else {
+                enqueueSnackbar(err.response?.data?.message || "Failed to add to cart", { variant: "error" });
+            }
+            return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
 );
 
 export const updateCartItem = createAsyncThunk(
-    "cart/updateCartItem",
+    "cart/updateItem",
     async ({ gameId, platform, qty }, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.put("/cart", {
-                gameId,
-                platform,
-                qty,
-            });
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data || "Failed to update cart item");
+            const res = await axiosInstance.put("/cart/update", { gameId, platform, qty });
+            return res.data.cart || [];
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
 );
 
 export const removeFromCart = createAsyncThunk(
-    "cart/removeFromCart",
+    "cart/remove",
     async ({ gameId, platform }, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.delete("/cart", {
-                data: { gameId, platform },
-            });
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data || "Failed to remove from cart");
+            const res = await axiosInstance.post("/cart/remove", { gameId, platform });
+            enqueueSnackbar("Removed from cart", { variant: "success" });
+            return res.data.cart || [];
+        } catch (err) {
+            enqueueSnackbar(err.response?.data?.message || "Failed to remove from cart", { variant: "error" });
+            return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
 );
 
 export const clearCart = createAsyncThunk(
-    "cart/clearCart",
+    "cart/clear",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.delete("/cart/clear");
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data || "Failed to clear cart");
+            const res = await axiosInstance.post("/cart/clear");
+            return res.data.cart || [];
+        } catch (err) {
+            return rejectWithValue(err.response?.data?.message || err.message);
         }
     }
 );
 
-const initialState = {
-    cart: [],
-    loading: false,
-    error: null,
-    success: false,
-};
-
 const cartSlice = createSlice({
     name: "cart",
-    initialState,
+    initialState: { cart: [], loading: false, error: null },
     reducers: {
-        clearError: (state) => {
-            state.error = null;
-        },
-        clearSuccess: (state) => {
-            state.success = false;
-        },
-        resetCart: (state) => {
+        setClearCart(state) {
             state.cart = [];
-            state.loading = false;
-            state.error = null;
-            state.success = false;
+        },
+        addToCartLocal(state, action) {
+            const { game } = action.payload || {};
+            if (!game) {
+                return;
+            }
+            const alreadyInCart = state.cart.some((item) => item.id === game.id);
+            if (alreadyInCart) {
+                enqueueSnackbar("Game already in cart", { variant: "warning" });
+                return;
+            }
+            state.cart.push(game);
+            enqueueSnackbar("Added to cart", { variant: "success" });
+        },
+        removeFromCartLocal(state, action) {
+            const { gameId } = action.payload || {};
+            state.cart = state.cart.filter((item) => item.id !== gameId);
+            enqueueSnackbar("Removed from cart", { variant: "success" });
+        },
+        clearCartLocal(state) {
+            state.cart = [];
+            enqueueSnackbar("Cart cleared", { variant: "info" });
         },
     },
     extraReducers: (builder) => {
-        // Get Cart
         builder
-            .addCase(getCart.pending, (state) => {
+            .addCase(fetchCart.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
-            .addCase(getCart.fulfilled, (state, action) => {
+            .addCase(fetchCart.fulfilled, (state, action) => {
                 state.loading = false;
-                state.cart = action.payload.cart || [];
-                state.success = true;
+                state.cart = action.payload;
             })
-            .addCase(getCart.rejected, (state, action) => {
+            .addCase(fetchCart.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-                state.success = false;
-            })
-
-            // Add to Cart
-            .addCase(addToCart.pending, (state) => {
-                state.loading = true;
-                state.error = null;
             })
             .addCase(addToCart.fulfilled, (state, action) => {
-                state.loading = false;
-                state.cart = action.payload.cart || [];
-                state.success = true;
-            })
-            .addCase(addToCart.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                state.success = false;
-            })
-
-            // Update Cart Item
-            .addCase(updateCartItem.pending, (state) => {
-                state.loading = true;
-                state.error = null;
+                state.cart = action.payload;
             })
             .addCase(updateCartItem.fulfilled, (state, action) => {
-                state.loading = false;
-                state.cart = action.payload.cart || [];
-                state.success = true;
-            })
-            .addCase(updateCartItem.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                state.success = false;
-            })
-
-            // Remove from Cart
-            .addCase(removeFromCart.pending, (state) => {
-                state.loading = true;
-                state.error = null;
+                state.cart = action.payload;
             })
             .addCase(removeFromCart.fulfilled, (state, action) => {
-                state.loading = false;
-                state.cart = action.payload.cart || [];
-                state.success = true;
-            })
-            .addCase(removeFromCart.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                state.success = false;
-            })
-
-            // Clear Cart
-            .addCase(clearCart.pending, (state) => {
-                state.loading = true;
-                state.error = null;
+                state.cart = action.payload;
             })
             .addCase(clearCart.fulfilled, (state, action) => {
-                state.loading = false;
-                state.cart = [];
-                state.success = true;
-            })
-            .addCase(clearCart.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                state.success = false;
+                state.cart = action.payload;
             });
     },
 });
 
-// Export actions
-export const { clearError, clearSuccess, resetCart } = cartSlice.actions;
+export const { setClearCart, addToCartLocal, removeFromCartLocal, clearCartLocal } = cartSlice.actions;
 
-// Export selectors
-export const selectCart = (state) => state.cart.cart;
-export const selectCartLoading = (state) => state.cart.loading;
-export const selectCartError = (state) => state.cart.error;
-export const selectCartSuccess = (state) => state.cart.success;
-export const selectCartItemCount = (state) => state.cart.cart.length;
-export const selectCartTotal = (state) => {
-    return state.cart.cart.reduce((total, item) => {
-        const price = item.price || 0;
-        const qty = item.qty || 1;
-        return total + (price * qty);
-    }, 0);
-};
 
 export default cartSlice.reducer;
