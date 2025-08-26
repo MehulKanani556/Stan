@@ -205,9 +205,9 @@ const SingleGame = () => {
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   const handleWishList = (id) => {
-     console.log("welcome", id);
-     dispatch(createWishlist(id))
-     
+    console.log("welcome", id);
+    dispatch(createWishlist(id))
+
   }
 
   return (
@@ -371,7 +371,7 @@ const SingleGame = () => {
 
               <div className="">
                 <div className='flex gap-4'>
-                  <button onClick={()=> handleWishList(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                  <button onClick={() => handleWishList(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                     <FaHeart size={16} />
                     <span className="text-xs">Add To WishList</span>
                   </button>

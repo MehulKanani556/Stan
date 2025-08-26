@@ -14,7 +14,7 @@ import ad2 from '../images/ad2.webp';
 import ad3 from '../images/ad3.jpg';
 import ad4 from '../images/ad4.jpg';
 import ad5 from '../images/game2.jpg';
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart , FaRegHeart} from "react-icons/fa";
 
 import game1 from '../images/game1.jpg';
 import game2 from '../images/game2.jpg';
@@ -31,6 +31,8 @@ import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
 import { useNavigate } from 'react-router-dom';
+import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
+import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
@@ -41,16 +43,69 @@ export default function Home() {
   const gameData = useSelector((state) => state?.game?.games)
   const dispatch = useDispatch()
   const cateData = useSelector((state) => state?.game?.category)
+  const wishlist = useSelector((state)=> state.wishlist.items)
   const [mainGameData, setMainGameData] = useState(gameData)
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { wishlistStatus } = useSelector((state) => state.wishlist);
+  
 
-  console.log("Hello Bachho" , gameData);
+  // console.log("Hello Bachho", gameData);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [velocity, setVelocity] = useState(0);
+  const [lastX, setLastX] = useState(0);
+  const [showAddedToCart, setShowAddedToCart] = useState(false);
+  const [addedGameTitle, setAddedGameTitle] = useState("");
+  const cartItems = useSelector((state) => state.cart.cart);
+  console.log("cart",cartItems);
+
+  
+  const prevCartLengthRef = useRef(0);
+
+  // Momentum effect after mouse up
+  useEffect(() => {
+    let animationFrame;
+    const momentum = () => {
+      if (Math.abs(velocity) > 0.1) {
+        categorySwiperRef.current.scrollLeft -= velocity;
+        setVelocity(velocity * 0.95); // friction
+        animationFrame = requestAnimationFrame(momentum);
+      }
+    };
+    if (!isDragging && Math.abs(velocity) > 0.1) {
+      animationFrame = requestAnimationFrame(momentum);
+    }
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isDragging, velocity]);
+
+  const onMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - categorySwiperRef.current.offsetLeft);
+    setScrollLeft(categorySwiperRef.current.scrollLeft);
+    setLastX(e.pageX);
+  };
+
+  const onMouseLeave = () => setIsDragging(false);
+  const onMouseUp = () => setIsDragging(false);
+
+  const onMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - categorySwiperRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // drag speed multiplier
+    categorySwiperRef.current.scrollLeft = scrollLeft - walk;
+
+    // calculate velocity for momentum
+    setVelocity(e.pageX - lastX);
+    setLastX(e.pageX);
+  };
+
+  // console.log("Hello Bachho" , gameData);
   const { games } = useSelector((state) => state.game);
 
   const scrollRef = useRef(null);
   const [isDown, setIsDown] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
 
   // console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
@@ -63,15 +118,23 @@ export default function Home() {
         //  console.log("hihi" , );
         //  setActiveTab(value?.payload[0]?.categoryName)
       })
+      dispatch(fetchWishlist())
+      dispatch(fetchCart())
   }, [])
 
   useEffect(() => {
     dispatch(getAllGames());
+
   }, [dispatch]);
 
   useEffect(() => {
     setMainGameData(gameData)
   }, [gameData])
+
+
+  // useEffect(() => {
+  //   dispatch(addToCart());
+  // }, [dispatch]);
 
   // Add CSS to hide scrollbars
   useEffect(() => {
@@ -189,8 +252,33 @@ export default function Home() {
   }, [isDown, startX, scrollLeft]);
 
 
+  const handleAddWishlist = (ele) =>{
+    // alert("a")
+    dispatch(addToWishlist({gameId :ele._id}));
+  }
+
+  const handleRemoveFromWishlist = (gameId) => {
+    dispatch(removeFromWishlist({ gameId }));
+  };
+  // Track cart changes for notifications
+
+
+  const handleAddToCart = (ele) => {
+    dispatch(addToCart({ gameId: ele._id, platform: "windows", qty:1 }));
+  }
+
   return (
     <>
+      {/* Success Notification */}
+      {showAddedToCart && (
+        <div className="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 animate-slide-in">
+          <div className="flex items-center gap-2">
+            <FaShoppingCart />
+            <span>{addedGameTitle} added to cart!</span>
+          </div>
+        </div>
+      )}
+      
       <section className="">
         <div className="relative w-full">
           <Swiper
@@ -248,22 +336,20 @@ export default function Home() {
                  </button>
                {cateData?.map((element) => (
                 <button
-                  key={element?._id}
                   className={`
-                   px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                   rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                   transition-all duration-200 ease-out
-                   border border-transparent
-                   whitespace-nowrap
-                   ${activeTab === element?.categoryName
+                    px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                    rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                    transition-all duration-200 ease-out
+                    border border-transparent
+                    whitespace-nowrap
+                    ${activeTab === null
                       ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
                       : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
                     }
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                 `}
-                  onClick={() => handle(element?.categoryName)}
+                  `}
+                  onClick={() => handle(null)}
                 >
-                  {element?.categoryName}
+                  All Games
                 </button>
                ))}
               </div>
@@ -371,7 +457,7 @@ export default function Home() {
                                 <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
 
                                 <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-                                  {/* Tags can be added here if needed */}
+
                                 </div>
 
                                 <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
@@ -383,13 +469,49 @@ export default function Home() {
                                 <div>
                                   <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
                                   <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-                                    ₹{element?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                                    ${element?.platforms?.windows?.price?.toLocaleString('en-IN')}
                                   </p>
                                 </div>
-                                <button className='inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 rounded-lg bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] text-white font-medium transition-all duration-300 text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'>
-                                  Buy
-                                  <FaArrowRight size={10} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-                                </button>
+                                <div className='flex items-center gap-2'>
+                                  <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddWishlist(element);
+                                      // handle add to cart logic
+                                    }}
+                                   >
+                                
+                                    {wishlistStatus[element?._id] ? (
+                                      <FaHeart size={16} className="text-white" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveFromWishlist(element?._id);
+                                      }}/>
+                                    ) : (
+                                      <FaRegHeart size={16} className="text-white" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddWishlist(element);
+                                      }}/>
+                                    )}
+                                  </button>
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddToCart(element);                                  
+                                    
+                                    }}
+                                    className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
+                                      cartItems.some(item => item.game._id === element?._id) 
+                                        ? 'bg-green-600 hover:bg-green-700' 
+                                        : 'bg-black/50 hover:bg-black/70'
+                                    }`}
+                                  >
+
+                                    <FaShoppingCart 
+                                      size={16} 
+                                    
+                                    />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </StylishDiv>

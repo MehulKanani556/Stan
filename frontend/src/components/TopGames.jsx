@@ -88,7 +88,7 @@ function TopGames() {
       if(game.length < 5 || freeGame.length < 5 || newGames.length < 5 ){
         var minLength = Math.min(game.length,freeGame.length,newGames.length)
         setLength(minLength);
-        console.log('length',minLength)
+        // console.log('length',minLength)
       }
       else {
         setLength(5);
@@ -164,7 +164,7 @@ function TopGames() {
 
 
                 {/* Games List */}
-                {console.log(section.items , length)}
+                {/* {console.log(section.items , length)} */}
                 <div className="space-y-4 md:space-y-5 lg:space-y-6">
                   {section.items.slice(0,length).map((item, j) => (
                     <GameCard key={j} {...item} />

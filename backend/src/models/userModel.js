@@ -25,6 +25,22 @@ const userSchema = new mongoose.Schema(
         role: { type: String, enum: ["admin", "user"] },
         isAdmin: { type: Boolean, default: false },
         lastLogin: { type: Date, default: null },
+
+        wishlist: [
+            {
+                game: { type: mongoose.Schema.Types.ObjectId, ref: 'game', required: true },
+                addedAt: { type: Date, default: Date.now }
+            }
+        ],
+        // Cart field to store cart items
+        cart: [{
+            game: { type: mongoose.Schema.Types.ObjectId, ref: "game" },
+            platform: { type: String, enum: ["windows", "ios", "android"] },
+            qty: { type: Number, default: 1, min: 1 },
+            price: { type: Number, required: true },
+            name: { type: String },
+            addedAt: { type: Date, default: Date.now }
+        }],
     },
     { timestamps: true }
 );

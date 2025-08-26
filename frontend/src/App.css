@@ -98,6 +98,22 @@ body {
   bottom: -40px !important;
 }
 
+/* Success message animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
 .ds_review_slider .slick-dots li button:before {
   color: rgba(120, 120, 120, 1) !important;
   font-size: 9px;
@@ -448,4 +464,9 @@ html {
     100% {
       background-position: -200% 0;
     }
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }

@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import User from "../models/userModel.js";
+import Game from "../models/Games.model.js";
+
 
 export const addToWishlist = async (req, res) => {
     try {
@@ -14,7 +16,7 @@ export const addToWishlist = async (req, res) => {
         }
 
         // Check if game exists
-        const game = await mongoose.model('game').findById(gameId);
+        const game = await Game.findById(gameId);
         if (!game) {
             return res.status(404).json({
                 status: 404,
@@ -32,6 +34,7 @@ export const addToWishlist = async (req, res) => {
         }
 
         // Check if game is already in wishlist
+
         const existingWishlistItem = userData.wishlist.find(
             item => item.game.toString() === gameId
         );
@@ -120,7 +123,12 @@ export const getWishlist = async (req, res) => {
         const userId = req.user._id;
 
         // Check if user exists and populate wishlist with game details
-        const userData = await User.findById(userId).populate('wishlist.game');
+        const userData = await User.findById(userId).populate({
+            path: 'wishlist.game',
+            populate: {
+                path: 'category'
+            }
+        });
         if (!userData) {
             return res.status(404).json({
                 status: 404,

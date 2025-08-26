@@ -139,7 +139,7 @@ indexRoutes.delete("/hometrailer/:id", UserAuth, deleteTrailer);
 // cart
 indexRoutes.get("/cart", UserAuth, getCart);
 indexRoutes.post("/cart/add", UserAuth, addToCart);
-indexRoutes.put("/cart/update", UserAuth, updateCartItem);
+indexRoutes.put("/cart", UserAuth, updateCartItem);
 indexRoutes.post("/cart/remove", UserAuth, removeFromCart);
 indexRoutes.post("/cart/clear", UserAuth, clearCart);
 
