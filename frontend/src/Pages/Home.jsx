@@ -14,7 +14,7 @@ import ad2 from '../images/ad2.webp';
 import ad3 from '../images/ad3.jpg';
 import ad4 from '../images/ad4.jpg';
 import ad5 from '../images/game2.jpg';
-import { FaArrowRight, FaHeart, FaShoppingCart } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart , FaRegHeart} from "react-icons/fa";
 
 import game1 from '../images/game1.jpg';
 import game2 from '../images/game2.jpg';
@@ -31,6 +31,7 @@ import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
 import { useNavigate } from 'react-router-dom';
+import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
@@ -41,10 +42,14 @@ export default function Home() {
   const gameData = useSelector((state) => state?.game?.games)
   const dispatch = useDispatch()
   const cateData = useSelector((state) => state?.game?.category)
+  const wishlist = useSelector((state)=> state.wishlist.items)
   const [mainGameData, setMainGameData] = useState(gameData)
   const navigate = useNavigate()
+  console.log("wishlist",wishlist);
+  const { wishlistStatus } = useSelector((state) => state.wishlist);
+  
 
-  console.log("Hello Bachho", gameData);
+  // console.log("Hello Bachho", gameData);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -89,7 +94,7 @@ export default function Home() {
       setLastX(e.pageX);
   };
 
-  console.log("Hello Bachho" , gameData);
+  // console.log("Hello Bachho" , gameData);
   const { games } = useSelector((state) => state.game);
   // console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
@@ -102,6 +107,7 @@ export default function Home() {
         //  console.log("hihi" , );
         //  setActiveTab(value?.payload[0]?.categoryName)
       })
+      dispatch(fetchWishlist())
   }, [])
 
   useEffect(() => {
@@ -191,6 +197,15 @@ export default function Home() {
       setMainGameData(gameData);
     }
   }, [gameData]);
+
+  const handleAddWishlist = (ele) =>{
+    // alert("a")
+    dispatch(addToWishlist({gameId :ele._id}));
+  }
+
+  const handleRemoveFromWishlist = (gameId) => {
+    dispatch(removeFromWishlist({ gameId }));
+  };
 
   return (
     <>
@@ -396,8 +411,25 @@ export default function Home() {
                                   </p>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                  <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
-                                    <FaHeart size={16} className="text-white" />
+                                  <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddWishlist(element);
+                                      // handle add to cart logic
+                                    }}
+                                   >
+                                
+                                    {wishlistStatus[element?._id] ? (
+                                      <FaHeart size={16} className="text-white" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveFromWishlist(element?._id);
+                                      }}/>
+                                    ) : (
+                                      <FaRegHeart size={16} className="text-white" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddWishlist(element);
+                                      }}/>
+                                    )}
                                   </button>
                                   <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
                                     <FaShoppingCart size={16} className="text-white" />

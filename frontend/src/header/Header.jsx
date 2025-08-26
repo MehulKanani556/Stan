@@ -24,6 +24,7 @@ import { MdLogout } from "react-icons/md";
 import { decryptData } from '../Utils/encryption';
 
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
+import { fetchWishlist } from '../Redux/Slice/wishlist.slice';
 
 
 export default function Header() {
@@ -34,7 +35,7 @@ export default function Header() {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
-
+    const { items } = useSelector((state) => state.wishlist);
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -47,6 +48,13 @@ export default function Header() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    useEffect(() => {
+        const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
+        if (userId) {
+            dispatch(fetchWishlist());
+        }
+    }, [dispatch, authUser, currentUser]); 
 
     useEffect(() => {
         const userId = authUser?._id || localStorage.getItem("userId");
@@ -128,8 +136,13 @@ export default function Header() {
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 items-center'>
-                                       <NavLink to="/wishlist" className='me-2'>
+                                       <NavLink to="/wishlist" className='me-2 relative'>
                                           <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                          {items.length > 0 && (
+                                            <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                                              {items.length}
+                                            </span>
+                                          )}
                                         </NavLink>
                                         <NavLink to="/cart" className='me-2'>
                                           <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />

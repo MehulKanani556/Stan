@@ -6,6 +6,7 @@ import freeGameSlice from "./Slice/freeGame.slice";
 import gameSlice from "./Slice/game.slice";
 import categorySlice from "./Slice/category.slice";
 import cartSlice from "./Slice/cart.slice";
+import wishlistSlice from './Slice/wishlist.slice';
 
 export const rootReducer = combineReducers({
   auth: authSlice,
@@ -15,4 +16,5 @@ export const rootReducer = combineReducers({
   game: gameSlice,
   category: categorySlice,
   cart: cartSlice,
+  wishlist:wishlistSlice
 });

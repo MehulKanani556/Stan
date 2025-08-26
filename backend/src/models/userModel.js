@@ -25,6 +25,13 @@ const userSchema = new mongoose.Schema(
         role: { type: String, enum: ["admin", "user"] },
         isAdmin: { type: Boolean, default: false },
         lastLogin: { type: Date, default: null },
+
+        wishlist: [
+            {
+                game: { type: mongoose.Schema.Types.ObjectId, ref: 'game', required: true },
+                addedAt: { type: Date, default: Date.now }
+            }
+        ]
     },
     { timestamps: true }
 );
