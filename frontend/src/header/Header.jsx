@@ -34,6 +34,11 @@ export default function Header() {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
+    const [name, setName] = useState(() => {
+        const stored = localStorage.getItem("userName");
+        return stored ? JSON.parse(stored) : "";
+    });
+      
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -50,10 +55,17 @@ export default function Header() {
 
     useEffect(() => {
         const userId = authUser?._id || localStorage.getItem("userId");
-        if (userId && !currentUser) {
+        if (userId && !currentUser) {   
             dispatch(getUserById(userId));
         }
+        if (currentUser?.name) {
+            localStorage.setItem("userName", JSON.stringify(currentUser.name ? currentUser.name : ""));
+            setName(currentUser.name);
+        }
+        
     }, [dispatch, authUser, currentUser]);
+
+
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
@@ -75,8 +87,11 @@ export default function Header() {
         if (id) {
             dispatch(logoutUser(id));
         }
-        // navigate('/login');
+        localStorage.removeItem("userName");
+        setName("")
     };
+
+
 
     return (
         <>
@@ -148,7 +163,7 @@ export default function Header() {
                                             className='text-base cursor-pointer hover:text-[#ab99e1] transition-colors'
                                             onClick={toggleDropdown}
                                         >
-                                            {decryptData(currentUser?.name)}
+                                            {decryptData(name)}
                                         </p>
                                     </div>
 
@@ -207,8 +222,15 @@ export default function Header() {
                                         </div>
                                     )}
                                 </div>
-
-
+                            
+                                <div className='flex gap-2 items-center md:hidden'>
+                                     <NavLink to="/wishlist" className='me-2'>
+                                           <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                         </NavLink>
+                                         <NavLink to="/cart" className='me-2'>
+                                           <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                     </NavLink>
+                                </div>
                                 <label
                                     htmlFor="my-drawer-3"
                                     aria-label="open sidebar"
@@ -285,11 +307,6 @@ export default function Header() {
                                 </div>
 
                         }
-
-
-
-
-
                             <div className='w-full flex flex-col gap-5'>
                                 <div className='w-full mt-4'>
 
@@ -299,17 +316,17 @@ export default function Header() {
                                             <SlBadge className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Rewards Offers
                                         </NavLink>
                                                  
-                                        <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        {/* <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
-                                        </NavLink>
+                                        </NavLink> */}
 
                                         <NavLink to="/GGTalks" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
                                                  
-                                        <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        {/* <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
-                                        </NavLink>
+                                        </NavLink> */}
 
                                         <NavLink to="/guides" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides

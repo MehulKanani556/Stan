@@ -19,13 +19,13 @@ const Footer = () => {
   return (
     <>
       {/* {showGoUp && (
-        <button
+        <button 
           onClick={scrollToTop}
           className="fixed bottom-28 right-6 md:bottom-6 md:right-20 z-30 p-3 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
           title="Go to top"
         >
           <FaArrowUp className="" />
-        </button>
+        </button>   
       )} */}
 
 

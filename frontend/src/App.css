@@ -76,6 +76,14 @@ body {
   }
 }
 
+.ds_home_scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.ds_home_scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .slick-track {
   display: flex !important;
 }
@@ -180,6 +188,11 @@ body {
     position: relative;
     z-index: 2;
  }
+ .ds_mini_slider .slick-current div div svg{
+    /* position: relative; */
+    z-index: 2;
+ }
+
 } 
 
 @media (max-width:426px) {

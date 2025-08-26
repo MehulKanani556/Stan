@@ -46,6 +46,12 @@ export default function Home() {
 
   console.log("Hello Bachho" , gameData);
   const { games } = useSelector((state) => state.game);
+
+  const scrollRef = useRef(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
   // console.log("Hello Bachho" , gameData);
   // console.log("cateData" , cateData);
 
@@ -147,6 +153,42 @@ export default function Home() {
     }
   }, [gameData]);
 
+
+  useEffect(() => {
+    const slider = scrollRef.current;
+    if (!slider) return;
+
+    const mouseDown = (e) => {
+      setIsDown(true);
+      setStartX(e.pageX - slider.offsetLeft);
+      setScrollLeft(slider.scrollLeft);
+    };
+
+    const mouseLeave = () => setIsDown(false);
+    const mouseUp = () => setIsDown(false);
+
+    const mouseMove = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2; // multiplier for speed
+      slider.scrollLeft = scrollLeft - walk;
+    };
+
+    slider.addEventListener("mousedown", mouseDown);
+    slider.addEventListener("mouseleave", mouseLeave);
+    slider.addEventListener("mouseup", mouseUp);
+    slider.addEventListener("mousemove", mouseMove);
+
+    return () => {
+      slider.removeEventListener("mousedown", mouseDown);
+      slider.removeEventListener("mouseleave", mouseLeave);
+      slider.removeEventListener("mouseup", mouseUp);
+      slider.removeEventListener("mousemove", mouseMove);
+    };
+  }, [isDown, startX, scrollLeft]);
+
+
   return (
     <>
       <section className="">
@@ -185,25 +227,26 @@ export default function Home() {
             {/* Tab buttons */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10  max-w-[95%] md:max-w-[85%]  mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
               {/* All Categories Button */}
-              <button
-                className={`
-                  px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                  rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                  transition-all duration-200 ease-out
-                  border border-transparent
-                  whitespace-nowrap
-                  ${activeTab === null
-                    ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                    : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                  }
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                `}
-                onClick={() => handle(null)}
-              >
-                All Games
-              </button>
-
-              {cateData?.map((element) => (
+             
+              <div ref={scrollRef}  className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none">
+                 <button
+                   className={`
+                     px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                     rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                     transition-all duration-200 ease-out
+                     border border-transparent
+                     whitespace-nowrap
+                     ${activeTab === null
+                       ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                       : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                     }
+                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                   `}
+                   onClick={() => handle(null)}
+                 >
+                   All Games
+                 </button>
+               {cateData?.map((element) => (
                 <button
                   key={element?._id}
                   className={`
@@ -222,7 +265,8 @@ export default function Home() {
                 >
                   {element?.categoryName}
                 </button>
-              ))}
+               ))}
+              </div>
             </div>
 
             {/* Tab content - Game cards */}
