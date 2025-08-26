@@ -205,9 +205,9 @@ const SingleGame = () => {
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   const handleWishList = (id) => {
-     console.log("welcome", id);
-     dispatch(createWishlist(id))
-     
+    console.log("welcome", id);
+    dispatch(createWishlist(id))
+
   }
 
   return (
@@ -218,7 +218,7 @@ const SingleGame = () => {
         </div>
 
         <div className="flex flex-col-reverse xl:flex-row md:mt-11">
-          <div className='2xl:w-3/4 xl:w-2/3 w-full '>
+          <div className='2xl:w-3/4 xl:w-2/3 w-full order-2 xl:order-1'>
             <div>
               <Slider {...mainSettings} className='ds_single_slider'>
                 {single?.video?.url ? (
@@ -362,7 +362,7 @@ const SingleGame = () => {
           </div>
 
           {/* right side copntent */}
-          <div className="2xl:w-1/4 xl:w-1/3 w-full xl:pl-6 mt-10 xl:mt-0 ">
+          <div className="2xl:w-1/4 xl:w-1/3 w-full xl:pl-6 mt-10 xl:mt-0 order-1 xl:order-2">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
@@ -371,7 +371,7 @@ const SingleGame = () => {
 
               <div className="">
                 <div className='flex gap-4'>
-                  <button onClick={()=> handleWishList(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                  <button onClick={() => handleWishList(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                     <FaHeart size={16} />
                     <span className="text-xs">Add To WishList</span>
                   </button>

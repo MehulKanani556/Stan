@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
-import { getUserById, editUserProfile } from '../Redux/Slice/user.slice';
+import { getUserById, editUserProfile, logoutUser } from '../Redux/Slice/user.slice';
 import stanUser from "../images/stan-user.jpg";
 import { decryptData } from "../Utils/encryption";
 import { Dialog, Transition } from '@headlessui/react'
@@ -230,6 +230,7 @@ const PlayStore = () => {
 }
 export default function Profile() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { currentUser, loading, error } = useSelector((state) => state.user);
     const { user: authUser } = useSelector((state) => state.auth);
     const [isEditing, setIsEditing] = useState(false);
@@ -317,14 +318,11 @@ export default function Profile() {
         }
     };
 
-    // const handleLogoutClick = () => {
-       
-    //     const id = authUser?._id || currentUser?._id || localStorage.getItem("userId");
-    //     if (id) {
-    //         dispatch(logoutUser(id));
-    //     }
-    //     // navigate('/login');
-    // };
+    const handleLogoutClick = async () => {
+        const id = authUser?._id || currentUser?._id || localStorage.getItem("userId");
+        await dispatch(logoutUser(id));
+        // navigate('/login');
+    };
 
 
 
@@ -481,7 +479,7 @@ export default function Profile() {
                         <IoIosArrowBack className="w-6 h-6" />
                         <span className="text-lg font-medium">Back</span>
                     </NavLink>
-                    
+
                 </div>
             </div>
 
@@ -741,9 +739,9 @@ export default function Profile() {
                                         <button
                                             className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] 
                              hover:from-[#8354f8] hover:to-[#9f78ff]   text-white"
-                                            onClick={() => setActiveMenu("profile")}
+                                            onClick={handleLogoutClick}
                                         >
-                                            logout
+                                            Logout
                                         </button>
                                         <button
                                             className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20"
