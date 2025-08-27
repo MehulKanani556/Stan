@@ -105,7 +105,16 @@ const Cart = () => {
 
                         ))
                     ) : (
-                        <p className="text-gray-400">Your cart is empty.</p>
+                        <div className="flex flex-col items-center justify-center text-center py-20 bg-black/15 rounded-2xl">
+                        <p className="text-2xl font-semibold text-gray-300 mb-4">🛒 Your cart is empty</p>
+                        <p className="text-gray-500 mb-6">Looks like you haven’t added anything yet.</p>
+                        <button
+                          onClick={handleContinueShopping}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
+                        >
+                          Continue Shopping
+                        </button>
+                      </div>
                     )}
                 </div>
 

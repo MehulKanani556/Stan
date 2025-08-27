@@ -458,7 +458,12 @@ export const getGameById = function (req, res) {
 export const getAllGames = function (req, res) {
     (async function () {
         try {
+            
             let query = Game.find();
+         
+                query = query.where(`platforms.windows.available`).equals(true);
+                query = query.where(`platforms.windows.download_link`).ne("");
+        
             // Populate category only if the model is registered to avoid MissingSchemaError
             if (mongoose.modelNames().includes("category")) {
                 query = query.populate("category");
@@ -478,6 +483,9 @@ export const getAllActiveGames = function (req, res) {
     (async function () {
         try {
             let query = Game.find({ isActive: true });
+            
+            query = query.where(`platforms.windows.available`).equals(true);
+            query = query.where(`platforms.windows.download_link`).ne("");
             if (mongoose.modelNames().includes("category")) {
                 query = query.populate("category");
             }
