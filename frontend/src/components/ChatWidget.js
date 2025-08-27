@@ -224,10 +224,10 @@ const ChatWidget = () => {
        {(showGoUp && !isContactModalOpen) && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-24 md:bottom-20  right-6 z-50 p-3 md:p-4 rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
+          className="fixed bottom-28 right-6 md:bottom-6 md:right-20 z-50 p-3  rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
           title="Go to top"
         >
-          <FaArrowUp className="w-5 h-5" />
+          <FaArrowUp />
         </button>
       )}
 
