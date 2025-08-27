@@ -154,7 +154,9 @@ export default function Header() {
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 items-center'>
                                        <NavLink to="/wishlist" className='me-2 relative'>
-                                          <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                          <div className='p-2 border-2 border-[#d1d5db] rounded-full hover:border-[#9ca3af] transition-colors'>
+                                            <FaHeart className='text-[18px] text-[#d1d5db] cursor-pointer' />
+                                          </div>
                                           {items.length > 0 && (
                                             <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                                               {items.length}
@@ -162,7 +164,9 @@ export default function Header() {
                                           )}
                                         </NavLink>
                                         <NavLink to="/cart" className='me-2 relative'>
-                                          <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                          <div className='p-2 border-2 border-[#d1d5db] rounded-full hover:border-[#9ca3af] transition-colors'>
+                                            <FaShoppingCart className='text-[18px] text-[#d1d5db] cursor-pointer' />
+                                          </div>
                                           {cartItems.length > 0 && (
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                                               {cartItems.length}

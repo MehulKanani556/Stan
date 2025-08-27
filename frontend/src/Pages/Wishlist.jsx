@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FaWindows } from "react-icons/fa";
+import { FaShoppingCart, FaWindows } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
@@ -21,12 +21,17 @@ const Wishlist = () => {
     dispatch(removeFromWishlist({ gameId: id }));
   };
 
-  const handleAddToCart = (ele)=>{  
-    
-    dispatch(addToCart({ gameId: ele.game._id, platform: "windows", qty:1 }));    
+  const handleAddToCart = (ele) => {
+
+    dispatch(addToCart({ gameId: ele.game._id, platform: "windows", qty: 1 }));
   }
-  const handleRemoveFromCart= (gameId) => {
-    dispatch(removeFromCart({ gameId:gameId._id ,platform:"windows"}));
+  const handleRemoveFromCart = (gameId) => {
+    dispatch(removeFromCart({ gameId: gameId._id, platform: "windows" }));
+  };
+
+  const handleContinueShopping = () => {
+    // You can add navigation logic here if needed
+    navigate("/store")
   };
 
   return (
@@ -105,7 +110,21 @@ const Wishlist = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-400 text-lg">Your wishlist is empty.</p>
+            <div className="w-full">
+              <div className="flex flex-col items-center justify-center text-center bg-white/5 border border-white/10 rounded-2xl p-10 py-16">
+                <div className="w-28 h-28 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+                  <FaShoppingCart className="w-14 h-14 text-purple-300" />
+                </div>
+                <h3 className="text-2xl font-semibold mb-2">Your wishlist is empty</h3>
+                <p className="text-gray-400 mb-6 max-w-md">Looks like you haven’t added anything yet. Discover top titles and exclusive deals in the store.</p>
+                <button
+                  onClick={handleContinueShopping}
+                  className="bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold px-6 py-3 rounded-xl active:scale-105 transition shadow-lg shadow-purple-900/20"
+                >
+                  Browse the Store
+                </button>
+              </div>
+            </div>
           )}
         </div>
 
@@ -121,10 +140,10 @@ const Wishlist = () => {
           </p>
 
           <div className="flex flex-col gap-3">
-            <button onClick={()=>navigate("/store")} className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
+            <button onClick={() => navigate("/store")} className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
               Explore More Games
             </button>
-            <button onClick={()=>navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-purple-300 hover:text-white hover:bg-purple-600/30 transition font-semibold py-3 rounded-xl">
+            <button onClick={() => navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-purple-300 hover:text-white hover:bg-purple-600/30 transition font-semibold py-3 rounded-xl">
               View Cart
             </button>
           </div>

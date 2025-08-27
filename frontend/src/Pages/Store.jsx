@@ -97,14 +97,42 @@ const Store = () => {
   const handleRemoveFromWishlist = (gameId) => {
     dispatch(removeFromWishlist({ gameId }));
   };
+
+  const handleAllGames = (title) => {
+    switch (title) {
+      case "All Games":
+        navigate('/allGames');
+        break;
+
+    }
+  };
+
   const GameSection = ({ title, games = [], sectionRef }) => (
     <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
       <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
         <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
-        <FaArrowRight
-          className='text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white/80 hover:text-white transition-colors cursor-pointer'
-          onClick={() => scrollRight(sectionRef)}
-        />
+        <div className="flex items-center gap-3">
+          <button
+            className={`
+                     px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                     rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                     transition-all duration-200 ease-out
+                     border border-transparent
+                     whitespace-nowrap
+                    
+                bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300
+                
+                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                   `}
+            onClick={() => handleAllGames(title)}
+          >
+            All Games
+          </button>
+          <FaArrowRight
+            className='text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white/80 hover:text-white transition-colors cursor-pointer'
+            onClick={() => scrollRight(sectionRef)}
+          />
+        </div>
       </div>
 
       <div
@@ -149,26 +177,8 @@ const Store = () => {
                 alt={game?.title || 'Game'}
                 className='w-full h-full object-cover'
               />
-              <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
-
-              <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-                {/* Tags can be added here if needed */}
-              </div>
-
-              <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
-                <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{game?.title}</p>
-              </div>
-            </div>
-
-            <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
-              <div>
-                <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
-                <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-                  ${Number(priceValue).toLocaleString('en-IN')}
-                </p>
-              </div>
-              <div className='flex items-center gap-2'>
-                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+              <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'>
+                <button className=' absolute top-2 sm:top-3 right-2 sm:right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
                   onClick={(e) => {
                     e.stopPropagation();
                     handleAddWishlist(game);
@@ -188,13 +198,32 @@ const Store = () => {
                     }} />
                   )}
                 </button>
+              </div>
+
+              <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
+                {/* Tags can be added here if needed */}
+              </div>
+
+              <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
+                <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{game?.title}</p>
+              </div>
+            </div>
+
+            <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
+              <div>
+                <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
+                <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
+                  ${Number(priceValue).toLocaleString('en-IN')}
+                </p>
+              </div>
+              <div className='flex items-center gap-2'>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleAddToCart(game);
 
                   }}
-                  className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${cartItems.some(item => item.game._id === game?._id)
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 hover:scale-110 bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold ${cartItems.some(item => item.game._id === game?._id)
                     ? 'bg-green-600 hover:bg-green-700'
                     : 'bg-black/50 hover:bg-black/70'
                     }`}
@@ -202,8 +231,8 @@ const Store = () => {
 
                   <FaShoppingCart
                     size={16}
-
                   />
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -248,6 +277,15 @@ const Store = () => {
         </div>
 
         {/* All Games Section (from API) */}
+        <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
+          <GameSection
+            title="All Games"
+            games={Array.isArray(games) ? games : []}
+            sectionRef={scrollContainerRefs.action}
+            loading={loading}
+            error={error}
+          />
+        </div>
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Trending Games"

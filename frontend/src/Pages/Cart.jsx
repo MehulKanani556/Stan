@@ -105,7 +105,21 @@ const Cart = () => {
 
                         ))
                     ) : (
-                        <p className="text-gray-400">Your cart is empty.</p>
+                        <div className="w-full">
+                            <div className="flex flex-col items-center justify-center text-center bg-white/5 border border-white/10 rounded-2xl p-10 py-16">
+                                <div className="w-28 h-28 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+                                    <FaShoppingCart className="w-14 h-14 text-purple-300" />
+                                </div>
+                                <h3 className="text-2xl font-semibold mb-2">Your cart is empty</h3>
+                                <p className="text-gray-400 mb-6 max-w-md">Looks like you haven’t added anything yet. Discover top titles and exclusive deals in the store.</p>
+                                <button
+                                    onClick={handleContinueShopping}
+                                    className="bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold px-6 py-3 rounded-xl active:scale-105 transition shadow-lg shadow-purple-900/20"
+                                >
+                                    Browse the Store
+                                </button>
+                            </div>
+                        </div>
                     )}
                 </div>
 
