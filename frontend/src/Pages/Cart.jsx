@@ -11,6 +11,7 @@ import game3 from "../images/game3.jpg";
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCartLocal, clearCartLocal, fetchCart, removeFromCart, clearCart } from "../Redux/Slice/cart.slice";
 import { useNavigate } from "react-router-dom";
+import { createOrder, verifyPayment } from "../Redux/Slice/Payment.slice";
 
 
 const Cart = () => {
@@ -46,6 +47,52 @@ const Cart = () => {
         // You can add navigation logic here if needed
         navigate("/store")
     };
+
+    const handleCheckout = async () => {
+
+        const items = (Array.isArray(cartItems) ? cartItems.map(it => ({
+          game: it.game?._id || it.game,
+          name: it.name,
+          platform: it.platform,
+          price: Number(it.price || it?.game?.platforms?.[it.platform]?.price || 0),
+        })) : []);
+        const amount = items.reduce((sum, it) => sum + it.price, 0);
+    
+        // 1. Create order (calls backend)
+        const resultAction = await dispatch(createOrder({ items, amount }));
+        if (createOrder.fulfilled.match(resultAction)) {
+          const { razorpayOrder, order } = resultAction.payload;
+    
+          const options = {
+            key: "rzp_test_hN631gyZ1XbXvp",
+            amount: razorpayOrder.amount,
+            currency: razorpayOrder.currency,
+            name: "Yoyo",
+            description: "Game Purchase",
+            order_id: razorpayOrder.id,
+            // image: "/logo192.png",
+            handler: function (response) {
+    
+              dispatch(verifyPayment({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                orderId: order._id,
+              }));
+            },
+            prefill: {
+              name:" user.fullName",
+              email:" user.email",
+            },
+            theme: {
+              color: "#7c3aed",
+            },
+          };
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+        }
+      };
+    
 
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
@@ -146,7 +193,8 @@ const Cart = () => {
                     </div>
 
                     <div className="gap-4">
-                        <button className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
+                        <button onClick={handleCheckout} className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
+
                             Proceed to Checkout
                         </button>
                         <button
