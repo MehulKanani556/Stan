@@ -58,7 +58,7 @@ export default function Home() {
   const [showAddedToCart, setShowAddedToCart] = useState(false);
   const [addedGameTitle, setAddedGameTitle] = useState("");
   const cartItems = useSelector((state) => state.cart.cart);
-  console.log("cart",cartItems);
+  // console.log("cart",cartItems);
 
   
   const prevCartLengthRef = useRef(0);
@@ -500,7 +500,7 @@ export default function Home() {
                                     
                                     }}
                                     className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
-                                      cartItems.some(item => item.game._id === element?._id) 
+                                      cartItems.some(item => item.game?._id === element?._id) 
                                         ? 'bg-green-600 hover:bg-green-700' 
                                         : 'bg-black/50 hover:bg-black/70'
                                     }`}

@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeFromCartLocal, clearCartLocal, fetchCart, removeFromCart, clearCart } from "../Redux/Slice/cart.slice";
 import { useNavigate } from "react-router-dom";
 
+
 const Cart = () => {
 
     const dispatch = useDispatch();
@@ -29,9 +30,11 @@ const Cart = () => {
     );
     const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
 
-    const handleRemove = (id) => {
+    const handleRemove = (item) => {
         // alert(id)
-        dispatch(removeFromCart({ gameId: id,platform:"windows" }));
+        console.log("aaa",item);
+        
+        dispatch(removeFromCart({ gameId: item.game._id,platform:"windows" }));
     };
 
     const handleClearCart = () => {
@@ -88,7 +91,7 @@ const Cart = () => {
                                 <div className="flex flex-col items-end justify-between min-w-[120px]">
                                     <div className="text-white text-xs px-3 py-1 rounded-full">
                                         <button
-                                            onClick={() => handleRemove(item._id)}
+                                            onClick={() => handleRemove(item)}
                                             className="text-red-400 hover:text-red-500 transition text-xl mr-4"
                                         >
                                             <RiDeleteBin6Line />

@@ -11,17 +11,15 @@ import '../css/Store.css';
 import { EffectFade, Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import game1 from '../images/game1.jpg';
-import game2 from '../images/game2.jpg';
-import game3 from '../images/game3.jpg';
-import game4 from '../images/game4.webp';
-import game5 from '../images/game5.jpg';
-import game6 from '../images/game6.jpg';
-import { FaArrowRight, FaHeart, FaShoppingCart } from "react-icons/fa";
+
+import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import { getAllGames, getPopularGames, getTopGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../Redux/Slice/category.slice';
 import { useNavigate } from 'react-router-dom';
 import StylishDiv from '../components/StylishDiv';
+import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
+import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 
 
 const Store = () => {
@@ -33,28 +31,19 @@ const Store = () => {
   const loading = useSelector((state) => state.game.loading);
   const error = useSelector((state) => state.game.error);
   const navigate = useNavigate();
+  const cartItems = useSelector((state) => state.cart.cart);
+  const { wishlistStatus } = useSelector((state) => state.wishlist);
 
-  // console.log(games);
-  console.log(games, "all games");
-  console.log("topGames:", topGames);
-  console.log("topGames length:", topGames?.length);
-  console.log("topGames isArray:", Array.isArray(topGames));
-  console.log("loading:", loading);
-  console.log("error:", error);
-  console.log("Redux state:", { games, PopularGames, topGames, loading, error });
 
 
   useEffect(() => {
     dispatch(getAllGames());
-  }, []);
-
-  useEffect(() => {
+    dispatch(fetchCart())
     dispatch(getPopularGames());
-  }, []);
-
-  useEffect(() => {
+    dispatch(fetchWishlist())
     dispatch(getAllCategories());
   }, []);
+
 
   useEffect(() => {
     try {
@@ -97,7 +86,17 @@ const Store = () => {
       ref.current.scrollBy({ left: 300, behavior: 'smooth' });
     }
   };
+  const handleAddToCart = (ele) => {
+    dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
+  }
+  const handleAddWishlist = (ele) => {
+    // alert("a")
+    dispatch(addToWishlist({ gameId: ele._id }));
+  }
 
+  const handleRemoveFromWishlist = (gameId) => {
+    dispatch(removeFromWishlist({ gameId }));
+  };
   const GameSection = ({ title, games = [], sectionRef }) => (
     <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
       <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
@@ -169,11 +168,42 @@ const Store = () => {
                 </p>
               </div>
               <div className='flex items-center gap-2'>
-                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
-                  <FaHeart size={16} className="text-white" />
+                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddWishlist(game);
+                    // handle add to cart logic
+                  }}
+                >
+
+                  {wishlistStatus[game?._id] ? (
+                    <FaHeart size={16} className="text-white" onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFromWishlist(game?._id);
+                    }} />
+                  ) : (
+                    <FaRegHeart size={16} className="text-white" onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddWishlist(game);
+                    }} />
+                  )}
                 </button>
-                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
-                  <FaShoppingCart size={16} className="text-white" />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(game);
+
+                  }}
+                  className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${cartItems.some(item => item.game._id === game?._id)
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-black/50 hover:bg-black/70'
+                    }`}
+                >
+
+                  <FaShoppingCart
+                    size={16}
+
+                  />
                 </button>
               </div>
             </div>
