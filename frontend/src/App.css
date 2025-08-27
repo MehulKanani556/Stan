@@ -436,3 +436,28 @@ html {
       background-position: -200% 0;
     }
   }
+
+
+  /* Add in your globals.css or index.css */
+.v-scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.v-scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* global.css */
+.v-scrollbar-hide  option {
+  padding: 10px !important;
+  background-color: #211e46 !important;
+  color: white !important;
+}
+
+
+.v-scrollbar-hide  {
+    /* around 5 items */
+    max-height: 200px !important;  
+  overflow-y: auto !important;
+}
