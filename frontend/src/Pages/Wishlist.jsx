@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FaWindows } from "react-icons/fa";
+import { FaShoppingCart, FaWindows } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
@@ -21,12 +21,17 @@ const Wishlist = () => {
     dispatch(removeFromWishlist({ gameId: id }));
   };
 
-  const handleAddToCart = (ele)=>{  
-    
-    dispatch(addToCart({ gameId: ele.game._id, platform: "windows", qty:1 }));    
+  const handleAddToCart = (ele) => {
+
+    dispatch(addToCart({ gameId: ele.game._id, platform: "windows", qty: 1 }));
   }
-  const handleRemoveFromCart= (gameId) => {
-    dispatch(removeFromCart({ gameId:gameId._id ,platform:"windows"}));
+  const handleRemoveFromCart = (gameId) => {
+    dispatch(removeFromCart({ gameId: gameId._id, platform: "windows" }));
+  };
+
+  const handleContinueShopping = () => {
+    // You can add navigation logic here if needed
+    navigate("/store")
   };
 
   return (
@@ -130,10 +135,10 @@ const Wishlist = () => {
           </p>
 
           <div className="flex flex-col gap-3">
-            <button onClick={()=>navigate("/store")} className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
+            <button onClick={() => navigate("/store")} className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
               Explore More Games
             </button>
-            <button onClick={()=>navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-purple-300 hover:text-white hover:bg-purple-600/30 transition font-semibold py-3 rounded-xl">
+            <button onClick={() => navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-purple-300 hover:text-white hover:bg-purple-600/30 transition font-semibold py-3 rounded-xl">
               View Cart
             </button>
           </div>
