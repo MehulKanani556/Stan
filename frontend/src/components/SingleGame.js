@@ -426,16 +426,25 @@ const SingleGame = () => {
           <div className="2xl:w-1/4 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
-                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
+                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
               </div>
               <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
 
               <div className="">
                 <div className='flex gap-4'>
                   {wishlistStatus[single?._id] ? (
-                    <button onClick={() => handleRemoveFromWishlist(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                    <button
+                      onClick={() => handleRemoveFromWishlist(single._id)}
+                      className="w-full flex items-center gap-2 
+                               bg-gradient-to-r from-green-500 to-green-700 
+                               hover:from-green-600 hover:to-green-800 
+                               active:scale-95 
+                               text-white font-bold py-3 px-4 mb-6 
+                               rounded-xl shadow-md hover:shadow-lg 
+                               transition-all duration-300 ease-in-out"
+                    >
                       <FaHeart size={16} />
-                      <span className="text-xs">Remove to WishList</span>
+                      <span className="text-xs">WishListed</span>
                     </button>
                   ) : (
 
@@ -446,9 +455,15 @@ const SingleGame = () => {
                   )}
                   {/* Conditional rendering for Add/Remove to Cart */}
                   {cartItems.some(item => item.game?._id === single?._id) ? (
-                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 
+                               bg-gradient-to-r from-green-500 to-green-700 
+                               hover:from-green-600 hover:to-green-800 
+                               active:scale-95 
+                               text-white font-bold py-3 px-4 mb-6 
+                               rounded-xl shadow-md hover:shadow-lg 
+                               transition-all duration-300 ease-in-out">
                       <FaShoppingCart size={16} />
-                      <span className="text-xs">Remove From Cart</span>
+                      <span className="text-xs">Added to cart</span>
                     </button>
                   ) : (
                     <button onClick={() => handleAddToCart(single)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
@@ -457,7 +472,7 @@ const SingleGame = () => {
                     </button>
                   )}
                 </div>
-                <button onClick={()=>handleCheckout()} className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Buy Now
                 </button>
               </div>

@@ -216,25 +216,21 @@ const Store = () => {
                   ${Number(priceValue).toLocaleString('en-IN')}
                 </p>
               </div>
-              <div className='flex items-center gap-2'>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddToCart(game);
-
-                  }}
-                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 hover:scale-110 bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold ${cartItems.some(item => item.game._id === game?._id)
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-black/50 hover:bg-black/70'
-                    }`}
-                >
-
-                  <FaShoppingCart
-                    size={16}
-                  />
-                  Add to Cart
-                </button>
-              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart(game);
+                }}
+                disabled={cartItems.some(item => item.game?._id === game?._id)} // ✅ use game
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-white font-semibold
+    ${cartItems.some(item => item.game?._id === game?._id)
+                    ? 'bg-green-600 cursor-not-allowed opacity-80'
+                    : 'bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:scale-110 hover:from-[#7a42ff] hover:to-[#c4aaff]'
+                  }`}
+              >
+                <FaShoppingCart size={16} />
+                {cartItems.some(item => item.game?._id === game?._id) ? "Added to Cart" : "Add to Cart"}
+              </button>
             </div>
           </div>
         </StylishDiv>
