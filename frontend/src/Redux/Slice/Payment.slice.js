@@ -10,7 +10,6 @@ const initialStatepayment = {
   loading: false,
   clientSecret: "",
   orders: [],
-  razorpayOrder: null,
   paymentStatus: null,
   error: null,
 };
@@ -68,7 +67,7 @@ export const createpayment = createAsyncThunk(
   }
 );
 
-// 1. Create order (calls backend to create Razorpay order and DB order)
+// Create order (calls backend to create Stripe Payment Intent and DB order)
 export const createOrder = createAsyncThunk(
   "payment/createOrder",
   async ({ items, amount }, { rejectWithValue }) => {
@@ -86,18 +85,16 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-// 2. Verify payment (calls backend to verify Razorpay payment)
+// Verify payment (calls backend to confirm Stripe Payment Intent)
 export const verifyPayment = createAsyncThunk(
   "payment/verifyPayment",
   async (
-    { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId },
+    { paymentIntentId, orderId },
     { dispatch, rejectWithValue }
   ) => {
     try {
       const response = await axiosInstance.post("/order/verify", {
-        razorpay_order_id,
-        razorpay_payment_id,
-        razorpay_signature,
+        paymentIntentId,
         orderId,
       });
       dispatch(setClearCart());
@@ -187,7 +184,7 @@ const paymentSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = action.payload.order;
-        state.razorpayOrder = action.payload.razorpayOrder;
+        state.clientSecret = action.payload.clientSecret;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
