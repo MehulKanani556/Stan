@@ -30,7 +30,7 @@ import MultiHome from '../components/MultiHome';
 import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
 
@@ -124,7 +124,7 @@ export default function Home() {
   useEffect(() => {
     dispatch(getAllGames());
 
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     setMainGameData(gameData)
@@ -413,7 +413,7 @@ export default function Home() {
                     breakpoints={{
                       320: { slidesPerView: 1, spaceBetween: 8 },
                       425: { slidesPerView: 2, spaceBetween: 10 },
-                      500: { slidesPerView: 2, spaceBetween: 10 },
+                      556: { slidesPerView: 2, spaceBetween: 10 },
                       640: { slidesPerView: 2, spaceBetween: 12 },
                       768: { slidesPerView: 2.5, spaceBetween: 14 },
                       1024: { slidesPerView: 3, spaceBetween: 14 },
@@ -545,13 +545,15 @@ export default function Home() {
             <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
               All of our games, in their most premium editions.
             </p>
-            <button className="bg-gradient-to-r from-purple-400 to-purple-600
+            <Link to='/store'>
+              <button className="bg-gradient-to-r from-purple-400 to-purple-600
                 hover:from-purple-500 hover:to-purple-700 font-semibold
                 text-sm py-1 px-3 sm:text-base sm:py-2 sm:px-4 md:py-2.5 md:px-6
                 rounded-full shadow-md transition-all duration-300
                 hover:scale-105 active:scale-95">
-              Buy Now
-            </button>
+                Buy Now
+              </button>
+            </Link>
           </div>
         </section>
       </section>

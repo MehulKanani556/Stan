@@ -15,7 +15,7 @@ const Trailer = () => {
 
   useEffect(() => {
     dispatch(getHomeTrailer());
-  }, [dispatch]);
+  }, []);
 
   const handleSlideChange = (swiper) => {
     videoRefs.current.forEach((video, index) => {

@@ -27,6 +27,9 @@ const initialState = {
   loggedIn: false,
   isLoggedOut: false,
   message: null,
+  name: localStorage.getItem("userName")
+    ? JSON.parse(localStorage.getItem("userName"))
+    : "",
 };
 
 
@@ -463,12 +466,13 @@ export const muteChat = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
-  async (id, { dispatch, rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
 
      
         localStorage.removeItem("userId");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
+        localStorage.removeItem("userName");
 
         // dispatch(setAlert({ text: response.data.message, color: 'success' }));
         enqueueSnackbar( "Logged out successfully", { variant: "success" });
@@ -507,6 +511,14 @@ const userSlice = createSlice({
     },
     setCurrentUser: (state, action) => {
       state.currentUser = action.payload;
+    },
+    setUser: (state, action) => {
+      state.name = action.payload?.name || "";
+      localStorage.setItem("userName", JSON.stringify(state.name));
+    },
+    clearUser: (state) => {
+      state.user = null;
+      state.name = "";
     },
   },
   extraReducers: (builder) => {
@@ -758,9 +770,10 @@ const userSlice = createSlice({
         state.message = action.payload?.message || "Logged out successfully";
       })
       .addCase(logoutUser.rejected, (state, action) => {
-        state.error = action.payload.message;
-        state.message = action.payload?.message || "Logout Failed";
+        state.error = action.payload?.message || action.error?.message || "Something went wrong";
+        state.message = action.payload?.message || action.error?.message || "Logout Failed";
       })
+      
       // GetUserById cases
       .addCase(getUserById.pending, (state) => {
         state.loading = true;
@@ -799,5 +812,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, clearUsers, clearCurrentUser, setCurrentUser } = userSlice.actions;
+export const { logout, clearUsers, clearCurrentUser, setCurrentUser  , clearUser , setUser} = userSlice.actions;
 export default userSlice.reducer;
