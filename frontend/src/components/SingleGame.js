@@ -18,6 +18,7 @@ import { createWishlist, getGameById } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go";
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
+import { createOrder, verifyPayment } from '../Redux/Slice/Payment.slice'
 
 
 const SingleGame = () => {
@@ -226,9 +227,60 @@ const SingleGame = () => {
   const handleRemoveFromWishlist = (gameId) => {
     dispatch(removeFromWishlist({ gameId }));
   };
-  const handleRemoveFromCart =(id)=>{
-    dispatch(removeFromCart({ gameId: id,platform:"windows" }));
+  const handleRemoveFromCart = (id) => {
+    dispatch(removeFromCart({ gameId: id, platform: "windows" }));
   }
+  console.log(  {
+    game: single._id,
+    name: single.title,
+    platform: "windows", // Assuming "windows" as a default platform
+    price: Number(single.platforms?.windows?.price || 0),
+    amount: single.platforms?.windows?.price 
+  });
+  
+  const handleCheckout = async () => {
+
+    // 1. Create order (calls backend)
+    const resultAction = await dispatch(createOrder({ items: [
+      {
+        game: single._id,
+        name: single.title,
+        platform: "windows", // Assuming "windows" as a default platform
+        price: Number(single.platforms?.windows?.price || 0),
+      }
+    ], amount: single.platforms?.windows?.price || 0 }));
+    if (createOrder.fulfilled.match(resultAction)) {
+      const { razorpayOrder, order } = resultAction.payload;
+
+      const options = {
+        key: "rzp_test_hN631gyZ1XbXvp",
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "Yoyo",
+        description: "Game Purchase",
+        order_id: razorpayOrder.id,
+        // image: "/logo192.png",
+        handler: function (response) {
+
+          dispatch(verifyPayment({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            orderId: order._id,
+          }));
+        },
+        prefill: {
+          name: " user.fullName",
+          email: " user.email",
+        },
+        theme: {
+          color: "#7c3aed",
+        },
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    }
+  };
 
   return (
     <div className=''>
@@ -404,7 +456,7 @@ const SingleGame = () => {
                     </button>
                   )}
                   {/* Conditional rendering for Add/Remove to Cart */}
-                  {  cartItems.some(item => item.game?._id === single?._id)? (
+                  {cartItems.some(item => item.game?._id === single?._id) ? (
                     <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                       <FaShoppingCart size={16} />
                       <span className="text-xs">Remove From Cart</span>
@@ -416,7 +468,7 @@ const SingleGame = () => {
                     </button>
                   )}
                 </div>
-                <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                <button onClick={()=>handleCheckout()} className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Buy Now
                 </button>
               </div>
