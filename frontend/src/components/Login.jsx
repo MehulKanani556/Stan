@@ -48,11 +48,11 @@ const Login = () => {
       },
       render: () => (
         <>
-          <Field name="email" type="email" placeholder="Email" className="input input-bordered w-full text-black" />
+          <Field name="email" type="email" placeholder="Email" className="input input-bordered w-full" />
           <ErrorMessage name="email" component="div" className="text-red-500" />
 
           <div className="relative">
-            <Field name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="input input-bordered w-full text-black" />
+            <Field name="password" type={showPassword ? "text" : "password"} placeholder="Password" className="input input-bordered w-full " />
             <button
               type="button"
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 z-50"
