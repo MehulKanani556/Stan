@@ -19,3 +19,4 @@ const CartInitializer = () => {
 };
 
 export default CartInitializer;
+

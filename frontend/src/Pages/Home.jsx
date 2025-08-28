@@ -194,19 +194,22 @@ export default function Home() {
   ];
 
 
-  const handle = (cate) => {
-    setActiveTab(cate)
-    if (cate === null) {
-      setMainGameData(gameData)
+  const handle = (cateId) => {
+    setActiveTab(cateId);
+    if (!cateId) {
+      setMainGameData(gameData); // Show all games
+    } else {
+      const filtered = gameData?.filter(
+        (game) => game?.category?._id === cateId
+      );
+      setMainGameData(filtered);
     }
-    else {
-      const filter = gameData?.filter((ele) => {
-        return ele?.category?.categoryName === cate
-      })
-      console.log("YESYE", filter);
-      setMainGameData(filter)
+
+    // Reset swiper to first slide after category change
+    if (gameSwiperRef.current && typeof gameSwiperRef.current.slideTo === 'function') {
+      gameSwiperRef.current.slideTo(0);
     }
-  }
+  };
 
   // Set initial state to show all games
   useEffect(() => {
@@ -309,46 +312,39 @@ export default function Home() {
           </Swiper>
         </div>
 
-        <div className=" mx-auto flex flex-col items-center sm:max-w-full">
-          <div className='py-4 sm:py-6 md:py-8 lg:py-10 w-full'>
-            {/* Tab buttons */}
-            <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10  max-w-[95%] md:max-w-[85%]  mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
-              {/* All Categories Button */}
-
-              <div ref={scrollRef} className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none">
+        <div className="mx-auto flex flex-col items-center sm:max-w-full">
+          <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+            <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
+              <div
+                ref={scrollRef}
+                className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none"
+              >
+                {/* All Games */}
                 <button
-                  className={`
-                     px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                     rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                     transition-all duration-200 ease-out
-                     border border-transparent
-                     whitespace-nowrap
-                     ${activeTab === null
+                  className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                    rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                    transition-all duration-200 ease-out border border-transparent whitespace-nowrap
+                    ${activeTab === null
                       ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                    }
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                   `}
+                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'}
+                  `}
                   onClick={() => handle(null)}
                 >
                   All Games
                 </button>
+
+                {/* Dynamic Categories */}
                 {cateData?.map((element) => (
                   <button
-                    key={element._id || element.id}
-                    className={`
-                    px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                    rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                    transition-all duration-200 ease-out
-                    border border-transparent
-                    whitespace-nowrap
-                    ${activeTab === element._id || activeTab === element.id
+                    key={element._id}
+                    className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                      rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                      transition-all duration-200 ease-out border border-transparent whitespace-nowrap
+                      ${activeTab === element._id
                         ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                        : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                      }
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                  `}
-                    onClick={() => handle(element._id || element.id)}
+                        : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'}
+                    `}
+                    onClick={() => handle(element._id)}
                   >
                     {element.name || element.categoryName}
                   </button>
@@ -525,6 +521,115 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Game Cards */}
+            <Swiper
+              modules={[Navigation]}
+              spaceBetween={12}
+              slidesPerView={1.1}
+              breakpoints={{
+                320: { slidesPerView: 1, spaceBetween: 8 },
+                425: { slidesPerView: 2, spaceBetween: 10 },
+                500: { slidesPerView: 2, spaceBetween: 10 },
+                640: { slidesPerView: 2, spaceBetween: 12 },
+                768: { slidesPerView: 2.5, spaceBetween: 14 },
+                1024: { slidesPerView: 3, spaceBetween: 14 },
+                1280: { slidesPerView: 3.5, spaceBetween: 14 },
+                1480: { slidesPerView: 4.2, spaceBetween: 16 },
+              }}
+              style={{ padding: '20px 4px' }}
+              className="game-swiper"
+              ref={gameSwiperRef}
+              onSwiper={(swiper) => {
+                gameSwiperRef.current = swiper;
+                setTimeout(() => {
+                  setIsBeginning(swiper.isBeginning);
+                  setIsEnd(swiper.isEnd);
+                }, 100);
+              }}
+              onSlideChange={(swiper) => {
+                setTimeout(() => {
+                  setIsBeginning(swiper.isBeginning);
+                  setIsEnd(swiper.isEnd);
+                }, 50);
+              }}
+              onResize={(swiper) => {
+                setTimeout(() => {
+                  setIsBeginning(swiper.isBeginning);
+                  setIsEnd(swiper.isEnd);
+                }, 100);
+              }}
+            >
+              {mainGameData?.map((element) => (
+                <SwiperSlide key={element?._id}>
+                  <div
+                    onClick={() => navigate(`/single/${element?._id}`)}
+                    className="w-64 sm:w-72 md:w-80 lg:w-96 cursor-pointer"
+                  >
+                    <StylishDiv>
+                      <div className="group relative overflow-hidden transition-all duration-300 w-full">
+                        <div className="relative w-full h-40 sm:h-56 md:h-64 lg:h-72 overflow-hidden">
+                          <img
+                            src={element?.cover_image?.url}
+                            alt={element?.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90">
+                            <button
+                              className="absolute top-2 sm:top-3 right-2 sm:right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                wishlistStatus[element?._id]
+                                  ? handleRemoveFromWishlist(element._id)
+                                  : handleAddWishlist(element);
+                              }}
+                            >
+                              {wishlistStatus[element?._id] ? (
+                                <FaHeart size={16} className="text-white" />
+                              ) : (
+                                <FaRegHeart size={16} className="text-white" />
+                              )}
+                            </button>
+                          </div>
+                          <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3">
+                            <p className="text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl">
+                              {element?.title}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="p-3 sm:p-4 md:p-5 flex items-center justify-between">
+                          <div>
+                            <p className="text-[10px] sm:text-xs text-gray-400 mb-1">Price</p>
+                            <p className="text-white font-semibold text-sm sm:text-base md:text-lg">
+                              ${element?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddToCart(element);
+                              }}
+                              disabled={cartItems.some(item => item.game?._id === element?._id)}
+                              className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-white font-semibold
+                                ${cartItems.some(item => item.game?._id === element?._id)
+                                  ? 'bg-green-600 cursor-not-allowed opacity-80'
+                                  : 'bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:scale-110 hover:from-[#7a42ff] hover:to-[#c4aaff]'}`}
+                            >
+                              <FaShoppingCart size={16} />
+                              {cartItems.some(item => item.game?._id === element?._id)
+                                ? "Added to Cart"
+                                : "Add to Cart"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </StylishDiv>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
 

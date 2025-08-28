@@ -228,9 +228,23 @@ export default function AllGames() {
                         alt={game?.title || "Game"}
                         className="w-full h-full object-cover transition-all duration-300 ease-in-out  "
                     />
-                    <div
-                        className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-100 group-hover:opacity-0 transition-opacity duration-500 ease-in-out"
-                    ></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90">
+                        <button
+                            className="absolute top-2 sm:top-3 right-2 sm:right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                wishlistStatus[game?._id]
+                                    ? handleRemoveFromWishlist(game._id)
+                                    : handleAddWishlist(game);
+                            }}
+                        >
+                            {wishlistStatus[game?._id] ? (
+                                <FaHeart size={16} className="text-white" />
+                            ) : (
+                                <FaRegHeart size={16} className="text-white" />
+                            )}
+                        </button>
+                    </div>
 
                     <div className="absolute bottom-0 left-0 right-0 p-3 ">
                         <h3 className="text-white font-semibold text-sm sm:text-base md:text-lg line-clamp-2 transition-colors">
@@ -248,42 +262,21 @@ export default function AllGames() {
                     </div>
 
                     <div className='flex items-center gap-2'>
-                        <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleAddWishlist(game);
-                                // handle add to cart logic
-                            }}
-                        >
-
-                            {wishlistStatus[game?._id] ? (
-                                <FaHeart size={16} className="text-white" onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRemoveFromWishlist(game?._id);
-                                }} />
-                            ) : (
-                                <FaRegHeart size={16} className="text-white" onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddWishlist(game);
-                                }} />
-                            )}
-                        </button>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleAddToCart(game);
-
                             }}
-                            className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${cartItems.some(item => item.game._id === game?._id)
-                                    ? 'bg-green-600 hover:bg-green-700'
-                                    : 'bg-black/50 hover:bg-black/70'
-                                }`}
+                            disabled={cartItems.some(item => item.game?._id === game?._id)}
+                            className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-white font-semibold
+                                ${cartItems.some(item => item.game?._id === game?._id)
+                                    ? 'bg-green-600 cursor-not-allowed opacity-80'
+                                    : 'bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:scale-110 hover:from-[#7a42ff] hover:to-[#c4aaff]'}`}
                         >
-
-                            <FaShoppingCart
-                                size={16}
-
-                            />
+                            <FaShoppingCart size={16} />
+                            {cartItems.some(item => item.game?._id === game?._id)
+                                ? "Added to Cart"
+                                : "Add to Cart"}
                         </button>
                     </div>
                 </div>
@@ -471,75 +464,72 @@ export default function AllGames() {
                     </div>
 
                     {totalPages > 1 && (
-                       <div className="flex justify-center">
-                       <div className="flex items-center gap-2 bg-gray-800/60 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-gray-700/50 
+                        <div className="flex justify-center">
+                            <div className="flex items-center gap-2 bg-gray-800/60 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-gray-700/50 
                                        overflow-x-auto sm:overflow-x-visible max-w-full">
-                         <div className="flex items-center gap-2">
-                           <button
-                             className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${
-                               currentPage === 1
-                                 ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
-                                 : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
-                             }`}
-                             onClick={() => handlePageChange(currentPage - 1)}
-                             disabled={currentPage === 1}
-                           >
-                             Prev
-                           </button>
-                     
-                           {/* Pages with scroll */}
-                           <div className="flex items-center gap-1 flex-nowrap">
-                             {Array.from({ length: totalPages }, (_, index) => {
-                               const pageNum = index + 1;
-                               const isActive = currentPage === pageNum;
-                               const isNear = Math.abs(currentPage - pageNum) <= 2;
-                     
-                               if (pageNum === 1 || pageNum === totalPages || isNear) {
-                                 return (
-                                   <button
-                                     key={pageNum}
-                                     onClick={() => handlePageChange(pageNum)}
-                                     className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-medium ${
-                                       isActive
-                                         ? "bg-purple-600 text-white shadow-md"
-                                         : "bg-gray-700/50 text-gray-300 hover:bg-gray-600 hover:text-white"
-                                     }`}
-                                   >
-                                     {pageNum}
-                                   </button>
-                                 );
-                               } else if (
-                                 pageNum === currentPage - 3 ||
-                                 pageNum === currentPage + 3
-                               ) {
-                                 return (
-                                   <span
-                                     key={pageNum}
-                                     className="px-2 text-gray-400 font-medium"
-                                   >
-                                     ...
-                                   </span>
-                                 );
-                               }
-                               return null;
-                             })}
-                           </div>
-                     
-                           <button
-                             className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${
-                               currentPage === totalPages
-                                 ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
-                                 : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
-                             }`}
-                             onClick={() => handlePageChange(currentPage + 1)}
-                             disabled={currentPage === totalPages}
-                           >
-                             Next
-                           </button>
-                         </div>
-                       </div>
-                     </div>
-                     
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${currentPage === 1
+                                            ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
+                                            : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
+                                            }`}
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Prev
+                                    </button>
+
+                                    {/* Pages with scroll */}
+                                    <div className="flex items-center gap-1 flex-nowrap">
+                                        {Array.from({ length: totalPages }, (_, index) => {
+                                            const pageNum = index + 1;
+                                            const isActive = currentPage === pageNum;
+                                            const isNear = Math.abs(currentPage - pageNum) <= 2;
+
+                                            if (pageNum === 1 || pageNum === totalPages || isNear) {
+                                                return (
+                                                    <button
+                                                        key={pageNum}
+                                                        onClick={() => handlePageChange(pageNum)}
+                                                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-medium ${isActive
+                                                            ? "bg-purple-600 text-white shadow-md"
+                                                            : "bg-gray-700/50 text-gray-300 hover:bg-gray-600 hover:text-white"
+                                                            }`}
+                                                    >
+                                                        {pageNum}
+                                                    </button>
+                                                );
+                                            } else if (
+                                                pageNum === currentPage - 3 ||
+                                                pageNum === currentPage + 3
+                                            ) {
+                                                return (
+                                                    <span
+                                                        key={pageNum}
+                                                        className="px-2 text-gray-400 font-medium"
+                                                    >
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+
+                                    <button
+                                        className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
+                                            ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
+                                            : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
+                                            }`}
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     )}
                 </>
             ) : (
