@@ -43,7 +43,7 @@ const Footer = () => {
               <p className="text-gray-300 text-sm leading-relaxed">
                 Your ultimate gaming destination. Discover, play, and connect with gamers worldwide.
               </p>
-              <div className="flex md:space-x-4 sm:space-x-2 space-x-4 lg:space-x-3 xl:space-x-4 ">
+              <div className="flex md:space-x-4 sm:space-x-2 space-x-4 lg:space-x-3  ">
                 {[
                   { Icon: FaFacebook, href: "#" },
                   { Icon: FaTwitter, href: "#" },
@@ -54,7 +54,7 @@ const Footer = () => {
                   <a
                     key={i}
                     href={href}
-                    className="p-2 sm:p-3 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300 flex items-center justify-center"
+                    className="p-2  xl:p-2.5 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300 flex items-center justify-center"
                   >
                     <Icon className="text-sm sm:text-base md:text-lg lg:text-xl" />
                   </a>
@@ -106,15 +106,15 @@ const Footer = () => {
                 Contact Us
               </h4>
               <div className="space-y-4 text-sm text-gray-300">
-                <div className="flex gap-3">
-                  <IoLocationOutline className="text-[#ab99e1] mt-1" />
+                <div className="flex gap-3 items-start">
+                  <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
                   <p>123 Gaming Street, Digital City, DC 12345</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-start">
                   <IoCallOutline className="text-[#ab99e1]" />
                   <p>+1 (555) 123-4567</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-start">
                   <IoMailOutline className="text-[#ab99e1]" />
                   <p>support@YOYO.com</p>
                 </div>
