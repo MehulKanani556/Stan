@@ -18,7 +18,12 @@ import { createWishlist, getGameById } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go";
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
+import { createOrder, verifyPayment } from '../Redux/Slice/Payment.slice'
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import PaymentForm from './PaymentForm';
 
+const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
 
 const SingleGame = () => {
 
@@ -33,6 +38,10 @@ const SingleGame = () => {
   const single = useSelector((state) => state?.game?.singleGame);
   const cartItems = useSelector((state) => state.cart.cart);
   const { wishlistStatus } = useSelector((state) => state.wishlist);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [amountToPay, setAmountToPay] = useState(0);
 
   // console.log("HIHIHI" , single);
 
@@ -226,9 +235,41 @@ const SingleGame = () => {
   const handleRemoveFromWishlist = (gameId) => {
     dispatch(removeFromWishlist({ gameId }));
   };
-  const handleRemoveFromCart =(id)=>{
-    dispatch(removeFromCart({ gameId: id,platform:"windows" }));
+  const handleRemoveFromCart = (id) => {
+    dispatch(removeFromCart({ gameId: id, platform: "windows" }));
   }
+
+  
+  const handleCheckout = async () => {
+    if (!single || !single._id) {
+      console.error("Game data is not available for checkout.");
+      return;
+    }
+
+    // 1. Create order (calls backend)
+    const resultAction = await dispatch(createOrder({ items: [
+      {
+        game: single._id,
+        name: single.title,
+        platform: "windows", // Assuming "windows" as a default platform
+        price: Number(single.platforms?.windows?.price || 0),
+      }
+    ], amount: single.platforms?.windows?.price || 0 }));
+    if (createOrder.fulfilled.match(resultAction)) {
+      const { clientSecret: newClientSecret, order } = resultAction.payload;
+      setClientSecret(newClientSecret);
+      setCurrentOrderId(order._id);
+      setAmountToPay(order.amount);
+      setShowPaymentForm(true);
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentForm(false);
+    setClientSecret("");
+    setCurrentOrderId(null);
+    setAmountToPay(0);
+  };
 
   return (
     <div className=''>
@@ -385,16 +426,25 @@ const SingleGame = () => {
           <div className="2xl:w-1/4 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
-                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
+                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
               </div>
               <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
 
               <div className="">
                 <div className='flex gap-4'>
                   {wishlistStatus[single?._id] ? (
-                    <button onClick={() => handleRemoveFromWishlist(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                    <button
+                      onClick={() => handleRemoveFromWishlist(single._id)}
+                      className="w-full flex items-center gap-2 
+                               bg-gradient-to-r from-green-500 to-green-700 
+                               hover:from-green-600 hover:to-green-800 
+                               active:scale-95 
+                               text-white font-bold py-3 px-4 mb-6 
+                               rounded-xl shadow-md hover:shadow-lg 
+                               transition-all duration-300 ease-in-out"
+                    >
                       <FaHeart size={16} />
-                      <span className="text-xs">Remove to WishList</span>
+                      <span className="text-xs">WishListed</span>
                     </button>
                   ) : (
 
@@ -404,10 +454,16 @@ const SingleGame = () => {
                     </button>
                   )}
                   {/* Conditional rendering for Add/Remove to Cart */}
-                  {  cartItems.some(item => item.game?._id === single?._id)? (
-                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                  {cartItems.some(item => item.game?._id === single?._id) ? (
+                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 
+                               bg-gradient-to-r from-green-500 to-green-700 
+                               hover:from-green-600 hover:to-green-800 
+                               active:scale-95 
+                               text-white font-bold py-3 px-4 mb-6 
+                               rounded-xl shadow-md hover:shadow-lg 
+                               transition-all duration-300 ease-in-out">
                       <FaShoppingCart size={16} />
-                      <span className="text-xs">Remove From Cart</span>
+                      <span className="text-xs">Added to cart</span>
                     </button>
                   ) : (
                     <button onClick={() => handleAddToCart(single)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
@@ -420,6 +476,29 @@ const SingleGame = () => {
                   Buy Now
                 </button>
               </div>
+
+              {showPaymentForm && clientSecret && currentOrderId && (
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                  <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
+                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                      <PaymentForm
+                        clientSecret={clientSecret}
+                        orderId={currentOrderId}
+                        amount={amountToPay}
+                        onPaymentSuccess={handlePaymentSuccess}
+                        fromCartPage={false} 
+                      />
+                    </Elements>
+                    <button
+                      onClick={() => setShowPaymentForm(false)}
+                      className="mt-4 text-gray-400 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Accordion */}
               <div className="divide-y divide-gray-700/60 rounded-xl overflow-hidden bg-black/10">

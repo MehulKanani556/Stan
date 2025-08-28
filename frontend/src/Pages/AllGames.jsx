@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import { getAllGames } from "../Redux/Slice/game.slice";
 import { getAllCategories } from "../Redux/Slice/category.slice";
+import { addToWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
+import { addToCart } from "../Redux/Slice/cart.slice";
 import game1 from "../images/game1.jpg";
 import StylishDiv from "../components/StylishDiv";
 import { IoMdSearch } from "react-icons/io";
@@ -75,10 +77,11 @@ const selectStyles = `
 export default function AllGames() {
     const games = useSelector((state) => state.game.games);
     const categories = useSelector((state) => state.category.categories);
+    const wishlistStatus = useSelector((state) => state.wishlist.wishlistStatus) || {};
+    const cartItems = useSelector((state) => state.cart.cart) || [];
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
-    // State for search and filters
+
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
     const [sortBy, setSortBy] = useState("");
@@ -94,10 +97,10 @@ export default function AllGames() {
 
 
     console.log("Hello", games);
-    
 
-       // Helper function to get game price
-       const getGamePrice = (game) => {
+
+
+    const getGamePrice = (game) => {
         const priceCandidateList = [
             game?.platforms?.windows?.price,
             game?.platforms?.ios?.price,
@@ -105,16 +108,16 @@ export default function AllGames() {
         ];
         return priceCandidateList.find((p) => typeof p === "number" && !Number.isNaN(p)) ?? 0;
     };
-    // Filter and search logic
+
     const filteredGames = games?.filter((game) => {
         // Search filter
-        const matchesSearch = searchQuery === "" || 
+        const matchesSearch = searchQuery === "" ||
             game.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             game.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             game.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
         // Category filter
-        const matchesCategory = selectedCategory === "" || 
+        const matchesCategory = selectedCategory === "" ||
             game.category?._id === selectedCategory ||
             game.category?.categoryName === selectedCategory;
 
@@ -152,7 +155,7 @@ export default function AllGames() {
     // Price range filter
     const priceFilteredGames = sortedGames.filter((game) => {
         if (priceRange === "") return true;
-        
+
         const gamePrice = getGamePrice(game);
         switch (priceRange) {
             case "free":
@@ -170,7 +173,7 @@ export default function AllGames() {
         }
     });
 
- 
+
 
     // Reset filters
     const resetFilters = () => {
@@ -192,6 +195,21 @@ export default function AllGames() {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
+    const handleAddWishlist = (ele) => {
+        // alert("a")
+        dispatch(addToWishlist({ gameId: ele._id }));
+    }
+
+    const handleRemoveFromWishlist = (gameId) => {
+        dispatch(removeFromWishlist({ gameId }));
+    };
+    // Track cart changes for notifications
+
+
+    const handleAddToCart = (ele) => {
+        dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
+    }
+
     // Reset to first page when filters change
     useEffect(() => {
         setCurrentPage(1);
@@ -203,8 +221,8 @@ export default function AllGames() {
         const priceValue = getGamePrice(game);
 
         return (
-            <StylishDiv onClick={() => navigate(`/single/${game?._id}`)}>
-                <div className="relative w-full  aspect-[5/5] overflow-hidden">
+            <StylishDiv >
+                <div className="relative w-full  aspect-[5/5] overflow-hidden " onClick={() => navigate(`/single/${game?._id}`)}>
                     <img
                         src={imageUrl}
                         alt={game?.title || "Game"}
@@ -229,21 +247,45 @@ export default function AllGames() {
                         </p>
                     </div>
 
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/single/${game?._id}`);
-                        }}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg 
-            bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff]  text-white text-sm font-medium 
-             transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 active:scale-95"
-                    >
-                        <span>Buy</span>
-                        <FaArrowRight
-                            size={14}
-                            className="group-hover:translate-x-1 transition-transform"
-                        />
-                    </button>
+                    <div className='flex items-center gap-2'>
+                        <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddWishlist(game);
+                                // handle add to cart logic
+                            }}
+                        >
+
+                            {wishlistStatus[game?._id] ? (
+                                <FaHeart size={16} className="text-white" onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveFromWishlist(game?._id);
+                                }} />
+                            ) : (
+                                <FaRegHeart size={16} className="text-white" onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddWishlist(game);
+                                }} />
+                            )}
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddToCart(game);
+
+                            }}
+                            className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${cartItems.some(item => item.game._id === game?._id)
+                                    ? 'bg-green-600 hover:bg-green-700'
+                                    : 'bg-black/50 hover:bg-black/70'
+                                }`}
+                        >
+
+                            <FaShoppingCart
+                                size={16}
+
+                            />
+                        </button>
+                    </div>
                 </div>
             </StylishDiv>
         );
@@ -251,10 +293,10 @@ export default function AllGames() {
 
     return (
         <div className="mx-auto max-w-[95%] md:max-w-[85%] pb-10">
-            {/* Custom Styles for Select Dropdowns */}
+
             <style>{selectStyles}</style>
-            
-            {/* Header Section */}
+
+
             <div className="text-center py-12 sm:py-16">
                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
                     All Games
@@ -264,17 +306,17 @@ export default function AllGames() {
                 </p>
             </div>
 
-            {/* Enhanced Filter Section */}
+
             <div className=" backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/25 shadow-2xl">
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                    {/* Search Bar */}
+
                     <div className="flex-1 max-w-md">
                         <label className="block text-sm font-medium text-gray-300 mb-2">Search Games</label>
                         <div className="relative">
                             <IoMdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
-                            <input 
-                                type="search" 
-                                placeholder="Search by title, description, or tags..." 
+                            <input
+                                type="search"
+                                placeholder="Search by title, description, or tags..."
                                 className="w-full pl-10 pr-4 py-3 bg-black/20 border border-white/25 rounded-xl text-white placeholder-gray-400 focus:outline-none outline-none focus:ring-1 focus:ring-white/25  transition-all duration-300"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -282,12 +324,12 @@ export default function AllGames() {
                         </div>
                     </div>
 
-                    {/* Filter Controls */}
+
                     <div className="flex flex-wrap items-end gap-4">
-                        {/* Category Filter */}
+
                         <div className="min-w-[180px]">
                             <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
-                            <select 
+                            <select
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 size={1}
@@ -302,7 +344,7 @@ export default function AllGames() {
                             </select>
                         </div>
 
-                        {/* Sort Filter */}
+
                         {/* <div className="min-w-[180px]">
                             <label className="block text-sm font-medium text-gray-300 mb-2">Sort By</label>
                             <select 
@@ -320,7 +362,7 @@ export default function AllGames() {
                             </select>
                         </div> */}
 
-                        {/* Price Range Filter */}
+
                         {/* <div className="min-w-[180px]">
                             <label className="block text-sm font-medium text-gray-300 mb-2">Price Range</label>
                             <select 
@@ -337,8 +379,8 @@ export default function AllGames() {
                             </select>
                         </div> */}
 
-                        {/* Reset Filters Button */}
-                        {(searchQuery || selectedCategory || sortBy || priceRange) && (
+
+                        {/* {(searchQuery || selectedCategory || sortBy || priceRange) && (
                             <div className="flex items-end">
                                 <button
                                     onClick={resetFilters}
@@ -347,12 +389,12 @@ export default function AllGames() {
                                     Reset Filters
                                 </button>
                             </div>
-                        )}
+                        )} */}
                     </div>
                 </div>
 
-                {/* Active Filters Display */}
-                {(searchQuery || selectedCategory || sortBy || priceRange) && (
+
+                {/* {(searchQuery || selectedCategory || sortBy || priceRange) && (
                     <div className="mt-6 pt-6 border-t border-gray-700/50">
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="text-sm font-medium text-gray-300">Active Filters:</span>
@@ -406,10 +448,10 @@ export default function AllGames() {
                             )}
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
 
-            {/* Results Summary */}
+
             {filteredGames.length > 0 && (
                 <div className="text-center mb-6">
                     <p className="text-gray-300 text-sm bg-gray-800/40 backdrop-blur-sm rounded-lg px-4 py-2 inline-block">
@@ -429,67 +471,75 @@ export default function AllGames() {
                     </div>
 
                     {totalPages > 1 && (
-                        <div className="flex justify-center">
-                            <div className="flex items-center gap-2 bg-gray-800/60 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-gray-700/50">
-                                <button
-                                    className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${currentPage === 1
-                                        ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
-                                        : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
-                                        }`}
-                                    onClick={() => handlePageChange(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                >
-                                    Prev
-                                </button>
-
-                                <div className="flex items-center gap-1">
-                                    {Array.from({ length: totalPages }, (_, index) => {
-                                        const pageNum = index + 1;
-                                        const isActive = currentPage === pageNum;
-                                        const isNear = Math.abs(currentPage - pageNum) <= 2;
-
-                                        if (pageNum === 1 || pageNum === totalPages || isNear) {
-                                            return (
-                                                <button
-                                                    key={pageNum}
-                                                    onClick={() => handlePageChange(pageNum)}
-                                                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-medium ${isActive
-                                                        ? "bg-purple-600 text-white shadow-md"
-                                                        : "bg-gray-700/50 text-gray-300 hover:bg-gray-600 hover:text-white"
-                                                        }`}
-                                                >
-                                                    {pageNum}
-                                                </button>
-                                            );
-                                        } else if (
-                                            pageNum === currentPage - 3 ||
-                                            pageNum === currentPage + 3
-                                        ) {
-                                            return (
-                                                <span
-                                                    key={pageNum}
-                                                    className="px-2 text-gray-400 font-medium"
-                                                >
-                                                    ...
-                                                </span>
-                                            );
-                                        }
-                                        return null;
-                                    })}
-                                </div>
-
-                                <button
-                                    className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
-                                        ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
-                                        : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
-                                        }`}
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </div>
+                       <div className="flex justify-center">
+                       <div className="flex items-center gap-2 bg-gray-800/60 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-gray-700/50 
+                                       overflow-x-auto sm:overflow-x-visible max-w-full">
+                         <div className="flex items-center gap-2">
+                           <button
+                             className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${
+                               currentPage === 1
+                                 ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
+                                 : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
+                             }`}
+                             onClick={() => handlePageChange(currentPage - 1)}
+                             disabled={currentPage === 1}
+                           >
+                             Prev
+                           </button>
+                     
+                           {/* Pages with scroll */}
+                           <div className="flex items-center gap-1 flex-nowrap">
+                             {Array.from({ length: totalPages }, (_, index) => {
+                               const pageNum = index + 1;
+                               const isActive = currentPage === pageNum;
+                               const isNear = Math.abs(currentPage - pageNum) <= 2;
+                     
+                               if (pageNum === 1 || pageNum === totalPages || isNear) {
+                                 return (
+                                   <button
+                                     key={pageNum}
+                                     onClick={() => handlePageChange(pageNum)}
+                                     className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-medium ${
+                                       isActive
+                                         ? "bg-purple-600 text-white shadow-md"
+                                         : "bg-gray-700/50 text-gray-300 hover:bg-gray-600 hover:text-white"
+                                     }`}
+                                   >
+                                     {pageNum}
+                                   </button>
+                                 );
+                               } else if (
+                                 pageNum === currentPage - 3 ||
+                                 pageNum === currentPage + 3
+                               ) {
+                                 return (
+                                   <span
+                                     key={pageNum}
+                                     className="px-2 text-gray-400 font-medium"
+                                   >
+                                     ...
+                                   </span>
+                                 );
+                               }
+                               return null;
+                             })}
+                           </div>
+                     
+                           <button
+                             className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${
+                               currentPage === totalPages
+                                 ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
+                                 : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
+                             }`}
+                             onClick={() => handlePageChange(currentPage + 1)}
+                             disabled={currentPage === totalPages}
+                           >
+                             Next
+                           </button>
+                         </div>
+                       </div>
+                     </div>
+                     
                     )}
                 </>
             ) : (
@@ -515,7 +565,7 @@ export default function AllGames() {
                             {searchQuery || selectedCategory || sortBy || priceRange ? 'No games found' : 'No games available'}
                         </h3>
                         <p className="text-gray-400 text-sm sm:text-base">
-                            {searchQuery || selectedCategory || sortBy || priceRange 
+                            {searchQuery || selectedCategory || sortBy || priceRange
                                 ? 'Try adjusting your search criteria or filters'
                                 : 'Check back later for new releases and updates'
                             }

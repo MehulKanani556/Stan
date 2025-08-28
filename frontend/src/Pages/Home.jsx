@@ -499,23 +499,20 @@ export default function Home() {
                                   </p>
                                 </div>
                                 <div className='flex items-center gap-2'>
-
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleAddToCart(element);
-
                                     }}
-                                    className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 hover:scale-110 bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold  ${cartItems.some(item => item.game?._id === element?._id)
-                                      ? 'bg-green-600 hover:bg-green-700'
-                                      : 'bg-black/50 hover:bg-black/70'
+                                    disabled={cartItems.some(item => item.game?._id === element?._id)} // 🔹 disable if already in cart
+                                    className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-white font-semibold
+      ${cartItems.some(item => item.game?._id === element?._id)
+                                        ? 'bg-green-600 cursor-not-allowed opacity-80' // Disabled style
+                                        : 'bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:scale-110 hover:from-[#7a42ff] hover:to-[#c4aaff]'
                                       }`}
                                   >
-
-                                    <FaShoppingCart
-                                      size={16}
-                                    />
-                                    Add to Cart
+                                    <FaShoppingCart size={16} />
+                                    {cartItems.some(item => item.game?._id === element?._id) ? "Added to Cart" : "Add to Cart"}
                                   </button>
                                 </div>
                               </div>
