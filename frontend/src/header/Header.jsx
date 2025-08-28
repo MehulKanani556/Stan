@@ -74,7 +74,7 @@ export default function Header() {
         if (currentUser?.name) {
             localStorage.setItem("userName", JSON.stringify(currentUser.name ? currentUser.name : ""));
             // setName(currentUser.name);
-            setUser(currentUser?.name)
+            dispatch(setUser(currentUser?.name))
         }
         
     }, [dispatch, authUser, currentUser]);

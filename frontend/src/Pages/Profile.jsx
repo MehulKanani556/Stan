@@ -239,7 +239,7 @@ export default function Profile() {
     const [user, setUser] = useState(null);
     const [activeMenu, setActiveMenu] = useState('profile');
     const [isActive, setIsActive] = useState("fanCoin");
-    console.log("aaaaaa", currentUser)
+    // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
     const [formData, setFormData] = useState({
