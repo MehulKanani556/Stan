@@ -18,7 +18,6 @@ import { createWishlist, getGameById } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go";
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
-import { createOrder, verifyPayment } from '../Redux/Slice/Payment.slice'
 
 
 const SingleGame = () => {
@@ -230,57 +229,6 @@ const SingleGame = () => {
   const handleRemoveFromCart = (id) => {
     dispatch(removeFromCart({ gameId: id, platform: "windows" }));
   }
-  console.log(  {
-    game: single._id,
-    name: single.title,
-    platform: "windows", // Assuming "windows" as a default platform
-    price: Number(single.platforms?.windows?.price || 0),
-    amount: single.platforms?.windows?.price 
-  });
-  
-  const handleCheckout = async () => {
-
-    // 1. Create order (calls backend)
-    const resultAction = await dispatch(createOrder({ items: [
-      {
-        game: single._id,
-        name: single.title,
-        platform: "windows", // Assuming "windows" as a default platform
-        price: Number(single.platforms?.windows?.price || 0),
-      }
-    ], amount: single.platforms?.windows?.price || 0 }));
-    if (createOrder.fulfilled.match(resultAction)) {
-      const { razorpayOrder, order } = resultAction.payload;
-
-      const options = {
-        key: "rzp_test_hN631gyZ1XbXvp",
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency,
-        name: "Yoyo",
-        description: "Game Purchase",
-        order_id: razorpayOrder.id,
-        // image: "/logo192.png",
-        handler: function (response) {
-
-          dispatch(verifyPayment({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            orderId: order._id,
-          }));
-        },
-        prefill: {
-          name: " user.fullName",
-          email: " user.email",
-        },
-        theme: {
-          color: "#7c3aed",
-        },
-      };
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    }
-  };
 
   return (
     <div className=''>
@@ -437,16 +385,25 @@ const SingleGame = () => {
           <div className="2xl:w-1/4 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
-                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
+                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
               </div>
               <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
 
               <div className="">
                 <div className='flex gap-4'>
                   {wishlistStatus[single?._id] ? (
-                    <button onClick={() => handleRemoveFromWishlist(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                    <button
+                      onClick={() => handleRemoveFromWishlist(single._id)}
+                      className="w-full flex items-center gap-2 
+                               bg-gradient-to-r from-green-500 to-green-700 
+                               hover:from-green-600 hover:to-green-800 
+                               active:scale-95 
+                               text-white font-bold py-3 px-4 mb-6 
+                               rounded-xl shadow-md hover:shadow-lg 
+                               transition-all duration-300 ease-in-out"
+                    >
                       <FaHeart size={16} />
-                      <span className="text-xs">Remove to WishList</span>
+                      <span className="text-xs">WishListed</span>
                     </button>
                   ) : (
 
@@ -457,9 +414,15 @@ const SingleGame = () => {
                   )}
                   {/* Conditional rendering for Add/Remove to Cart */}
                   {cartItems.some(item => item.game?._id === single?._id) ? (
-                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 
+                               bg-gradient-to-r from-green-500 to-green-700 
+                               hover:from-green-600 hover:to-green-800 
+                               active:scale-95 
+                               text-white font-bold py-3 px-4 mb-6 
+                               rounded-xl shadow-md hover:shadow-lg 
+                               transition-all duration-300 ease-in-out">
                       <FaShoppingCart size={16} />
-                      <span className="text-xs">Remove From Cart</span>
+                      <span className="text-xs">Added to cart</span>
                     </button>
                   ) : (
                     <button onClick={() => handleAddToCart(single)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
@@ -468,7 +431,7 @@ const SingleGame = () => {
                     </button>
                   )}
                 </div>
-                <button onClick={()=>handleCheckout()} className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Buy Now
                 </button>
               </div>
