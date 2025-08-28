@@ -365,7 +365,7 @@ const SingleGame = () => {
           <div className="2xl:w-1/4 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
-                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
+                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
               </div>
               <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
 
