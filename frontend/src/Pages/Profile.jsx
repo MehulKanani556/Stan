@@ -79,51 +79,53 @@ const FANCoin = () => {
                         <StylishDiv key={transaction.id} className="group rounded-3xl overflow-hidden h-full ">
                             {/* <div className=" opacity-80  h-full min-h-[180px]" /> */}
                             <div className=" rounded-3xl min-h-[120px]  h-full">
-                                <div className="flex  items-center justify-between">
-                                    <div>
-                                        <h3 className="font-bold text-white text-base sm:text-lg">{transaction.title}</h3>
-                                        <p className="text-gray-300 text-xs sm:text-sm mt-1">{transaction.time}</p>
-                                    </div>
-                                    <span className={`font-bold text-base sm:text-lg ${transaction.type === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
-                                        {transaction.amount}
-                                    </span>
-                                </div>
-                                <div className="mt-4 pt-4 border-t border-white/10">
-                                    <div
-                                        className="flex items-center justify-between cursor-pointer"
-                                        onClick={() => toggleDetails(transaction.id)}
-                                    >
-                                        <div className="flex items-center">
-                                            <span className="text-white text-sm">Details</span>
-                                            <svg
-                                                className={`w-4 h-4 text-white ml-1 transition-transform duration-300 ${openId === transaction.id ? 'rotate-180' : ''}`}
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                            </svg>
+                                <div className='flex flex-col h-full'>
+                                    <div className="flex  justify-between mb-2  ">
+                                        <div className=''>
+                                            <h3 className="font-bold text-white text-base sm:text-lg">{transaction.title}</h3>
+                                            <p className="text-gray-300 text-xs sm:text-sm mt-1">{transaction.time}</p>
                                         </div>
+                                        <span className={`font-bold text-base sm:text-lg whitespace-nowrap ${transaction.type === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
+                                            {transaction.amount}
+                                        </span>
                                     </div>
-                                    {openId === transaction.id && (
-                                        <div className="mt-3 space-y-2">
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-gray-300">Before Fan Coins:</span>
-                                                <span className="text-white">0</span>
-                                            </div>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-gray-300">After Fan Coins:</span>
-                                                <span className="text-white">50</span>
-                                            </div>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-gray-300">Before Bonus Fan Coins:</span>
-                                                <span className="text-white">0</span>
-                                            </div>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-gray-300">After Bonus Fan Coins:</span>
-                                                <span className="text-white">50</span>
+                                    <div className="mt-auto pt-4 border-t border-white/10">
+                                        <div
+                                            className="flex items-center justify-between cursor-pointer"
+                                            onClick={() => toggleDetails(transaction.id)}
+                                        >
+                                            <div className="flex items-center">
+                                                <span className="text-white text-sm">Details</span>
+                                                <svg
+                                                    className={`w-4 h-4 text-white ml-1 transition-transform duration-300 ${openId === transaction.id ? 'rotate-180' : ''}`}
+                                                    fill="currentColor"
+                                                    viewBox="0 0 20 20"
+                                                >
+                                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                </svg>
                                             </div>
                                         </div>
-                                    )}
+                                        {openId === transaction.id && (
+                                            <div className="mt-3 space-y-2">
+                                                <div className="flex justify-between text-sm">
+                                                    <span className="text-gray-300">Before Fan Coins:</span>
+                                                    <span className="text-white">0</span>
+                                                </div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span className="text-gray-300">After Fan Coins:</span>
+                                                    <span className="text-white">50</span>
+                                                </div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span className="text-gray-300">Before Bonus Fan Coins:</span>
+                                                    <span className="text-white">0</span>
+                                                </div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span className="text-gray-300">After Bonus Fan Coins:</span>
+                                                    <span className="text-white">50</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </StylishDiv>
@@ -166,14 +168,14 @@ const FANCoin = () => {
 // UPICard Component
 const UPICard = () => {
     return (
-        <div className="flex flex-col items-center justify-center  px-3 sm:px-4 py-4 sm:py-6 relative">
+        <div className="flex flex-col items-center justify-center  px-3 sm:px-4 py-4 sm:py-6 ">
 
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+            {/* <div className=" -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
               from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
               animate-pulse"></div>
-            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+            <div className=" -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
               from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
-              animate-pulse"></div>
+              animate-pulse"></div> */}
 
 
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
@@ -199,14 +201,14 @@ const UPICard = () => {
 // PlayStore Component
 const PlayStore = () => {
     return (
-        <div className="flex flex-col items-center justify-center px-3 sm:px-4 py-4 sm:py-6 relative">
-
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
+        <div className="flex flex-col items-center justify-center px-3 sm:px-4 py-4 sm:py-6 ">
+            {/* 
+            <div className=" -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
                   from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
                   animate-pulse"></div>
-            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
+            <div className=" -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
                   from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
-                  animate-pulse"></div>
+                  animate-pulse"></div> */}
 
 
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
@@ -317,11 +319,12 @@ export default function Profile() {
             // noop - error snackbar handled in thunk
         }
     };
-
     const handleLogoutClick = async () => {
         const id = authUser?._id || currentUser?._id || localStorage.getItem("userId");
-        await dispatch(logoutUser(id));
-        // navigate('/login');
+        dispatch(logoutUser());
+        dispatch(clearUser())
+        localStorage.removeItem("userName");
+        navigate("/")
     };
 
 
@@ -473,7 +476,7 @@ export default function Profile() {
     return (
         <div className="  text-white md:max-w-[85%] max-w-[95%] mx-auto">
             {/* Header */}
-            <div className=" sticky top-0 z-40 border-b border-white/25 ">
+            <div className="sticky top-0 z-40 border-b border-white/25 ">
                 <div className="flex items-center justify-between px-4 py-3">
                     <NavLink to="/" className="flex items-center gap-2 text-white hover:text-[#ab99e1] transition-colors">
                         <IoIosArrowBack className="w-6 h-6" />
@@ -603,10 +606,10 @@ export default function Profile() {
                                 Personal Information
                             </h3>
                             <div className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg">
+                                <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                     <FaUser className="text-[#ab99e1] w-5 h-5" />
                                     <div className="flex-1">
-                                        <div className="text-sm text-gray-400">Name</div>
+                                        <div className="text-sm text-gray-400 ">Name</div>
                                         {isEditing ? (
                                             <input
                                                 type="text"
@@ -622,9 +625,9 @@ export default function Profile() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center  gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg">
+                                <div className="flex items-center  gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                     <MdEmail className="text-[#ab99e1] w-5 h-5" />
-                                    <div className="flex-1">
+                                    <div className="flex-1 ">
                                         <div className="text-sm text-gray-400">Email</div>
                                         {/* {isEditing ? (
                                             <input
@@ -638,7 +641,7 @@ export default function Profile() {
                                         ) : (
                                             <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
                                         )} */}
-                                        <div className="text-white   ">{decryptData(user?.email) || "example@gmail.com"}</div>
+                                        <div className="text-white ">{decryptData(user?.email) || "example@gmail.com"}</div>
                                     </div>
                                 </div>
                             </div>
