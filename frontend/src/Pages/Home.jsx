@@ -14,7 +14,7 @@ import ad2 from '../images/ad2.webp';
 import ad3 from '../images/ad3.jpg';
 import ad4 from '../images/ad4.jpg';
 import ad5 from '../images/game2.jpg';
-import { FaArrowRight, FaHeart, FaShoppingCart , FaRegHeart} from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart } from "react-icons/fa";
 
 import game1 from '../images/game1.jpg';
 import game2 from '../images/game2.jpg';
@@ -43,11 +43,11 @@ export default function Home() {
   const gameData = useSelector((state) => state?.game?.games)
   const dispatch = useDispatch()
   const cateData = useSelector((state) => state?.game?.category)
-  const wishlist = useSelector((state)=> state.wishlist.items)
+  const wishlist = useSelector((state) => state.wishlist.items)
   const [mainGameData, setMainGameData] = useState(gameData)
   const navigate = useNavigate();
   const { wishlistStatus } = useSelector((state) => state.wishlist);
-  
+
 
   // console.log("Hello Bachho", gameData);
   const [isDragging, setIsDragging] = useState(false);
@@ -58,9 +58,8 @@ export default function Home() {
   const [showAddedToCart, setShowAddedToCart] = useState(false);
   const [addedGameTitle, setAddedGameTitle] = useState("");
   const cartItems = useSelector((state) => state.cart.cart);
-  console.log("cart",cartItems);
+  // console.log("cart",cartItems);
 
-  
   const prevCartLengthRef = useRef(0);
 
   // Momentum effect after mouse up
@@ -118,8 +117,8 @@ export default function Home() {
         //  console.log("hihi" , );
         //  setActiveTab(value?.payload[0]?.categoryName)
       })
-      dispatch(fetchWishlist())
-      dispatch(fetchCart())
+    dispatch(fetchWishlist())
+    dispatch(fetchCart())
   }, [])
 
   useEffect(() => {
@@ -252,9 +251,9 @@ export default function Home() {
   }, [isDown, startX, scrollLeft]);
 
 
-  const handleAddWishlist = (ele) =>{
+  const handleAddWishlist = (ele) => {
     // alert("a")
-    dispatch(addToWishlist({gameId :ele._id}));
+    dispatch(addToWishlist({ gameId: ele._id }));
   }
 
   const handleRemoveFromWishlist = (gameId) => {
@@ -264,7 +263,7 @@ export default function Home() {
 
 
   const handleAddToCart = (ele) => {
-    dispatch(addToCart({ gameId: ele._id, platform: "windows", qty:1 }));
+    dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
   }
 
   return (
@@ -278,7 +277,7 @@ export default function Home() {
           </div>
         </div>
       )}
-      
+
       <section className="">
         <div className="relative w-full">
           <Swiper
@@ -315,43 +314,45 @@ export default function Home() {
             {/* Tab buttons */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10  max-w-[95%] md:max-w-[85%]  mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
               {/* All Categories Button */}
-             
-              <div ref={scrollRef}  className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none">
-                 <button
-                   className={`
+
+              <div ref={scrollRef} className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none">
+                <button
+                  className={`
                      px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
                      rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
                      transition-all duration-200 ease-out
                      border border-transparent
                      whitespace-nowrap
                      ${activeTab === null
-                       ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                       : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                     }
+                      ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                    }
                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                    `}
-                   onClick={() => handle(null)}
-                 >
-                   All Games
-                 </button>
-               {cateData?.map((element) => (
-                <button
-                  className={`
+                  onClick={() => handle(null)}
+                >
+                  All Games
+                </button>
+                {cateData?.map((element) => (
+                  <button
+                    key={element._id || element.id}
+                    className={`
                     px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
                     rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
                     transition-all duration-200 ease-out
                     border border-transparent
                     whitespace-nowrap
-                    ${activeTab === null
-                      ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
-                    }
+                    ${activeTab === element._id || activeTab === element.id
+                        ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                        : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'
+                      }
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
                   `}
-                  onClick={() => handle(null)}
-                >
-                  All Games
-                </button>
-               ))}
+                    onClick={() => handle(element._id || element.id)}
+                  >
+                    {element.name || element.categoryName}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -366,6 +367,13 @@ export default function Home() {
                       </p>
                     </div>
                     <div className="flex gap-2">
+
+                      <button
+                        onClick={() => navigate('/allGames')}
+                        className='px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6 rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg transition-all duration-200 ease-out border border-transparent whitespace-nowrap bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900'
+                      >
+                        All Games
+                      </button>
                       <button
                         onClick={() => {
                           if (gameSwiperRef.current && typeof gameSwiperRef.current.slidePrev === 'function') {
@@ -454,11 +462,29 @@ export default function Home() {
                                   alt={element?.title}
                                   className='w-full h-full object-cover'
                                 />
-                                <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
+                                <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'>
+                                  <button className=' absolute top-2 sm:top-3 right-2 sm:right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddWishlist(element);
+                                      // handle add to cart logic
+                                    }}
+                                  >
 
-                                <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
-
+                                    {wishlistStatus[element?._id] ? (
+                                      <FaHeart size={16} className="text-white" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveFromWishlist(element?._id);
+                                      }} />
+                                    ) : (
+                                      <FaRegHeart size={16} className="text-white" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddWishlist(element);
+                                      }} />
+                                    )}
+                                  </button>
                                 </div>
+
 
                                 <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
                                   <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{element?.title}</p>
@@ -473,43 +499,23 @@ export default function Home() {
                                   </p>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                  <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+
+                                  <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleAddWishlist(element);
-                                      // handle add to cart logic
+                                      handleAddToCart(element);
+
                                     }}
-                                   >
-                                
-                                    {wishlistStatus[element?._id] ? (
-                                      <FaHeart size={16} className="text-white" onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRemoveFromWishlist(element?._id);
-                                      }}/>
-                                    ) : (
-                                      <FaRegHeart size={16} className="text-white" onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleAddWishlist(element);
-                                      }}/>
-                                    )}
-                                  </button>
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleAddToCart(element);                                  
-                                    
-                                    }}
-                                    className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
-                                      cartItems.some(item => item.game._id === element?._id) 
-                                        ? 'bg-green-600 hover:bg-green-700' 
-                                        : 'bg-black/50 hover:bg-black/70'
-                                    }`}
+                                    className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 hover:scale-110 bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold  ${cartItems.some(item => item.game?._id === element?._id)
+                                      ? 'bg-green-600 hover:bg-green-700'
+                                      : 'bg-black/50 hover:bg-black/70'
+                                      }`}
                                   >
 
-                                    <FaShoppingCart 
-                                      size={16} 
-                                    
+                                    <FaShoppingCart
+                                      size={16}
                                     />
+                                    Add to Cart
                                   </button>
                                 </div>
                               </div>

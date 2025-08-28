@@ -16,6 +16,8 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { createWishlist, getGameById } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go";
+import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
+import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
 
 
 const SingleGame = () => {
@@ -28,7 +30,9 @@ const SingleGame = () => {
   const [slidesToShow, setSlidesToShow] = useState(5)
   const { id } = useParams()
   const dispatch = useDispatch()
-  const single = useSelector((state) => state?.game?.singleGame)
+  const single = useSelector((state) => state?.game?.singleGame);
+  const cartItems = useSelector((state) => state.cart.cart);
+  const { wishlistStatus } = useSelector((state) => state.wishlist);
 
   // console.log("HIHIHI" , single);
 
@@ -38,7 +42,9 @@ const SingleGame = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getGameById(id))
+    dispatch(getGameById(id));
+    dispatch(fetchWishlist());
+    dispatch(fetchCart());
   }, [])
 
   useEffect(() => {
@@ -209,6 +215,20 @@ const SingleGame = () => {
     dispatch(createWishlist(id))
 
   }
+  const handleAddToCart = (ele) => {
+    dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
+  }
+  const handleAddWishlist = (ele) => {
+    // alert("a")
+    dispatch(addToWishlist({ gameId: ele._id }));
+  }
+
+  const handleRemoveFromWishlist = (gameId) => {
+    dispatch(removeFromWishlist({ gameId }));
+  };
+  const handleRemoveFromCart =(id)=>{
+    dispatch(removeFromCart({ gameId: id,platform:"windows" }));
+  }
 
   return (
     <div className=''>
@@ -365,20 +385,36 @@ const SingleGame = () => {
           <div className="2xl:w-1/4 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
-                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
+                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
               </div>
               <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
 
               <div className="">
                 <div className='flex gap-4'>
-                  <button onClick={() => handleWishList(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
-                    <FaHeart size={16} />
-                    <span className="text-xs">Add To WishList</span>
-                  </button>
-                  <button className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
-                    <FaShoppingCart size={16} />
-                    <span className="text-xs">Add To Cart</span>
-                  </button>
+                  {wishlistStatus[single?._id] ? (
+                    <button onClick={() => handleRemoveFromWishlist(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                      <FaHeart size={16} />
+                      <span className="text-xs">Remove to WishList</span>
+                    </button>
+                  ) : (
+
+                    <button onClick={() => handleAddWishlist(single)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                      <FaHeart size={16} />
+                      <span className="text-xs">Add To WishList</span>
+                    </button>
+                  )}
+                  {/* Conditional rendering for Add/Remove to Cart */}
+                  {  cartItems.some(item => item.game?._id === single?._id)? (
+                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                      <FaShoppingCart size={16} />
+                      <span className="text-xs">Remove From Cart</span>
+                    </button>
+                  ) : (
+                    <button onClick={() => handleAddToCart(single)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                      <FaShoppingCart size={16} />
+                      <span className="text-xs">Add To Cart</span>
+                    </button>
+                  )}
                 </div>
                 <button className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Buy Now

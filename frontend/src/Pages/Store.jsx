@@ -11,17 +11,15 @@ import '../css/Store.css';
 import { EffectFade, Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import game1 from '../images/game1.jpg';
-import game2 from '../images/game2.jpg';
-import game3 from '../images/game3.jpg';
-import game4 from '../images/game4.webp';
-import game5 from '../images/game5.jpg';
-import game6 from '../images/game6.jpg';
-import { FaArrowRight, FaHeart, FaShoppingCart } from "react-icons/fa";
+
+import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import { getAllGames, getPopularGames, getTopGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../Redux/Slice/category.slice';
 import { useNavigate } from 'react-router-dom';
 import StylishDiv from '../components/StylishDiv';
+import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
+import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 
 
 const Store = () => {
@@ -33,28 +31,19 @@ const Store = () => {
   const loading = useSelector((state) => state.game.loading);
   const error = useSelector((state) => state.game.error);
   const navigate = useNavigate();
+  const cartItems = useSelector((state) => state.cart.cart);
+  const { wishlistStatus } = useSelector((state) => state.wishlist);
 
-  // console.log(games);
-  console.log(games, "all games");
-  console.log("topGames:", topGames);
-  console.log("topGames length:", topGames?.length);
-  console.log("topGames isArray:", Array.isArray(topGames));
-  console.log("loading:", loading);
-  console.log("error:", error);
-  console.log("Redux state:", { games, PopularGames, topGames, loading, error });
 
 
   useEffect(() => {
     dispatch(getAllGames());
-  }, []);
-
-  useEffect(() => {
+    dispatch(fetchCart())
     dispatch(getPopularGames());
-  }, []);
-
-  useEffect(() => {
+    dispatch(fetchWishlist())
     dispatch(getAllCategories());
   }, []);
+
 
   useEffect(() => {
     try {
@@ -97,15 +86,53 @@ const Store = () => {
       ref.current.scrollBy({ left: 300, behavior: 'smooth' });
     }
   };
+  const handleAddToCart = (ele) => {
+    dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
+  }
+  const handleAddWishlist = (ele) => {
+    // alert("a")
+    dispatch(addToWishlist({ gameId: ele._id }));
+  }
+
+  const handleRemoveFromWishlist = (gameId) => {
+    dispatch(removeFromWishlist({ gameId }));
+  };
+
+  const handleAllGames = (title) => {
+    switch (title) {
+      case "All Games":
+        navigate('/allGames');
+        break;
+
+    }
+  };
 
   const GameSection = ({ title, games = [], sectionRef }) => (
     <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
       <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
         <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
-        <FaArrowRight
-          className='text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white/80 hover:text-white transition-colors cursor-pointer'
-          onClick={() => scrollRight(sectionRef)}
-        />
+        <div className="flex items-center gap-3">
+          <button
+            className={`
+                     px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                     rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
+                     transition-all duration-200 ease-out
+                     border border-transparent
+                     whitespace-nowrap
+                    
+                bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300
+                
+                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
+                   `}
+            onClick={() => handleAllGames(title)}
+          >
+            All Games
+          </button>
+          <FaArrowRight
+            className='text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white/80 hover:text-white transition-colors cursor-pointer'
+            onClick={() => scrollRight(sectionRef)}
+          />
+        </div>
       </div>
 
       <div
@@ -150,7 +177,28 @@ const Store = () => {
                 alt={game?.title || 'Game'}
                 className='w-full h-full object-cover'
               />
-              <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'></div>
+              <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'>
+                <button className=' absolute top-2 sm:top-3 right-2 sm:right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddWishlist(game);
+                    // handle add to cart logic
+                  }}
+                >
+
+                  {wishlistStatus[game?._id] ? (
+                    <FaHeart size={16} className="text-white" onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFromWishlist(game?._id);
+                    }} />
+                  ) : (
+                    <FaRegHeart size={16} className="text-white" onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddWishlist(game);
+                    }} />
+                  )}
+                </button>
+              </div>
 
               <div className='absolute top-2 sm:top-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between'>
                 {/* Tags can be added here if needed */}
@@ -169,11 +217,22 @@ const Store = () => {
                 </p>
               </div>
               <div className='flex items-center gap-2'>
-                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
-                  <FaHeart size={16} className="text-white" />
-                </button>
-                <button className='p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'>
-                  <FaShoppingCart size={16} className="text-white" />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(game);
+
+                  }}
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 hover:scale-110 bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold ${cartItems.some(item => item.game._id === game?._id)
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-black/50 hover:bg-black/70'
+                    }`}
+                >
+
+                  <FaShoppingCart
+                    size={16}
+                  />
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -218,6 +277,15 @@ const Store = () => {
         </div>
 
         {/* All Games Section (from API) */}
+        <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
+          <GameSection
+            title="All Games"
+            games={Array.isArray(games) ? games : []}
+            sectionRef={scrollContainerRefs.action}
+            loading={loading}
+            error={error}
+          />
+        </div>
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto">
           <GameSection
             title="Trending Games"
