@@ -30,7 +30,7 @@ import MultiHome from '../components/MultiHome';
 import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
 
@@ -124,7 +124,7 @@ export default function Home() {
   useEffect(() => {
     dispatch(getAllGames());
 
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     setMainGameData(gameData)
@@ -352,173 +352,43 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Tab content - Game cards */}
-            <div className="w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto">
-              <div className=''>
-                <div className="">
-                  <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
-                    <div>
-                      <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>
-                        {activeTab ? `${activeTab} Games` : 'All Games'}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-
-                      <button
-                        onClick={() => navigate('/allGames')}
-                        className='px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6 rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg transition-all duration-200 ease-out border border-transparent whitespace-nowrap bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900'
-                      >
-                        All Games
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (gameSwiperRef.current && typeof gameSwiperRef.current.slidePrev === 'function') {
-                            gameSwiperRef.current.slidePrev();
-                          }
-                        }}
-                        disabled={isBeginning}
-                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
-                          ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                          : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
-                          } text-white rotate-180`}
-                      >
-                        <FaArrowRight size={16} />
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (gameSwiperRef.current && typeof gameSwiperRef.current.slideNext === 'function') {
-                            gameSwiperRef.current.slideNext();
-                          }
-                        }}
-                        disabled={isEnd}
-                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
-                          ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                          : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
-                          } text-white`}
-                      >
-                        <FaArrowRight size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Game Cards Container */}
-                  <Swiper
-                    modules={[Navigation]}
-                    spaceBetween={12}
-                    slidesPerView={1.1}
-                    breakpoints={{
-                      320: { slidesPerView: 1, spaceBetween: 8 },
-                      425: { slidesPerView: 2, spaceBetween: 10 },
-                      556: { slidesPerView: 2, spaceBetween: 10 },
-                      640: { slidesPerView: 2, spaceBetween: 12 },
-                      768: { slidesPerView: 2.5, spaceBetween: 14 },
-                      1024: { slidesPerView: 3, spaceBetween: 14 },
-                      1280: { slidesPerView: 3.5, spaceBetween: 14 },
-                      1480: { slidesPerView: 4.2, spaceBetween: 16 }
-                    }}
-                    style={{
-                      padding: '20px 4px'
-                    }}
-                    className="game-swiper"
-                    ref={gameSwiperRef}
-                    onSwiper={(swiper) => {
-                      gameSwiperRef.current = swiper;
-                      // Delay the initial state check to ensure proper initialization
-                      setTimeout(() => {
-                        setIsBeginning(swiper.isBeginning);
-                        setIsEnd(swiper.isEnd);
-                      }, 100);
-                    }}
-                    onSlideChange={(swiper) => {
-                      // Add a small delay to ensure accurate state detection
-                      setTimeout(() => {
-                        setIsBeginning(swiper.isBeginning);
-                        setIsEnd(swiper.isEnd);
-                      }, 50);
-                    }}
-                    onResize={(swiper) => {
-                      // Recalculate states when screen size changes
-                      setTimeout(() => {
-                        setIsBeginning(swiper.isBeginning);
-                        setIsEnd(swiper.isEnd);
-                      }, 100);
-                    }}
-                  >
-                    {mainGameData?.map((element) => (
-                      <SwiperSlide key={element?._id}>
-                        <div
-                          onClick={() => navigate(`/single/${element?._id}`)}
-                          className="w-64 sm:w-72 md:w-80 lg:w-96 cursor-pointer"
-                        >
-                          <StylishDiv>
-                            <div className="group relative overflow-hidden  transition-all duration-300 w-full">
-                              <div className='relative w-full h-40 sm:h-56 md:h-64 lg:h-72 overflow-hidden'>
-                                <img
-                                  src={element?.cover_image?.url}
-                                  alt={element?.title}
-                                  className='w-full h-full object-cover'
-                                />
-                                <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90'>
-                                  <button className=' absolute top-2 sm:top-3 right-2 sm:right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110'
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleAddWishlist(element);
-                                      // handle add to cart logic
-                                    }}
-                                  >
-
-                                    {wishlistStatus[element?._id] ? (
-                                      <FaHeart size={16} className="text-white" onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRemoveFromWishlist(element?._id);
-                                      }} />
-                                    ) : (
-                                      <FaRegHeart size={16} className="text-white" onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleAddWishlist(element);
-                                      }} />
-                                    )}
-                                  </button>
-                                </div>
-
-
-                                <div className='absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3'>
-                                  <p className='text-white font-semibold text-sm sm:text-base md:text-lg lg:text-xl'>{element?.title}</p>
-                                </div>
-                              </div>
-
-                              <div className='p-3 sm:p-4 md:p-5 flex items-center justify-between'>
-                                <div>
-                                  <p className='text-[10px] sm:text-xs text-gray-400 mb-1'>Price</p>
-                                  <p className='text-white font-semibold text-sm sm:text-base md:text-lg'>
-                                    ${element?.platforms?.windows?.price?.toLocaleString('en-IN')}
-                                  </p>
-                                </div>
-                                <div className='flex items-center gap-2'>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleAddToCart(element);
-                                    }}
-                                    disabled={cartItems.some(item => item.game?._id === element?._id)} // 🔹 disable if already in cart
-                                    className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-white font-semibold
-      ${cartItems.some(item => item.game?._id === element?._id)
-                                        ? 'bg-green-600 cursor-not-allowed opacity-80' // Disabled style
-                                        : 'bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:scale-110 hover:from-[#7a42ff] hover:to-[#c4aaff]'
-                                      }`}
-                                  >
-                                    <FaShoppingCart size={16} />
-                                    {cartItems.some(item => item.game?._id === element?._id) ? "Added to Cart" : "Add to Cart"}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </StylishDiv>
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </div>
+            {/* Heading + Navigation */}
+            <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white">
+                  {activeTab
+                    ? `${cateData?.find(c => c._id === activeTab)?.name || "Category"} Games`
+                    : "All Games"}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => navigate('/allGames')}
+                  className="px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
+                    font-medium text-xs sm:text-sm transition-all duration-200 ease-out
+                    bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110
+                    active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                >
+                  All Games
+                </button>
+                <button
+                  onClick={() => gameSwiperRef.current?.slidePrev()}
+                  disabled={isBeginning}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
+                    ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white rotate-180`}
+                >
+                  <FaArrowRight size={16} />
+                </button>
+                <button
+                  onClick={() => gameSwiperRef.current?.slideNext()}
+                  disabled={isEnd}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
+                    ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white`}
+                >
+                  <FaArrowRight size={16} />
+                </button>
               </div>
             </div>
 
@@ -650,15 +520,13 @@ export default function Home() {
             <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
               All of our games, in their most premium editions.
             </p>
-            <Link to='/store'>
-              <button className="bg-gradient-to-r from-purple-400 to-purple-600
+            <button className="bg-gradient-to-r from-purple-400 to-purple-600
                 hover:from-purple-500 hover:to-purple-700 font-semibold
                 text-sm py-1 px-3 sm:text-base sm:py-2 sm:px-4 md:py-2.5 md:px-6
                 rounded-full shadow-md transition-all duration-300
                 hover:scale-105 active:scale-95">
-                Buy Now
-              </button>
-            </Link>
+              Buy Now
+            </button>
           </div>
         </section>
       </section>
