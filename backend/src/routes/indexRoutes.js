@@ -16,6 +16,7 @@ import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateT
 import { addToCart, clearCart, getCart, removeFromCart, updateCartItem } from "../controllers/cart.controller.js";
 import { addToWishlist, checkWishlistStatus, getWishlist, removeFromWishlist } from "../controllers/wishlist.controller.js";
 import websiteInfoRoutes from "./websiteInfo.routes.js";
+import { createOrder, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
 
 
 const indexRoutes = express.Router();
@@ -166,5 +167,15 @@ indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
 indexRoutes.get("/chatWidget", chatWidGetController);
 indexRoutes.use('/website', websiteInfoRoutes);
+
+
+// payment
+
+indexRoutes.post("/order/create", UserAuth, createOrder);
+indexRoutes.post("/order/verify", UserAuth, verifyPayment);
+indexRoutes.post("/order/retry", UserAuth, retryOrderPayment);
+indexRoutes.get("/allorders", UserAuth, getUserOrders);
+indexRoutes.get("/getorders", getAllOrders);
+indexRoutes.get('/download/:token', downloadGame);
 
 export default indexRoutes

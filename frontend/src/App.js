@@ -32,8 +32,8 @@ import AllGames from './Pages/AllGames.jsx';
 function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
-  const showFooter  = isAuthPage || location.pathname === "/ggtalks";
-  const chatwidegt = location.pathname === "/ggtalks";
+  const showFooter  = isAuthPage || location.pathname === "/GGTalks";
+  const chatwidegt = location.pathname == "/GGTalks";
 
   return (
     <>

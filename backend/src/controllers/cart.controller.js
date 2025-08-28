@@ -135,7 +135,7 @@ export const removeFromCart = async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return sendError(res, 404, 'User not found');
         user.cart = (user.cart || []).filter(
-            (c) => !(String(c._id) == String(gameId) && c.platform == platform)
+            (c) => !(String(c.game) === String(gameId) && c.platform === platform)
         );
         await user.save();
         console.log(user.cart,gameId,platform);
