@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
-import { getUserById, editUserProfile, logoutUser } from '../Redux/Slice/user.slice';
+import { getUserById, editUserProfile, logoutUser, clearUser } from '../Redux/Slice/user.slice';
 import stanUser from "../images/stan-user.jpg";
 import { decryptData } from "../Utils/encryption";
 import { Dialog, Transition } from '@headlessui/react'
