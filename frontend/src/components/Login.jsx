@@ -12,6 +12,7 @@ import {
   verifyOtp,
 } from "../Redux/Slice/auth.slice";
 import { useDispatch } from "react-redux";
+import { setUser } from "../Redux/Slice/user.slice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -37,7 +38,11 @@ const Login = () => {
         try {
           const res = await dispatch(login(values));
           if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
+            console.log("ZZZZZZZZZZAAAAAAA" , res?.payload?.name);
+            
             navigate("/");
+            dispatch(setUser({ name: res?.payload?.name }))
+            
             resetForm();
           } else {
             setStatus({ error: "Invalid credentials" });

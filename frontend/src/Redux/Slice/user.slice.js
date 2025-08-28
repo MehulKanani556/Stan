@@ -30,6 +30,7 @@ const initialState = {
   name: localStorage.getItem("userName")
     ? JSON.parse(localStorage.getItem("userName"))
     : "",
+    chatToggle:false
 };
 
 
@@ -513,13 +514,23 @@ const userSlice = createSlice({
       state.currentUser = action.payload;
     },
     setUser: (state, action) => {
-      state.name = action.payload?.name || "";
+      state.name = typeof action.payload === "string" 
+        ? action.payload 
+        : action.payload?.name || "";
+        
       localStorage.setItem("userName", JSON.stringify(state.name));
     },
+    
     clearUser: (state) => {
       state.user = null;
       state.name = "";
     },
+    chatToggleFunc : (state , action) => {
+      if (typeof action.payload === "boolean") {
+        state.chatToggle = action.payload;
+      } 
+       
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -812,5 +823,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, clearUsers, clearCurrentUser, setCurrentUser  , clearUser , setUser} = userSlice.actions;
+export const { logout, clearUsers, clearCurrentUser, setCurrentUser  , clearUser , setUser , chatToggleFunc} = userSlice.actions;
 export default userSlice.reducer;
