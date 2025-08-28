@@ -113,18 +113,14 @@ const Store = () => {
         <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
         <div className="flex items-center gap-3">
           <button
-            className={`
-                     px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                     rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                     transition-all duration-200 ease-out
-                     border border-transparent
-                     whitespace-nowrap
-                    
-                bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300
-                
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                   `}
-            onClick={() => handleAllGames(title)}
+            onClick={() => navigate('/allGames')}
+            className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
+             font-medium text-xs sm:text-sm transition-all duration-200 ease-out
+             bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110
+             active:scale-95
+             focus-visible:outline-none focus-visible:ring-2 
+             focus-visible:ring-indigo-400 focus-visible:ring-offset-2 
+             focus-visible:ring-offset-gray-900'
           >
             All Games
           </button>

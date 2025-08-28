@@ -414,18 +414,25 @@ const SingleGame = () => {
                   )}
                   {/* Conditional rendering for Add/Remove to Cart */}
                   {cartItems.some(item => item.game?._id === single?._id) ? (
-                    <button onClick={() => handleRemoveFromCart(single._id)} className="w-full flex items-center gap-2 
-                               bg-gradient-to-r from-green-500 to-green-700 
-                               hover:from-green-600 hover:to-green-800 
-                               active:scale-95 
-                               text-white font-bold py-3 px-4 mb-6 
-                               rounded-xl shadow-md hover:shadow-lg 
-                               transition-all duration-300 ease-in-out">
+                    <button
+                      disabled
+                      className="w-full flex items-center gap-2 
+               bg-gradient-to-r from-green-500 to-green-700 
+               text-white font-bold py-3 px-4 mb-6 
+               rounded-xl shadow-md transition-all duration-300 ease-in-out
+               opacity-70 cursor-not-allowed">
                       <FaShoppingCart size={16} />
                       <span className="text-xs">Added to cart</span>
                     </button>
                   ) : (
-                    <button onClick={() => handleAddToCart(single)} className="w-full flex items-center gap-2 bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                    <button
+                      onClick={() => handleAddToCart(single)}
+                      className="w-full flex items-center gap-2 
+               bg-gradient-to-r from-[#8c71e0] to-[#a493d9] 
+               hover:from-[#7a5cd6] hover:to-[#947ce8] 
+               active:scale-95 text-white font-bold 
+               py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg 
+               transition-all duration-300 ease-in-out">
                       <FaShoppingCart size={16} />
                       <span className="text-xs">Add To Cart</span>
                     </button>
@@ -446,8 +453,8 @@ const SingleGame = () => {
                   <div className="pb-5 px-4 md:px-5">
                     <div className="flex flex-wrap gap-3">
                       <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center"><FaWindows className='me-2' /> Windows</span>
-                      <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center">PS5</span>
-                      <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center">XBOX</span>
+                      {/* <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center">PS5</span> */}
+                      {/* <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center">XBOX</span> */}
                     </div>
                   </div>
                 </details>
