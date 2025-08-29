@@ -111,20 +111,20 @@ const Wishlist = () => {
             ))
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-20 bg-black/15 rounded-2xl">
-            <p className="text-2xl font-semibold text-gray-300 mb-4">💜 Your wishlist is empty</p>
-            <p className="text-gray-500 mb-6">Save games you love to find them easily later.</p>
-            <button
-              onClick={()=>navigate("/store")}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
-            >
-              Browse Store
-            </button>
-          </div>
+              <p className="text-2xl font-semibold text-gray-300 mb-4">💜 Your wishlist is empty</p>
+              <p className="text-gray-500 mb-6">Save games you love to find them easily later.</p>
+              <button
+                onClick={() => navigate("/store")}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
+              >
+                Browse Store
+              </button>
+            </div>
           )}
         </div>
 
         {/* RIGHT SIDE - Summary */}
-        <div className="bg-black/15 border border-white/10 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg">
+        <div className="bg-black/15 border border-white/10 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg sticky top-20">
           <div className="flex justify-between items-center">
             <h2 className="font-bold text-xl">Total Items</h2>
             <span className="text-xl font-bold text-purple-400">{items.length}</span>
