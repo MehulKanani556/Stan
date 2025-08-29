@@ -282,13 +282,18 @@ export default function Home() {
       )}
 
       <section className="">
-        <div className="relative w-full">
+        <div className="relative w-full sp_slider_dot sp_font">
           <Swiper
             modules={[EffectFade, Pagination, Autoplay]}
             effect="fade"
             speed={1200}
             slidesPerView={1}
-            pagination={{ clickable: true }}
+            pagination={{
+              clickable: true,
+              renderBullet: (index, className) => {
+                return `<span class="${className} custom-bullet"></span>`;
+              },
+            }}
             autoplay={{ delay: 5000 }}
             loop={true}
             className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
@@ -296,13 +301,17 @@ export default function Home() {
             {games && games.length > 0 ? (
               games.slice(-6).map((game, index) => (
                 <SwiperSlide key={index}>
-                  <div className="relative w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden">
+                  <div className="relative flex w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden bg-black">
+                    {/* <div className='blob w-[70%]'> */}
                     <img
                       src={game?.cover_image?.url || game1}
                       alt={game.title || `Game ${index + 1}`}
                       className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
                     />
+                      {/* </div> */}
+                    
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    {/* <div className=" text-[40px] z-10">{game.title}</div> */}
                   </div>
                 </SwiperSlide>
               ))
