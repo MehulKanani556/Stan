@@ -28,9 +28,9 @@ const Cart = () => {
     const [currentOrderId, setCurrentOrderId] = useState(null);
     const [amountToPay, setAmountToPay] = useState(0);
 
-    useEffect (()=>{
+    useEffect(() => {
         dispatch(fetchCart());
-    },[])
+    }, [])
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
     const totalDiscount = cartItems.reduce(
@@ -41,9 +41,9 @@ const Cart = () => {
 
     const handleRemove = (item) => {
         // alert(id)
-        console.log("aaa",item);
-        
-        dispatch(removeFromCart({ gameId: item.game._id,platform:"windows" }));
+        console.log("aaa", item);
+
+        dispatch(removeFromCart({ gameId: item.game._id, platform: "windows" }));
     };
 
     const handleClearCart = () => {
@@ -63,13 +63,13 @@ const Cart = () => {
         }
 
         const items = (Array.isArray(cartItems) ? cartItems.map(it => ({
-          game: it.game?._id || it.game,
-          name: it.name,
-          platform: it.platform,
-          price: Number(it.price || it?.game?.platforms?.[it.platform]?.price || 0),
+            game: it.game?._id || it.game,
+            name: it.name,
+            platform: it.platform,
+            price: Number(it.price || it?.game?.platforms?.[it.platform]?.price || 0),
         })) : []);
         const amount = items.reduce((sum, it) => sum + it.price, 0);
-    
+
         // 1. Create order (calls backend)
         const resultAction = await dispatch(createOrder({ items, amount }));
         if (createOrder.fulfilled.match(resultAction)) {
@@ -90,20 +90,20 @@ const Cart = () => {
 
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
-            <h1 className="text-4xl font-extrabold mb-8">My Cart</h1>     
+            <h1 className="text-4xl font-extrabold mb-8">My Cart</h1>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {cartItems.length > 0 ? (
                         cartItems.map((item) => (
                             <div
-                            key={item.game._id}
+                                key={item.game._id}
                                 className="bg-black/15 border border-white/10 p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-6"
                             >
                                 <div className="w-full lg:w-40 h-48 lg:h-40 shrink-0">
                                     <img
-                                       src={item.game.cover_image.url}
-                                       alt={item.game.title}
+                                        src={item.game.cover_image.url}
+                                        alt={item.game.title}
                                         className="w-full h-full object-cover rounded-lg"
                                     />
                                 </div>
@@ -111,7 +111,7 @@ const Cart = () => {
                                 <div className="flex-1 flex flex-col justify-between">
                                     <div>
                                         <span className="text-xs bg-[#525050] px-2 py-1 rounded tracking-wide">
-                                        {item.game.category.categoryName}
+                                            {item.game.category.categoryName}
                                         </span>
 
                                         <h2 className="text-xl font-semibold mt-2">{item.game.title}</h2>
@@ -147,19 +147,19 @@ const Cart = () => {
                         ))
                     ) : (
                         <div className="flex flex-col items-center justify-center text-center py-20 bg-black/15 rounded-2xl">
-                        <p className="text-2xl font-semibold text-gray-300 mb-4">🛒 Your cart is empty</p>
-                        <p className="text-gray-500 mb-6">Looks like you haven’t added anything yet.</p>
-                        <button
-                          onClick={handleContinueShopping}
-                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
-                        >
-                          Continue Shopping
-                        </button>
-                      </div>
+                            <p className="text-2xl font-semibold text-gray-300 mb-4">🛒 Your cart is empty</p>
+                            <p className="text-gray-500 mb-6">Looks like you haven’t added anything yet.</p>
+                            <button
+                                onClick={handleContinueShopping}
+                                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
+                            >
+                                Continue Shopping
+                            </button>
+                        </div>
                     )}
                 </div>
 
-                <div className=" rounded-2xl p-8 flex flex-col gap-6 h-fit bg-black/15">
+                <div className="bg-black/15 border border-white/10 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg sticky top-20">
                     <div className="flex justify-between items-center">
                         <h2 className="font-bold text-xl">Order Summary</h2>
                         <span className="text-xl font-bold text-purple-400">{cartItems.length}</span>

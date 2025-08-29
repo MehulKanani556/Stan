@@ -253,11 +253,11 @@ export default function AllGames() {
                     </div>
                 </div>
 
-                <div className=" pt-3  backdrop-blur-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className=" pt-3  backdrop-blur-sm flex flex-row sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <p className="text-xs text-gray-400">Price</p>
-                        <p className="text-white font-bold text-lg sm:text-xl">
-                            ₹{Number(priceValue).toLocaleString("en-IN")}
+                        <p className="text-white font-bold text-lg lg:text-xl">
+                            ${Number(priceValue).toLocaleString("en-IN")}
                         </p>
                     </div>
 
