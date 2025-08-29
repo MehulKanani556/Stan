@@ -255,12 +255,22 @@ export default function Header() {
                                 </div>
                             
                                 <div className='flex gap-2 items-center md:hidden'>
-                                     <NavLink to="/wishlist" className='me-2'>
+                                         <NavLink to="/wishlist" className='me-2 relative'>
                                            <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
+                                           {items?.length > 0 && (
+                                            <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                                              {items.length}
+                                            </span>
+                                            )}
                                          </NavLink>
-                                         <NavLink to="/cart" className='me-2'>
+                                         <NavLink to="/cart" className='me-2 relative'>
                                            <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
-                                     </NavLink>
+                                           {cartItems?.length > 0 && (
+                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
+                                               {cartItems?.length}
+                                             </span>
+                                            )}
+                                        </NavLink>
                                 </div>
                                 <label
                                     htmlFor="my-drawer-3"
