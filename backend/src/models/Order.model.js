@@ -18,9 +18,7 @@ const orderSchema = new mongoose.Schema({
   ],
   amount: { type: Number, required: true },
   currency: { type: String, default: "USD" },
-  razorpayOrderId: { type: String },
-  razorpayPaymentId: { type: String },
-  razorpaySignature: { type: String },
+  stripePaymentIntentId: { type: String },
   status: {
     type: String,
     enum: ["created", "paid", "failed"],

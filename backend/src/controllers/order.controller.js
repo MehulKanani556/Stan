@@ -1,4 +1,4 @@
-import Razorpay from "razorpay";
+import Stripe from "stripe";
 import crypto from "crypto";
 import Order from "../models/Order.model.js";
 import User from "../models/userModel.js";
@@ -7,38 +7,38 @@ import { clearCart } from "./cart.controller.js";
 import sendMail from "../helper/sendMail.js";
 import { decryptData } from "../middlewares/incrypt.js";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// 1. Create Razorpay Order and DB Order
+// 1. Create Order and DB Order
 export const createOrder = async (req, res) => {
   try {
     const { items, amount } = req.body;
     const userId = req.user._id; // assuming you use auth middleware
 
-    // Create Razorpay order
-    const razorpayOrder = await razorpay.orders.create({
+    // Create Stripe Payment Intent
+      console.log(req.user);
+    
+    const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // in cents
       currency: "USD",
-      receipt: `receipt_order_${Date.now()}`,
+      metadata: { orderId: "temp_order_id" }, // Placeholder, will be updated
+      receipt_email:decryptData( req.user.email), // Assuming user email is available
     });
 
-    if (razorpayOrder && razorpayOrder.id) {
+    if (paymentIntent && paymentIntent.id) {
       // Save order in DB
       const order = await Order.create({
         user: userId,
         items,
         amount,
         currency: "USD",
-        razorpayOrderId: razorpayOrder.id,
+        stripePaymentIntentId: paymentIntent.id,
         status: "created",
       });
 
-      return res.json({ order, razorpayOrder });
+      return res.json({ order, clientSecret: paymentIntent.client_secret });
     } else {
-      return res.status(500).json({ error: "Failed to create Razorpay order" });
+      return res.status(500).json({ error: "Failed to create Stripe Payment Intent" });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -49,31 +49,18 @@ export const createOrder = async (req, res) => {
 export const verifyPayment = async (req, res) => {
   try {
     const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
+      paymentIntentId,
       orderId,
     } = req.body;
 
-    // Signature verification
-    const sign = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(sign.toString())
-      .digest("hex");
-
-    if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({ error: "Invalid signature" });
-    }
-
+    // No signature verification needed on backend for Stripe client-side confirmation
     // Update order in DB
     let order;
     try {
       order = await Order.findByIdAndUpdate(
         orderId,
         {
-          razorpayPaymentId: razorpay_payment_id,
-          razorpaySignature: razorpay_signature,
+          stripePaymentIntentId: paymentIntentId,
           status: "paid",
         },
         { new: true }
@@ -87,18 +74,18 @@ export const verifyPayment = async (req, res) => {
 
     // Clear user cart if possible
     const userId = req.user?._id;
-    if (userId) {
-      try {
-        const user = await User.findById(userId);
-        if (user) {
-          user.cart = [];
-          await user.save();
-        }
-      } catch (err) {
-        // Log but don't block payment success
-        console.error("Error clearing user cart:", err);
-      }
-    }
+    // if (userId) {
+    //   try {
+    //     const user = await User.findById(userId);
+    //     if (user) {
+    //       user.cart = [];
+    //       await user.save();
+    //     }
+    //   } catch (err) {
+    //     // Log but don't block payment success
+    //     console.error("Error clearing user cart:", err);
+    //   }
+    // }
 
     // Generate download tokens and send mail
     let mailError = null;
@@ -216,18 +203,18 @@ export const retryOrderPayment = async (req, res) => {
     if (order.status === "paid")
       return res.status(400).json({ error: "Order already paid" });
 
-    // Create new Razorpay order
-    const razorpayOrder = await razorpay.orders.create({
+    // Create new Stripe Payment Intent
+    const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(order.amount * 100),
       currency: order.currency,
-      receipt: `receipt_retry_${Date.now()}`,
+      metadata: { orderId: order._id.toString() },
     });
 
-    order.razorpayOrderId = razorpayOrder.id;
+    order.stripePaymentIntentId = paymentIntent.id;
     order.status = "created";
     await order.save();
 
-    res.json({ order, razorpayOrder });
+    res.json({ order, clientSecret: paymentIntent.client_secret });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

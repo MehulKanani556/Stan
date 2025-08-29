@@ -2,6 +2,8 @@ import React from "react";
 import guide1 from "../images/guide1.jpg";
 import guide2 from "../images/guide2.png";
 import guide3 from "../images/guide3.jpg";
+import { useDispatch } from "react-redux";
+import { chatToggleFunc } from "../Redux/Slice/user.slice";
 
 function Guides() {
   return (
@@ -12,6 +14,9 @@ function Guides() {
 }
 
 const SupportPage = () => {
+
+ const dispatch = useDispatch()
+
   return (
     <div className="w-full">
       {/* Hero Section */}
@@ -101,7 +106,7 @@ const SupportPage = () => {
                   You will have all answers of your questions
                 </p>
               </div>
-              <button className="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition">
+            <button onClick={()=> dispatch(chatToggleFunc(true))} className="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition">
                 Start Chat
               </button>
             </div>
@@ -130,6 +135,9 @@ const SupportPage = () => {
 };
 
 const SectionWrapper = ({ title, description, img, items, flip }) => {
+
+   
+
   return (
     <section className="py-16 px-3 md:px-6 border-purple-500/30">
       <div className={`w-full max-w-[95%] md:max-w-[85%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center ${flip ? "md:grid-flow-dense" : ""}`}>

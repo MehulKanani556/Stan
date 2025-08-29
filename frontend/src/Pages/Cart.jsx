@@ -12,13 +12,21 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeFromCartLocal, clearCartLocal, fetchCart, removeFromCart, clearCart } from "../Redux/Slice/cart.slice";
 import { useNavigate } from "react-router-dom";
 import { createOrder, verifyPayment } from "../Redux/Slice/Payment.slice";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import PaymentForm from '../components/PaymentForm';
 
+const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
 
 const Cart = () => {
 
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart.cart);
     const navigate = useNavigate();
+    const [showPaymentForm, setShowPaymentForm] = useState(false);
+    const [clientSecret, setClientSecret] = useState("");
+    const [currentOrderId, setCurrentOrderId] = useState(null);
+    const [amountToPay, setAmountToPay] = useState(0);
 
     useEffect(() => {
         dispatch(fetchCart());
@@ -49,6 +57,10 @@ const Cart = () => {
     };
 
     const handleCheckout = async () => {
+        if (!cartItems || cartItems.length === 0) {
+            alert("Your cart is empty. Please add items before checking out.");
+            return;
+        }
 
         const items = (Array.isArray(cartItems) ? cartItems.map(it => ({
             game: it.game?._id || it.game,
@@ -61,38 +73,20 @@ const Cart = () => {
         // 1. Create order (calls backend)
         const resultAction = await dispatch(createOrder({ items, amount }));
         if (createOrder.fulfilled.match(resultAction)) {
-            const { razorpayOrder, order } = resultAction.payload;
-
-            const options = {
-                key: "rzp_test_hN631gyZ1XbXvp",
-                amount: razorpayOrder.amount,
-                currency: razorpayOrder.currency,
-                name: "Yoyo",
-                description: "Game Purchase",
-                order_id: razorpayOrder.id,
-                // image: "/logo192.png",
-                handler: function (response) {
-
-                    dispatch(verifyPayment({
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_signature: response.razorpay_signature,
-                        orderId: order._id,
-                    }));
-                },
-                prefill: {
-                    name: " user.fullName",
-                    email: " user.email",
-                },
-                theme: {
-                    color: "#7c3aed",
-                },
-            };
-            const rzp = new window.Razorpay(options);
-            rzp.open();
+          const { clientSecret: newClientSecret, order } = resultAction.payload;
+          setClientSecret(newClientSecret);
+          setCurrentOrderId(order._id);
+          setAmountToPay(order.amount);
+          setShowPaymentForm(true);
         }
-    };
+      };
 
+    const handlePaymentSuccess = () => {
+      setShowPaymentForm(false);
+      setClientSecret("");
+      setCurrentOrderId(null);
+      setAmountToPay(0);
+    };
 
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
@@ -212,6 +206,29 @@ const Cart = () => {
                     </div>
                 </div>
             </div>
+
+            {showPaymentForm && clientSecret && currentOrderId && (
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+                        <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
+                        <Elements stripe={stripePromise} options={{ clientSecret }}>
+                            <PaymentForm
+                                clientSecret={clientSecret}
+                                orderId={currentOrderId}
+                                amount={amountToPay}
+                                onPaymentSuccess={handlePaymentSuccess}
+                                fromCartPage={true} 
+                            />
+                        </Elements>
+                        <button
+                            onClick={() => setShowPaymentForm(false)}
+                            className="mt-4 text-gray-400 hover:text-white"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

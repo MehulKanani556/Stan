@@ -11,7 +11,7 @@ import { IoBagOutline, IoBag } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
 import stanUser from "../images/stan-user.jpg"
 import stanLogo from "../images/stan-logo.svg"
-import { getUserById, logoutUser } from "../Redux/Slice/user.slice"
+import { clearUser, getUserById, logoutUser, setUser } from "../Redux/Slice/user.slice"
 import { MdRocketLaunch, MdSettings } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
@@ -36,12 +36,15 @@ export default function Header() {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
-    const [name, setName] = useState(() => {
-        const stored = localStorage.getItem("userName");
-        return stored ? JSON.parse(stored) : "";
-    });
-      
+    // const [name, setName] = useState(() => {
+    //     const stored = localStorage.getItem("userName");
+    //     return stored ? JSON.parse(stored) : "";
+    // });
+    const name = useSelector((state) => state?.user?.name);
 
+    console.log("ZZZZZZZZ" , name);
+    
+         
     const { items } = useSelector((state) => state.wishlist);
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -70,7 +73,8 @@ export default function Header() {
         }
         if (currentUser?.name) {
             localStorage.setItem("userName", JSON.stringify(currentUser.name ? currentUser.name : ""));
-            setName(currentUser.name);
+            // setName(currentUser.name);
+            dispatch(setUser(currentUser?.name))
         }
         
     }, [dispatch, authUser, currentUser]);
@@ -91,14 +95,17 @@ export default function Header() {
         navigate('/login');
     };
 
+
+
     const handleLogoutClick = () => {
         setIsDropdownOpen(false);
         const id = authUser?._id || currentUser?._id || localStorage.getItem("userId");
         if (id) {
-            dispatch(logoutUser(id));
+            dispatch(logoutUser());
+            dispatch(clearUser())
         }
         localStorage.removeItem("userName");
-        setName("")
+        navigate("/")
     };
 
 

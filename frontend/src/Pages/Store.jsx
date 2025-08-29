@@ -113,18 +113,14 @@ const Store = () => {
         <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
         <div className="flex items-center gap-3">
           <button
-            className={`
-                     px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
-                     rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
-                     transition-all duration-200 ease-out
-                     border border-transparent
-                     whitespace-nowrap
-                    
-                bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300
-                
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900
-                   `}
-            onClick={() => handleAllGames(title)}
+            onClick={() => navigate('/allGames')}
+            className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
+             font-medium text-xs sm:text-sm transition-all duration-200 ease-out
+             bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110
+             active:scale-95
+             focus-visible:outline-none focus-visible:ring-2 
+             focus-visible:ring-indigo-400 focus-visible:ring-offset-2 
+             focus-visible:ring-offset-gray-900'
           >
             All Games
           </button>
@@ -216,25 +212,21 @@ const Store = () => {
                   ${Number(priceValue).toLocaleString('en-IN')}
                 </p>
               </div>
-              <div className='flex items-center gap-2'>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddToCart(game);
-
-                  }}
-                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 hover:scale-110 bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold ${cartItems.some(item => item.game._id === game?._id)
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-black/50 hover:bg-black/70'
-                    }`}
-                >
-
-                  <FaShoppingCart
-                    size={16}
-                  />
-                  Add to Cart
-                </button>
-              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToCart(game);
+                }}
+                disabled={cartItems.some(item => item.game?._id === game?._id)} // ✅ use game
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-white font-semibold
+    ${cartItems.some(item => item.game?._id === game?._id)
+                    ? 'bg-green-600 cursor-not-allowed opacity-80'
+                    : 'bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:scale-110 hover:from-[#7a42ff] hover:to-[#c4aaff]'
+                  }`}
+              >
+                <FaShoppingCart size={16} />
+                {cartItems.some(item => item.game?._id === game?._id) ? "Added to Cart" : "Add to Cart"}
+              </button>
             </div>
           </div>
         </StylishDiv>

@@ -19,7 +19,7 @@ import { Link, Links } from 'react-router-dom';
 
 const GameCard = (item) => (
   <Link to={`${!item?.platforms?.windows?.price ? `/games` : `/single/${item?._id}`}`} className='block mb-6' >
-   <div className="flex-none flex-col sm:flex-col xl:flex-row justify-center items-stretch md:items-center gap-4 md:gap-5 p-5  relative rounded-2xl bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl border-purple-500/30 hover:from-gray-800/90 hover:to-gray-700/90 transition-all duration-300 cursor-pointer group border hover:shadow-lg hover:shadow-purple-500/40 hover:-translate-y-1 overflow-hidden lg:h-[305px] md:w-full w-full m-auto ">
+   <div className=" capitalize flex-none flex-col sm:flex-col xl:flex-row justify-center items-stretch md:items-center gap-4 md:gap-5 p-5  relative rounded-2xl bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl border-purple-500/30 hover:from-gray-800/90 hover:to-gray-700/90 transition-all duration-300 cursor-pointer group border hover:shadow-lg hover:shadow-purple-500/40 hover:-translate-y-1 overflow-hidden lg:h-[305px] md:w-full w-full m-auto ">
     <div className="relative overflow-hidden rounded-lg w-full  sm:shrink-0">
       <img
         src={item?.cover_image?.url || item?.image}
@@ -140,9 +140,9 @@ function TopGames() {
                 {/* Section Header */}
                 <div className="flex items-center gap-4 mb-6 sm:mb-8">
                   {/* Icon container */}
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
+                  <div className="sm:w-12 sm:h-12 h-10 w-10 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
                     <svg
-                      className="w-6 h-6 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
+                      className="sm:w-6 sm:h-6  h-5 w-5 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -174,7 +174,7 @@ function TopGames() {
                 {/* View All Button */}
                 <Link to={section.link}>
                 <div className="mt-6 sm:mt-8 pt-6 border-t border-purple-500/30">
-                  <button className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#ab99e1]/20 to-[#b8a8e6]/20 hover:from-[#ab99e1]/30 hover:to-[#b8a8e6]/30 border border-[#ab99e1]/30 text-[#ab99e1] font-semibold transition-all duration-300 hover:shadow-lg">
+                  <button className="w-full sm:py-3 py-2 sm:px-4 px-3 sm:text-base text-sm rounded-xl bg-gradient-to-r from-[#ab99e1]/20 to-[#b8a8e6]/20 hover:from-[#ab99e1]/30 hover:to-[#b8a8e6]/30 border border-[#ab99e1]/30 text-[#ab99e1] font-semibold transition-all duration-300 hover:shadow-lg">
                     View All {section.title}
                   </button>
                 </div>

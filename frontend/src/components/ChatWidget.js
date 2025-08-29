@@ -4,6 +4,8 @@ import { IoArrowBack } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../Utils/axiosInstance";
 import { useSnackbar } from "notistack";
+import { useDispatch, useSelector } from "react-redux";
+import { chatToggleFunc } from "../Redux/Slice/user.slice";
 
 const ChatWidget = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -14,6 +16,8 @@ const ChatWidget = () => {
   const [hasMore, setHasMore] = useState(false);
   const [actionLoading, setActionLoading] = useState("");
   const [selectedPlatformById, setSelectedPlatformById] = useState({});
+  const toggle = useSelector((state) => state?.user?.chatToggle);
+  const dispatch = useDispatch()
 
   
   const [messages, setMessages] = useState([
@@ -232,11 +236,11 @@ const ChatWidget = () => {
       )}
 
       {/* Modal */}
-      {isContactModalOpen && (
+      {(isContactModalOpen || toggle) && (
         <>
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-            onClick={() => setIsContactModalOpen(false)}
+            onClick={() => {setIsContactModalOpen(false);dispatch(chatToggleFunc(false))}}
           />
 
           <div className="fixed bottom-0 left-0 right-0 z-50 w-full sm:bottom-6 sm:right-6 sm:left-auto sm:w-full sm:max-w-sm">
@@ -249,7 +253,7 @@ const ChatWidget = () => {
               <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0">
                 <button
                   className="text-white hover:scale-110 transition"
-                  onClick={() => setIsContactModalOpen(false)}
+                  onClick={() => {setIsContactModalOpen(false); dispatch(chatToggleFunc(false))}}
                 >
                   <IoArrowBack className="w-6 h-6" />
                 </button>
