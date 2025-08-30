@@ -77,7 +77,7 @@ const generateTokens = async (id) => {
                 isAdmin: userData.role === "admin"
             },
             process.env.JWT_SECRET,
-            { expiresIn: "1m" }
+            { expiresIn: "2h" }
         );
 
         const refreshToken = await jwt.sign(
