@@ -39,73 +39,73 @@ axiosInstance.interceptors.request.use(
 );
 
 // Response Interceptor
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     const originalRequest = error.config;
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-//     // Handle 401 errors and token refresh
-//     if (
-//       error.response?.status === 401 &&
-//       !originalRequest._retry &&
-//       !originalRequest.url.includes("/generateNewTokens")
-//     ) {
-//       if (isRefreshing) {
-//         // If refresh is in progress, queue the request
-//         return new Promise(function (resolve, reject) {
-//           failedQueue.push({
-//             resolve: (token) => {
-//               originalRequest.headers.Authorization = "Bearer " + token;
-//               resolve(axiosInstance(originalRequest));
-//             },
-//             reject: (err) => {
-//               reject(err);
-//             },
-//           });
-//         });
-//       }
+    // Handle 401 errors and token refresh
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/generateNewTokens")
+    ) {
+      if (isRefreshing) {
+        // If refresh is in progress, queue the request
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({
+            resolve: (token) => {
+              originalRequest.headers.Authorization = "Bearer " + token;
+              resolve(axiosInstance(originalRequest));
+            },
+            reject: (err) => {
+              reject(err);
+            },
+          });
+        });
+      }
 
-//       originalRequest._retry = true;
-//       isRefreshing = true;
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-//       const refreshToken = localStorage.getItem("refreshToken");
-//       try {
-//         const response = await axios.post(
-//           `${BASE_URL}/generateNewTokens`,
-//           {},
-//           {
-//             headers: { Authorization: `Bearer ${refreshToken}` },
-//             withCredentials: true,
-//           }
-//         );
+      const refreshToken = localStorage.getItem("refreshToken");
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/generateNewTokens`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${refreshToken}` },
+            withCredentials: true,
+          }
+        );
 
-//         if (response.data.success && response.data.accessToken) {
-//           localStorage.setItem("token", response.data.accessToken);
-//           sessionStorage.setItem("token", response.data.accessToken);
-//           localStorage.setItem("refreshToken", response.data.refreshToken);
+        if (response.data.success && response.data.accessToken) {
+          localStorage.setItem("token", response.data.accessToken);
+          sessionStorage.setItem("token", response.data.accessToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
 
-//           processQueue(null, response.data.accessToken);
+          processQueue(null, response.data.accessToken);
 
-//           originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
-//           return axiosInstance(originalRequest);
-//         }
-//       } catch (refreshError) {
-//         processQueue(refreshError, null);
+          originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+          return axiosInstance(originalRequest);
+        }
+      } catch (refreshError) {
+        processQueue(refreshError, null);
 
-//         const { store } = require("../Redux/Store").configureStore();
-//         store.dispatch(logoutUser(userId));
-//         localStorage.removeItem("token");
-//         localStorage.removeItem("userId");
-//         localStorage.removeItem("refreshToken");
-//         window.location.href = "/";
-//         return Promise.reject(refreshError);
-//       } finally {
-//         isRefreshing = false;
-//       }
-//     }
+        const { store } = require("../Redux/Store").configureStore();
+        store.dispatch(logoutUser(userId));
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
 
-//     return Promise.reject(error);
-//   }
-// );
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;
