@@ -239,7 +239,7 @@ const SingleGame = () => {
     dispatch(removeFromCart({ gameId: id, platform: "windows" }));
   }
 
-  
+
   const handleCheckout = async () => {
     if (!single || !single._id) {
       console.error("Game data is not available for checkout.");
@@ -247,14 +247,16 @@ const SingleGame = () => {
     }
 
     // 1. Create order (calls backend)
-    const resultAction = await dispatch(createOrder({ items: [
-      {
-        game: single._id,
-        name: single.title,
-        platform: "windows", // Assuming "windows" as a default platform
-        price: Number(single.platforms?.windows?.price || 0),
-      }
-    ], amount: single.platforms?.windows?.price || 0 }));
+    const resultAction = await dispatch(createOrder({
+      items: [
+        {
+          game: single._id,
+          name: single.title,
+          platform: "windows", // Assuming "windows" as a default platform
+          price: Number(single.platforms?.windows?.price || 0),
+        }
+      ], amount: single.platforms?.windows?.price || 0
+    }));
     if (createOrder.fulfilled.match(resultAction)) {
       const { clientSecret: newClientSecret, order } = resultAction.payload;
       setClientSecret(newClientSecret);
@@ -426,7 +428,7 @@ const SingleGame = () => {
           <div className="2xl:w-1/4 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
-                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[180px] h-auto" />
+                <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
               </div>
               <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
 
@@ -480,10 +482,10 @@ const SingleGame = () => {
                   )}
                 </div>
                 <button
-                
-                onClick={()=>handleCheckout()}
-                
-                className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+
+                  onClick={() => handleCheckout()}
+
+                  className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Buy Now
                 </button>
               </div>
@@ -498,7 +500,7 @@ const SingleGame = () => {
                         orderId={currentOrderId}
                         amount={amountToPay}
                         onPaymentSuccess={handlePaymentSuccess}
-                        fromCartPage={false} 
+                        fromCartPage={false}
                       />
                     </Elements>
                     <button
@@ -571,19 +573,19 @@ const SingleGame = () => {
                   <div className="pb-5 px-4 md:px-5 space-y-4">
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Refund Type</p>
-                      <p className="text-white text-base">Refundable</p>
+                      <p className="text-white text-base">{single?.refund_type}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Developer</p>
-                      <p className="text-white text-base">Rockstar Games</p>
+                      <p className="text-white text-base">{single?.developer}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Publisher</p>
-                      <p className="text-white text-base">Rockstar Games</p>
+                      <p className="text-white text-base">{single?.publisher}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Release Date</p>
-                      <p className="text-white text-base">03/04/25</p>
+                      <p className="text-white text-base">{single?.release_date}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Total Download</p>
