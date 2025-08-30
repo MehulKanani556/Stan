@@ -57,6 +57,7 @@ const Store = () => {
     trending: useRef(null),
     popular: useRef(null),
     action: useRef(null),
+    allGames: useRef(null),
     ps5: useRef(null),
     topGames: useRef(null),
   };
@@ -84,12 +85,12 @@ const Store = () => {
   const scrollLeft = (sectionRef) => {
     sectionRef.current?.scrollBy({ left: -300, behavior: "smooth" });
   };
-  
+
   const scrollRight = (sectionRef) => {
     sectionRef.current?.scrollBy({ left: 300, behavior: "smooth" });
   };
-  
-  
+
+
   const handleAddToCart = (ele) => {
     dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
   }
@@ -129,18 +130,18 @@ const Store = () => {
             All Games
           </button>
           <button
-  onClick={()=>scrollLeft(sectionRef)}
-  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
+            onClick={() => scrollLeft(sectionRef)}
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
              bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110 text-white rotate-180">
-  <FaArrowRight size={16} />
-</button>
+            <FaArrowRight size={16} />
+          </button>
 
-<button
-  onClick={()=>scrollRight(sectionRef)}
-  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
+          <button
+            onClick={() => scrollRight(sectionRef)}
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
              bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110 text-white">
-  <FaArrowRight size={16} />
-</button>
+            <FaArrowRight size={16} />
+          </button>
         </div>
       </div>
 
@@ -286,7 +287,7 @@ const Store = () => {
           <GameSection
             title="All Games"
             games={Array.isArray(games) ? games : []}
-            sectionRef={scrollContainerRefs.action}
+            sectionRef={scrollContainerRefs.allGames}
             loading={loading}
             error={error}
           />
