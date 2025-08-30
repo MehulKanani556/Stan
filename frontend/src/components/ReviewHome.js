@@ -7,7 +7,6 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import StylishDiv from './StylishDiv'
 
-
 const ReviewHome = () => {
 
   const [slidesToShow, setSlidesToShow] = useState(1)
@@ -97,37 +96,44 @@ const ReviewHome = () => {
         <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
           <Slider {...settings} className="ds_review_slider flex items-center justify-center py-5">
             {reviews.map((r) => (
-              <div key={r.id} className="flex justify-center px-4 h-full">
-                <StylishDiv className="max-w-md w-full h-full flex">
+              <div key={r.id} className="flex justify-center h-full relative  px-8">
+                <div className="max-w-[100%] w-full h-full flex ">
                   <div className=" rounded-2xl   transition flex flex-col h-full w-full">
-
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-4 mb-4 sm:block hidden">
                       <img
                         src={r.avatar}
                         alt={r.name}
-                        className="w-12 h-12 rounded-full object-cover border border-gray-700"
+                        className=" sm:absolute md:h-[150px] h-[100px] aspect-square top-[50%] -translate-y-1/2 left-[20px] object-cover border border-gray-700 rounded-xl z-10"
                       />
-                      <div>
+                    </div>
+                    <div className='bg-white/10 backdrop-blur-md border border-white/10  py-4  md:h-[200px] sm:h-[180px] h-full sm:ms-[25px] md:ps-[120px] sm:ps-[70px] sm:pe-3 ps-5 pe-5 rounded-xl sm:text-start text-center'>
+                    <div className="flex items-center justify-center gap-4 mb-4 sm:hidden ">
+                      <img
+                        src={r.avatar}
+                        alt={r.name}
+                        className="md:h-[150px] h-[100px] aspect-square  object-cover border border-gray-700 sm:rounded-xl rounded-full z-10"
+                      />
+                    </div>
+                      <div className=''>
                         <p className="font-semibold">{r.name}</p>
                         <p className="text-sm text-gray-400">{r.game}</p>
                       </div>
-                    </div>
+                      <div className="flex   my-3 justify-center sm:justify-start">
+                        {[...Array(5)].map((_, i) => (
+                          <FaStar
+                            key={i}
+                            className={`h-5 w-5 mx-1 ${i < r.rating ? 'text-yellow-400' : 'text-gray-600'
+                              }`}
+                          />
+                        ))}
+                      </div>
 
-                    <div className="flex mb-3 mt-6">
-                      {[...Array(5)].map((_, i) => (
-                        <FaStar
-                          key={i}
-                          className={`h-5 w-5 mx-1 ${i < r.rating ? 'text-yellow-400' : 'text-gray-600'
-                            }`}
-                        />
-                      ))}
+                      <p className="text-gray-300 sm:text-[14px] text-[12px] leading-relaxed flex-grow ">
+                        {r.review}
+                      </p>
                     </div>
-
-                    <p className="text-gray-300 sm:text-[16px] text-[14px] leading-relaxed mt-5 flex-grow">
-                      {r.review}
-                    </p>
                   </div>
-                </StylishDiv>
+                </div>
               </div>
             ))}
           </Slider>
