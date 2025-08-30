@@ -8,8 +8,8 @@
 }
 
 body {
-  /* background: linear-gradient(to bottom right, #0f0c29, #302b63, #24243e); */
-  background-color: #1C2326;
+  /* background-color: #1C2326; */
+  background: -moz-linear-gradient(180deg, hsla(246, 55%, 10%, 1) 0%, hsla(240, 33%, 15%, 1) 100%);
   color: white;
   /* font-family: "League Spartan", sans-serif; */
   font-family: "Epunda Slab", serif;
