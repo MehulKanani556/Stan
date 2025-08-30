@@ -25,7 +25,9 @@ import { decryptData } from '../Utils/encryption';
 
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
 import { fetchWishlist } from '../Redux/Slice/wishlist.slice';
-
+import axiosInstance from '../Utils/axiosInstance';
+import { BASE_URL } from '../Utils/baseUrl';
+import axios from 'axios';
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -109,13 +111,13 @@ export default function Header() {
     };
 
 
-
     return (
         <>
             <header className='bg-black/30 backdrop-blur-xl sticky w-full top-0 z-50 '>
                 <div className="drawer max-w-[95%] md:max-w-[85%] m-auto w-full  ">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
+                
 
                         <div className="navbar  w-full px-0 justify-between">
 

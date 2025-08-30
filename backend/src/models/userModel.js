@@ -59,9 +59,12 @@ userSchema.methods.getJWT = async function () {
         _id: user._id,
         role: user.role || 'user',
         isAdmin: user.role === 'admin'
-    }, process.env.JWT_SECRET);
+    }, process.env.JWT_SECRET,   
+    // { expiresIn: "60m" }
+);
     return token;
 };
+
 
 //  Password validation method (for encrypted passwords)
 userSchema.methods.validatePassword = async function (passwordInputByUser) {

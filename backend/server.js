@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { connectDB } from './src/config/db.js';
 import indexRouter from './src/routes/indexRoutes.js';
 import http from 'http';
@@ -11,6 +12,7 @@ const app = express();
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
 
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',

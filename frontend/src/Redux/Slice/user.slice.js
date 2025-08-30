@@ -469,16 +469,25 @@ export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { dispatch, rejectWithValue }) => {
 
-     
-        localStorage.removeItem("userId");
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-        localStorage.removeItem("userName");
-
-        // dispatch(setAlert({ text: response.data.message, color: 'success' }));
-        enqueueSnackbar( "Logged out successfully", { variant: "success" });
-        return ;
+    
+      try {
+        const response = await axiosInstance.post(`${BASE_URL}/logout`);
+        if (response.data.success) {
+          localStorage.removeItem("userId");
+          localStorage.removeItem("token");
+          localStorage.removeItem("role");
+          localStorage.removeItem("userName");
+          if (window.persistor) {
+            window.persistor.purge();
+          }
+          // dispatch(setAlert({ text: response.data.message, color: 'success' }));
+          enqueueSnackbar(response.data.message || "Logged out successfully", { variant: "success" });
+          return response.data;
+        }
+      } catch (error) {
+        // return handleErrors(error, dispatch, rejectWithValue);
       }
+    }
     
   
 );

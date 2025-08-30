@@ -6,6 +6,7 @@ import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendFor
 import { getReceiverSocketId } from "../socketManager/SocketManager.js";
 import { decryptData, encryptData } from "../middlewares/incrypt.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,6 +18,44 @@ const s3 = new S3Client({
     },
     region: process.env.S3_REGION || "us-east-1"
 });
+const generateTokens = async (id) => {
+    try {
+        const userData = await User.findOne({ _id: id });
+        if (!userData) {
+            throw new Error("User not found");
+        }
+
+        const accessToken = await jwt.sign(
+            {
+                _id: userData._id,
+                role: userData.role || "user",
+                isAdmin: userData.role === "admin"
+            },
+            process.env.JWT_SECRET,
+            // { expiresIn: "60m" }
+        );
+
+        const refreshToken = await jwt.sign(
+            {
+                _id: userData._id,
+                role: userData.role || "user",
+                isAdmin: userData.role === "admin"
+            },
+            process.env.REFRESH_SECRET_KEY,
+            { expiresIn: "15d" }
+        );
+
+        userData.refreshToken = refreshToken;
+        await userData.save({ validateBeforeSave: false });
+
+        return {
+            accessToken: accessToken, // Encrypt accessToken
+            refreshToken: userData.refreshToken, // Already encrypted
+        };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
 
 // Helper function to delete file from S3
 const deleteFileFromS3 = async (fileUrl) => {
@@ -74,20 +113,34 @@ export const register = async (req, res) => {
             role: role || 'user',
         });
 
-        const token = await data.getJWT();
-        if (!token) {
+        const { accessToken, refreshToken } = await generateTokens(data._id);
+        if (!accessToken) {
             return sendErrorResponse(res, 500, "Failed to generate token");
         }
 
-        return sendCreatedResponse(res, "Account created successfully", {
-            id: data._id,
-            name: data.name,
-            email: data.email,
-            role: data.role || 'user',
-            isAdmin: data.role === 'admin',
-            lastLogin: data.lastLogin,
-            token: token
-        });
+        return res
+            .cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 2 * 60 * 60 * 1000, sameSite: "Strict" })
+            .cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 15 * 24 * 60 * 60 * 1000,
+                sameSite: "Strict",
+            })
+            .status(201)
+            .json({
+                success: true,
+                message: "Account created successfully",
+                result: {
+                    id: data._id,
+                    name: data.name,
+                    email: data.email,
+                    role: data.role || 'user',
+                    isAdmin: data.role === 'admin',
+                    lastLogin: data.lastLogin,
+                    token: accessToken
+                }
+            });
+        
     } catch (error) {
         return sendErrorResponse(res, 500, error.message);
     }

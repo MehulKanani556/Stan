@@ -5,8 +5,9 @@ import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendUna
 import nodemailer from "nodemailer"
 import twilio from 'twilio';
 import { encryptData } from "../middlewares/incrypt.js";
-
-
+import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -62,6 +63,46 @@ async function sendOtpEmail(email, otp) {
     await transporter.sendMail(mailOptions);
 }
 
+const generateTokens = async (id) => {
+    try {
+        const userData = await User.findOne({ _id: id });
+        if (!userData) {
+            throw new Error("User not found");
+        }
+
+        const accessToken = await jwt.sign(
+            {
+                _id: userData._id,
+                role: userData.role || "user",
+                isAdmin: userData.role === "admin"
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "1m" }
+        );
+
+        const refreshToken = await jwt.sign(
+            {
+                _id: userData._id,
+                role: userData.role || "user",
+                isAdmin: userData.role === "admin"
+            },
+            process.env.REFRESH_SECRET_KEY,
+            { expiresIn: "15d" }
+        );
+
+        userData.refreshToken = refreshToken;
+        await userData.save({ validateBeforeSave: false });
+
+        return {
+            accessToken: accessToken, // Encrypt accessToken
+            refreshToken: userData.refreshToken, // Already encrypted
+        };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+
 export const userLogin = async (req, res) => {
     try {
         const { email, password, contactNo } = req.body;
@@ -105,8 +146,8 @@ export const userLogin = async (req, res) => {
         }
 
         // Validate password (don't encrypt input password for comparison)
-        console.log(password)   
         const isPasswordValid = await user.validatePassword(password);
+        console.log(isPasswordValid)   
         if (!isPasswordValid) {
             return sendUnauthorizedResponse(res, "Invalid password");
         }
@@ -116,21 +157,35 @@ export const userLogin = async (req, res) => {
         await user.save();
 
         // Generate JWT token
-        const token = await user.getJWT();
-        if (!token) {
+        const { accessToken, refreshToken } = await generateTokens(user._id);
+
+        if (!accessToken) {
             return sendErrorResponse(res, 500, "Failed to generate token");
         }
 
-        // Return user data with role and isAdmin status
-        return sendSuccessResponse(res, "Login successful", {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role || 'user',
-            isAdmin: user.role === 'admin',
-            lastLogin: user.lastLogin,
-            token: token
-        });
+     
+        return res
+            .cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 2 * 60 * 60 * 1000, sameSite: "Strict" })
+            .cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 15 * 24 * 60 * 60 * 1000,
+                sameSite: "Strict",
+            })
+            .status(201)
+            .json({
+                success: true,
+                message: "Login successful",
+                result: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role || 'user',
+                    isAdmin: user.role === 'admin',
+                    lastLogin: user.lastLogin,
+                    token: accessToken
+                }
+            });
     } catch (error) {
         return ThrowError(res, 500, error.message);
     }
@@ -363,6 +418,82 @@ export const changePassword = async (req, res) => {
     }
 };
 
+export const generateNewToken = async (req, res) => {
+    let  token =  req?.cookies?.refreshToken || req.header("Authorization").split(" ")[1];
+
+    console.log(req?.cookies,req.header("Authorization"));
+    
+  
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Token not available",
+      });
+    }
+  
+    jwt.verify(
+      token,
+      process.env.REFRESH_SECRET_KEY,
+      async function (err, decoded) {
+        try {
+          console.log(err);
+  
+          if (err) {
+            return res.status(400).json({
+              success: false,
+              message: "Token invalid",
+            });
+          }
+  
+          const USERS = await User.findOne({ _id: decoded._id });
+          // console.log("USERSss", USERS);
+  
+          if (!USERS) {
+            return res.status(404).json({
+              success: false,
+              message: "User not found..!!",
+            });
+          }
+          const { accessToken, refreshToken } = await generateTokens(decoded._id);
+  
+          const userDetails = await User
+            .findOne({ _id: USERS._id })
+            .select("-password -refreshToken");
+          // console.log("userDetailsss", userDetails);
+  
+          return res
+            .status(200)
+            .cookie("accessToken", accessToken, {
+              httpOnly: true,
+              secure: true,
+              maxAge: 2 *60 * 60 * 1000,
+              sameSite: "Strict",
+            })
+            .cookie("refreshToken", refreshToken, {
+              httpOnly: true,
+              secure: true,
+              maxAge: 15 * 24 * 60 * 60 * 1000,
+              sameSite: "Strict",
+            })
+            .json({
+              success: true,
+              finduser: userDetails,
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            });
+        } catch (error) {
+          return res.status(500).json({
+            success: false,
+            data: [],
+            error: "Error in register user: " + error.message,
+          });
+        }
+      }
+    );
+  };
+  
+
 //logoutUser
 // export const logoutUser = async (req, res) => {
 //     try {
@@ -376,3 +507,19 @@ export const changePassword = async (req, res) => {
 //         return sendErrorResponse(res, 400, error.message);
 //     }
 // };
+
+export const logoutUser = async (req,res)=>{
+    try {
+        const userId = req.user._id;
+        const user  = User.findById(userId);
+        return res.status(200)
+            .clearCookie("accessToken")
+            .clearCookie("refreshToken")
+            .json({
+                success: true,
+                message: "User logged Out",
+              });
+    } catch (error) {
+        
+    }
+}

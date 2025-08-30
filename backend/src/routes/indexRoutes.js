@@ -6,7 +6,7 @@ import {
 } from "../middlewares/imageupload.js";
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
-import { changePassword, forgotPassword, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
+import { changePassword, forgotPassword, generateNewToken, logoutUser, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
 import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
 import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames } from "../controllers/game.controller.js";
@@ -49,6 +49,9 @@ indexRoutes.post("/forgotPassword", forgotPassword);
 indexRoutes.post("/VerifyEmail", VerifyOtp);
 indexRoutes.post("/resetPassword", resetPassword);
 indexRoutes.post("/changePassword", UserAuth, changePassword);
+
+indexRoutes.post("/generateNewTokens", generateNewToken);
+indexRoutes.post("/logout",UserAuth,logoutUser)
 
 indexRoutes.get("/searchUsers", UserAuth, searchUsers);
 indexRoutes.get("/suggestedUsers", UserAuth, isUser, suggestedUsers);
