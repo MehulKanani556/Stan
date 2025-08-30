@@ -8,8 +8,9 @@
 }
 
 body {
-  /* background-color: #1C2326; */
-  background: -moz-linear-gradient(180deg, hsla(246, 55%, 10%, 1) 0%, hsla(240, 33%, 15%, 1) 100%);
+  background-color: #1D232A;
+
+  /* background: -moz-linear-gradient(180deg, hsla(246, 55%, 10%, 1) 0%, hsla(240, 33%, 15%, 1) 100%); */
   color: white;
   /* font-family: "League Spartan", sans-serif; */
   font-family: "Epunda Slab", serif;
@@ -190,6 +191,9 @@ body {
   width: 100%;
   padding: 0px 10px;
 }
+
+
+
 
 
 /* .ds_review_slider .slick-dots li button{

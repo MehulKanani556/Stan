@@ -4,6 +4,7 @@ import guide2 from "../images/guide2.png";
 import guide3 from "../images/guide3.jpg";
 import { useDispatch } from "react-redux";
 import { chatToggleFunc } from "../Redux/Slice/user.slice";
+import { Link } from "react-router-dom";
 
 function Guides() {
   return (
@@ -120,12 +121,12 @@ const SupportPage = () => {
                   Find answers to common questions
                 </p>
               </div>
-              <a
-                href="/faqs"
+              <Link
+                to="/faqs"
                 className="w-full text-center py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition inline-block"
               >
                 View FAQs
-              </a>
+              </Link>
             </div>
           </div>
         </div>

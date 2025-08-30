@@ -573,19 +573,19 @@ const SingleGame = () => {
                   <div className="pb-5 px-4 md:px-5 space-y-4">
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Refund Type</p>
-                      <p className="text-white text-base">{single?.refund_type}</p>
+                      <p className="text-white text-base">{single?.refund_type || '-'}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Developer</p>
-                      <p className="text-white text-base">{single?.developer}</p>
+                      <p className="text-white text-base">{single?.developer || '-'}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Publisher</p>
-                      <p className="text-white text-base">{single?.publisher}</p>
+                      <p className="text-white text-base">{single?.publisher || '-'}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Release Date</p>
-                      <p className="text-white text-base">{single?.release_date}</p>
+                      <p className="text-white text-base">{single?.release_date || '-'}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Total Download</p>

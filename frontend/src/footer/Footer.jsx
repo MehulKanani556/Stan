@@ -2,6 +2,7 @@ import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaArrowUp } from 'react-icons/fa';
 import { IoMailOutline, IoCallOutline, IoLocationOutline } from 'react-icons/io5';
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg";
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const [showGoUp, setShowGoUp] = React.useState(false);
@@ -29,10 +30,10 @@ const Footer = () => {
       )} */}
 
 
-      <footer className="relative overflow-hidden bg-gradient-to-r pb-10 md:pb-0 from-[#0f0c29] via-[#302b63] to-[#24243e] text-white">
+      <footer className="relative overflow-hidden pb-10 md:pb-0 bg-black text-white">
 
-        <div className="absolute top-0 left-0 w-72 h-72 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-500 rounded-full blur-3xl opacity-20"></div>
+        {/* <div className="absolute top-0 left-0 w-72 h-72 bg-purple-500 rounded-full blur-3xl opacity-20"></div> */}
+        {/* <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-500 rounded-full blur-3xl opacity-20"></div> */}
 
         <div className="relative max-w-[90%] md:max-w-[85%] mx-auto z-10">
 
@@ -70,12 +71,12 @@ const Footer = () => {
               <ul className="space-y-2">
                 {["Home", "GGtalks", "Games", "Rewards", "Store"].map((link, i) => (
                   <li key={i}>
-                    <a
-                      href={link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#"}
+                    <Link
+                      to={link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#"}
                       className="text-gray-300 hover:text-[#ab99e1] transition-colors text-sm"
                     >
                       {link}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -89,12 +90,12 @@ const Footer = () => {
               <ul className="space-y-2">
                 {["FAQs", "Guides", "Terms of Service", "Privacy Policy"].map((link, i) => (
                   <li key={i}>
-                    <a
-                      href={link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#"}
+                    <Link
+                      to={link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#"}
                       className="text-gray-300 hover:text-[#ab99e1] transition-colors text-sm"
                     >
                       {link}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -106,15 +107,15 @@ const Footer = () => {
                 Contact Us
               </h4>
               <div className="space-y-4 text-sm text-gray-300">
-                <div className="flex gap-3 items-start">
+                <div className="flex gap-3 items-center">
                   <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
                   <p>123 Gaming Street, Digital City, DC 12345</p>
                 </div>
-                <div className="flex gap-3 items-start">
+                <div className="flex gap-3 items-center">
                   <IoCallOutline className="text-[#ab99e1]" />
                   <p>+1 (555) 123-4567</p>
                 </div>
-                <div className="flex gap-3 items-start">
+                <div className="flex gap-3 items-center">
                   <IoMailOutline className="text-[#ab99e1]" />
                   <p>support@YOYO.com</p>
                 </div>
