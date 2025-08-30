@@ -30,7 +30,7 @@ import MultiHome from '../components/MultiHome';
 import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
 
@@ -263,8 +263,6 @@ export default function Home() {
     dispatch(removeFromWishlist({ gameId }));
   };
   // Track cart changes for notifications
-
-
   const handleAddToCart = (ele) => {
     dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
   }
@@ -282,7 +280,7 @@ export default function Home() {
       )}
 
       <section className="">
-        <div className="relative w-full sp_slider_dot sp_font">
+        <div className="relative w-full sp_slider_dot ">
           <Swiper
             modules={[EffectFade, Pagination, Autoplay]}
             effect="fade"
@@ -299,19 +297,30 @@ export default function Home() {
             className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
             {games && games.length > 0 ? (
-              games.slice(-6).map((game, index) => (
+              games.slice(100,105).map((game, index) => (
                 <SwiperSlide key={index}>
-                  <div className="relative flex w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] overflow-hidden bg-black">
-                    {/* <div className='blob w-[70%]'> */}
-                    <img
-                      src={game?.cover_image?.url || game1}
-                      alt={game.title || `Game ${index + 1}`}
-                      className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px] object-cover object-center"
-                    />
-                      {/* </div> */}
-                    
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                    {/* <div className=" text-[40px] z-10">{game.title}</div> */}
+                  <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
+                    <div className='blob md:w-[60%] w-full h-[600px]' >
+                      <img
+                        src={game?.cover_image?.url || game1}
+                        alt={game.title || `Game ${index + 1}`}
+                        className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
+                      />
+                    {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
+
+                    </div>
+
+                    <div className='md:w-[40%] w-full  md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font  '>
+                      <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
+                      <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
+                        {game.description.slice(0, 200) + '...'}
+                      </p>
+                      <Link to={'/single/'+game._id} className='flex justify-center mt-5'>
+                        <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
+                          Learn More
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </SwiperSlide>
               ))
@@ -409,7 +418,7 @@ export default function Home() {
               breakpoints={{
                 320: { slidesPerView: 1, spaceBetween: 8 },
                 425: { slidesPerView: 2, spaceBetween: 10 },
-                500: { slidesPerView: 2, spaceBetween: 10 },
+                575: { slidesPerView: 2, spaceBetween: 10 },
                 640: { slidesPerView: 2, spaceBetween: 12 },
                 768: { slidesPerView: 2.5, spaceBetween: 14 },
                 1024: { slidesPerView: 3, spaceBetween: 14 },
