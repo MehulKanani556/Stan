@@ -136,8 +136,6 @@ const SupportPage = () => {
 
 const SectionWrapper = ({ title, description, img, items, flip }) => {
 
-   
-
   return (
     <section className="py-16 px-3 md:px-6 border-purple-500/30">
       <div className={`w-full max-w-[95%] md:max-w-[85%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center ${flip ? "md:grid-flow-dense" : ""}`}>

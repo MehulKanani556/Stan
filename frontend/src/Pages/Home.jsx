@@ -297,7 +297,7 @@ export default function Home() {
             className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
             {games && games.length > 0 ? (
-              games.slice(100,105).map((game, index) => (
+              games.slice(100, 105).map((game, index) => (
                 <SwiperSlide key={index}>
                   <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
                     <div className='blob md:w-[60%] w-full h-[600px]' >
@@ -306,7 +306,7 @@ export default function Home() {
                         alt={game.title || `Game ${index + 1}`}
                         className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
                       />
-                    {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
+                      {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
 
                     </div>
 
@@ -315,7 +315,7 @@ export default function Home() {
                       <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
                         {game.description.slice(0, 200) + '...'}
                       </p>
-                      <Link to={'/single/'+game._id} className='flex justify-center mt-5'>
+                      <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
                         <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
                           Learn More
                         </button>
@@ -533,7 +533,7 @@ export default function Home() {
 
           <div className="relative z-10 sm:w-full w-[60%] max-w-[95%] md:max-w-[85%] ps-5 sm:ps-0 sm:mx-auto flex flex-col items-start md:items-start md:text-left text-white ">
             <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 md:mb-3 leading-tight">
-              100+ games, worlds. Explore them all with Stan
+              100+ games, worlds. Explore them all with YOYO
             </h2>
             <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
               All of our games, in their most premium editions.
