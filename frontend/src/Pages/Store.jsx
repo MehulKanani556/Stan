@@ -239,16 +239,21 @@ const Store = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 gap-4">
               {/* Price */}
-              <div className="bg-slate-700/50 rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 border border-slate-600/30">
-                <div className="flex items-center space-x-2 mb-2">
+              <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                <div className="flex flex-wrap items-center space-x-2 mb-2">
                   <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                   <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-                </div>
-                <div className="flex items-baseline space-x-1">
-                  <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black text-white">
-                    ${Number(priceValue).toLocaleString('en-IN')}
+                  <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
+                    ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
                   </span>
                   <span className="text-xs text-slate-400 font-medium">USD</span>
+                </div>
+                <div className="flex flex-wrap items-center space-x-2 mb-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                  <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
+                    {game?.platforms?.windows?.size || 'N/A'}
+                  </span>
                 </div>
               </div>
             </div>

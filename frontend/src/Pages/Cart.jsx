@@ -73,19 +73,19 @@ const Cart = () => {
         // 1. Create order (calls backend)
         const resultAction = await dispatch(createOrder({ items, amount }));
         if (createOrder.fulfilled.match(resultAction)) {
-          const { clientSecret: newClientSecret, order } = resultAction.payload;
-          setClientSecret(newClientSecret);
-          setCurrentOrderId(order._id);
-          setAmountToPay(order.amount);
-          setShowPaymentForm(true);
+            const { clientSecret: newClientSecret, order } = resultAction.payload;
+            setClientSecret(newClientSecret);
+            setCurrentOrderId(order._id);
+            setAmountToPay(order.amount);
+            setShowPaymentForm(true);
         }
-      };
+    };
 
     const handlePaymentSuccess = () => {
-      setShowPaymentForm(false);
-      setClientSecret("");
-      setCurrentOrderId(null);
-      setAmountToPay(0);
+        setShowPaymentForm(false);
+        setClientSecret("");
+        setCurrentOrderId(null);
+        setAmountToPay(0);
     };
 
     return (
@@ -98,6 +98,7 @@ const Cart = () => {
                         cartItems.map((item) => (
                             <div
                                 key={item.game._id}
+                                onClick={() => navigate(`/single/${item.game._id}`)}
                                 className="bg-black/15 border border-white/10 p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-6"
                             >
                                 <div className="w-full lg:w-40 h-48 lg:h-40 shrink-0">
@@ -132,7 +133,7 @@ const Cart = () => {
                                 <div className="flex flex-col items-end justify-between min-w-[120px]">
                                     <div className="text-white text-xs px-3 py-1 rounded-full">
                                         <button
-                                            onClick={() => handleRemove(item)}
+                                            onClick={(e) => { e.stopPropagation(); handleRemove(item); }}
                                             className="text-red-400 hover:text-red-500 transition text-xl mr-4"
                                         >
                                             <RiDeleteBin6Line />
@@ -217,7 +218,7 @@ const Cart = () => {
                                 orderId={currentOrderId}
                                 amount={amountToPay}
                                 onPaymentSuccess={handlePaymentSuccess}
-                                fromCartPage={true} 
+                                fromCartPage={true}
                             />
                         </Elements>
                         <button
