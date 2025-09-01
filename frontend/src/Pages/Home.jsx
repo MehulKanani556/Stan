@@ -50,7 +50,8 @@ export default function Home() {
   const navigate = useNavigate();
   const { wishlistStatus } = useSelector((state) => state.wishlist);
 
-
+  const { currentUser } = useSelector((state) => state.user);
+  const { user: authUser } = useSelector((state) => state.auth);
   // console.log("Hello Bachho", gameData);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -114,18 +115,18 @@ export default function Home() {
 
 
   useEffect(() => {
-    dispatch(getAllCategories())
-      .then((value) => {
-        //  console.log("hihi" , );
-        //  setActiveTab(value?.payload[0]?.categoryName)
-      })
-    dispatch(fetchWishlist())
-    dispatch(fetchCart())
+  
+      const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
+      if (userId) {
+        dispatch(fetchWishlist());
+        dispatch(fetchCart());
+      }
+  
   }, [])
 
   useEffect(() => {
     dispatch(getAllGames());
-
+    dispatch(getAllCategories())
   }, [dispatch]);
 
   useEffect(() => {

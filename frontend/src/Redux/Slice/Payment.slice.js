@@ -121,6 +121,23 @@ export const allorders = createAsyncThunk(
   }
 );
 
+// Retry payment for existing order
+export const retryOrderPayment = createAsyncThunk(
+  "payment/retryOrderPayment",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/order/retry-payment", {
+        orderId,
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.error || "Failed to retry payment"
+      );
+    }
+  }
+);
+
 const paymentSlice = createSlice({
   name: "payment",
   initialState: initialStatepayment,
@@ -214,6 +231,18 @@ const paymentSlice = createSlice({
       .addCase(allorders.rejected, (state, action) => {
         state.loading = false;
         state.orders = [];
+        state.error = action.payload;
+      })
+      .addCase(retryOrderPayment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(retryOrderPayment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.clientSecret = action.payload.clientSecret;
+      })
+      .addCase(retryOrderPayment.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },

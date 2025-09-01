@@ -27,13 +27,14 @@ import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import Cart from './Pages/Cart.jsx';
 import Wishlist from './Pages/Wishlist.jsx';
 import AllGames from './Pages/AllGames.jsx';
+// import Loader from './Pages/Loader.js';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
-  const showFooter  = isAuthPage || location.pathname === "/GGTalks";
-  const chatwidegt = location.pathname == "/GGTalks";
+  const showFooter  = isAuthPage || location.pathname === "/GGTalks" || location.pathname === "/ggtalks";
+  const chatwidegt = location.pathname == "/GGTalks" || location.pathname === "/ggtalks";
 
   return (
     <>
@@ -50,6 +51,7 @@ function AppContent() {
           <SocketProvider>
           <Routes>
             <Route path="/" element={<Home />} />
+            {/* <Route path="/loader" element={<Loader />} /> */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/store" element={<Store />} />
