@@ -27,7 +27,7 @@ import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import Cart from './Pages/Cart.jsx';
 import Wishlist from './Pages/Wishlist.jsx';
 import AllGames from './Pages/AllGames.jsx';
-// import Loader from './Pages/Loader.js';
+import Loader from './Pages/Loader.js';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -51,7 +51,7 @@ function AppContent() {
           <SocketProvider>
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* <Route path="/loader" element={<Loader />} /> */}
+            <Route path="/loader" element={<Loader />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/store" element={<Store />} />
