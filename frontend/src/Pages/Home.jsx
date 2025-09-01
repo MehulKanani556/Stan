@@ -43,6 +43,7 @@ export default function Home() {
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
   const gameData = useSelector((state) => state?.game?.games)
+  const { pagination, loading } = useSelector((state) => state.game);
   const dispatch = useDispatch()
   const cateData = useSelector((state) => state?.game?.category)
   const wishlist = useSelector((state) => state.wishlist.items)
@@ -125,7 +126,7 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    dispatch(getAllGames());
+    dispatch(getAllGames({ page: 1, limit: 20 })); // Load first 20 games
     dispatch(getAllCategories())
   }, [dispatch]);
 
@@ -299,7 +300,12 @@ export default function Home() {
             loop={true}
             className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
-            {games && games.length > 0 ? (
+                    {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                <span className="ml-3 text-white">Loading games...</span>
+              </div>
+            ) : games && games.length > 0 ? (
               games.slice(100, 105).map((game, index) => (
                 <SwiperSlide key={index}>
                   <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
@@ -328,7 +334,7 @@ export default function Home() {
                 </SwiperSlide>
               ))
             ) : (
-              <p className="text-center text-white py-10">Loading...</p>
+              <p className="text-center text-white py-10">No games available</p>
             )}
           </Swiper>
         </div>
