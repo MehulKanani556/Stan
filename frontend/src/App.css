@@ -194,7 +194,103 @@ body {
   padding: 0px 10px;
 }
 
+/* ************* Multi Home ******** */
+.ds_multi_img{
+   transition: 0.5s ease-in-out;
+   cursor: pointer;
+}
+.ds_multi_img:hover{
+   transform: scale(1.2);
+}
 
+/* ************* Home Review ******** */
+.ds_review_card {
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.ds_review_card:hover {
+  transform: scale(1.03);
+}
+.ds_review_card:hover::before {
+  opacity: 1;
+}
+
+
+/* ******** Demo ******* */
+/* Container anchors all slides at center. */
+#carousel {
+  position: relative;
+  height: 480px;            /* adjust if your cards are taller */
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;        /* important: avoid clipping side cards */
+}
+
+/* Each slide is absolutely centered, then shifted via transform (inline style) */
+#carousel .slide {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+  will-change: transform, opacity;
+}
+
+/* Card styling */
+.ds_review_card {
+  width: 340px;             /* tune this with GAP in JS */
+  min-height: 360px;
+  background: rgba(20, 20, 20, 0.92);
+  border-radius: 1rem;
+  border: 1px solid #333;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.ds_review_card:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+/* Buttons */
+.buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.buttons button {
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s ease;
+}
+
+.buttons button:hover {
+  background: #444;
+}
+
+
+
+/* 📲 Tablet */
+@media (max-width: 1024px) {
+  .ds_review_card { width: 300px; }
+  #carousel { height: 440px; }
+}
+
+@media (max-width: 640px) {
+  .ds_review_card {
+    width: 250px /* make card full width on mobile */
+  }
+
+  #carousel { height: 400px; }
+}
 
 
 

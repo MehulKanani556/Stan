@@ -35,6 +35,7 @@ import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice
 import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
 import { BiLogoWindows } from 'react-icons/bi';
 import { BsWindows } from 'react-icons/bs';
+import Demo from '../components/Demo';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
@@ -382,15 +383,18 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => navigate('/allGames')}
-                  className="px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
-                    font-medium text-xs sm:text-sm transition-all duration-200 ease-out
-                    bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110
-                    active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                >
-                  All Games
-                </button>
+              <button
+  onClick={() => navigate('/allGames')}
+  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-lg 
+    font-medium text-sm transition-all duration-200 ease-out
+    bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+    text-white shadow-lg shadow-fuchsia-500/30
+    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+    active:scale-95 focus-visible:outline-none 
+    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+>
+  All Games
+</button>
                 <button
                   onClick={() => gameSwiperRef.current?.slidePrev()}
                   disabled={isBeginning}
@@ -615,6 +619,7 @@ export default function Home() {
 
       <Trailer />
       <ReviewHome />
+      {/* <Demo/> */}
       <MultiHome />
     </>
   )

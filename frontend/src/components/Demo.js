@@ -1,11 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import Slider from 'react-slick'
-import { FaStar } from 'react-icons/fa'
-
-// Import slick styles
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
-import StylishDiv from './StylishDiv'
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { FaStar } from "react-icons/fa";
 
 const reviews = [
   { id: 1, name: "Alex Johnson", avatar: "https://i.pravatar.cc/150?img=1", game: "Resident Evil Village", rating: 5, review: "An absolute masterpiece! The atmosphere is chilling, and the storyline kept me hooked till the end." },
@@ -15,8 +9,7 @@ const reviews = [
   { id: 5, name: "Ethan Brown", avatar: "https://i.pravatar.cc/150?img=5", game: "Cyberpunk 2077", rating: 4, review: "Amazing world-building and graphics. Still has some bugs, but definitely enjoyable." },
 ];
 
-const ReviewHome = () => {
-
+export default function Demo() {
   const [selected, setSelected] = useState(0);
   const [offset, setOffset] = useState(0); 
   const [gap, setGap] = useState(340); // dynamic GAP (depends on card width)
@@ -94,17 +87,8 @@ const ReviewHome = () => {
     return arr;
   }, [selected, n, offset, gap]);
 
-  
-  
-
   return (
-    <div className=" pt-11 overflow-hidden">
-      <section className="md:py-12 text-white">
-        <h2 className="md:text-[35px] text-[28px] font-bold  text-center">
-          Player Reviews
-        </h2>
-        <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
-        <main className="relative flex flex-col items-center">
+    <main className="relative flex flex-col items-center">
       {/* Carousel */}
       <div
         id="carousel"
@@ -150,7 +134,7 @@ const ReviewHome = () => {
       </div>
 
       {/* Dots */}
-      <div className="flex gap-2 ">
+      <div className="flex gap-2 mt-4">
         {reviews.map((_, i) => (
           <button
             key={i}
@@ -162,10 +146,5 @@ const ReviewHome = () => {
         ))}
       </div>
     </main>
-        </div>
-      </section>
-    </div>
-  )
+  );
 }
-
-export default ReviewHome

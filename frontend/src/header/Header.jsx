@@ -44,7 +44,7 @@ export default function Header() {
     // });
     const name = useSelector((state) => state?.user?.name);
 
-    console.log("ZZZZZZZZ" , name);
+    // console.log("ZZZZZZZZ" , name);
     
          
     const { items } = useSelector((state) => state.wishlist);
