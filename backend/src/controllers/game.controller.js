@@ -455,23 +455,101 @@ export const getGameById = function (req, res) {
 };
 
 // Get all games
+// Get all games with pagination and performance optimizations
 export const getAllGames = function (req, res) {
     (async function () {
         try {
+            // Parse query parameters with defaults
+            const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+            const limit = Math.max(parseInt(req.query.limit, 10) || 20, 1);
+            const sortBy = req.query.sortBy || 'createdAt';
+            const order = (req.query.order || 'desc').toLowerCase();
+            const sortOrder = order === 'asc' ? 1 : -1;
+            const category = req.query.category; // Optional category filter
+            const search = req.query.search; // Optional search filter
             
-            let query = Game.find();
-         
-                query = query.where(`platforms.windows.available`).equals(true);
-                query = query.where(`platforms.windows.download_link`).ne("");
-        
-            // Populate category only if the model is registered to avoid MissingSchemaError
-            if (mongoose.modelNames().includes("category")) {
-                query = query.populate("category");
+            // Build base filter
+            let filter = {
+                'platforms.windows.available': true,
+                'platforms.windows.download_link': { $ne: "" }
+            };
+            
+            // Add category filter if provided
+            if (category && mongoose.Types.ObjectId.isValid(category)) {
+                filter.category = category;
             }
-            const games = await query.exec();
-            if (!games || games.length === 0)
-                return ThrowError(res, 404, "No games found");
-            res.json(games);
+            
+            // Add search filter if provided
+            if (search) {
+                filter.$or = [
+                    { title: { $regex: search, $options: 'i' } },
+                    { description: { $regex: search, $options: 'i' } },
+                    { tags: { $in: [new RegExp(search, 'i')] } }
+                ];
+            }
+            
+            // Define sorting options
+            const sortOptions = {
+                'createdAt': { createdAt: sortOrder },
+                'title': { title: sortOrder },
+                'views': { views: sortOrder },
+                'downloads': { downloads: sortOrder },
+                'rating': { 'reviews.averageRating': sortOrder },
+                'price': { 'platforms.windows.price': sortOrder }
+            };
+            
+            const sort = sortOptions[sortBy] || { createdAt: sortOrder };
+            
+            // Build query with optimizations
+            let query = Game.find(filter)
+                .sort(sort)
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .select('-__v'); // Exclude version field
+            
+            // Populate category only if the model is registered
+            if (mongoose.modelNames().includes("category")) {
+                query = query.populate('category', 'name categoryName _id');
+            }
+            
+            // Execute queries in parallel for better performance
+            const [games, total] = await Promise.all([
+                query.exec(),
+                Game.countDocuments(filter)
+            ]);
+            
+            if (!games || games.length === 0) {
+                return res.status(200).json({
+                    success: true,
+                    data: [],
+                    pagination: {
+                        page,
+                        limit,
+                        total: 0,
+                        totalPages: 0
+                    },
+                    message: "No games found"
+                });
+            }
+            
+            res.json({
+                success: true,
+                data: games,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit)
+                },
+                sorting: {
+                    sortBy,
+                    order
+                },
+                filters: {
+                    category: category || null,
+                    search: search || null
+                }
+            });
         } catch (error) {
             return ThrowError(res, 500, error.message);
         }

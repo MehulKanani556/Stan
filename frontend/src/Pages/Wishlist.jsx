@@ -45,6 +45,7 @@ const Wishlist = () => {
             items.map((item) => (
               <div
                 key={item.game?._id}
+                onClick={() => navigate(`/single/${item.game._id}`)}
                 className="bg-black/15 border border-white/10 p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-6"
               >
                 {/* IMAGE */}

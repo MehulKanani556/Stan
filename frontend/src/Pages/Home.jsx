@@ -44,6 +44,7 @@ export default function Home() {
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
   const gameData = useSelector((state) => state?.game?.games)
+  const { pagination, loading } = useSelector((state) => state.game);
   const dispatch = useDispatch()
   const cateData = useSelector((state) => state?.game?.category)
   const wishlist = useSelector((state) => state.wishlist.items)
@@ -51,7 +52,8 @@ export default function Home() {
   const navigate = useNavigate();
   const { wishlistStatus } = useSelector((state) => state.wishlist);
 
-
+  const { currentUser } = useSelector((state) => state.user);
+  const { user: authUser } = useSelector((state) => state.auth);
   // console.log("Hello Bachho", gameData);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -115,18 +117,18 @@ export default function Home() {
 
 
   useEffect(() => {
-    dispatch(getAllCategories())
-      .then((value) => {
-        //  console.log("hihi" , );
-        //  setActiveTab(value?.payload[0]?.categoryName)
-      })
-    dispatch(fetchWishlist())
-    dispatch(fetchCart())
+  
+      const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
+      if (userId) {
+        dispatch(fetchWishlist());
+        dispatch(fetchCart());
+      }
+  
   }, [])
 
   useEffect(() => {
-    dispatch(getAllGames());
-
+    dispatch(getAllGames({ page: 1, limit: 20 })); // Load first 20 games
+    dispatch(getAllCategories())
   }, [dispatch]);
 
   useEffect(() => {
@@ -299,7 +301,12 @@ export default function Home() {
             loop={true}
             className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
-            {games && games.length > 0 ? (
+                    {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                <span className="ml-3 text-white">Loading games...</span>
+              </div>
+            ) : games && games.length > 0 ? (
               games.slice(100, 105).map((game, index) => (
                 <SwiperSlide key={index}>
                   <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
@@ -328,7 +335,7 @@ export default function Home() {
                 </SwiperSlide>
               ))
             ) : (
-              <p className="text-center text-white py-10">Loading...</p>
+              <p className="text-center text-white py-10">No games available</p>
             )}
           </Swiper>
         </div>
@@ -506,7 +513,7 @@ export default function Home() {
                           {/* Game Title */}
                           <div className="absolute bottom-4 left-4 right-4">
                             <div className="p-4">
-                              <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl leading-tight">
+                              <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-2xl leading-tight">
                                 {element?.title}
                               </h3>
                             </div>
@@ -520,16 +527,21 @@ export default function Home() {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 gap-4">
                           {/* Price */}
-                          <div className="bg-slate-700/50 rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 border border-slate-600/30">
-                            <div className="flex items-center space-x-2 mb-2">
+                          <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                            <div className="flex flex-wrap items-center space-x-2 mb-2">
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                               <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-                            </div>
-                            <div className="flex items-baseline space-x-1">
-                              <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black text-white">
+                              <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
                                 ${element?.platforms?.windows?.price?.toLocaleString('en-IN')}
                               </span>
                               <span className="text-xs text-slate-400 font-medium">USD</span>
+                            </div>
+                            <div className="flex flex-wrap items-center space-x-2 mb-2">
+                              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                              <span className="text-xs text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                              <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
+                                {element?.platforms?.windows?.size || 'N/A'}
+                              </span>
                             </div>
                           </div>
                         </div>

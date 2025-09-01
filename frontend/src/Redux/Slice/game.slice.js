@@ -4,18 +4,28 @@ import { enqueueSnackbar } from "notistack";
 import axios from "axios";
 
 // GET ALL GAMES
+// GET ALL GAMES - Optimized version
 export const getAllGames = createAsyncThunk(
   "game/getAllGames",
-  async (_, { rejectWithValue }) => {
+  async ({ page = 1, limit = 20, sortBy = 'createdAt', order = 'desc', category, search } = {}, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get("/getAllGames");
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        sortBy,
+        order
+      });
+
+      if (category) params.append('category', category);
+      if (search) params.append('search', search);
+
+      const res = await axiosInstance.get(`/getAllGames?${params}`);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
-
 export const getAllActiveGames = createAsyncThunk(
   "game/getAllActiveGames",
   async (_, { rejectWithValue }) => {
@@ -165,7 +175,7 @@ export const createWishlist = createAsyncThunk(
   "game/createWishlist",
   async (id, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token"); 
+      const token = localStorage.getItem("token");
 
       const response = await axiosInstance.post(
         `/wishlist/${id}`,
@@ -201,9 +211,11 @@ const gameSlice = createSlice({
     error: null,
     success: null,
     pagination: null,
+    sorting: null,
+    filters: null,
     category: [],
     trailer: [],
-    wishData:[]
+    wishData: []
   },
   reducers: {
     clearGameError: (state) => {
@@ -222,7 +234,10 @@ const gameSlice = createSlice({
       })
       .addCase(getAllGames.fulfilled, (state, action) => {
         state.loading = false;
-        state.games = action.payload;
+        state.games = action.payload.data || [];
+        state.pagination = action.payload.pagination || null;
+        state.sorting = action.payload.sorting || null;
+        state.filters = action.payload.filters || null;
       })
       .addCase(getAllGames.rejected, (state, action) => {
         state.loading = false;

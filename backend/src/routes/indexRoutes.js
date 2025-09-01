@@ -176,7 +176,7 @@ indexRoutes.use('/website', websiteInfoRoutes);
 
 indexRoutes.post("/order/create", UserAuth, createOrder);
 indexRoutes.post("/order/verify", UserAuth, verifyPayment);
-indexRoutes.post("/order/retry", UserAuth, retryOrderPayment);
+indexRoutes.post("/order/retry-payment", UserAuth, retryOrderPayment);
 indexRoutes.get("/allorders", UserAuth, getUserOrders);
 indexRoutes.get("/getorders", getAllOrders);
 indexRoutes.get('/download/:token', downloadGame);

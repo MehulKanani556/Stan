@@ -109,8 +109,42 @@ const PaymentForm = ({ clientSecret, orderId, amount, onPaymentSuccess, fromCart
         </div>
       </div>
 
+      {/* Name and Email Fields */}
+      <div className="space-y-4">
+        <div className="relative group">
+          <div className="p-3 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
+            <label className="absolute -top-2 left-3 text-xs text-purple-300 bg-gray-900 px-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Enter your full name"
+              className="w-full bg-transparent outline-none text-white placeholder-gray-500"
+            />
+          </div>
+        </div>
+
+        <div className="relative group">
+          <div className="p-3 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
+            <label className="absolute -top-2 left-3 text-xs text-purple-300 bg-gray-900 px-1">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full bg-transparent outline-none text-white placeholder-gray-500"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Pay Button */}
       <button
+        type="submit"
         className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 rounded-xl active:scale-95 transition transform hover:shadow-[0_0_15px_#621df2]"
         disabled={!stripe || isLoading}
       >
