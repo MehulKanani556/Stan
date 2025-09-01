@@ -2,9 +2,10 @@ import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaShieldAlt, FaLockOpen } from "react-icons/fa";
 // import loginBg from "../images/login-bg.jpg";
 import loginBg from "../images/login-bg-video.mp4";
+import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
 import {
   forgotPassword,
   login,
@@ -21,50 +22,48 @@ function cn(...args) {
   return args.filter(Boolean).join(' ');
 }
 
-// Reusable component for form inputs with a floating label and icon
+// Simple input component with icon
 const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onToggleShowPassword, ...props }) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const isFloating = isFocused || props.value;
-
   return (
-      <div className="relative mb-6" >
-        <div className="relative">
-          {/* Floating label */}
-          <label
-            htmlFor={id}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 transform text-gray-400 pointer-events-none transition-all duration-300 ${isFloating ? '-top-5 text-xs text-gray-200 drop-shadow-md font-medium' : 'pl-10'}`}
-          >
-            {label}
-          </label>
-          {/* Input icon */}
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+    <div className="mb-4 sm:mb-6">
+      {/* Label */}
+      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-2">
+        {label}
+      </label>
+
+      <div className="relative">
+        {/* Input icon */}
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
+          <div className="text-white drop-shadow-sm">
             {icon}
           </div>
-          {/* Formik Field */}
-          <Field
-            id={id}
-            name={props.name}
-            type={isPassword && showPassword ? "text" : type}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="w-full pl-10 pr-10 py-3 rounded-xl border border-white/10 bg-gray-800/40 text-gray-200 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300 shadow-inner"
-            placeholder={label}
-            {...props}
-          />
-          {/* Password toggle button */}
-          {isPassword && (
-            <button
-              type="button"
-              onClick={onToggleShowPassword}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          )}
         </div>
-        <ErrorMessage name={props.name} component="div" className="text-red-400 text-sm mt-1" />
+
+        {/* Formik Field */}
+        <Field
+          id={id}
+          name={props.name}
+          type={isPassword && showPassword ? "text" : type}
+          className="w-full pl-10 pr-10 py-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400/50 transition-all duration-300 backdrop-blur-sm"
+          placeholder={`Enter ${label.toLowerCase()}`}
+          {...props}
+        />
+
+        {/* Password toggle button */}
+        {isPassword && (
+          <button
+            type="button"
+            onClick={onToggleShowPassword}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors duration-200 z-10"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+          </button>
+        )}
       </div>
+
+      <ErrorMessage name={props.name} component="div" className="text-red-400 text-sm mt-1" />
+    </div>
   );
 };
 
@@ -227,7 +226,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
       ref={parentRef}
       className={cn(
         "relative flex items-center w-full justify-center overflow-hidden",
-        "h-screen md:h-screen"
+        "min-h-screen py-4 sm:py-0"
       )}
     >
       {/* Background Video */}
@@ -241,7 +240,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         <source src={loginBg} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-  
+
       {/* Foreground Content */}
       {beams.map((beam) => (
         <CollisionMechanism
@@ -251,9 +250,9 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
           parentRef={parentRef}
         />
       ))}
-  
+
       {children}
-  
+
       <div
         ref={containerRef}
         className="absolute bottom-0 w-full inset-x-0 pointer-events-none z-30"
@@ -264,7 +263,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
       ></div>
     </div>
   );
-  
+
 };
 
 const Login = () => {
@@ -312,14 +311,14 @@ const Login = () => {
             label="Email"
             type="email"
             name="email"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-400"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>}
+            icon={<FaEnvelope size={20} />}
           />
           <InputWithIcon
             id="login-password"
             label="Password"
             type="password"
             name="password"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock text-gray-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
+            icon={<FaLock size={20} />}
             isPassword
             showPassword={showPassword}
             onToggleShowPassword={togglePasswordVisibility}
@@ -330,7 +329,15 @@ const Login = () => {
           >
             Forgot password?
           </p>
-          <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl">Sign in</button>
+          <button type="submit" className="group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
+              <span className="mr-2">Sign in</span>
+              <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </button>
           <p className="mt-2 text-center text-sm text-slate-300">
             Don't have an account?{" "}
             <span
@@ -372,21 +379,21 @@ const Login = () => {
             label="Full Name"
             type="text"
             name="name"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user text-gray-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>}
+            icon={<FaUser size={20} />}
           />
           <InputWithIcon
             id="signup-email"
             label="Email"
             type="email"
             name="email"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-400"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>}
+            icon={<FaEnvelope size={20} />}
           />
           <InputWithIcon
             id="signup-password"
             label="Password"
             type="password"
             name="password"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock text-gray-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
+            icon={<FaLock size={20} />}
             isPassword
             showPassword={showPassword}
             onToggleShowPassword={togglePasswordVisibility}
@@ -406,7 +413,15 @@ const Login = () => {
             </label>
           </div>
           <ErrorMessage name="agreeToTerms" component="div" className="text-red-400 text-sm mt-1" />
-          <button type="submit" className="w-full bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl">Sign up</button>
+          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
+              <span className="mr-2">Sign up</span>
+              <svg className="w-4 h-4 transform group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+            </span>
+          </button>
           <p className="cursor-pointer text-sm text-blue-300 mt-2 text-center hover:text-blue-200" onClick={() => setActiveForm("login")}>
             Already have an account? Login
           </p>
@@ -443,9 +458,17 @@ const Login = () => {
             label="Email"
             type="email"
             name="email"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail text-gray-400"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>}
+            icon={<FaEnvelope size={20} />}
           />
-          <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl">Send OTP</button>
+          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
+              <span className="mr-2">Send OTP</span>
+              <svg className="w-4 h-4 transform group-hover:animate-bounce transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </span>
+          </button>
           <p className="cursor-pointer text-sm text-blue-300 mt-2 text-center hover:text-blue-200" onClick={() => setActiveForm("login")}>
             Back to Login
           </p>
@@ -481,9 +504,18 @@ const Login = () => {
             label="Enter OTP"
             type="text"
             name="otp"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-check text-gray-400"><path d="M20 13c0 5-2.5 7-10 7-1.4 0-2.4-.4-4.5-1.7" /><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="m9 12 2 2 4-4" /></svg>}
+            icon={<FaShieldAlt size={20} />}
           />
-          <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl">Verify OTP</button>
+          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
+              <span className="mr-2">Verify OTP</span>
+              <svg className="w-4 h-4 transform group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+
+          </button>
         </>
       ),
     },
@@ -518,7 +550,7 @@ const Login = () => {
             label="New Password"
             type="password"
             name="password"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock text-gray-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
+            icon={<FaLock size={20} />}
             isPassword
             showPassword={showPassword}
             onToggleShowPassword={togglePasswordVisibility}
@@ -528,12 +560,21 @@ const Login = () => {
             label="Confirm Password"
             type="password"
             name="confirmPassword"
-            icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-check text-gray-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /><path d="m15 16 2 2 4-4" /></svg>}
+            icon={<FaLockOpen size={20} />}
             isPassword
             showPassword={showConfirmPassword}
             onToggleShowPassword={toggleConfirmPasswordVisibility}
           />
-          <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl">Reset Password</button>
+          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
+              <span className="mr-2">Reset Password</span>
+              <svg className="w-4 h-4 transform group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </span>
+
+          </button>
         </>
       ),
     },
@@ -543,8 +584,14 @@ const Login = () => {
 
   return (
     <BackgroundBeamsWithCollision className="z-10">
-      <div className="relative bg-gray-900/40 backdrop-blur-xl p-8 sm:p-10 rounded-3xl w-full max-w-sm border-2 border-white/10 z-20 glass-form">
-        <h1 className="text-3xl font-bold text-center mb-6 text-white drop-shadow-lg">
+      <div className="relative bg-black/5 p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-sm mx-auto z-20 shadow shadow-white/50">
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 p-2 bg-black border rounded-full">
+
+            <YOYO_LOGO className="svg-current-color h-full w-full text-white" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+          </div>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 text-white drop-shadow-lg">
           {title}
         </h1>
         <Formik
@@ -554,7 +601,7 @@ const Login = () => {
           onSubmit={onSubmit}
         >
           {({ status, isSubmitting }) => (
-            <Form className="space-y-4">
+            <Form className="space-y-3 sm:space-y-4">
               {render()}
               {status?.error && (
                 <div className="text-red-400 text-center mt-4 p-2 rounded-xl bg-red-800/80 shadow-lg">{status.error}</div>
@@ -562,7 +609,20 @@ const Login = () => {
             </Form>
           )}
         </Formik>
+
+
+        {activeForm === "login" || activeForm === "signup" ?
+          <div className="mt-4 sm:mt-6">
+            <button className="btn bg-gradient-to-r from-gray-50 to-white text-black border-[#e5e5e5] w-full py-2.5 sm:py-3 rounded-xl hover:from-gray-100 hover:to-gray-50 transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 shadow-lg">
+              <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
+              <span>{title} with Google</span>
+            </button>
+          </div>
+          :
+          ""
+        }
       </div>
+
     </BackgroundBeamsWithCollision>
   );
 };
