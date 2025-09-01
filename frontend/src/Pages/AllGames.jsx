@@ -221,66 +221,133 @@ export default function AllGames() {
         const priceValue = getGamePrice(game);
 
         return (
-            <StylishDiv >
-                <div className="relative w-full  aspect-[5/5] overflow-hidden " onClick={() => navigate(`/single/${game?._id}`)}>
-                    <img
-                        src={imageUrl}
-                        alt={game?.title || "Game"}
-                        className="w-full h-full object-cover transition-all duration-300 ease-in-out  "
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90">
-                        <button
-                            className="absolute top-2 sm:top-3 right-2 sm:right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full transition-all duration-300 hover:scale-110"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                wishlistStatus[game?._id]
-                                    ? handleRemoveFromWishlist(game._id)
-                                    : handleAddWishlist(game);
-                            }}
-                        >
-                            {wishlistStatus[game?._id] ? (
-                                <FaHeart size={16} className="text-white" />
-                            ) : (
-                                <FaRegHeart size={16} className="text-white" />
-                            )}
-                        </button>
+            <div
+                onClick={() => navigate(`/single/${game?._id}`)}
+                className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
+            >
+                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
+
+                    {/* Enhanced Glow Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+                    {/* Image Container with Enhanced Effects */}
+                    <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden">
+                        <img
+                            src={imageUrl}
+                            alt={game?.title}
+                            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                        />
+
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
+
+                            {/* Top Badge */}
+                            <div className="absolute top-4 left-4">
+                                <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                                    <span className="text-xs font-bold text-white tracking-wider">NEW</span>
+                                </div>
+                            </div>
+
+                            {/* Wishlist Button */}
+                            <button
+                                className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${wishlistStatus[game?._id]
+                                    ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
+                                    : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
+                                    }`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    wishlistStatus[game?._id]
+                                        ? handleRemoveFromWishlist(game._id)
+                                        : handleAddWishlist(game);
+                                }}
+                            >
+                                {wishlistStatus[game?._id] ? (
+                                    <FaHeart size={16} className="text-white animate-pulse" />
+                                ) : (
+                                    <FaRegHeart size={16} className="text-slate-300 group-hover:text-red-400 transition-colors" />
+                                )}
+                            </button>
+
+                            {/* Game Title */}
+                            <div className="absolute bottom-4 left-4 right-4">
+                                <div className="p-4">
+                                    <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl leading-tight">
+                                        {game?.title}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 p-3 ">
-                        <h3 className="text-white font-semibold text-sm sm:text-base md:text-lg line-clamp-2 transition-colors">
-                            {game?.title}
-                        </h3>
-                    </div>
-                </div>
+                    {/* Content Section */}
+                    <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
 
-                <div className=" pt-3  backdrop-blur-sm flex flex-row sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <p className="text-xs text-gray-400">Price</p>
-                        <p className="text-white font-bold text-lg lg:text-xl">
-                            ${Number(priceValue).toLocaleString("en-IN")}
-                        </p>
-                    </div>
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-1 gap-4">
+                            {/* Price */}
+                            <div className="bg-slate-700/50 rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 border border-slate-600/30">
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                    <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">Price</span>
+                                </div>
+                                <div className="flex items-baseline space-x-1">
+                                    <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black text-white">
+                                        ${priceValue?.toLocaleString('en-IN')}
+                                    </span>
+                                    <span className="text-xs text-slate-400 font-medium">USD</span>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div className='flex items-center gap-2'>
+                        {/* Action Button */}
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleAddToCart(game);
                             }}
                             disabled={cartItems.some(item => item.game?._id === game?._id)}
-                            className={`inline-flex items-center gap-2 px-3 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-white font-semibold
-                                ${cartItems.some(item => item.game?._id === game?._id)
-                                    ? 'bg-green-600 cursor-not-allowed opacity-80'
-                                    : 'bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:scale-110 hover:from-[#7a42ff] hover:to-[#c4aaff]'}`}
+                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${cartItems.some(item => item.game?._id === game?._id)
+                                ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
+                                : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
+                                }`}
                         >
-                            <FaShoppingCart size={16} />
-                            {cartItems.some(item => item.game?._id === game?._id)
-                                ? "Added to Cart"
-                                : "Add to Cart"}
+                            <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                                <div>
+                                    {cartItems.some(item => item.game?._id === game?._id) ? (
+                                        <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
+                                            <span className="text-emerald-600 font-bold text-sm">✓</span>
+                                        </div>
+                                    ) : (
+                                        <FaShoppingCart size={18} className="text-white" />
+                                    )}
+                                </div>
+                                <span className="text-white font-bold text-sm tracking-wider uppercase">
+                                    {cartItems.some(item => item.game?._id === game?._id)
+                                        ? "Added to Cart"
+                                        : "Add to Cart"}
+                                </span>
+                            </div>
+
+                            {/* Button Effects */}
+                            {!cartItems.some(item => item.game?._id === game?._id) && (
+                                <>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                </>
+                            )}
                         </button>
                     </div>
+
+                    {/* Decorative Elements */}
+                    <div className="absolute top-2 left-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                        <div className="w-16 h-16 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
+                    </div>
+
+                    <div className="absolute bottom-2 right-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                        <div className="w-12 h-12 border-2 border-pink-400/30 rounded-full"></div>
+                    </div>
                 </div>
-            </StylishDiv>
+            </div>
         );
     };
 
