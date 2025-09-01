@@ -5,6 +5,7 @@ import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
 import { getUserById, editUserProfile, logoutUser, clearUser } from '../Redux/Slice/user.slice';
+import { allorders, retryOrderPayment } from '../Redux/Slice/Payment.slice';
 import stanUser from "../images/stan-user.jpg";
 import { decryptData } from "../Utils/encryption";
 import { Dialog, Transition } from '@headlessui/react'
@@ -15,8 +16,17 @@ import { FaUserLarge } from 'react-icons/fa6';
 import { GiTakeMyMoney } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom'
 import { IoLocation, IoClose, IoTrash, IoPencil } from "react-icons/io5";
+import { BsBoxSeam } from "react-icons/bs";
 import manageAddress from "../images/manage_addres-1.png"
 import StylishDiv from '../components/StylishDiv';
+
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import PaymentForm from '../components/PaymentForm';
+
+
+const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
+
 // FANCoin Component
 const FANCoin = () => {
     const [openId, setOpenId] = useState(null);
@@ -235,10 +245,18 @@ export default function Profile() {
     const navigate = useNavigate();
     const { currentUser, loading, error } = useSelector((state) => state.user);
     const { user: authUser } = useSelector((state) => state.auth);
+    const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
     const [isEditing, setIsEditing] = useState(false);
     const [user, setUser] = useState(null);
     const [activeMenu, setActiveMenu] = useState('profile');
     const [isActive, setIsActive] = useState("fanCoin");
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [showOrderDetails, setShowOrderDetails] = useState(false);
+    const [showPaymentForm, setShowPaymentForm] = useState(false);
+    const [clientSecret, setClientSecret] = useState("");
+    const [currentOrderId, setCurrentOrderId] = useState(null);
+    const [amountToPay, setAmountToPay] = useState(0);
+    const [isPaymentLoading, setIsPaymentLoading] = useState(false);
     // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
@@ -258,6 +276,13 @@ export default function Profile() {
             dispatch(getUserById(userId));
         }
     }, [dispatch, authUser]);
+
+    // Fetch orders when Orders menu is selected
+    useEffect(() => {
+        if (activeMenu === 'Orders') {
+            dispatch(allorders());
+        }
+    }, [activeMenu, dispatch]);
 
     useEffect(() => {
         if (currentUser) {
@@ -327,119 +352,56 @@ export default function Profile() {
         navigate("/")
     };
 
+    const handleOrderClick = (order) => {
+        console.log('Order clicked:', order);
+        setSelectedOrder(order);
+        setShowOrderDetails(true);
+    };
 
-
-    // // manage address ----------------------------------------------------------------------------------------------------
-    // const [isModalOpen, setIsModalOpen] = useState(false)
-    // const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    // const [editingAddress, setEditingAddress] = useState(null)
-    // const [addresses, setAddresses] = useState([
-    //     {
-    //         id: 1,
-    //         name: 'Vaibhav Gohil',
-    //         mobile: '+917567058384',
-    //         addressLine1: 'Hirabag, Surat',
-    //         addressLine2: 'Surat, 395006',
-    //         landmark: '',
-    //         pincode: '395006',
-    //         isDefault: true
-    //     }
-    // ])
-
-    // // open add  address modal 
-    // const openModal = () => {
-    //     setIsModalOpen(true)
-    //     setEditingAddress(null)
-    //     // Reset form data when opening
-    //     setFormData({
-    //         name: '',
-    //         mobile: '',
-    //         addressLine1: '',
-    //         addressLine2: '',
-    //         landmark: '',
-    //         pincode: '',
-    //         isDefault: false
-    //     })
-    // }
-
-    // //  close add address modal 
-    // const closeModal = () => {
-    //     setIsModalOpen(false)
-    //     setIsEditModalOpen(false)
-    //     setEditingAddress(null)
-    // }
-
-    // //  open edit address modal
-    // const openEditModal = (address) => {
-    //     setEditingAddress(address)
-    //     setFormData({
-    //         name: address.name,
-    //         mobile: address.mobile.replace('+91', ''),
-    //         addressLine1: address.addressLine1,
-    //         addressLine2: address.addressLine2,
-    //         landmark: address.landmark,
-    //         pincode: address.pincode,
-    //         isDefault: address.isDefault
-    //     })
-    //     setIsEditModalOpen(true)
-    // }
-
-    // // address change code here
-    // const handleaddressChange = (e) => {
-    //     const { name, value, type, checked } = e.target
-    //     setFormData(prev => ({
-    //         ...prev,
-    //         [name]: type === 'checkbox' ? checked : value
-    //     }))
-    // }
-
-    // // add amd edit address submit handler
-    // const handleSubmit = (e) => {
-    //     e.preventDefault()
-
-    //     if (editingAddress) {
-    //         // Update existing address
-    //         const updatedAddresses = addresses.map(addr =>
-    //             addr.id === editingAddress.id
-    //                 ? { ...formData, id: addr.id, mobile: `+91${formData.mobile}` }
-    //                 : addr
-    //         )
-    //         setAddresses(updatedAddresses)
-    //     } else {
-    //         // Add new address
-    //         const newAddress = {
-    //             ...formData,
-    //             id: Date.now(),
-    //             mobile: `+91${formData.mobile}`,
-    //             isDefault: formData.isDefault || addresses.length === 0
-    //         }
-
-    //         // If this is set as default, remove default from others
-    //         let updatedAddresses = [...addresses]
-    //         if (newAddress.isDefault) {
-    //             updatedAddresses = updatedAddresses.map(addr => ({ ...addr, isDefault: false }))
-    //         }
-
-    //         setAddresses([...updatedAddresses, newAddress])
-    //     }
-
-    //     closeModal()
-    // }
-
-    // // delete addres function 
-    // const deleteAddress = (addressId) => {
-    //     const addressToDelete = addresses.find(addr => addr.id === addressId)
-    //     if (addressToDelete.isDefault && addresses.length > 1) {
-    //         // If deleting default address and there are others, make first one default
-    //         const updatedAddresses = addresses
-    //             .filter(addr => addr.id !== addressId)
-    //             .map((addr, index) => ({ ...addr, isDefault: index === 0 }))
-    //         setAddresses(updatedAddresses)
-    //     } else {
-    //         setAddresses(addresses.filter(addr => addr.id !== addressId))
-    //     }
-    // }
-
+    const handlePaymentClick = async (order) => {
+        console.log('Payment clicked for order:', order._id);
+        
+        try {
+            // Close the order details modal
+            setShowOrderDetails(false);
+            
+            // Show loading state
+            setIsPaymentLoading(true);
+            
+            // Call the retry payment API to get a new client secret
+            const resultAction = await dispatch(retryOrderPayment(order._id));
+            
+            if (retryOrderPayment.fulfilled.match(resultAction)) {
+                const { clientSecret: newClientSecret, order: updatedOrder } = resultAction.payload;
+                
+                // Set the payment form state
+                setClientSecret(newClientSecret);
+                setCurrentOrderId(updatedOrder._id);
+                setAmountToPay(updatedOrder.amount);
+                setShowPaymentForm(true);
+            } else {
+                // Handle error
+                console.error('Failed to initiate payment:', resultAction.error);
+                alert('Failed to initiate payment. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error initiating payment:', error);
+            alert('An error occurred while initiating payment. Please try again.');
+        } finally {
+            setIsPaymentLoading(false);
+        }
+    };
+    const handlePaymentSuccess = () => {
+        setShowPaymentForm(false);
+        setClientSecret("");
+        setCurrentOrderId(null);
+        setAmountToPay(0);
+        
+        // Refresh the orders list to show updated status
+        if (activeMenu === 'Orders') {
+            dispatch(allorders());
+        }
+    };
 
     // Loading state
     if (loading) {
@@ -495,10 +457,10 @@ export default function Profile() {
                             <li className={` mt-2 transition-all  duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('profile') }}>
                                 {(() => {
                                     const Tag = activeMenu === "profile" ? StylishDiv : "div";
-                                    const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "profile" ? "w-full  h-[48px] " : "p-3  bg-[#31244e] rounded-md";
                                     return (
-                                        <Tag className={style}>
-                                            <div className="flex items-center">
+                                        <Tag className={style} >
+                                            <div className={"flex items-center "}>
                                                 <FaUserLarge className="h-5 w-5 me-3" />
                                                 <p>profile</p>
                                             </div>
@@ -529,6 +491,20 @@ export default function Profile() {
                                             <div className="flex items-center">
                                                 <GiTakeMyMoney className="h-5 w-5 me-3" />
                                                 <p>Transaction</p>
+                                            </div>
+                                        </Tag>
+                                    );
+                                })()}
+                            </li>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Orders" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Orders') }}>
+                                {(() => {
+                                    const Tag = activeMenu === "Orders" ? StylishDiv : "div";
+                                    const style = activeMenu === "Orders" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    return (
+                                        <Tag className={style}>
+                                            <div className="flex items-center">
+                                                <BsBoxSeam className="h-5 w-5 me-3" />
+                                                <p>Orders</p>
                                             </div>
                                         </Tag>
                                     );
@@ -703,6 +679,195 @@ export default function Profile() {
                     </div>
                 )}
 
+                {/* Orders */}
+                {activeMenu === "Orders" && (
+                    <div className='px-4 py-6 w-full'>
+                        <section className='w-full border border-white/25 rounded-2xl sm:p-6 p-1 text-white flex flex-col'>
+                            <div className=''>
+                                {/* Header */}
+                                <div className='flex items-center justify-between px-2 sm:px-4 py-4 backdrop-blur-xl sticky top-0 z-20 border-b border-white/25'>
+                                    <div className='flex items-center gap-2 sm:gap-3'>
+                                        <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>My Orders</h1>
+                                    </div>
+                                    <div className='bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white px-3 py-1.5 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md'>
+                                        <div className='w-6 h-6 bg-white/20 rounded-full flex items-center justify-center'>
+                                            <span className='text-xs'>🛍️</span>
+                                        </div>
+                                        <span className='font-semibold'>{orders?.length || 0}</span>
+                                    </div>
+                                </div>
+
+                                {/* Orders List */}
+                                <div className='flex-1 overflow-y-auto pr-2 px-3 sm:px-4 py-4 sm:py-6'>
+                                    {ordersLoading ? (
+                                        <div className="flex items-center justify-center py-12">
+                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ab99e1]"></div>
+                                            <span className="ml-3 text-[#ab99e1]">Loading orders...</span>
+                                        </div>
+                                    ) : !orders || orders.length === 0 ? (
+                                        <div className="flex flex-col items-center justify-center px-4 relative">
+                                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+                                            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+
+                                            <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 relative overflow-hidden shadow-lg shadow-purple-500/30">
+                                                <img
+                                                    src={lazyCatImage}
+                                                    alt="No Orders"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+
+                                            <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
+                                                No orders yet!
+                                            </h2>
+                                            <p className="text-gray-400 text-sm text-center mt-2">
+                                                Place your first order to see it here
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                            {orders.map((order, index) => (
+                                                <StylishDiv
+                                                    key={order._id || index}
+                                                    className="group rounded-3xl overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 border border-white/10 hover:border-white/20 active:scale-[0.98]"
+                                                    onClick={() => handleOrderClick(order)}
+                                                >
+                                                    <div className="p-4">
+                                                        {/* Order Header */}
+                                                        <div className="flex items-center justify-between mb-3">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-10 h-10 bg-gradient-to-br from-[#621df2] to-[#b191ff] rounded-full flex items-center justify-center">
+                                                                    <span className="text-white font-bold text-xs">#{order._id?.slice(-4) || 'N/A'}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <h3 className="font-bold text-white text-base">
+                                                                        Order #{order._id?.slice(-8) || 'N/A'}
+                                                                    </h3>
+                                                                    <p className="text-gray-300 text-xs">
+                                                                        {new Date(order.createdAt).toLocaleDateString('en-US', {
+                                                                            year: 'numeric',
+                                                                            month: 'short',
+                                                                            day: 'numeric'
+                                                                        })} at {new Date(order.createdAt).toLocaleTimeString('en-US', {
+                                                                            hour: '2-digit',
+                                                                            minute: '2-digit'
+                                                                        })}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${order.status === 'paid' ? 'text-green-400 bg-green-400/10 border border-green-400/20' :
+                                                                    order.status === 'created' ? 'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20' :
+                                                                        'text-red-400 bg-red-400/10 border border-red-400/20'
+                                                                    }`}>
+                                                                    {order.status === 'paid' ? '✅ Paid' :
+                                                                        order.status === 'created' ? '⏳ Pending' :
+                                                                            '❌ Failed'}
+                                                                </span>
+                                                                <div className="mt-1">
+                                                                    <span className="text-xl font-bold text-white">${order.amount}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Order Items Preview */}
+                                                        {order.items && order.items.length > 0 && (
+                                                            <div className="mb-3">
+                                                                <h4 className="text-gray-300 text-xs font-medium mb-2">Items ({order.items.length})</h4>
+                                                                <div className="space-y-1">
+                                                                    {order.items.slice(0, 2).map((item, itemIndex) => (
+                                                                        <div key={itemIndex} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                                                                            <div className="flex items-center gap-2">
+                                                                                <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                                                                    <span className="text-white text-xs font-bold">{itemIndex + 1}</span>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <p className="text-white font-medium text-xs">
+                                                                                        {item.name || `Game ${itemIndex + 1}`}
+                                                                                    </p>
+                                                                                    <p className="text-gray-400 text-xs">
+                                                                                        {item.platform}
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="text-right">
+                                                                                <p className="text-white font-semibold text-sm">${item.price}</p>
+                                                                                {item.downloadToken && (
+                                                                                    <p className="text-green-400 text-xs">
+                                                                                        {item.downloadTokenUsed ? 'Downloaded' : 'Available'}
+                                                                                    </p>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                    {order.items.length > 2 && (
+                                                                        <div className="text-center py-1">
+                                                                            <span className="text-gray-400 text-xs">
+                                                                                +{order.items.length - 2} more items
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Order Footer */}
+                                                        <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                                                            <div className="flex items-center gap-2 text-xs">
+                                                                <span className="text-gray-300">
+                                                                    {order.stripePaymentIntentId ? 'Stripe' : 'N/A'}
+                                                                </span>
+                                                                <span className="text-gray-300">
+                                                                    {order.currency || 'USD'}
+                                                                </span>
+                                                            </div>
+                                                            <button
+                                                                className="flex items-center gap-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1.5 rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300 border border-purple-500/30 hover:scale-105 active:scale-95 cursor-pointer shadow-lg hover:shadow-purple-500/20"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    console.log('View details clicked for order:', order._id);
+                                                                    handleOrderClick(order);
+                                                                }}
+                                                            >
+                                                                <span className="text-purple-300 text-xs font-medium hover:text-white transition-colors">View details</span>
+                                                                <svg className="w-3 h-3 text-purple-300 hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </StylishDiv>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                       {showPaymentForm && clientSecret && currentOrderId && (
+                            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                                <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+                                    <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
+                                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                                        <PaymentForm
+                                            clientSecret={clientSecret}
+                                            orderId={currentOrderId}
+                                            amount={amountToPay}
+                                            onPaymentSuccess={handlePaymentSuccess}
+                                            fromCartPage={false}
+                                        />
+                                    </Elements>
+                                    <button
+                                        onClick={() => setShowPaymentForm(false)}
+                                        className="mt-4 text-gray-400 hover:text-white"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        )} 
+                    </div>
+                )}
+
                 {/* logout modal */}
                 <Transition appear show={activeMenu === "logout"} as={Fragment}>
                     <Dialog as="div" className="relative z-50" onClose={() => setActiveMenu("profile")}>
@@ -759,270 +924,221 @@ export default function Profile() {
                     </Dialog>
                 </Transition>
 
+                {/* Order Details Modal */}
+                <Transition appear show={showOrderDetails} as={Fragment}>
+                    <Dialog as="div" className="relative z-50" onClose={() => setShowOrderDetails(false)}>
+                        {/* Backdrop */}
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                        </Transition.Child>
+
+                        {/* Modal */}
+                        <div className="fixed inset-0 flex items-center justify-center p-4">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95 translate-y-4"
+                                enterTo="opacity-100 scale-100 translate-y-0"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100 translate-y-0"
+                                leaveTo="opacity-0 scale-95 translate-y-4"
+                            >
+                                <Dialog.Panel className="w-full max-w-3xl rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl max-h-[90vh] overflow-y-auto">
+                                    {selectedOrder && (
+                                        <>
+                                            <Dialog.Title className="text-xl font-semibold flex items-center justify-between mb-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 bg-gradient-to-br from-[#621df2] to-[#b191ff] rounded-full flex items-center justify-center">
+                                                        <span className="text-white font-bold text-sm">#{selectedOrder._id?.slice(-4) || 'N/A'}</span>
+                                                    </div>
+                                                    <span>Order Details</span>
+                                                </div>
+                                                <button
+                                                    onClick={() => setShowOrderDetails(false)}
+                                                    className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+                                                >
+                                                    <IoClose className="w-6 h-6" />
+                                                </button>
+                                            </Dialog.Title>
+
+                                            <div className="space-y-6">
+                                                {/* Order Header */}
+                                                <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl p-6 border border-white/10">
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <h3 className="font-bold text-xl mb-2">
+                                                                Order #{selectedOrder._id?.slice(-8) || 'N/A'}
+                                                            </h3>
+                                                            <p className="text-gray-300 text-sm">
+                                                                {new Date(selectedOrder.createdAt).toLocaleDateString('en-US', {
+                                                                    year: 'numeric',
+                                                                    month: 'long',
+                                                                    day: 'numeric'
+                                                                })} at {new Date(selectedOrder.createdAt).toLocaleTimeString('en-US', {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                                                })}
+                                                            </p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${selectedOrder.status === 'paid' ? 'text-green-400 bg-green-400/10 border border-green-400/20' :
+                                                                selectedOrder.status === 'created' ? 'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20' :
+                                                                    'text-red-400 bg-red-400/10 border border-red-400/20'
+                                                                }`}>
+                                                                {selectedOrder.status === 'paid' ? '✅ Paid' :
+                                                                    selectedOrder.status === 'created' ? '⏳ Pending' :
+                                                                        '❌ Failed'}
+                                                            </span>
+                                                            <div className="mt-2">
+                                                                <span className="text-3xl font-bold text-white">${selectedOrder.amount}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Order Items */}
+                                                {selectedOrder.items && selectedOrder.items.length > 0 && (
+                                                    <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl p-6 border border-white/10">
+                                                        <h4 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                                                            <span>🎮 Order Items</span>
+                                                            <span className="text-gray-400 text-sm">({selectedOrder.items.length})</span>
+                                                        </h4>
+                                                        <div className="space-y-4">
+                                                            {selectedOrder.items.map((item, index) => (
+                                                                <div key={index} className="bg-white/5 rounded-lg p-4 border border-white/10">
+                                                                    <div className="flex items-center justify-between">
+                                                                        <div className="flex items-center gap-4">
+                                                                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                                                                <span className="text-white font-bold text-sm">{index + 1}</span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <h5 className="font-semibold text-white text-lg">
+                                                                                    {item.name || `Game ${index + 1}`}
+                                                                                </h5>
+                                                                                <p className="text-gray-300 text-sm">
+                                                                                    Platform: {item.platform}
+                                                                                </p>
+                                                                                {item.downloadToken && (
+                                                                                    <div className="mt-2">
+                                                                                        <p className="text-green-400 text-xs">
+                                                                                            Download Token: {item.downloadToken.slice(0, 12)}...
+                                                                                        </p>
+                                                                                        <p className={`text-xs ${item.downloadTokenUsed ? 'text-red-400' : 'text-green-400'}`}>
+                                                                                            Status: {item.downloadTokenUsed ? 'Downloaded' : 'Available for download'}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="text-right">
+                                                                            <p className="font-bold text-white text-xl">${item.price}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Order Summary */}
+                                                <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl p-6 border border-white/10">
+                                                    <h4 className="font-semibold text-lg mb-4">📋 Order Summary</h4>
+                                                    <div className="space-y-3">
+                                                        <div className="flex justify-between items-center py-2 border-b border-white/10">
+                                                            <span className="text-gray-300">Subtotal:</span>
+                                                            <span className="text-white font-semibold">${selectedOrder.amount}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center py-2 border-b border-white/10">
+                                                            <span className="text-gray-300">Currency:</span>
+                                                            <span className="text-white">{selectedOrder.currency || 'USD'}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center py-2 border-b border-white/10">
+                                                            <span className="text-gray-300">Payment Method:</span>
+                                                            <span className="text-white">{selectedOrder.stripePaymentIntentId ? 'Stripe' : 'N/A'}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center py-2 border-b border-white/10">
+                                                            <span className="text-gray-300">Payment Intent:</span>
+                                                            <span className="text-white text-sm">
+                                                                {selectedOrder.stripePaymentIntentId ?
+                                                                    selectedOrder.stripePaymentIntentId.slice(0, 12) + '...' :
+                                                                    'N/A'
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                        <div className="pt-3 border-t-2 border-white/20">
+                                                            <div className="flex justify-between items-center">
+                                                                <span className="text-white font-bold text-lg">Total:</span>
+                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Payment Button for Unpaid Orders */}
+                                                {selectedOrder.status !== 'paid' && (
+                                                    <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl p-6 border border-yellow-500/20">
+                                                        <div className="text-center">
+                                                            <div className="mb-4">
+                                                                <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                                    <span className="text-white text-2xl">💳</span>
+                                                                </div>
+                                                                <h4 className="font-semibold text-lg text-white mb-2">Payment Required</h4>
+                                                                <p className="text-gray-300 text-sm mb-4">
+                                                                    This order is pending payment. Complete your payment to access your games.
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="space-y-3">
+                                                                <div className="flex items-center justify-between bg-white/5 rounded-lg p-3 border border-white/10">
+                                                                    <span className="text-gray-300">Order Total:</span>
+                                                                    <span className="text-white font-bold text-lg">${selectedOrder.amount}</span>
+                                                                </div>
+
+                                                                <button
+                                                                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-green-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    onClick={() => handlePaymentClick(selectedOrder)}
+                                                                    disabled={isPaymentLoading}
+                                                                >
+                                                                    {isPaymentLoading ? (
+                                                                        <>
+                                                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                                                            <span>Processing...</span>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <span>💳</span>
+                                                                            <span>Pay Now - ${selectedOrder.amount}</span>
+                                                                        </>
+                                                                    )}
+                                                                </button>
+
+                                                                <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+                                                                    <span>🔒</span>
+                                                                    <span>Secure payment powered by Stripe</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </Dialog>
+                </Transition>
+
             </div>
 
         </div>
     );
 }
-
-
-
-
-//  {activeMenu === "address" && (
-//     <div className={`px-4 py-6 w-full`}>
-//         <div className=" border border-white/10 rounded-2xl sm:p-6 p-1 mb-6 flex flex-col w-full">
-//             {/* Header */}
-//             <div className="flex items-center justify-between px-2 sm:px-4 py-4   sticky top-0 z-20 border-b border-white/10 ">
-//                 <div className="flex items-center gap-2 sm:gap-3">
-//                     {/* <button
-//                     className="text-white rounded-full hover:bg-white/10 transition-colors touch-manipulation"
-//                     onClick={handleBack}
-//                     aria-label="Go back"
-//                 >
-//                     <IoArrowBack className="w-5 h-5 sm:w-6 sm:h-6" />
-//                 </button> */}
-//                     <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide">Manage Addresses</h1>
-//                 </div>
-//                 {/* Add Address Button */}
-//                 <button
-//                     className="bg-gradient-to-r from-[#621df2] to-[#b191ff]
-//              hover:from-[#8354f8] hover:to-[#9f78ff]
-//              text-white px-2 sm:px-5 py-2.5 rounded-xl
-//              flex items-center gap-2 text-sm font-medium
-//              transition-all duration-200 shadow-md hover:shadow-xl"
-//                     onClick={openModal}
-//                 >
-//                     <IoLocation className=" w-4 h-4" />
-//                     <span>Add Address</span>
-//                 </button>
-//             </div>
-
-//             {/* Main Content - Address Cards */}
-//             <div className="flex-1 px-3 sm:px-4 py-4 sm:py-6">
-//                 {addresses.length === 0 ? (
-//                     <div className="flex flex-col items-center justify-center  px-4 relative">
-
-//                         <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br
-// from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20
-// animate-pulse"></div>
-//                         <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br
-// from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20
-// animate-pulse"></div>
-
-
-//                         <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8
-// relative overflow-hidden shadow-lg shadow-purple-500/30">
-//                             <img
-//                                 src={manageAddress}
-//                                 alt="Lazy Cat"
-//                                 className="w-full h-full object-cover"
-//                             />
-//                         </div>
-
-
-//                         <h2 className="text-white text-xl md:text-2xl font-semibold text-center">
-//                             No addresses added!
-//                         </h2>
-//                         <p className="text-gray-400 text-sm text-center mt-2">
-//                             Add your first address to get started
-//                         </p>
-//                     </div>
-//                 ) : (
-//                     // Address cards
-//                     <div className="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-//                         {addresses.map((address) => (
-//                             <StylishDiv key={address.id} className=" group rounded-3xl overflow-hidden">
-//                                 {/* <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 opacity-80 blur-[2px]" /> */}
-//                                 <div className="">
-//                                     {/* Default Ribbon */}
-//                                     {address.isDefault && (
-//                                         <div className="pointer-events-none absolute top-0 right-0 w-32 h-24 overflow-hidden">
-//                                             <div className="absolute right-[-19px] top-[7px]  rotate-45">
-//                                                 <span className="bg-[#621df2] text-white text-[10px] font-semibold tracking-wide px-6 py-1 shadow-lg">Default</span>
-//                                             </div>
-//                                         </div>
-//                                     )}
-
-//                                     {/* Address Content */}
-//                                     <div className="space-y-2 sm:space-y-3">
-//                                         <h3 className="text-[#cfab9d] font-medium text-sm sm:text-base">{address.name}</h3>
-//                                         <p className="text-white text-sm">{address.addressLine1}</p>
-//                                         <p className="text-[#7b7b7b] text-sm">{address.addressLine2}</p>
-//                                         <div className='flex items-center gap-2 justify-between'>
-//                                             <p className="text-gray-300 text-sm">{address.mobile}</p>
-//                                             {/* Action Buttons */}
-//                                             <div className="flex flex-wrap items-center  gap-2 sm:gap-3 ">
-//                                                 {/* Delete Button */}
-//                                                 <button
-//                                                     onClick={() => deleteAddress(address.id)}
-//                                                     className="bg-red-600 hover:bg-red-700 text-white p-1 sm:p-2.5 rounded transition-colors duration-200 ms-auto"
-//                                                     aria-label="Delete address"
-//                                                 >
-//                                                     <IoTrash className="w-4 h-4 sm:w-5 sm:h-5" />
-//                                                 </button>
-
-//                                                 {/* Edit Button */}
-//                                                 <button
-//                                                     onClick={() => openEditModal(address)}
-//                                                     className="bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-3 py-2 rounded-lg shadow-md flex items-center gap-1 transition-all duration-200 ms-auto"
-//                                                 >
-//                                                     <IoPencil className="w-4 h-4" />
-//                                                     <span className="text-sm">Edit</span>
-//                                                 </button>
-//                                             </div>
-//                                         </div>
-//                                     </div>
-
-
-//                                 </div>
-//                             </StylishDiv>
-//                         ))}
-//                     </div>
-//                 )}
-//             </div>
-
-//             {/* Address Add/Edit Modal */}
-//             {(isModalOpen || isEditModalOpen) && (
-//                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
-//                     <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-[90vh] overflow-y-auto">
-//                         {/* Modal Header */}
-//                         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10">
-//                             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
-//                                 {editingAddress ? 'Edit Address' : 'Add Address'}
-//                             </h2>
-//                             <button
-//                                 onClick={closeModal}
-//                                 className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors"
-//                                 aria-label="Close modal"
-//                             >
-//                                 <IoClose className="w-5 h-5 sm:w-6 sm:h-6" />
-//                             </button>
-//                         </div>
-
-//                         {/* Modal Body */}
-//                         <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4 sm:space-y-5">
-//                             {/* Name Field */}
-//                             <div>
-//                                 <label htmlFor="name" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-//                                     Name
-//                                 </label>
-//                                 <input
-//                                     type="text"
-//                                     id="name"
-//                                     name="name"
-//                                     value={formData.name}
-//                                     onChange={handleaddressChange}
-//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-//                                     placeholder="Enter your name"
-//                                 />
-//                             </div>
-
-//                             {/* Mobile Field */}
-//                             <div>
-//                                 <label htmlFor="mobile" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-//                                     Mobile No.
-//                                 </label>
-//                                 <input
-//                                     type="tel"
-//                                     id="mobile"
-//                                     name="mobile"
-//                                     value={formData.mobile}
-//                                     onChange={handleaddressChange}
-//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-//                                     placeholder="Enter mobile number"
-//                                 />
-//                             </div>
-
-//                             {/* Address Line 1 Field */}
-//                             <div>
-//                                 <label htmlFor="addressLine1" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-//                                     Address Line 1
-//                                 </label>
-//                                 <input
-//                                     type="text"
-//                                     id="addressLine1"
-//                                     name="addressLine1"
-//                                     value={formData.addressLine1}
-//                                     onChange={handleaddressChange}
-//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-//                                     placeholder="Enter address line 1"
-//                                 />
-//                             </div>
-
-//                             {/* Address Line 2 Field */}
-//                             <div>
-//                                 <label htmlFor="addressLine2" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-//                                     Address Line 2
-//                                 </label>
-//                                 <input
-//                                     type="text"
-//                                     id="addressLine2"
-//                                     name="addressLine2"
-//                                     value={formData.addressLine2}
-//                                     onChange={handleaddressChange}
-//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-//                                     placeholder="Enter address line 2 (optional)"
-//                                 />
-//                             </div>
-
-//                             {/* Landmark Field */}
-//                             <div>
-//                                 <label htmlFor="landmark" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-//                                     Landmark
-//                                 </label>
-//                                 <input
-//                                     type="text"
-//                                     id="landmark"
-//                                     name="landmark"
-//                                     value={formData.landmark}
-//                                     onChange={handleaddressChange}
-//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-//                                     placeholder="Enter landmark (optional)"
-//                                 />
-//                             </div>
-
-//                             {/* Pincode Field */}
-//                             <div>
-//                                 <label htmlFor="pincode" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
-//                                     Pincode
-//                                 </label>
-//                                 <input
-//                                     type="text"
-//                                     id="pincode"
-//                                     name="pincode"
-//                                     value={formData.pincode}
-//                                     onChange={handleaddressChange}
-//                                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-transparent transition-all duration-200"
-//                                     placeholder="Enter pincode"
-//                                 />
-//                             </div>
-
-//                             {/* Default Address Checkbox */}
-//                             <div className="flex items-center gap-3">
-//                                 <input
-//                                     type="checkbox"
-//                                     id="isDefault"
-//                                     name="isDefault"
-//                                     checked={formData.isDefault}
-//                                     onChange={handleaddressChange}
-//                                     className="w-4 h-4 sm:w-5 sm:h-5 text-pink-500 bg-white/5 border-white/10 rounded focus:ring-pink-500 focus:ring-2"
-//                                 />
-//                                 <label htmlFor="isDefault" className="text-sm sm:text-base text-gray-300 cursor-pointer">
-//                                     Set as default address
-//                                 </label>
-//                             </div>
-
-//                             {/* Submit Button */}
-//                             <button
-//                                 type="submit"
-//                                 className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff]             hover:from-[#8354f8] hover:to-[#9f78ff] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 touch-manipulation shadow-lg mt-4 sm:mt-6"
-//                             >
-//                                 {editingAddress ? 'Update Address' : 'Save Address'}
-//                             </button>
-//                         </form>
-//                     </div>
-//                 </div>
-//             )}
-//         </div>
-//     </div>
-// )}

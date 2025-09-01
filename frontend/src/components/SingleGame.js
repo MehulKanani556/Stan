@@ -523,8 +523,6 @@ const SingleGame = () => {
                   <div className="pb-5 px-4 md:px-5">
                     <div className="flex flex-wrap gap-3">
                       <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center"><FaWindows className='me-2' /> Windows</span>
-                      {/* <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center">PS5</span> */}
-                      {/* <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center">XBOX</span> */}
                     </div>
                   </div>
                 </details>
@@ -585,7 +583,7 @@ const SingleGame = () => {
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Release Date</p>
-                      <p className="text-white text-base">{single?.release_date || '-'}</p>
+                      <p className="text-white text-base">{single?.createdAt ? new Date(single.createdAt).toLocaleDateString() : '-'}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Total Download</p>
@@ -594,8 +592,6 @@ const SingleGame = () => {
                   </div>
                 </details>
               </div>
-
-
             </div>
           </div>
         </div>
