@@ -27,6 +27,7 @@ import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import Cart from './Pages/Cart.jsx';
 import Wishlist from './Pages/Wishlist.jsx';
 import AllGames from './Pages/AllGames.jsx';
+import Demo from './Pages/demo.jsx';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -72,7 +73,7 @@ function AppContent() {
             <Route path="/wishlist" element={<Wishlist/>} />
             <Route path="/wishlist" element={<Wishlist/>} />
             <Route path="/allGames" element={<AllGames/>} />
-
+            <Route path="/demo" element={<Demo/>} />
           </Routes>
            { !chatwidegt &&<ChatWidget />}
           </SocketProvider>
