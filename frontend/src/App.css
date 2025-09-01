@@ -9,7 +9,6 @@
 
 body {
   background-color: #1D232A;
-
   /* background: -moz-linear-gradient(180deg, hsla(246, 55%, 10%, 1) 0%, hsla(240, 33%, 15%, 1) 100%); */
   color: white;
   /* font-family: "League Spartan", sans-serif; */
@@ -148,6 +147,9 @@ body {
 
 .ds_review_slider .ds_height_manage {
   height: 100%;
+}
+.ds_review_slider .slick-slide div{
+  width: 100% ;
 }
 
 /* ********** Single Game Detail *********** */
@@ -585,4 +587,9 @@ html {
     width: 6px !important;
     border-radius: 50%;
   }
+}
+
+
+.card{
+  background-image: url('https://cdn.pixabay.com/photo/2016/10/26/23/24/colors-1772977_1280.jpg');
 }
