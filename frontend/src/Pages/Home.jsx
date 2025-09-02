@@ -36,6 +36,7 @@ import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice'
 import { BiLogoWindows } from 'react-icons/bi';
 import { BsWindows } from 'react-icons/bs';
 import Demo from '../components/Demo';
+import HomeSlider from '../components/HomeSlider';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
@@ -284,61 +285,9 @@ export default function Home() {
         </div>
       )}
 
-      <section className="">
-        <div className="relative w-full sp_slider_dot ">
-          <Swiper
-            modules={[EffectFade, Pagination, Autoplay]}
-            effect="fade"
-            speed={1200}
-            slidesPerView={1}
-            pagination={{
-              clickable: true,
-              renderBullet: (index, className) => {
-                return `<span class="${className} custom-bullet"></span>`;
-              },
-            }}
-            autoplay={{ delay: 5000 }}
-            loop={true}
-            className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
-          >
-            {loading ? (
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-                <span className="ml-3 text-white">Loading games...</span>
-              </div>
-            ) : games && games.length > 0 ? (
-              games.slice(0, 5).map((game, index) => (
-                <SwiperSlide key={index}>
-                  <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
-                    <div className='blob md:w-[60%] w-full h-[600px]' >
-                      <img
-                        src={game?.cover_image?.url || game1}
-                        alt={game.title || `Game ${index + 1}`}
-                        className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
-                      />
-                      {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
-
-                    </div>
-
-                    <div className='md:w-[40%] w-full  md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font  '>
-                      <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
-                      <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
-                        {game.description.slice(0, 200) + '...'}
-                      </p>
-                      <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
-                        <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
-                          Learn More
-                        </button>
-                      </Link>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))
-            ) : (
-              <p className="text-center text-white py-10">No games available</p>
-            )}
-          </Swiper>
-        </div>
+      <section className="relative">
+    
+       <HomeSlider/>
 
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
           <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
