@@ -28,6 +28,7 @@ import { fetchWishlist } from '../Redux/Slice/wishlist.slice';
 import axiosInstance from '../Utils/axiosInstance';
 import { BASE_URL } from '../Utils/baseUrl';
 import axios from 'axios';
+import { handleMyToggle } from '../Redux/Slice/game.slice';
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -43,8 +44,8 @@ export default function Header() {
     //     return stored ? JSON.parse(stored) : "";
     // });
     const name = useSelector((state) => state?.user?.name);
+    const myManage = useSelector((state)=> state?.game?.myToggle)
 
-    // console.log("ZZZZZZZZ" , name);
     
          
     const { items } = useSelector((state) => state.wishlist);
@@ -108,6 +109,7 @@ export default function Header() {
         }
         localStorage.removeItem("userName");
         navigate("/")
+        dispatch(handleMyToggle(false)) 
     };
 
 
@@ -166,9 +168,9 @@ export default function Header() {
                                           <div className='p-2 border-2 border-[#d1d5db] rounded-full hover:border-[#9ca3af] transition-colors'>
                                             <FaHeart className='text-[18px] text-[#d1d5db] cursor-pointer' />
                                           </div>
-                                          {items.length > 0 && (
+                                          {(items?.length > 0 && myManage) && (
                                             <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                                              {items.length}
+                                              {items?.length}
                                             </span>
                                           )}
                                         </NavLink>
@@ -176,9 +178,9 @@ export default function Header() {
                                           <div className='p-2 border-2 border-[#d1d5db] rounded-full hover:border-[#9ca3af] transition-colors'>
                                             <FaShoppingCart className='text-[18px] text-[#d1d5db] cursor-pointer' />
                                           </div>
-                                          {cartItems.length > 0 && (
+                                          {(cartItems?.length > 0 && myManage) && (
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                                              {cartItems.length}
+                                              {cartItems?.length}
                                             </span>
                                           )}
                                         </NavLink>
@@ -259,7 +261,7 @@ export default function Header() {
                                 <div className='flex gap-2 items-center md:hidden'>
                                          <NavLink to="/wishlist" className='me-2 relative'>
                                            <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
-                                           {items?.length > 0 && (
+                                           {(items?.length > 0 && myManage) && (
                                             <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
                                               {items.length}
                                             </span>
@@ -267,7 +269,7 @@ export default function Header() {
                                          </NavLink>
                                          <NavLink to="/cart" className='me-2 relative'>
                                            <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
-                                           {cartItems?.length > 0 && (
+                                           {(items?.length > 0 && myManage) && (
                                              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
                                                {cartItems?.length}
                                              </span>

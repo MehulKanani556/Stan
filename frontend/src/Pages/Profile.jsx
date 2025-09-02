@@ -23,6 +23,7 @@ import StylishDiv from '../components/StylishDiv';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
+import { handleMyToggle } from '../Redux/Slice/game.slice';
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -363,6 +364,8 @@ export default function Profile() {
         dispatch(clearUser())
         localStorage.removeItem("userName");
         navigate("/")
+        dispatch(handleMyToggle(false)) 
+
     };
 
     const handleOrderClick = (order) => {

@@ -215,7 +215,8 @@ const gameSlice = createSlice({
     filters: null,
     category: [],
     trailer: [],
-    wishData: []
+    wishData: [],
+    myToggle:true,
   },
   reducers: {
     clearGameError: (state) => {
@@ -224,6 +225,11 @@ const gameSlice = createSlice({
     clearGameSuccess: (state) => {
       state.success = null;
     },
+    handleMyToggle: (state, action) => {
+      if (typeof action.payload === "boolean") {
+        state.myToggle = action.payload;
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -388,5 +394,5 @@ const gameSlice = createSlice({
   },
 });
 
-export const { clearGameError, clearGameSuccess } = gameSlice.actions;
+export const { clearGameError, clearGameSuccess , handleMyToggle } = gameSlice.actions;
 export default gameSlice.reducer;

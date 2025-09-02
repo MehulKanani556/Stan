@@ -16,6 +16,7 @@ import {
 import { useDispatch } from "react-redux";
 import { setUser } from "../Redux/Slice/user.slice";
 import { motion, AnimatePresence } from "framer-motion";
+import { handleMyToggle } from "../Redux/Slice/game.slice";
 
 
 function cn(...args) {
@@ -320,6 +321,7 @@ const Login = () => {
           if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
             console.log("Login successful:", res?.payload?.name);
             navigate("/");
+            dispatch(handleMyToggle(true)) 
             dispatch(setUser({ name: res?.payload?.name }));
             resetForm();
           } else {
