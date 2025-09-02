@@ -53,13 +53,14 @@ const ReviewHome = () => {
   const handleEnd = () => {
     if (!dragging.current) return;
     dragging.current = false;
-
+  
     const movedSlides = Math.round(offset / gap);
     let newIndex = (selected - movedSlides + n) % n;
-
+  
     setSelected(newIndex);
     setOffset(0);
   };
+  
 
   const positions = useMemo(() => {
     const arr = [];
@@ -125,6 +126,7 @@ const ReviewHome = () => {
                   <img
                     src={r.avatar}
                     alt={r.name}
+                    draggable="false"
                     className="w-[90px] h-[90px] rounded-full object-cover border border-gray-700"
                   />
                   <div className="text-center mt-3">

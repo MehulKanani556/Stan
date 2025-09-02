@@ -219,27 +219,27 @@ body {
 
 
 /* ******** Demo ******* */
-/* Container anchors all slides at center. */
 #carousel {
   position: relative;
-  height: 480px;            /* adjust if your cards are taller */
+  height: 480px;           
   width: 100%;
   margin: 0 auto;
-  overflow: hidden;        /* important: avoid clipping side cards */
+  overflow: hidden;   
+  user-select: none;   
+  -webkit-user-drag: none;    
 }
 
-/* Each slide is absolutely centered, then shifted via transform (inline style) */
 #carousel .slide {
   position: absolute;
   left: 50%;
   top: 50%;
   transition: transform 0.6s ease, opacity 0.6s ease;
   will-change: transform, opacity;
+  z-index: 49 !important;
 }
 
-/* Card styling */
 .ds_review_card {
-  width: 340px;             /* tune this with GAP in JS */
+  width: 340px;            
   min-height: 360px;
   background: rgba(20, 20, 20, 0.92);
   border-radius: 1rem;
@@ -255,7 +255,6 @@ body {
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
 }
 
-/* Buttons */
 .buttons {
   display: flex;
   gap: 16px;
@@ -278,7 +277,6 @@ body {
 
 
 
-/* 📲 Tablet */
 @media (max-width: 1024px) {
   .ds_review_card { width: 300px; }
   #carousel { height: 440px; }
@@ -286,7 +284,7 @@ body {
 
 @media (max-width: 640px) {
   .ds_review_card {
-    width: 250px /* make card full width on mobile */
+    width: 250px 
   }
 
   #carousel { height: 400px; }
