@@ -94,7 +94,7 @@ export default function FAQs() {
 
             <div
               className={`overflow-hidden transition-all duration-300 ease-in-out mx-4 md:mx-6 ${
-                openIndex === index ? "max-h-40 pb-4 border-t-[1px]  border-slate-700" : "max-h-0"
+                openIndex === index ? "max-h-40 pb-4 border-t-[1px]  border-slate-700" : "max-h-0  border-slate-700"
               }`}
             >
               <p className="text-sm text-slate-300 mt-3">{faq.answer}</p>

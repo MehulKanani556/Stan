@@ -164,26 +164,54 @@ export default function Header() {
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
                                     <div className='flex gap-2 items-center'>
-                                       <NavLink to="/wishlist" className='me-2 relative'>
-                                          <div className='p-2 border-2 border-[#d1d5db] rounded-full hover:border-[#9ca3af] transition-colors'>
-                                            <FaHeart className='text-[18px] text-[#d1d5db] cursor-pointer' />
-                                          </div>
-                                          {(items?.length > 0 && myManage) && (
-                                            <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                                              {items?.length}
-                                            </span>
+                                       <NavLink to="/wishlist" className="me-2 relative">
+                                          {({ isActive }) => (
+                                            <>
+                                              <div
+                                                className={`p-2 border-2 rounded-full transition-colors ${
+                                                  isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                }`}
+                                              >
+                                                <FaHeart
+                                                  className={`text-[18px] cursor-pointer transition-colors ${
+                                                    isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                  }`}
+                                                />
+                                              </div>
+                                        
+                                              {(items?.length > 0 && myManage) && (
+                                                <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                                                  {items?.length}
+                                                </span>
+                                              )}
+                                            </>
                                           )}
                                         </NavLink>
-                                        <NavLink to="/cart" className='me-2 relative'>
-                                          <div className='p-2 border-2 border-[#d1d5db] rounded-full hover:border-[#9ca3af] transition-colors'>
-                                            <FaShoppingCart className='text-[18px] text-[#d1d5db] cursor-pointer' />
-                                          </div>
-                                          {(cartItems?.length > 0 && myManage) && (
-                                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                                              {cartItems?.length}
-                                            </span>
-                                          )}
+
+                                        <NavLink to="/cart" className="me-2 relative">
+                                            {({ isActive }) => (
+                                              <>
+                                                <div
+                                                  className={`p-2 border-2 rounded-full transition-colors ${
+                                                    isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                  }`}
+                                                >
+                                                  <FaShoppingCart
+                                                    className={`text-[18px] cursor-pointer transition-colors ${
+                                                      isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                    }`}
+                                                  />
+                                                </div>
+                                          
+                                                {(cartItems?.length > 0 && myManage) && (
+                                                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                                    {cartItems?.length}
+                                                  </span>
+                                                )}
+                                              </>
+                                            )}
                                         </NavLink>
+
                                         <div
                                             className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
                                             onClick={toggleDropdown}
@@ -259,22 +287,52 @@ export default function Header() {
                                 </div>
                             
                                 <div className='flex gap-2 items-center md:hidden'>
-                                         <NavLink to="/wishlist" className='me-2 relative'>
-                                           <FaHeart className='text-[25px] text-[#d1d5db] cursor-pointer' />
-                                           {(items?.length > 0 && myManage) && (
-                                            <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-                                              {items.length}
-                                            </span>
-                                            )}
-                                         </NavLink>
-                                         <NavLink to="/cart" className='me-2 relative'>
-                                           <FaShoppingCart className='text-[25px] text-[#d1d5db] cursor-pointer' />
-                                           {(items?.length > 0 && myManage) && (
-                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
-                                               {cartItems?.length}
-                                             </span>
-                                            )}
-                                        </NavLink>
+                                    <NavLink to="/wishlist" className="me-2 relative">
+                                          {({ isActive }) => (
+                                            <>
+                                              <div
+                                                className={`p-2 border-2 rounded-full transition-colors ${
+                                                  isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                }`}
+                                              >
+                                                <FaHeart
+                                                  className={`text-[18px] cursor-pointer transition-colors ${
+                                                    isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                  }`}
+                                                />
+                                              </div>
+                                        
+                                              {(items?.length > 0 && myManage) && (
+                                                <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                                                  {items?.length}
+                                                </span>
+                                              )}
+                                            </>
+                                          )}
+                                    </NavLink>
+                                     <NavLink to="/cart" className="me-2 relative">
+                                          {({ isActive }) => (
+                                            <>
+                                              <div
+                                                className={`p-2 border-2 rounded-full transition-colors ${
+                                                  isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                }`}
+                                              >
+                                                <FaShoppingCart
+                                                  className={`text-[18px] cursor-pointer transition-colors ${
+                                                    isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                  }`}
+                                                />
+                                              </div>
+                                        
+                                              {(cartItems?.length > 0 && myManage) && (
+                                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center ">
+                                                  {cartItems?.length}
+                                                </span>
+                                              )}
+                                            </>
+                                          )}
+                                      </NavLink>
                                 </div>
                                 <label
                                     htmlFor="my-drawer-3"

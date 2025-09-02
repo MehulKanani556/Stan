@@ -419,6 +419,8 @@ export default function Profile() {
         }
     };
 
+
+
     // Loading state
     if (loading) {
         return (
@@ -987,9 +989,9 @@ export default function Profile() {
 
                                             <div className="space-y-6">
                                                 {/* Order Header */}
-                                                <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl p-6 border border-white/10">
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
+                                                <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl px-6 py-4 border border-white/10">
+                                                    <div className="flex flex-wrap justify-between items-start">
+                                                        <div className='mt-2'>
                                                             <h3 className="font-bold text-xl mb-2">
                                                                 Order #{selectedOrder._id?.slice(-8) || 'N/A'}
                                                             </h3>
@@ -1004,7 +1006,7 @@ export default function Profile() {
                                                                 })}
                                                             </p>
                                                         </div>
-                                                        <div className="text-right">
+                                                        <div className="sm:text-right mt-2">
                                                             <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${selectedOrder.status === 'paid' ? 'text-green-400 bg-green-400/10 border border-green-400/20' :
                                                                 selectedOrder.status === 'created' ? 'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20' :
                                                                     'text-red-400 bg-red-400/10 border border-red-400/20'
@@ -1029,9 +1031,9 @@ export default function Profile() {
                                                         </h4>
                                                         <div className="space-y-4">
                                                             {selectedOrder.items.map((item, index) => (
-                                                                <div key={index} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                                                                    <div className="flex items-center justify-between">
-                                                                        <div className="flex items-center gap-4">
+                                                                <div key={index} className="bg-white/5 rounded-lg px-4 py-2 border border-white/10">
+                                                                    <div className="flex flex-wrap items-center justify-between">
+                                                                        <div className="flex flex-wrap items-center gap-4 mt-2 mb-2">
                                                                             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                                                                                 <span className="text-white font-bold text-sm">{index + 1}</span>
                                                                             </div>
@@ -1054,7 +1056,7 @@ export default function Profile() {
                                                                                 )}
                                                                             </div>
                                                                         </div>
-                                                                        <div className="text-right">
+                                                                        <div className="text-right mt-2 mb-2">
                                                                             <p className="font-bold text-white text-xl">${item.price}</p>
                                                                         </div>
                                                                     </div>
@@ -1119,7 +1121,7 @@ export default function Profile() {
                                                                 </div>
 
                                                                 <button
-                                                                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-green-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white sm:px-6 px-2 py-3 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-green-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                     onClick={() => handlePaymentClick(selectedOrder)}
                                                                     disabled={isPaymentLoading}
                                                                 >
