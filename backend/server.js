@@ -6,49 +6,66 @@ import indexRouter from './src/routes/indexRoutes.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import socketManager from "./src/socketManager/SocketManager.js";
+import cluster from "cluster";
+import os from "os";
 
-const app = express();
+const numCPUs = os.cpus().length;
 
-// Middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(cookieParser());
+if (cluster.isPrimary) {
+  console.log(`Master ${process.pid} is running`);
+  console.log(`Forking for ${numCPUs} CPUs`);
 
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
-}));
-app.use('/public', express.static('public'));
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
 
-// router
-app.use("/api", indexRouter)
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+    console.log("Starting a new worker...");
+    cluster.fork();
+  });
+} else {
+  const app = express();
 
-// Create single HTTP server from Express
-const server = http.createServer(app);
+  // Middleware
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  app.use(cookieParser());
 
-// Initialize Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  app.use(cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true
-  },
-  transports: ['websocket', 'polling'],
-  pingTimeout: 60000,
-  pingInterval: 25000,
-  connectTimeout: 45000,
-});
+  }));
 
-// Make Socket.IO globally accessible
-global.io = io;
+  app.use('/public', express.static('public'));
 
-// Initialize socket manager
-socketManager.initializeSocket(io);
+  // Routes
+  app.use("/api", indexRouter);
 
-// Connect to database
-connectDB();
+  // Create server
+  const server = http.createServer(app);
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server + Socket.IO running on port ${PORT}`);
-});
+  // Socket.IO
+  const io = new Server(server, {
+    cors: {
+      origin: "*",
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      credentials: true
+    },
+    transports: ['websocket', 'polling'],
+    pingTimeout: 60000,
+    pingInterval: 25000,
+    connectTimeout: 45000,
+  });
+
+  // Socket manager
+  socketManager.initializeSocket(io);
+
+  // DB connection
+  connectDB();
+
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, () => {
+    console.log(`Worker ${process.pid} running server + Socket.IO on port ${PORT}`);
+  });
+}

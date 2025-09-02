@@ -29,6 +29,7 @@ import Wishlist from './Pages/Wishlist.jsx';
 import AllGames from './Pages/AllGames.jsx';
 import Loader from './Pages/Loader.js';
 import Demo from './Pages/demo.jsx';
+import BackgroundColor from './components/BackgroundColor';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -50,6 +51,7 @@ function AppContent() {
           autoHideDuration={3000}
         >
           <SocketProvider>
+            <BackgroundColor>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/loader" element={<Loader />} />
@@ -77,6 +79,7 @@ function AppContent() {
             <Route path="/allGames" element={<AllGames/>} />
             <Route path="/demo" element={<Demo/>} />
           </Routes>
+          </BackgroundColor>
            { !chatwidegt &&<ChatWidget />}
           </SocketProvider>
         </SnackbarProvider>
