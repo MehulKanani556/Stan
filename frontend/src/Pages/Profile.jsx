@@ -5,6 +5,10 @@ import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
 import { getUserById, editUserProfile, logoutUser, clearUser } from '../Redux/Slice/user.slice';
+import { fetchProfile } from '../Redux/Slice/profile.slice';
+import ProfileSkeleton from '../lazyLoader/ProfileSkeleton';
+import TransactionHistorySkeleton from '../lazyLoader/TransactionHistorySkeleton';
+import OrderListSkeleton from '../lazyLoader/OrderListSkeleton';
 import { allorders, retryOrderPayment } from '../Redux/Slice/Payment.slice';
 import stanUser from "../images/stan-user.jpg";
 import { decryptData } from "../Utils/encryption";
@@ -271,6 +275,7 @@ export default function Profile() {
     const [currentOrderId, setCurrentOrderId] = useState(null);
     const [amountToPay, setAmountToPay] = useState(0);
     const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+    const [transactionLoading, setTransactionLoading] = useState(false);
     // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
@@ -284,10 +289,10 @@ export default function Profile() {
 
     const [profilePicFile, setProfilePicFile] = useState(null);
     useEffect(() => {
-        // Get current user ID from auth state or localStorage
         const userId = authUser?._id || localStorage.getItem("userId");
         if (userId) {
             dispatch(getUserById(userId));
+            dispatch(fetchProfile(userId));
         }
     }, [dispatch, authUser]);
 
@@ -312,6 +317,16 @@ export default function Profile() {
             setUser(null);
         }
     }, [currentUser]);
+
+    // show skeleton briefly when opening Transaction section
+    useEffect(() => {
+        if (activeMenu === 'Transaction') {
+            setTransactionLoading(true);
+            const timeoutId = setTimeout(() => setTransactionLoading(false), 600);
+            return () => clearTimeout(timeoutId);
+        }
+        return undefined;
+    }, [activeMenu, isActive]);
 
 
     // Handle edit mode toggle
@@ -419,18 +434,9 @@ export default function Profile() {
         }
     };
 
-
-
-    // Loading state
+    // Loading state using skeleton
     if (loading) {
-        return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ab99e1] mx-auto mb-4"></div>
-                    <p className="text-[#ab99e1]">Loading profile...</p>
-                </div>
-            </div>
-        );
+        return <ProfileSkeleton />;
     }
 
     // Error state
@@ -648,6 +654,9 @@ export default function Profile() {
                 {/* transaction */}
                 {activeMenu === "Transaction" && (
                     <div className='px-4 py-6 w-full'>
+                        {transactionLoading ? (
+                            <TransactionHistorySkeleton />
+                        ) : (
                         <section className='w-full  border border-white/25 rounded-2xl  sm:p-6 p-1 text-white flex flex-col'>
                             <div className=''>
                                 {/* Header */}
@@ -694,6 +703,7 @@ export default function Profile() {
                                 </div>
                             </div>
                         </section>
+                        )}
                     </div>
                 )}
 
@@ -718,10 +728,7 @@ export default function Profile() {
                                 {/* Orders List */}
                                 <div className='flex-1 overflow-y-auto pr-2 px-3 sm:px-4 py-4 sm:py-6'>
                                     {ordersLoading ? (
-                                        <div className="flex items-center justify-center py-12">
-                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ab99e1]"></div>
-                                            <span className="ml-3 text-[#ab99e1]">Loading orders...</span>
-                                        </div>
+                                        <OrderListSkeleton count={orders?.length} />
                                     ) : !orders || orders.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center px-4 relative">
                                             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>

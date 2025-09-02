@@ -8,6 +8,7 @@ import categorySlice from "./Slice/category.slice";
 import cartSlice from "./Slice/cart.slice";
 import wishlistSlice from './Slice/wishlist.slice';
 import paymentSlice from './Slice/Payment.slice';
+import profileSlice from './Slice/profile.slice';
 
 export const rootReducer = combineReducers({
   auth: authSlice,
@@ -19,4 +20,5 @@ export const rootReducer = combineReducers({
   cart: cartSlice,
   wishlist:wishlistSlice,
   payment: paymentSlice,
+  profile: profileSlice,
 });

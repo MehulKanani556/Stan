@@ -7,6 +7,7 @@ import { Navigation, Autoplay } from 'swiper/modules'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import 'swiper/css'
 import 'swiper/css/navigation'
+import FreeGamesSkeleton from '../lazyLoader/FreeGamesSkeleton'
 
 const Games = () => {
 	const dispatch = useDispatch()
@@ -19,12 +20,12 @@ const Games = () => {
 
 	const safeGames = Array.isArray(games) ? games : []
 
-	
+
 	useEffect(() => {
 		dispatch(getFreeGames())
 	}, [dispatch])
 
-	
+
 	useEffect(() => {
 		return () => dispatch(clearError())
 	}, [dispatch])
@@ -61,54 +62,61 @@ const Games = () => {
 		}
 	}, [safeGames])
 
+	const isInitialLoading = loading && (!Array.isArray(games) || games.length === 0)
+
 	return (
 		<div className="max-w-[95%] md:max-w-[85%] m-auto pt-16 sm:pt-20 md:pt-28 pb-12 sm:pb-16 md:pb-24 px-3 sm:px-4">
+
+
 
 			<div className="flex flex-col gap-4 mb-6 sm:mb-8">
 				<h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-wide text-center sm:text-left">
 					Free Games
 				</h2>
-				<div className="flex items-center justify-center sm:justify-end gap-3 sm:gap-4">
-					
-					{
-						!showAll && (
-							<>
-								<button
-									onClick={goPrev}
-									disabled={isBeginning}
-									className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
-										isBeginning 
-											? 'bg-gray-500 cursor-not-allowed opacity-50' 
-											: 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
-									} text-white`}
-								>
-									<FaChevronLeft size={16} />
-								</button>
-								<button
-									onClick={goNext}
-									disabled={isEnd}
-									className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
-										isEnd 
-											? 'bg-gray-500 cursor-not-allowed opacity-50' 
-											: 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
-									} text-white`}
-								>
-									<FaChevronRight size={16} />
-								</button>
-							</>
-						)
-					}
+				{!isInitialLoading && (
+					<div className="flex items-center justify-center sm:justify-end gap-3 sm:gap-4">
 
-					<button
-						onClick={() => setShowAll(!showAll)}
-						className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40"
-					>
-						{showAll ? 'View Less' : 'View More'}
-					</button>
-				</div>
+						{
+							!showAll && (
+								<>
+									<button
+										onClick={goPrev}
+										disabled={isBeginning}
+										className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
+												? 'bg-gray-500 cursor-not-allowed opacity-50'
+												: 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+											} text-white`}
+									>
+										<FaChevronLeft size={16} />
+									</button>
+									<button
+										onClick={goNext}
+										disabled={isEnd}
+										className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
+												? 'bg-gray-500 cursor-not-allowed opacity-50'
+												: 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+											} text-white`}
+									>
+										<FaChevronRight size={16} />
+									</button>
+								</>
+							)
+						}
+
+						<button
+							onClick={() => setShowAll(!showAll)}
+							className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40"
+						>
+							{showAll ? 'View Less' : 'View More'}
+						</button>
+					</div>
+				)}
 			</div>
+			{isInitialLoading && (
+				<FreeGamesSkeleton />
+			)}
 
-			{!showAll && (
+			{!isInitialLoading && !showAll && (
 				<div className="relative">
 					<Swiper
 						ref={swiperRef}
@@ -185,8 +193,8 @@ const Games = () => {
 				</div>
 			)}
 
-			
-			{showAll && (
+
+			{!isInitialLoading && showAll && (
 				<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
 					{safeGames.map((game) => (
 						<Link key={game._id} to={`/games/${game.slug}`} className="group">

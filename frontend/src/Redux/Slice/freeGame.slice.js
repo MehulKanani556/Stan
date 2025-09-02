@@ -5,6 +5,7 @@ import { enqueueSnackbar } from "notistack";
 const initialState = {
   games: [],
   loading: false,
+  topGamesInitialLoading: false, // New loading state for initial load
   error: null,
   selectedGame: null,
   totalGames: 0,
@@ -74,16 +75,19 @@ const freeGameSlice = createSlice({
       // Fetch all games
       .addCase(getFreeGames.pending, (state) => {
         state.loading = true;
+        state.topGamesInitialLoading = true;
         state.error = null;
       })
       .addCase(getFreeGames.fulfilled, (state, action) => {
         state.loading = false;
+        state.topGamesInitialLoading = false;
         state.games = Array.isArray(action.payload) ? action.payload : [];
         state.totalGames = Array.isArray(action.payload) ? action.payload.length : 0;
         state.error = null;
       })
       .addCase(getFreeGames.rejected, (state, action) => {
         state.loading = false;
+        state.topGamesInitialLoading = false;
         state.error = action.payload?.message || 'Failed to fetch games';
         state.games = [];
         state.totalGames = 0;
