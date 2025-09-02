@@ -10,6 +10,7 @@ import game1 from "../images/game1.jpg";
 import StylishDiv from "../components/StylishDiv";
 import { IoMdSearch } from "react-icons/io";
 import { IoFilter } from "react-icons/io5";
+import { allorders } from "../Redux/Slice/Payment.slice";
 
 // Custom CSS for select dropdowns
 const selectStyles = `
@@ -79,6 +80,8 @@ export default function AllGames() {
     const categories = useSelector((state) => state.category.categories);
     const wishlistStatus = useSelector((state) => state.wishlist.wishlistStatus) || {};
     const cartItems = useSelector((state) => state.cart.cart) || [];
+    const orders = useSelector((state) => state.payment.orders);
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -89,6 +92,10 @@ export default function AllGames() {
     const [currentPage, setCurrentPage] = useState(1);
 
     const gamesPerPage = 12;
+
+    useEffect(() => {
+        dispatch(allorders());
+    }, [dispatch]);
 
     useEffect(() => {
         dispatch(getAllGames({
@@ -233,10 +240,15 @@ export default function AllGames() {
     }, [searchQuery, selectedCategory, sortBy, priceRange]);
 
     // Game Card Component
-    const GameCard = ({ game }) => {
+    const GameCard = ({ game,orders }) => {
         const imageUrl = game?.cover_image?.url || game1;
         const priceValue = getGamePrice(game);
-
+        
+        // Check if the game has been purchased
+        const isPurchased = orders.some(order => 
+            order.items.some(item => item.game?._id === game?._id)
+        );
+       
         return (
             <div
                 onClick={() => navigate(`/single/${game?._id}`)}
@@ -325,19 +337,19 @@ export default function AllGames() {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleAddToCart(game);
+                                !isPurchased && handleAddToCart(game);
                             }}
-                            disabled={cartItems.some(item => item.game?._id === game?._id)}
-                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${cartItems.some(item => item.game?._id === game?._id)
+                            disabled={cartItems.some(item => item.game?._id === game?._id) || isPurchased}
+                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${cartItems.some(item => item.game?._id === game?._id) || isPurchased
                                 ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
                                 : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
                                 }`}
                         >
                             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
                                 <div>
-                                    {cartItems.some(item => item.game?._id === game?._id) ? (
-                                        <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
-                                            <span className="text-emerald-600 font-bold text-sm">✓</span>
+                                    {cartItems.some(item => item.game?._id === game?._id) || isPurchased ? (
+                                        <div className="flex items-center justify-center w-6 h-6 rounded-full">
+                                            <span className="text-white font-bold text-sm">✓</span>
                                         </div>
                                     ) : (
                                         <FaShoppingCart size={18} className="text-white" />
@@ -346,12 +358,12 @@ export default function AllGames() {
                                 <span className="text-white font-bold text-sm tracking-wider uppercase">
                                     {cartItems.some(item => item.game?._id === game?._id)
                                         ? "Added to Cart"
-                                        : "Add to Cart"}
+                                        : (isPurchased ? "Purchased" : "Add to Cart")}
                                 </span>
                             </div>
 
                             {/* Button Effects */}
-                            {!cartItems.some(item => item.game?._id === game?._id) && (
+                            {!cartItems.some(item => item.game?._id === game?._id) && !isPurchased && (
                                 <>
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
                                     <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -538,7 +550,7 @@ export default function AllGames() {
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
                         {games.map((game, index) => (
-                            <GameCard key={game.id || index} game={game} />
+                            <GameCard key={game.id || index} game={game} orders={orders} />
                         ))}
                     </div>
 
