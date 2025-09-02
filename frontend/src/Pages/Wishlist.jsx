@@ -6,8 +6,10 @@ import { fetchWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice
 import { useNavigate } from "react-router-dom";
 import { addToCart, fetchCart, removeFromCart } from "../Redux/Slice/cart.slice";
 
+import { WishlistSkeletonCard, WishlistSkeletonSummary } from "../lazyLoader/WishlistSkeleton";
+
 const Wishlist = () => {
-  const { items } = useSelector((state) => state.wishlist);
+  const { items, loading } = useSelector((state) => state.wishlist);
   const cartItems = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,7 +43,14 @@ const Wishlist = () => {
       <div className="grid lg:grid-cols-3 gap-10">
         {/* LEFT SIDE - Wishlist Games */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          {items.length > 0 ? (
+          {loading ? (
+            // Show skeletons while wishlist is loading
+            <>
+              <WishlistSkeletonCard />
+              <WishlistSkeletonCard />
+              <WishlistSkeletonCard />
+            </>
+          ) : items.length > 0 ? (
             items.map((item) => (
               <div
                 key={item.game?._id}
@@ -125,25 +134,29 @@ const Wishlist = () => {
         </div>
 
         {/* RIGHT SIDE - Summary */}
-        <div className="bg-black/15 border border-white/10 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg sticky top-20">
-          <div className="flex justify-between items-center">
-            <h2 className="font-bold text-xl">Total Items</h2>
-            <span className="text-xl font-bold text-purple-400">{items.length}</span>
-          </div>
+        {loading ? (
+          <WishlistSkeletonSummary />
+        ) : (
+          <div className="bg-black/15 border border-white/10 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg sticky top-20">
+            <div className="flex justify-between items-center">
+              <h2 className="font-bold text-xl">Total Items</h2>
+              <span className="text-xl font-bold text-purple-400">{items.length}</span>
+            </div>
 
-          <p className="text-gray-400 text-sm leading-relaxed">
-            Keep track of the games you’re interested in.
-          </p>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Keep track of the games you’re interested in.
+            </p>
 
-          <div className="flex flex-col gap-3">
-            <button onClick={() => navigate("/store")} className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
-              Explore More Games
-            </button>
-            <button onClick={() => navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-purple-300 hover:text-white hover:bg-purple-600/30 transition font-semibold py-3 rounded-xl">
-              View Cart
-            </button>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => navigate("/store")} className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
+                Explore More Games
+              </button>
+              <button onClick={() => navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-purple-300 hover:text-white hover:bg-purple-600/30 transition font-semibold py-3 rounded-xl">
+                View Cart
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
