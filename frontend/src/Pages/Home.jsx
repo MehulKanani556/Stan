@@ -33,9 +33,6 @@ import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
 import { Link, useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
-import { BiLogoWindows } from 'react-icons/bi';
-import { BsWindows } from 'react-icons/bs';
-import Demo from '../components/Demo';
 
 export default function Home() {
   const categorySwiperRef = useRef(null);
