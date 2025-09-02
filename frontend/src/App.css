@@ -697,11 +697,11 @@ html {
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
 /*Header*/
-
+/* 
 header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; display: flex; align-items: center; position: relative; z-index: 1000; }
     header nav a { color: #FFFFFF; margin-right: 5px; padding: 5px 10px; font-size: 16px; transition: .4s; text-decoration: none; }
         a.active { background: #14FF72CB; border-radius: 2px; }
-        a:hover { background: #14FF72CB;}
+        a:hover { background: #14FF72CB;} */
 
 /*Carousel*/
 
@@ -718,7 +718,7 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
         background-position: 50% 50%;
         background-size: cover;
         z-index: 100;
-        transition: .5s;
+        transition: .5s;  
     }
         .carousel .list .item:nth-child(1), .carousel .list .item:nth-child(2) { top: 0; left: 0; transform: translate(0, 0); border-radius: 0; width: 100%; height: 100%; }
         .carousel .list .item:nth-child(3) { left: 67%; }
