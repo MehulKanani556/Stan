@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaShieldAlt, FaLockOpen } from "react-icons/fa";
-// import loginBg from "../images/login-bg.jpg";
+
 import loginBg from "../images/login-bg-video.mp4";
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
 import {
@@ -17,29 +17,29 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../Redux/Slice/user.slice";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Helper function to conditionally join Tailwind CSS classes
+
 function cn(...args) {
   return args.filter(Boolean).join(' ');
 }
 
-// Simple input component with icon
+
 const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onToggleShowPassword, ...props }) => {
   return (
     <div className="mb-4 sm:mb-6">
-      {/* Label */}
+      
       <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-2">
         {label}
       </label>
 
       <div className="relative">
-        {/* Input icon */}
+        
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
           <div className="text-white drop-shadow-sm">
             {icon}
           </div>
         </div>
 
-        {/* Formik Field */}
+        
         <Field
           id={id}
           name={props.name}
@@ -49,7 +49,7 @@ const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onTogg
           {...props}
         />
 
-        {/* Password toggle button */}
+        
         {isPassword && (
           <button
             type="button"
@@ -67,7 +67,7 @@ const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onTogg
   );
 };
 
-// New components for the background animation, integrated into this file
+
 const Explosion = ({ ...props }) => {
   const spans = Array.from({ length: 20 }, (_, index) => ({
     id: index,
@@ -84,7 +84,7 @@ const Explosion = ({ ...props }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute -inset-x-10 top-0 m-auto h-2 w-10 rounded-full bg-gradient-to-r from-transparent via-indigo-500 to-transparent blur-sm"
+        className="absolute -inset-x-10 top-0 m-auto h-2 w-10 rounded-full bg-gradient-to-r from-transparent via-indigo-100 to-transparent blur-sm"
       ></motion.div>
       {spans.map((span) => (
         <motion.span
@@ -96,7 +96,7 @@ const Explosion = ({ ...props }) => {
             opacity: 0,
           }}
           transition={{ duration: Math.random() * 1.5 + 0.5, ease: "easeOut" }}
-          className="absolute h-1 w-1 rounded-full bg-gradient-to-b from-indigo-500 to-purple-500"
+          className="absolute h-1 w-1 rounded-full bg-gradient-to-b from-indigo-100 to-purple-200"
         />
       ))}
     </div>
@@ -186,7 +186,7 @@ const CollisionMechanism = ({ parentRef, containerRef, beamOptions = {} }) => {
           repeatDelay: beamOptions.repeatDelay || 0,
         }}
         className={cn(
-          "absolute left-0 top-20 m-auto h-14 w-px rounded-full bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent",
+          "absolute left-0 top-20 m-auto h-14 w-px rounded-full bg-gradient-to-t from-indigo-100 via-purple-200 to-transparent",
           beamOptions.className
         )}
       />
@@ -210,16 +210,41 @@ const CollisionMechanism = ({ parentRef, containerRef, beamOptions = {} }) => {
 const BackgroundBeamsWithCollision = ({ children, className }) => {
   const containerRef = useRef(null);
   const parentRef = useRef(null);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-  const beams = [
-    { initialX: 10, translateX: 10, duration: 7, repeatDelay: 3, delay: 2 },
-    { initialX: 600, translateX: 600, duration: 3, repeatDelay: 3, delay: 4 },
-    { initialX: 100, translateX: 100, duration: 7, repeatDelay: 7, className: "h-6" },
-    { initialX: 400, translateX: 400, duration: 5, repeatDelay: 14, delay: 4 },
-    { initialX: 800, translateX: 800, duration: 11, repeatDelay: 2, className: "h-20" },
-    { initialX: 1000, translateX: 1000, duration: 4, repeatDelay: 2, className: "h-12" },
-    { initialX: 1200, translateX: 1200, duration: 6, repeatDelay: 4, delay: 2, className: "h-6" },
-  ];
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  
+  const generateBeams = () => {
+    const beamCount = Math.min(12, Math.floor(screenWidth / 100)); 
+    const beams = [];
+    
+    for (let i = 0; i < beamCount; i++) {
+      const position = (i / Math.max(1, beamCount - 1)) * (screenWidth - 100) + 50;
+      const variation = (Math.random() - 0.5) * 30; 
+      const finalPosition = Math.max(50, Math.min(screenWidth - 50, position + variation));
+      
+      beams.push({
+        initialX: finalPosition,
+        translateX: finalPosition,
+        duration: Math.random() * 4 + 6, 
+        repeatDelay: Math.random() * 3 + 4, 
+        delay: Math.random() * 2, 
+        className: `h-${Math.floor(Math.random() * 8) + 8}`, 
+      });
+    }
+    
+    return beams;
+  };
+
+  const beams = generateBeams();
 
   return (
     <div
@@ -229,7 +254,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         "min-h-screen py-4 sm:py-0"
       )}
     >
-      {/* Background Video */}
+      
       <video
         autoPlay
         loop
@@ -241,7 +266,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         Your browser does not support the video tag.
       </video>
 
-      {/* Foreground Content */}
+      
       {beams.map((beam) => (
         <CollisionMechanism
           key={beam.initialX + "beam-idx"}
@@ -268,7 +293,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
 
 const Login = () => {
   const dispatch = useDispatch();
-  const [activeForm, setActiveForm] = useState("login"); // login | signup | forgot | otp | reset
+  const [activeForm, setActiveForm] = useState("login"); 
   const [resetEmail, setResetEmail] = useState("");
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);

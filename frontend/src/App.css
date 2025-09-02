@@ -652,7 +652,7 @@ html {
   height: 100%;
   aspect-ratio: 1;
   clip-path: polygon(0 0, calc(100% - var(--p)) 0, 100% 100%, 0 100%);
-  background: transparent;
+  /* background: transparent; */
 
 }
 
@@ -770,4 +770,11 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
 @media screen and (max-width: 450px) {
     .item .content { width: 300px; }
     .list .item .content { left: 20px; }
+}
+
+.carousel .list .item .blob {
+  display: none !important;
+}
+.carousel .list .item:nth-child(2) .blob {
+  display: block !important;
 }

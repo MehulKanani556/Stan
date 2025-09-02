@@ -100,7 +100,7 @@ function TopGames() {
   const freeGame = useSelector((state)=>state.freeGame.games);
 
   useEffect(()=>{
-    dispatch(getAllActiveGames())
+    // dispatch(getAllActiveGames())
     dispatch(getFreeGames())
   },[])
   // Array of all available game images

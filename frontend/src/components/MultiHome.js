@@ -1,44 +1,109 @@
-import React from 'react'
-import shadow from '../images/shadow.jpg'
-import hd from '../images/hd.png'
-import tap from '../images/tap.jpg'
-
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import shadow from "../images/shadow.jpg";
+import hd from "../images/hd.png";
+import tap from "../images/tap.jpg";
 
 const MultiHome = () => {
+  const containerRef = useRef(null);
+
+  const cards = [
+    {
+      id: 1,
+      title: "Seamless Device Access",
+      desc: "Enjoy gaming across smartphones, desktops, and set-top boxes with uninterrupted single sign-on access.",
+      img: shadow,
+      position: "top-[80px]",
+    },
+    {
+      id: 2,
+      title: "Crystal Clear Gaming",
+      desc: "High-quality cloud gaming, 1080p resolution, zero hidden fees.",
+      img: hd,
+      position: "top-[100px]",
+    },
+    {
+      id: 3,
+      title: "One-Tap Gaming",
+      desc: "Stream games directly from the cloud and start playing in seconds",
+      img: tap,
+      position: "top-[120px]",
+    },
+  ];
+
   return (
-    <div className='py-11 md:mt-4 mt-9'>
-        <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
-            <div className="flex lg:flex-nowrap flex-wrap gap-x-6 sm:px-0 px-1">
-                <div className="lg:w-2/5 w-full">
-                    <div className='relative ms:rounded-[35px] rounded-[10px] overflow-hidden'>
-                       <img src={shadow} alt="" className='xl:h-[825px] lg:h-[700px] md:h-[600px] ms:h-[500px] h-[400px] object-cover w-full ds_multi_img' />
-                        <div className='absolute top-0 text-white ms:p-11 p-5'>
-                           <h2 className='lg:text-[38px] md:text-[34px] ms:text-[30px] text-[26px] font-[700]'>Seamless Device Access</h2>
-                           <h4 className='lg:text-[22px] ms:text-[19px] text-[16px] mt-3 ms:leading-[29px] leading-[24px]'>Enjoy gaming across smartphones, desktops, and set-top boxes with uninterrupted single sign-on access.</h4>
-                        </div>
-                    </div>
-                </div>
-                <div className="lg:w-3/5 w-full lg:mt-0 mt-6">
-                   <div className='relative ms:rounded-[35px] rounded-[10px] overflow-hidden'>
-                       <img src={hd} alt="" className='xl:h-[400px] ms:h-[338px] h-[300px] object-cover w-full ds_multi_img' />
-                       <div className='absolute top-0 text-white ms:p-11 p-5'>
-                           <h2 className='lg:text-[38px] md:text-[34px] ms:text-[30px] text-[26px] font-[700]'>Crystal Clear Gaming</h2>
-                           <h4 className='lg:text-[22px] ms:text-[19px] text-[16px] mt-3 lms:eading-[29px] leading-[24px]'>High-quality cloud gaming, 1080p resolution, zero hidden fees.</h4>
-                        </div>
-                   </div>
-
-                   <div className='relative ms:rounded-[35px] rounded-[10px] overflow-hidden mt-6'>
-                       <img src={tap} alt="" className='xl:h-[400px] h-[338px] object-cover w-full ds_multi_img' />
-                       <div className='absolute bottom-0 text-white ms:p-11 p-5'>
-                           <h2 className='lg:text-[38px] md:text-[34px] ms:text-[30px] text-[26px] font-[700]'>One-Tap Gaming</h2>
-                           <h4 className='lg:text-[22px] ms:text-[19px] text-[16px] mt-3 ms:leading-[29px] leading-[24px]'>Stream games directly from the cloud and start playing in seconds</h4>
-                        </div>
-                   </div>
-                </div>
-            </div>
-        </div>
+    <div className="relative w-full max-w-[95%] md:max-w-[85%] my-5 mx-auto">
+      {/* this wrapper is our scroll container */}
+      <div ref={containerRef} className="relative h-[300vh]">
+        {cards.map((card, i) => (
+          <StackingCard
+            key={card.id}
+            card={card}
+            index={i}
+            containerRef={containerRef}
+          />
+        ))}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default MultiHome
+const StackingCard = ({ card, index, containerRef }) => {
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Define input and output ranges with consistent lengths
+  const inputRange = index === 0 
+    ? [0, 1]  // For first card, use full range
+    : [0 + (index - 1) * 0.2, 0.4 + (index - 1) * 0.2];
+  
+  const yOutputRange = index === 0 
+    ? [0, 0]  // Stay at 0 for first card
+    : [100, 0];  // Slide up for subsequent cards
+  
+  const opacityOutputRange = index === 0
+    ? [1, 1]  // Stay fully opaque for first card
+    : [0, 1];  // Fade in for subsequent cards
+
+  const y = useTransform(
+    scrollYProgress,
+    inputRange,
+    yOutputRange
+  );
+
+  const opacity = useTransform(
+    scrollYProgress,
+    inputRange,
+    opacityOutputRange
+  );
+
+  return (
+    <motion.div
+      className={`sticky ${card.position} flex items-center justify-center`}
+      style={{ zIndex: index + 1 }}
+    >
+      <motion.div
+        style={{ y, opacity }}
+        className="relative w-full ms:rounded-[35px] rounded-[10px] overflow-hidden shadow-2xl"
+      >
+        <motion.img
+          src={card.img}
+          alt={card.title}
+          className="w-full h-[80vh] object-cover ds_multi_img"
+        />
+        <div className={`absolute ${card.position} text-white ms:p-11 p-5`}>
+          <h2 className="lg:text-[38px] md:text-[34px] sm:text-[30px] text-[26px] font-[700] drop-shadow-lg">
+            {card.title}
+          </h2>
+          <h4 className="lg:text-[22px] sm:text-[19px] text-[16px] mt-3 leading-relaxed drop-shadow">
+            {card.desc}
+          </h4>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default MultiHome;

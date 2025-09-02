@@ -117,13 +117,13 @@ export default function Home() {
 
 
   useEffect(() => {
-  
-      const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
-      if (userId) {
-        dispatch(fetchWishlist());
-        dispatch(fetchCart());
-      }
-  
+
+    const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
+    if (userId) {
+      dispatch(fetchWishlist());
+      dispatch(fetchCart());
+    }
+
   }, [])
 
   useEffect(() => {
@@ -301,13 +301,13 @@ export default function Home() {
             loop={true}
             className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
           >
-                    {loading ? (
+            {loading ? (
               <div className="flex justify-center items-center py-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
                 <span className="ml-3 text-white">Loading games...</span>
               </div>
             ) : games && games.length > 0 ? (
-              games.slice(100, 105).map((game, index) => (
+              games.slice(0, 5).map((game, index) => (
                 <SwiperSlide key={index}>
                   <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
                     <div className='blob md:w-[60%] w-full h-[600px]' >
@@ -628,11 +628,11 @@ export default function Home() {
           </div>
         </section>
       </section>
+      <MultiHome />
 
       <Trailer />
       <ReviewHome />
       {/* <Demo/> */}
-      <MultiHome />
     </>
   )
 }
