@@ -15,6 +15,7 @@
     "crypto-js": "^4.2.0",
     "formik": "^2.4.6",
     "framer-motion": "^12.23.12",
+    "gsap": "^3.13.0",
     "notistack": "^3.0.2",
     "razorpay": "^2.9.6",
     "react": "^19.1.1",

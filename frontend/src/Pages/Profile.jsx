@@ -240,6 +240,19 @@ const PlayStore = () => {
         </div>
     )
 }
+
+const StyleDiv = ({children})=>{
+    return (
+        <div
+
+        className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl p-3  border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden ds_height_manage"
+    >
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+        <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-gradient-to-br from-blue-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+        {children}
+    </div>
+    )
+}
 export default function Profile() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -456,8 +469,8 @@ export default function Profile() {
                         <ul className='p-3 capitalize'>
                             <li className={` mt-2 transition-all  duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('profile') }}>
                                 {(() => {
-                                    const Tag = activeMenu === "profile" ? StylishDiv : "div";
-                                    const style = activeMenu === "profile" ? "w-full  h-[48px] " : "p-3  bg-[#31244e] rounded-md";
+                                    const Tag = activeMenu === "profile" ? StyleDiv : "div";
+                                    const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style} >
                                             <div className={"flex items-center "}>
@@ -484,7 +497,7 @@ export default function Profile() {
                             </li> */}
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Transaction') }}>
                                 {(() => {
-                                    const Tag = activeMenu === "Transaction" ? StylishDiv : "div";
+                                    const Tag = activeMenu === "Transaction" ? StyleDiv : "div";
                                     const style = activeMenu === "Transaction" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style}>
@@ -512,7 +525,7 @@ export default function Profile() {
                             </li>
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "logout" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('logout') }}>
                                 {(() => {
-                                    const Tag = activeMenu === "logout" ? StylishDiv : "div";
+                                    const Tag = activeMenu === "logout" ? StyleDiv : "div";
                                     const style = activeMenu === "logout" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style}>
