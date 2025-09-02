@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeFromCartLocal, clearCartLocal, fetchCart, removeFromCart, clearCart } from "../Redux/Slice/cart.slice";
 import { useNavigate } from "react-router-dom";
 import { createOrder, verifyPayment } from "../Redux/Slice/Payment.slice";
+import { CartSkeletonCard, CartSkeletonSummary } from "../lazyLoader/CartSkeleton";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
@@ -22,6 +23,7 @@ const Cart = () => {
 
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart.cart);
+    const loading = useSelector((state) => state.cart.loading);
     const navigate = useNavigate();
     const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
@@ -94,7 +96,9 @@ const Cart = () => {
 
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                    {cartItems.length > 0 ? (
+                    {loading ? (
+                        [1,2,3].map((i)=> <CartSkeletonCard key={i} />)
+                    ) : cartItems.length > 0 ? (
                         cartItems.map((item) => (
                             <div
                                 key={item.game._id}
@@ -162,11 +166,20 @@ const Cart = () => {
 
                 <div className="bg-black/15 border border-white/10 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg sticky top-20">
                     <div className="flex justify-between items-center">
-                        <h2 className="font-bold text-xl">Order Summary</h2>
-                        <span className="text-xl font-bold text-purple-400">{cartItems.length}</span>
+                        {loading ? (
+                            <div className="w-full">
+                                <CartSkeletonSummary />
+                            </div>
+                        ) : (
+                            <>
+                                <h2 className="font-bold text-xl">Order Summary</h2>
+                                <span className="text-xl font-bold text-purple-400">{cartItems.length}</span>
+                            </>
+                        )}
 
                     </div>
 
+                    {!loading && (
                     <div className=" flex flex-col gap-3 border-b border-gray-700 pb-4 text-base">
                         <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300 w-[40%]">
                             Rewards: $0.00
@@ -181,12 +194,16 @@ const Cart = () => {
                             <span>Calculated at Checkout</span>
                         </div>
                     </div>
+                    )}
 
+                    {!loading && (
                     <div className="flex justify-between text-lg font-bold">
                         <span>Subtotal</span>
                         <span>${subtotal.toLocaleString()}</span>
                     </div>
+                    )}
 
+                    {!loading && (
                     <div className="gap-4">
                         <button onClick={handleCheckout} className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
 
@@ -205,6 +222,7 @@ const Cart = () => {
                             Continue Shopping
                         </button>
                     </div>
+                    )}
                 </div>
             </div>
 
