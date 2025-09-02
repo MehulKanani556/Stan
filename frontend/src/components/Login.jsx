@@ -253,8 +253,24 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         "min-h-screen py-4 sm:py-0"
       )}
     >
+      {/* Starry sky background */}
+      <div className="absolute inset-0 stars-background">
+        {[...Array(500)].map((_, i) => (
+          <div 
+            key={i} 
+            className="star" 
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              width: `${Math.random() * 2}px`,
+              height: `${Math.random() * 2}px`
+            }} 
+          />
+        ))}
+      </div>
       
-      <video
+      {/* <video
         autoPlay
         loop
         muted
@@ -263,8 +279,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
       >
         <source src={loginBg} type="video/mp4" />
         Your browser does not support the video tag.
-      </video>
-
+      </video> */}
       
       {beams.map((beam) => (
         <CollisionMechanism
@@ -287,7 +302,6 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
       ></div>
     </div>
   );
-
 };
 
 const Login = () => {

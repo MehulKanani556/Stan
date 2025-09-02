@@ -512,7 +512,6 @@ html {
 /* Ensure proper touch scrolling on iOS */
 .touch-scroll {
   -webkit-overflow-scrolling: touch;
-  overflow-scrolling: touch;
 }
 
 /* Message animation */
@@ -775,4 +774,26 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
 }
 .carousel .list .item:nth-child(2) .blob {
   display: block !important;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.stars-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite;
 }

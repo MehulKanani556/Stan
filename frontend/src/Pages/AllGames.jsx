@@ -91,9 +91,27 @@ export default function AllGames() {
     const gamesPerPage = 12;
 
     useEffect(() => {
-        dispatch(getAllGames());
+        dispatch(getAllGames({
+            page: currentPage, 
+            limit: gamesPerPage, 
+            category: selectedCategory
+        }));
         dispatch(getAllCategories());
-    }, [dispatch]);
+    }, [dispatch, currentPage, selectedCategory]);
+
+    // Debounce search to avoid too many API calls
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            dispatch(getAllGames({
+                page: currentPage, 
+                limit: gamesPerPage, 
+                category: selectedCategory,
+                search: searchQuery
+            }));
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+    }, [dispatch, currentPage, selectedCategory, searchQuery]);
 
 
     console.log("Hello", games);
@@ -184,11 +202,10 @@ export default function AllGames() {
         setCurrentPage(1);
     };
 
-    // Pagination logic with filtered results
-    const indexOfLastGame = currentPage * gamesPerPage;
-    const indexOfFirstGame = indexOfLastGame - gamesPerPage;
-    const currentGames = priceFilteredGames.slice(indexOfFirstGame, indexOfLastGame);
-    const totalPages = Math.ceil(priceFilteredGames.length / gamesPerPage);
+    // Use server-side pagination from Redux state
+    const pagination = useSelector((state) => state.game.pagination);
+    const totalPages = pagination?.totalPages || 1;
+    const totalGames = pagination?.totalItems || 0;
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -517,20 +534,10 @@ export default function AllGames() {
             </div>
 
 
-            {filteredGames.length > 0 && (
-                <div className="text-center mb-6">
-                    <p className="text-gray-300 text-sm bg-gray-800/40 backdrop-blur-sm rounded-lg px-4 py-2 inline-block">
-                        Showing <span className="text-purple-400 font-semibold">{currentGames.length}</span> of <span className="text-purple-400 font-semibold">{filteredGames.length}</span> games
-                        {searchQuery && ` matching "${searchQuery}"`}
-                        {selectedCategory && ` in ${categories.find(c => c._id === selectedCategory)?.categoryName || 'selected category'}`}
-                    </p>
-                </div>
-            )}
-
-            {priceFilteredGames && priceFilteredGames.length > 0 ? (
+            {games && games.length > 0 ? (
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
-                        {currentGames.map((game, index) => (
+                        {games.map((game, index) => (
                             <GameCard key={game.id || index} game={game} />
                         ))}
                     </div>
@@ -624,20 +631,20 @@ export default function AllGames() {
                             </svg>
                         </div>
                         <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                            {searchQuery || selectedCategory || sortBy || priceRange ? 'No games found' : 'No games available'}
+                            {selectedCategory ? 'No games found' : 'No games available'}
                         </h3>
                         <p className="text-gray-400 text-sm sm:text-base">
-                            {searchQuery || selectedCategory || sortBy || priceRange
-                                ? 'Try adjusting your search criteria or filters'
+                            {selectedCategory
+                                ? 'Try selecting a different category'
                                 : 'Check back later for new releases and updates'
                             }
                         </p>
-                        {(searchQuery || selectedCategory || sortBy || priceRange) && (
+                        {selectedCategory && (
                             <button
-                                onClick={resetFilters}
+                                onClick={() => setSelectedCategory("")}
                                 className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors"
                             >
-                                Clear All Filters
+                                Clear Category
                             </button>
                         )}
                     </div>
