@@ -17,7 +17,7 @@ import { createWishlist, getGameById } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go";
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
-import { createOrder, verifyPayment } from '../Redux/Slice/Payment.slice'
+import { allorders, createOrder, verifyPayment } from '../Redux/Slice/Payment.slice'
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from './PaymentForm';
@@ -274,7 +274,19 @@ const SingleGame = () => {
     setAmountToPay(0);
     setHasPaid(true); // 👈 Add this line
   };
+  // review modal hadnling
   const [open, setOpen] = useState(false)
+
+  const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
+  console.log('orders', orders)
+  const isBuyed = orders?.some(order =>
+    order?.items?.some(item => item.game._id === id)
+  );
+
+  console.log(isBuyed);
+  useEffect(() => {
+    dispatch(allorders());
+  }, [dispatch]);
 
   return (
     <div className=''>
@@ -484,17 +496,24 @@ const SingleGame = () => {
                     </button>
                   )}
                 </div>
-                {hasPaid ? (
-                  <button
-                    onClick={() => {
-                      // Add your download logic here
-                      console.log("Starting download...");
-                      // You can trigger a function to handle the file download
-                    }}
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
-                  >
-                    Download Now
-                  </button>
+                {isBuyed ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        // Add your download logic here
+                        console.log("Starting download...");
+                        // You can trigger a function to handle the file download
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
+                    >
+                      Download Now
+                    </button>
+                    <button
+                      onClick={() => setOpen(true)}
+                      className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                      Review
+                    </button>
+                  </>
                 ) : (
                   <button
                     onClick={() => handleCheckout()}
@@ -503,11 +522,7 @@ const SingleGame = () => {
                     Buy Now
                   </button>
                 )}
-                <button
-                  onClick={() => setOpen(true)}
-                  className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
-                  Review
-                </button>
+
               </div>
 
               {showPaymentForm && clientSecret && currentOrderId && (
@@ -613,7 +628,7 @@ const SingleGame = () => {
                 </details>
                 {/* review modal */}
                 {open && (
-                  <ReviewForm open={open} onClose={() => setOpen(false)} />
+                  <ReviewForm open={open} onClose={() => setOpen(false)} game={id} />
                 )}
 
               </div>

@@ -1,7 +1,6 @@
 import Rating from "../models/rating.model.js";
 import Game from "../models/Games.model.js";
-// import { createError } from "../utils/ErrorUtils.js";
-// import { createResponse } from "../utils/ResponseUtils.js";
+import { sendSuccessResponse, sendBadRequestResponse, sendNotFoundResponse, sendCreatedResponse } from "../utils/ResponseUtils.js";
 
 // Create or update a rating and review
 export const createOrUpdateRating = async (req, res, next) => {
@@ -9,20 +8,21 @@ export const createOrUpdateRating = async (req, res, next) => {
         const { gameId } = req.params;
         const { rating, review } = req.body;
         const userId = req.user._id;
-
+console.log(gameId , rating, review , userId)
         // Validate input
         if (!rating || rating < 1 || rating > 5) {
-            return next(createError(400, "Rating must be between 1 and 5"));
+            return sendBadRequestResponse(res, "Rating must be between 1 and 5");
         }
 
         // Check if game exists
         const game = await Game.findById(gameId);
         if (!game) {
-            return next(createError(404, "Game not found"));
+            return sendNotFoundResponse(res, "Game not found");
         }
 
         // Check if user has already rated this game
-        let existingRating = await Rating.findOne({ user: userId, game: gameId });
+        let existingRating = await Rating.findOne({ user: userId, game: gameId, isActive: true });
+        const isUpdate = !!existingRating;
 
         if (existingRating) {
             // Update existing rating
@@ -31,13 +31,16 @@ export const createOrUpdateRating = async (req, res, next) => {
             await existingRating.save();
         } else {
             // Create new rating
-            existingRating = new Rating({
+            console.log('rating ======================================================>',existingRating);
+
+            existingRating = await Rating.create({
                 user: userId,
                 game: gameId,
                 rating,
                 review,
             });
-            await existingRating.save();
+            // await existingRating.save();
+
         }
 
         // Update game's average rating and review count
@@ -51,10 +54,10 @@ export const createOrUpdateRating = async (req, res, next) => {
         // Populate user details for response
         await existingRating.populate("user", "name username profilePic");
 
-        res.status(200).json(createResponse(
-            existingRating ? "Rating updated successfully" : "Rating created successfully",
-            existingRating
-        ));
+        if (isUpdate) {
+            return sendSuccessResponse(res, "Rating updated successfully", existingRating);
+        }
+        return sendCreatedResponse(res, "Rating created successfully", existingRating);
     } catch (error) {
         next(error);
     }
@@ -371,7 +374,7 @@ export const getAllRatings = async (req, res, next) => {
         const totalRatings = allRatings.length;
 
         // The rest of the response logic remains the same
-        res.status(200).json(createResponse("All ratings retrieved successfully", {
+        return sendSuccessResponse(res, "All ratings retrieved successfully", {
             ratings,
             pagination: {
                 currentPage: 1, // Always 1, as we are only returning the first 5 ratings
@@ -380,7 +383,7 @@ export const getAllRatings = async (req, res, next) => {
                 hasNext: totalRatings > 5,
                 hasPrev: false
             }
-        }));
+        });
     } catch (error) {
         next(error);
     }

@@ -27,6 +27,24 @@ const ratingSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        // Whether the rating is active (for soft delete)
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
+        // Helpful marks from other users
+        helpful: [
+            {
+                user: { type: mongoose.Schema.Types.ObjectId, ref: "UserStan", required: true },
+                isHelpful: { type: Boolean, default: true },
+                createdAt: { type: Date, default: Date.now },
+            },
+        ],
+        // Cached count of helpful marks
+        helpfulCount: {
+            type: Number,
+            default: 0,
+        },
        
     },
     {
@@ -39,7 +57,11 @@ ratingSchema.index({ user: 1, game: 1 }, { unique: true });
 
 // Pre-save middleware to calculate helpful count
 ratingSchema.pre('save', function(next) {
-    this.helpfulCount = this.helpful.length;
+    if (Array.isArray(this.helpful)) {
+        this.helpfulCount = this.helpful.length;
+    } else {
+        this.helpfulCount = 0;
+    }
     next();
 });
 
