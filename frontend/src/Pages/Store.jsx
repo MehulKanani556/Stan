@@ -114,7 +114,7 @@ const Store = () => {
   };
 
   const GameSection = ({ title, games = [], sectionRef }) => (
-    <LazyGameCard>
+    // <LazyGameCard>
       <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
         <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
           <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
@@ -148,24 +148,29 @@ const Store = () => {
         </div>
 
         <div
-          ref={sectionRef}
-          className='overflow-x-auto scrollbar-hide '
-          onMouseDown={(e) => handleMouseDown(e, sectionRef)}
-        >
-          <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max py-4 px-2 '>
-            {games && games.length > 0 ? (
-              games.map((game) => (
-                <GameCard key={game._id || game.id} game={game} />
-              ))
-            ) : (
-              <div className="text-gray-400 text-center py-8">
-                No games available
-              </div>
-            )}
+      ref={sectionRef}
+      className='overflow-x-auto scrollbar-hide'
+      onMouseDown={(e) => handleMouseDown(e, sectionRef)}
+    >
+      <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max py-4 px-2 '>
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <LazyGameCard key={i} />  
+          ))
+        ) : games && games.length > 0 ? (
+          games.map((game) => (
+            <GameCard key={game._id || game.id} game={game} />
+          ))
+        ) : (
+          <div className="text-gray-400 text-center py-8">
+            No games available
           </div>
-        </div>
+        )}
       </div>
-    </LazyGameCard>
+    </div>
+
+      </div>
+    // {/* </LazyGameCard> */}
   );
 
   const GameCard = ({ game }) => {

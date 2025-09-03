@@ -182,7 +182,7 @@ const Footer = () => {
 
 
 
-          <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
+          <div className="relative z-10 border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
             <p>© 2024 YOYO Gaming. All rights reserved.</p>
 
           </div>
