@@ -44,7 +44,7 @@ const Footer = () => {
               <p className="text-gray-300 text-sm leading-relaxed">
                 Your ultimate gaming destination. Discover, play, and connect with gamers worldwide.
               </p>
-              <div className="flex justify-center md:justify-start gap-3 sm:gap-4 md:gap-5 flex-wrap ">
+              <div className="flex justify-center flex-nowrap md:justify-start gap-4 sm:gap-2 md:gap-5 lg:gap-2 xl:gap-4">
                 {[
                   { Icon: FaFacebook, href: "#" },
                   { Icon: FaTwitter, href: "#" },
