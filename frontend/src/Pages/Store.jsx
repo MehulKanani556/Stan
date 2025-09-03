@@ -246,7 +246,7 @@ const Store = () => {
                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                   <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                   <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-                  <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
+                  <span className="text-base md:text-md lg:text-lg xl:text-xl font-black text-white">
                     ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
                   </span>
                   <span className="text-xs text-slate-400 font-medium">USD</span>
@@ -254,7 +254,7 @@ const Store = () => {
                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                   <span className="text-xs text-green-400 font-semibold uppercase tracking-wider">Size</span>
-                  <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
+                  <span className="text-base md:text-md lg:text-lg xl:text-xl font-black text-white">
                     {game?.platforms?.windows?.size || 'N/A'}
                   </span>
                 </div>

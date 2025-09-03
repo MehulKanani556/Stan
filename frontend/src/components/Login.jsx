@@ -27,20 +27,20 @@ function cn(...args) {
 const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onToggleShowPassword, ...props }) => {
   return (
     <div className="mb-4 sm:mb-6">
-      
+
       <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-2">
         {label}
       </label>
 
       <div className="relative">
-        
+
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
           <div className="text-white drop-shadow-sm">
             {icon}
           </div>
         </div>
 
-        
+
         <Field
           id={id}
           name={props.name}
@@ -50,7 +50,7 @@ const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onTogg
           {...props}
         />
 
-        
+
         {isPassword && (
           <button
             type="button"
@@ -222,23 +222,23 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  
+
   const generateBeams = () => {
-    const beamCount = Math.min(12, Math.floor(screenWidth / 100)); 
+    const beamCount = Math.min(12, Math.floor(screenWidth / 100));
     const beams = [];
-    
+
     for (let i = 0; i < beamCount; i++) {
       const position = (i / Math.max(1, beamCount - 1)) * (screenWidth - 100) + 50;
-      const variation = (Math.random() - 0.5) * 30; 
+      const variation = (Math.random() - 0.5) * 30;
       const finalPosition = Math.max(50, Math.min(screenWidth - 50, position + variation));
-      
+
       beams.push({
         initialX: finalPosition,
         translateX: finalPosition,
-        duration: Math.random() * 4 + 6, 
-        repeatDelay: Math.random() * 3 + 4, 
-        delay: Math.random() * 2, 
-        className: `h-${Math.floor(Math.random() * 8) + 8}`, 
+        duration: Math.random() * 4 + 6,
+        repeatDelay: Math.random() * 3 + 4,
+        delay: Math.random() * 2,
+        className: `h-${Math.floor(Math.random() * 8) + 8}`,
       });
     }    
     return beams;
@@ -307,7 +307,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
 
 const Login = () => {
   const dispatch = useDispatch();
-  const [activeForm, setActiveForm] = useState("login"); 
+  const [activeForm, setActiveForm] = useState("login");
   const [resetEmail, setResetEmail] = useState("");
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
