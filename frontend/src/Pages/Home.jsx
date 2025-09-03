@@ -389,8 +389,8 @@ export default function Home() {
               slidesPerView={1.1}
               breakpoints={{
                 320: { slidesPerView: 1, spaceBetween: 8 },
-                425: { slidesPerView: 2, spaceBetween: 10 },
-                575: { slidesPerView: 2, spaceBetween: 10 },
+                425: { slidesPerView: 1, spaceBetween: 10 },
+                575: { slidesPerView: 1, spaceBetween: 10 },
                 640: { slidesPerView: 2, spaceBetween: 12 },
                 768: { slidesPerView: 2.5, spaceBetween: 14 },
                 1024: { slidesPerView: 3, spaceBetween: 14 },
