@@ -749,8 +749,10 @@ const Login = () => {
   const { title, initialValues, validationSchema, onSubmit, render } = formConfigs[activeForm];
 
   return (
-    <BackgroundBeamsWithCollision className="z-10">
-      <div className="relative bg-black/5 p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-sm mx-auto z-20 shadow shadow-white/50">
+    <BackgroundBeamsWithCollision className="z-10 relative">
+      <div className="relative p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-sm mx-auto z-20 shadow shadow-white/50">
+      <div className="absolute top-0 left-0 h-full w-full   backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-sm mx-auto z-0 shadow shadow-white/50"></div>
+        <div className="relative z-10">
         <div className="flex justify-center mb-4 sm:mb-6">
           <div className="w-12 h-12 sm:w-14 sm:h-14 p-2 bg-black border rounded-full">
 
@@ -787,6 +789,7 @@ const Login = () => {
           :
           ""
         }
+        </div>
       </div>
 
     </BackgroundBeamsWithCollision>
