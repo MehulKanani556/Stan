@@ -20,6 +20,7 @@ import { RiCoupon2Fill } from "react-icons/ri";
 import { IoRocketOutline } from "react-icons/io5";
 import { MdAddTask } from "react-icons/md";
 import { SiPhonepe } from "react-icons/si";
+import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
 
 
 
@@ -64,22 +65,31 @@ const swiperStyles = `
 `;
 
 export default function Rewards() {
-   
+    const [isLoading, setIsLoading] = React.useState(true);
 
     React.useEffect(() => {
         const style = document.createElement('style');
         style.textContent = swiperStyles;
         document.head.appendChild(style);
 
+        // Simulate loading time
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1500);
+
         return () => {
             document.head.removeChild(style);
+            clearTimeout(timer);
         };
     }, []);
+
+    if (isLoading) {
+        return <RewardsSkeleton />;
+    }
 
     return (
         <>
             <section className='w-full'>
-
                 <RedeemAndWin />
             </section>
         </>
