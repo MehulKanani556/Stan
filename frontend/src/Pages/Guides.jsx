@@ -16,7 +16,7 @@ function Guides() {
 
 const SupportPage = () => {
 
- const dispatch = useDispatch()
+  const dispatch = useDispatch()
 
   return (
     <div className="w-full">
@@ -107,7 +107,7 @@ const SupportPage = () => {
                   You will have all answers of your questions
                 </p>
               </div>
-            <button onClick={()=> dispatch(chatToggleFunc(true))} className="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition">
+              <button onClick={() => dispatch(chatToggleFunc(true))} className="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition">
                 Start Chat
               </button>
             </div>
@@ -137,7 +137,7 @@ const SupportPage = () => {
 
 const SectionWrapper = ({ title, description, img, items, flip }) => {
 
-   
+
 
   return (
     <section className="py-16 px-3 md:px-6 border-purple-500/30">

@@ -390,18 +390,18 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex gap-2">
-              <button
-  onClick={() => navigate('/allGames')}
-  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-lg 
+                <button
+                  onClick={() => navigate('/allGames')}
+                  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-lg 
     font-medium text-sm transition-all duration-200 ease-out
     bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
     text-white shadow-lg shadow-fuchsia-500/30
     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
     active:scale-95 focus-visible:outline-none 
     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
->
-  All Games
-</button>
+                >
+                  All Games
+                </button>
                 <button
                   onClick={() => gameSwiperRef.current?.slidePrev()}
                   disabled={isBeginning}
@@ -531,7 +531,7 @@ export default function Home() {
                             <div className="flex flex-wrap items-center space-x-2 mb-2">
                               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                               <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-                              <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
+                              <span className="text-base md:text-md lg:text-lg xl:text-xl font-black text-white">
                                 ${element?.platforms?.windows?.price?.toLocaleString('en-IN')}
                               </span>
                               <span className="text-xs text-slate-400 font-medium">USD</span>
@@ -539,7 +539,7 @@ export default function Home() {
                             <div className="flex flex-wrap items-center space-x-2 mb-2">
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                               <span className="text-xs text-green-400 font-semibold uppercase tracking-wider">Size</span>
-                              <span className="text-lg sm:text-md md:text-2xl lg:text-3xl xl:text-xl font-black text-white">
+                              <span className="text-base md:text-md lg:text-lg xl:text-xl font-black text-white">
                                 {element?.platforms?.windows?.size || 'N/A'}
                               </span>
                             </div>

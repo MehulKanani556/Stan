@@ -281,7 +281,7 @@ const SingleGame = () => {
         </div>
 
         <div className="flex flex-col-reverse xl:flex-row md:mt-11">
-          <div className='2xl:w-3/4 xl:w-3/5 w-full '>
+          <div className='2xl:w-3/4 xl:w-3/5 w-full xl:mt-0 mt-8'>
             <div>
               <Slider {...mainSettings} className='ds_single_slider'>
                 {single?.video?.url ? (
