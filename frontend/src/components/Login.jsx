@@ -16,6 +16,7 @@ import {
 import { useDispatch } from "react-redux";
 import { setUser } from "../Redux/Slice/user.slice";
 import { motion, AnimatePresence } from "framer-motion";
+import { handleMyToggle } from "../Redux/Slice/game.slice";
 
 
 function cn(...args) {
@@ -239,8 +240,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         delay: Math.random() * 2,
         className: `h-${Math.floor(Math.random() * 8) + 8}`,
       });
-    }
-
+    }    
     return beams;
   };
 
@@ -254,8 +254,24 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         "min-h-screen py-4 sm:py-0"
       )}
     >
-
-      <video
+      {/* Starry sky background */}
+      <div className="absolute inset-0 stars-background">
+        {[...Array(500)].map((_, i) => (
+          <div 
+            key={i} 
+            className="star" 
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              width: `${Math.random() * 2}px`,
+              height: `${Math.random() * 2}px`
+            }} 
+          />
+        ))}
+      </div>
+      
+      {/* <video
         autoPlay
         loop
         muted
@@ -264,9 +280,8 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
       >
         <source src={loginBg} type="video/mp4" />
         Your browser does not support the video tag.
-      </video>
-
-
+      </video> */}
+      
       {beams.map((beam) => (
         <CollisionMechanism
           key={beam.initialX + "beam-idx"}
@@ -288,7 +303,6 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
       ></div>
     </div>
   );
-
 };
 
 const Login = () => {
@@ -320,6 +334,7 @@ const Login = () => {
           if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
             console.log("Login successful:", res?.payload?.name);
             navigate("/");
+            dispatch(handleMyToggle(true)) 
             dispatch(setUser({ name: res?.payload?.name }));
             resetForm();
           } else {
@@ -502,48 +517,174 @@ const Login = () => {
     },
     otp: {
       title: "Verify OTP",
-      initialValues: { otp: "" },
-      validationSchema: Yup.object({
-        otp: Yup.string().length(4, "Enter 4-digit OTP").required("Required"),
-      }),
-      onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
-        try {
-          const res = await dispatch(verifyOtp({ email: resetEmail, otp: values.otp }));
-          if (res.meta.requestStatus === "fulfilled" && res.payload?.success) {
-            setActiveForm("reset");
-            resetForm();
-          } else {
-            setStatus({ error: "Invalid OTP" });
-          }
-        } finally {
-          setSubmitting(false);
-        }
+      render: () => {
+        const OtpInput = () => {
+          const [otpInputs, setOtpInputs] = useState(["", "", "", ""]);
+          const [error, setError] = useState("");
+          const [isLoading, setIsLoading] = useState(false);
+          const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+    
+          const handleOtpChange = (index, value) => {
+            const newOtpInputs = [...otpInputs];
+            newOtpInputs[index] = value.replace(/\D/g, ""); // only digits
+            setOtpInputs(newOtpInputs);
+            setError("");
+    
+            if (value && index < 3) {
+              otpRefs[index + 1].current.focus();
+            }
+          };
+    
+          const handleOtpKeyDown = (index, e) => {
+            if (e.key === "Backspace" && !otpInputs[index] && index > 0) {
+              otpRefs[index - 1].current.focus();
+            }
+          };
+    
+          const handlePaste = (e) => {
+            e.preventDefault();
+            const pastedText = e.clipboardData.getData("text").slice(0, 4);
+            const digits = pastedText.split("").map((c) => (/\d/.test(c) ? c : ""));
+            const newOtp = [...otpInputs];
+            digits.forEach((d, i) => {
+              if (i < 4) newOtp[i] = d;
+            });
+            setOtpInputs(newOtp);
+    
+            const lastIndex = digits.length - 1;
+            if (lastIndex >= 0 && lastIndex < 4) {
+              otpRefs[lastIndex].current.focus();
+            }
+          };
+    
+          const verifyOtpHandler = async () => {
+            const otp = otpInputs.join("");
+            if (otp.length !== 4) {
+              setError("Please enter a 4-digit OTP");
+              return;
+            }
+    
+            setIsLoading(true);
+            setError("");
+    
+            try {
+              const res = await dispatch(verifyOtp({ email: resetEmail, otp })).unwrap();
+    
+              if (res?.success) {
+                setActiveForm("reset");
+              } else {
+                setError(res?.message || "Invalid OTP. Please try again.");
+              }
+            } catch (err) {
+              setError(err?.message || "Something went wrong. Try again.");
+              console.error("OTP Verification Error:", err);
+            } finally {
+              setIsLoading(false);
+            }
+          };
+    
+          return (
+            <>
+              <div className="flex justify-center space-x-2 mb-4">
+                {otpInputs.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={otpRefs[index]}
+                    type="text"
+                    maxLength="1"
+                    value={digit}
+                    onPaste={index === 0 ? handlePaste : undefined}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    className="w-12 h-12 text-center text-white bg-white/10 border border-white/30 rounded-xl 
+                               focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400/50 
+                               transition-all duration-300"
+                  />
+                ))}
+              </div>
+    
+              {error && (
+                <div className="text-red-400 text-center mb-4 p-2 rounded-xl bg-red-800/80 shadow-lg">
+                  {error}
+                </div>
+              )}
+    
+              <button
+                type="button"
+                onClick={verifyOtpHandler}
+                disabled={isLoading}
+                className="group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] 
+                           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 
+                           focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 
+                           disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] 
+                               bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
+                <span className="relative inline-flex h-full w-full items-center justify-center rounded-xl 
+                                 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300">
+                  {isLoading ? (
+                    <span className="flex items-center">
+                      <svg
+                        className="animate-spin h-5 w-5 mr-2"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 
+                             0 5.373 0 12h4zm2 5.291A7.962 
+                             7.962 0 014 12H0c0 3.042 1.135 
+                             5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Verifying...
+                    </span>
+                  ) : (
+                    <>
+                      <span className="mr-2">Verify OTP</span>
+                      <svg
+                        className="w-4 h-4 transform group-hover:scale-110 transition-transform duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 
+                             9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </>
+                  )}
+                </span>
+              </button>
+            </>
+          );
+        };
+    
+        return (
+          <>
+            <p className="text-sm text-gray-300 text-center mb-4">
+              A 4-digit code has been sent to <b>{resetEmail}</b>.
+            </p>
+            <OtpInput />
+          </>
+        );
       },
-      render: () => (
-        <>
-          <p className="text-sm text-gray-300 text-center mb-4">
-            A 4-digit code has been sent to **{resetEmail}**.
-          </p>
-          <InputWithIcon
-            id="otp"
-            label="Enter OTP"
-            type="text"
-            name="otp"
-            icon={<FaShieldAlt size={20} />}
-          />
-          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
-            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
-            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
-              <span className="mr-2">Verify OTP</span>
-              <svg className="w-4 h-4 transform group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </span>
-
-          </button>
-        </>
-      ),
     },
+    
     reset: {
       title: "Set New Password",
       initialValues: { password: "", confirmPassword: "" },

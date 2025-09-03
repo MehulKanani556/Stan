@@ -280,8 +280,8 @@ const SingleGame = () => {
           <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize'>{single?.title}</h2>
         </div>
 
-        <div className="flex flex-col-reverse xl:flex-row md:mt-11">
-          <div className='2xl:w-3/4 xl:w-3/5 w-full xl:mt-0 mt-8'>
+        <div className="flex flex-col-reverse xl:flex-row lg:mt-11">
+          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 w-full xl:mt-0 mt-5'>
             <div>
               <Slider {...mainSettings} className='ds_single_slider'>
                 {single?.video?.url ? (
@@ -425,7 +425,7 @@ const SingleGame = () => {
           </div>
 
           {/* right side copntent */}
-          <div className="2xl:w-1/4 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
+          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/15 ">
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />

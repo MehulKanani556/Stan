@@ -72,7 +72,7 @@ export default function Demo() {
     const listRef = useRef(null);
     const carouselRef = useRef(null);
     const timeRunning = 3000;
-    const timeAutoNext = 7000;
+    const timeAutoNext = 700000;
     const runTimeOut = useRef(null);
     const runNextAuto = useRef(null);
     const timeBarRef = useRef(null);
@@ -182,6 +182,7 @@ export default function Demo() {
                                 background: 'linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%)',
                                 zIndex: 1
                             }}></div>
+                            <div className="blob md:w-[60%] w-full h-[600px] absolute top-0 right-0 rotate-180 bg-black z-[999] bg-black!important" />
                             
                             <div className="content" style={{ position: 'relative', zIndex: 2 }}>
                                 <div className="name">{slide.title || slide.name || 'Untitled'}</div>

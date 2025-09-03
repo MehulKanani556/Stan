@@ -120,17 +120,49 @@ const cartSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            .addCase(addToCart.pending, (state) => {
+                state.loading = true;
+            })
             .addCase(addToCart.fulfilled, (state, action) => {
+                state.loading = false;
                 state.cart = action.payload;
+            })
+            .addCase(addToCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(updateCartItem.pending, (state) => {
+                state.loading = true;
             })
             .addCase(updateCartItem.fulfilled, (state, action) => {
+                state.loading = false;
                 state.cart = action.payload;
+            })
+            .addCase(updateCartItem.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(removeFromCart.pending, (state) => {
+                state.loading = true;
             })
             .addCase(removeFromCart.fulfilled, (state, action) => {
+                state.loading = false;
                 state.cart = action.payload;
             })
+            .addCase(removeFromCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(clearCart.pending, (state) => {
+                state.loading = true;
+            })
             .addCase(clearCart.fulfilled, (state, action) => {
+                state.loading = false;
                 state.cart = action.payload;
+            })
+            .addCase(clearCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 });

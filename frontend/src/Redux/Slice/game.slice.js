@@ -208,6 +208,9 @@ const gameSlice = createSlice({
     topGames: [],
     singleGame: null,
     loading: false,
+    topGamesLoading: false,
+    popularGamesLoading: false,
+    topGamesInitialLoading: false, // New loading state for initial load
     error: null,
     success: null,
     pagination: null,
@@ -215,7 +218,8 @@ const gameSlice = createSlice({
     filters: null,
     category: [],
     trailer: [],
-    wishData: []
+    wishData: [],
+    myToggle:true,
   },
   reducers: {
     clearGameError: (state) => {
@@ -224,6 +228,11 @@ const gameSlice = createSlice({
     clearGameSuccess: (state) => {
       state.success = null;
     },
+    handleMyToggle: (state, action) => {
+      if (typeof action.payload === "boolean") {
+        state.myToggle = action.payload;
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -246,28 +255,31 @@ const gameSlice = createSlice({
       // GET ALL ACTIVE
       .addCase(getAllActiveGames.pending, (state) => {
         state.loading = true;
+        state.topGamesInitialLoading = true;
         state.error = null;
       })
       .addCase(getAllActiveGames.fulfilled, (state, action) => {
         state.loading = false;
+        state.topGamesInitialLoading = false;
         state.games = action.payload;
       })
       .addCase(getAllActiveGames.rejected, (state, action) => {
         state.loading = false;
+        state.topGamesInitialLoading = false;
         state.error = action.payload;
       })
       // GET POPULAR
       .addCase(getPopularGames.pending, (state) => {
-        state.loading = true;
+        state.popularGamesLoading = true;
         state.error = null;
       })
       .addCase(getPopularGames.fulfilled, (state, action) => {
-        state.loading = false;
+        state.popularGamesLoading = false;
         state.popularGames = action.payload?.data || [];
         state.pagination = action.payload?.pagination || null;
       })
       .addCase(getPopularGames.rejected, (state, action) => {
-        state.loading = false;
+        state.popularGamesLoading = false;
         state.error = action.payload;
       })
       // CREATE
@@ -318,16 +330,16 @@ const gameSlice = createSlice({
       })
 
       .addCase(getTopGames.pending, (state) => {
-        state.loading = true;
+        state.topGamesLoading = true;
         state.error = null;
         state.success = null;
       })
       .addCase(getTopGames.fulfilled, (state, action) => {
-        state.loading = false;
+        state.topGamesLoading = false;
         state.topGames = action.payload?.data || [];
       })
       .addCase(getTopGames.rejected, (state, action) => {
-        state.loading = false;
+        state.topGamesLoading = false;
         state.error = action.payload;
       })
       // Get by ID
@@ -388,5 +400,5 @@ const gameSlice = createSlice({
   },
 });
 
-export const { clearGameError, clearGameSuccess } = gameSlice.actions;
+export const { clearGameError, clearGameSuccess , handleMyToggle } = gameSlice.actions;
 export default gameSlice.reducer;

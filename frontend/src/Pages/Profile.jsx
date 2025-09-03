@@ -5,6 +5,10 @@ import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
 import { getUserById, editUserProfile, logoutUser, clearUser } from '../Redux/Slice/user.slice';
+import { fetchProfile } from '../Redux/Slice/profile.slice';
+import ProfileSkeleton from '../lazyLoader/ProfileSkeleton';
+import TransactionHistorySkeleton from '../lazyLoader/TransactionHistorySkeleton';
+import OrderListSkeleton from '../lazyLoader/OrderListSkeleton';
 import { allorders, retryOrderPayment } from '../Redux/Slice/Payment.slice';
 import stanUser from "../images/stan-user.jpg";
 import { decryptData } from "../Utils/encryption";
@@ -23,6 +27,7 @@ import StylishDiv from '../components/StylishDiv';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
+import { handleMyToggle } from '../Redux/Slice/game.slice';
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -270,6 +275,7 @@ export default function Profile() {
     const [currentOrderId, setCurrentOrderId] = useState(null);
     const [amountToPay, setAmountToPay] = useState(0);
     const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+    const [transactionLoading, setTransactionLoading] = useState(false);
     // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
@@ -283,10 +289,10 @@ export default function Profile() {
 
     const [profilePicFile, setProfilePicFile] = useState(null);
     useEffect(() => {
-        // Get current user ID from auth state or localStorage
         const userId = authUser?._id || localStorage.getItem("userId");
         if (userId) {
             dispatch(getUserById(userId));
+            dispatch(fetchProfile(userId));
         }
     }, [dispatch, authUser]);
 
@@ -311,6 +317,16 @@ export default function Profile() {
             setUser(null);
         }
     }, [currentUser]);
+
+    // show skeleton briefly when opening Transaction section
+    useEffect(() => {
+        if (activeMenu === 'Transaction') {
+            setTransactionLoading(true);
+            const timeoutId = setTimeout(() => setTransactionLoading(false), 600);
+            return () => clearTimeout(timeoutId);
+        }
+        return undefined;
+    }, [activeMenu, isActive]);
 
 
     // Handle edit mode toggle
@@ -363,6 +379,8 @@ export default function Profile() {
         dispatch(clearUser())
         localStorage.removeItem("userName");
         navigate("/")
+        dispatch(handleMyToggle(false)) 
+
     };
 
     const handleOrderClick = (order) => {
@@ -416,16 +434,9 @@ export default function Profile() {
         }
     };
 
-    // Loading state
+    // Loading state using skeleton
     if (loading) {
-        return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ab99e1] mx-auto mb-4"></div>
-                    <p className="text-[#ab99e1]">Loading profile...</p>
-                </div>
-            </div>
-        );
+        return <ProfileSkeleton />;
     }
 
     // Error state
@@ -643,6 +654,9 @@ export default function Profile() {
                 {/* transaction */}
                 {activeMenu === "Transaction" && (
                     <div className='px-4 py-6 w-full'>
+                        {transactionLoading ? (
+                            <TransactionHistorySkeleton />
+                        ) : (
                         <section className='w-full  border border-white/25 rounded-2xl  sm:p-6 p-1 text-white flex flex-col'>
                             <div className=''>
                                 {/* Header */}
@@ -689,6 +703,7 @@ export default function Profile() {
                                 </div>
                             </div>
                         </section>
+                        )}
                     </div>
                 )}
 
@@ -713,10 +728,7 @@ export default function Profile() {
                                 {/* Orders List */}
                                 <div className='flex-1 overflow-y-auto pr-2 px-3 sm:px-4 py-4 sm:py-6'>
                                     {ordersLoading ? (
-                                        <div className="flex items-center justify-center py-12">
-                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ab99e1]"></div>
-                                            <span className="ml-3 text-[#ab99e1]">Loading orders...</span>
-                                        </div>
+                                        <OrderListSkeleton count={orders?.length} />
                                     ) : !orders || orders.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center px-4 relative">
                                             <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
@@ -984,9 +996,9 @@ export default function Profile() {
 
                                             <div className="space-y-6">
                                                 {/* Order Header */}
-                                                <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl p-6 border border-white/10">
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
+                                                <div className="bg-gradient-to-r from-white/5 to-white/10 rounded-xl px-6 py-4 border border-white/10">
+                                                    <div className="flex flex-wrap justify-between items-start">
+                                                        <div className='mt-2'>
                                                             <h3 className="font-bold text-xl mb-2">
                                                                 Order #{selectedOrder._id?.slice(-8) || 'N/A'}
                                                             </h3>
@@ -1001,7 +1013,7 @@ export default function Profile() {
                                                                 })}
                                                             </p>
                                                         </div>
-                                                        <div className="text-right">
+                                                        <div className="sm:text-right mt-2">
                                                             <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${selectedOrder.status === 'paid' ? 'text-green-400 bg-green-400/10 border border-green-400/20' :
                                                                 selectedOrder.status === 'created' ? 'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20' :
                                                                     'text-red-400 bg-red-400/10 border border-red-400/20'
@@ -1026,9 +1038,9 @@ export default function Profile() {
                                                         </h4>
                                                         <div className="space-y-4">
                                                             {selectedOrder.items.map((item, index) => (
-                                                                <div key={index} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                                                                    <div className="flex items-center justify-between">
-                                                                        <div className="flex items-center gap-4">
+                                                                <div key={index} className="bg-white/5 rounded-lg px-4 py-2 border border-white/10">
+                                                                    <div className="flex flex-wrap items-center justify-between">
+                                                                        <div className="flex flex-wrap items-center gap-4 mt-2 mb-2">
                                                                             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                                                                                 <span className="text-white font-bold text-sm">{index + 1}</span>
                                                                             </div>
@@ -1051,7 +1063,7 @@ export default function Profile() {
                                                                                 )}
                                                                             </div>
                                                                         </div>
-                                                                        <div className="text-right">
+                                                                        <div className="text-right mt-2 mb-2">
                                                                             <p className="font-bold text-white text-xl">${item.price}</p>
                                                                         </div>
                                                                     </div>
@@ -1116,7 +1128,7 @@ export default function Profile() {
                                                                 </div>
 
                                                                 <button
-                                                                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-green-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white sm:px-6 px-2 py-3 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-green-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                     onClick={() => handlePaymentClick(selectedOrder)}
                                                                     disabled={isPaymentLoading}
                                                                 >

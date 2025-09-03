@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import StylishDiv from '../components/StylishDiv';
 import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
+import LazyGameCard from '../lazyLoader/LazyGameCard';
 
 
 const Store = () => {
@@ -113,56 +114,58 @@ const Store = () => {
   };
 
   const GameSection = ({ title, games = [], sectionRef }) => (
-    <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
-      <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
-        <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/allGames')}
-            className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
+    <LazyGameCard>
+      <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
+        <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
+          <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>{title}</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/allGames')}
+              className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
              font-medium text-xs sm:text-sm transition-all duration-200 ease-out
              bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110
              active:scale-95
              focus-visible:outline-none focus-visible:ring-2 
              focus-visible:ring-indigo-400 focus-visible:ring-offset-2 
              focus-visible:ring-offset-gray-900'
-          >
-            All Games
-          </button>
-          <button
-            onClick={() => scrollLeft(sectionRef)}
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
+            >
+              All Games
+            </button>
+            <button
+              onClick={() => scrollLeft(sectionRef)}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
              bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110 text-white rotate-180">
-            <FaArrowRight size={16} />
-          </button>
+              <FaArrowRight size={16} />
+            </button>
 
-          <button
-            onClick={() => scrollRight(sectionRef)}
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
+            <button
+              onClick={() => scrollRight(sectionRef)}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center 
              bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110 text-white">
-            <FaArrowRight size={16} />
-          </button>
+              <FaArrowRight size={16} />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div
-        ref={sectionRef}
-        className='overflow-x-auto scrollbar-hide '
-        onMouseDown={(e) => handleMouseDown(e, sectionRef)}
-      >
-        <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max py-4 px-2 '>
-          {games && games.length > 0 ? (
-            games.map((game) => (
-              <GameCard key={game._id || game.id} game={game} />
-            ))
-          ) : (
-            <div className="text-gray-400 text-center py-8">
-              No games available
-            </div>
-          )}
+        <div
+          ref={sectionRef}
+          className='overflow-x-auto scrollbar-hide '
+          onMouseDown={(e) => handleMouseDown(e, sectionRef)}
+        >
+          <div className='flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 min-w-max py-4 px-2 '>
+            {games && games.length > 0 ? (
+              games.map((game) => (
+                <GameCard key={game._id || game.id} game={game} />
+              ))
+            ) : (
+              <div className="text-gray-400 text-center py-8">
+                No games available
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </LazyGameCard>
   );
 
   const GameCard = ({ game }) => {
