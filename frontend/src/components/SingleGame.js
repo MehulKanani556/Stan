@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt, FaWindows } from 'react-icons/fa'
-
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
@@ -22,6 +21,7 @@ import { createOrder, verifyPayment } from '../Redux/Slice/Payment.slice'
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from './PaymentForm';
+import ReviewForm from './ReviewForm'
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
 
@@ -272,7 +272,8 @@ const SingleGame = () => {
     setCurrentOrderId(null);
     setAmountToPay(0);
   };
-
+  const [open, setOpen] = useState(false)
+  
   return (
     <div className=''>
       <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
@@ -488,6 +489,11 @@ const SingleGame = () => {
                   className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Buy Now
                 </button>
+                <button
+                    onClick={() => setOpen(true)}
+                  className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+                  Review
+                </button>
               </div>
 
               {showPaymentForm && clientSecret && currentOrderId && (
@@ -591,6 +597,11 @@ const SingleGame = () => {
                     </div>
                   </div>
                 </details>
+                {/* review modal */}
+                      {open && (
+                      <ReviewForm open={open} onClose={()=>setOpen(false)}/>
+                    )}
+    
               </div>
             </div>
           </div>

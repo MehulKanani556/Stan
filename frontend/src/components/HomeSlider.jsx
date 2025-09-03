@@ -77,7 +77,7 @@ export default function HomeSlider() {
         dispatch(getAllGames());
     }, [dispatch]);
 
-    const games = useSelector((state) => state.game.games)?.slice(5, 15) || [];
+    const games = useSelector((state) => state.game.games)?.slice(0,7) || [];
     const listRef = useRef(null);
     const carouselRef = useRef(null);
     const timeRunning = 3000;
@@ -191,7 +191,7 @@ export default function HomeSlider() {
                                 bottom: 0,
                                 zIndex: 1
                             }}></div>
-                            <div className="blob md:w-[50%] w-full h-[600px] absolute bottom-0 right-0 bg-[#141414]/70 z-[2] bg-[0,0,0,0.1] ms-0" >
+                            <div className="blob lg:w-[50%] md:w-[60%] w-full h-[600px] absolute bottom-0 right-0 bg-[#141414]/70 z-[2] bg-[0,0,0,0.1] ms-0 lg:px-14 px-10" >
                                 <div className="content w-[80%] m-auto  w-full z-10  md:h-full h-full flex flex-col lg:justify-center 3xl:px-16 xl:px-8 px-4 sp_font py-10" style={{ position: 'relative', zIndex: 2 }}>
                                     <div className="name xl:text-[50px] md:text-[28px] text-[24px] z-10">{slide.title || slide.name || 'Untitled'}</div>
                                     <div className="des xl:text-base md:text-sm  text-xs text-[#ccc]">{slide.description?.slice(0, 100) + '...' || 'No description available'}</div>
