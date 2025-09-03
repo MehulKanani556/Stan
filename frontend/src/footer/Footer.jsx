@@ -29,16 +29,12 @@ const Footer = () => {
         </button>   
       )} */}
 
-
       <footer className="relative overflow-hidden pb-10 md:pb-0 bg-black text-white">
-
         {/* <div className="absolute top-0 left-0 w-72 h-72 bg-purple-500 rounded-full blur-3xl opacity-20"></div> */}
         {/* <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-500 rounded-full blur-3xl opacity-20"></div> */}
 
         <div className="relative max-w-[90%] md:max-w-[85%] mx-auto z-10">
-
           <div className="py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-
             <div className="space-y-4">
               <YOYO_LOGO className="svg-current-color h-12 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -63,7 +59,6 @@ const Footer = () => {
               </div>
             </div>
 
-
             <div>
               <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
                 Quick Links
@@ -82,7 +77,6 @@ const Footer = () => {
               </ul>
             </div>
 
-
             <div>
               <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
                 Support
@@ -100,7 +94,6 @@ const Footer = () => {
                 ))}
               </ul>
             </div>
-
 
             <div>
               <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
@@ -123,69 +116,10 @@ const Footer = () => {
             </div>
           </div>
 
-         <div>
-           <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
-             Quick Links
-           </h4>
-           <ul className="space-y-2">
-             {["Home", "GGtalks", "Games", "Rewards", "Store"].map((link, i) => (
-               <li key={i}>
-                 <Link
-                   to={link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#"}
-                   className="text-gray-300 hover:text-[#ab99e1] transition-colors text-sm"
-                 >
-                   {link}
-                 </Link>
-               </li>
-             ))}
-           </ul>
-         </div>
-
-       <div>
-         <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
-           Support
-         </h4>
-         <ul className="space-y-2">
-           {["FAQs", "Guides", "Terms of Service", "Privacy Policy"].map((link, i) => (
-             <li key={i}>
-               <Link
-                 to={link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#"}
-                 className="text-gray-300 hover:text-[#ab99e1] transition-colors text-sm"
-               >
-                 {link}
-               </Link>
-             </li>
-           ))}
-         </ul>
-       </div>
-
-       <div className="max-[425px]:col-span-2">
-         <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
-           Contact Us
-         </h4>
-         <div className="space-y-4 text-sm text-gray-300">
-           <div className="flex gap-3 items-center">
-             <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
-             <p>123 Gaming Street, Digital City, DC 12345</p>
-           </div>
-           <div className="flex gap-3 items-center">
-             <IoCallOutline className="text-[#ab99e1]" />
-             <p>+1 (555) 123-4567</p>
-           </div>
-           <div className="flex gap-3 items-center">
-             <IoMailOutline className="text-[#ab99e1]" />
-             <p>support@YOYO.com</p>
-           </div>
-         </div>
-       </div>
-    </div>
-
-
-
           <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
             <p>© 2024 YOYO Gaming. All rights reserved.</p>
-
           </div>
+        </div>
       </footer>
     </>
   );
