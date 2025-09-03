@@ -329,7 +329,7 @@ const SingleGame = () => {
                   {single?.video?.url ? (
                     <div className="flex justify-center  relative w-full">
                       <video src={single?.video?.url} muted className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                      <FaPlay className="absolute inset-0 m-auto text-white text-4xl transition" />
+                      <FaPlay className="absolute inset-0 m-auto text-white sm:text-4xl text-[20px] transition" />
                     </div>
                   ) : ""}
 

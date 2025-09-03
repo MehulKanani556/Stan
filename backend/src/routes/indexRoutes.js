@@ -192,5 +192,5 @@ indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
 // indexRoutes.put("/ratings/:ratingId", UserAuth, updateRating);
 // indexRoutes.delete("/ratings/:ratingId", UserAuth, deleteRating);
 // indexRoutes.get("/ratings/:gameId/stats", getGameRatingStats);
-indexRoutes.get("/admin/ratings", UserAuth, isAdmin, getAllRatings);
+indexRoutes.get("/admin/ratings", UserAuth, getAllRatings);
 export default indexRoutes
