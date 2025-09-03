@@ -522,7 +522,7 @@ export default function Profile() {
                             </li>
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Orders" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Orders') }}>
                                 {(() => {
-                                    const Tag = activeMenu === "Orders" ? StylishDiv : "div";
+                                    const Tag = activeMenu === "Orders" ? StyleDiv : "div";
                                     const style = activeMenu === "Orders" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
                                     return (
                                         <Tag className={style}>
@@ -757,18 +757,18 @@ export default function Profile() {
                                                     className="group rounded-3xl overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 border border-white/10 hover:border-white/20 active:scale-[0.98]"
                                                     onClick={() => handleOrderClick(order)}
                                                 >
-                                                    <div className="p-4">
+                                                    <div className="">
                                                         {/* Order Header */}
-                                                        <div className="flex items-center justify-between mb-3">
-                                                            <div className="flex items-center gap-2">
+                                                        <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
+                                                            <div className="flex items-center gap-2 flex-shrink min-w-0">
                                                                 <div className="w-10 h-10 bg-gradient-to-br from-[#621df2] to-[#b191ff] rounded-full flex items-center justify-center">
                                                                     <span className="text-white font-bold text-xs">#{order._id?.slice(-4) || 'N/A'}</span>
                                                                 </div>
-                                                                <div>
-                                                                    <h3 className="font-bold text-white text-base">
+                                                                <div className="min-w-0">
+                                                                    <h3 className="font-bold text-white text-sm sm:text-base truncate">
                                                                         Order #{order._id?.slice(-8) || 'N/A'}
                                                                     </h3>
-                                                                    <p className="text-gray-300 text-xs">
+                                                                    <p className="text-gray-300 text-[10px] sm:text-xs whitespace-nowrap">
                                                                         {new Date(order.createdAt).toLocaleDateString('en-US', {
                                                                             year: 'numeric',
                                                                             month: 'short',
@@ -780,7 +780,7 @@ export default function Profile() {
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            <div className="text-right">
+                                                            <div className=" ">
                                                                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${order.status === 'paid' ? 'text-green-400 bg-green-400/10 border border-green-400/20' :
                                                                     order.status === 'created' ? 'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20' :
                                                                         'text-red-400 bg-red-400/10 border border-red-400/20'
@@ -790,7 +790,7 @@ export default function Profile() {
                                                                             '❌ Failed'}
                                                                 </span>
                                                                 <div className="mt-1">
-                                                                    <span className="text-xl font-bold text-white">${order.amount}</span>
+                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.amount}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -801,24 +801,24 @@ export default function Profile() {
                                                                 <h4 className="text-gray-300 text-xs font-medium mb-2">Items ({order.items.length})</h4>
                                                                 <div className="space-y-1">
                                                                     {order.items.slice(0, 2).map((item, itemIndex) => (
-                                                                        <div key={itemIndex} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
-                                                                            <div className="flex items-center gap-2">
+                                                                        <div key={itemIndex} className="flex items-center justify-between p-2 bg-white/5 rounded-lg gap-2">
+                                                                            <div className="flex items-center gap-2 min-w-0">
                                                                                 <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                                                                                     <span className="text-white text-xs font-bold">{itemIndex + 1}</span>
                                                                                 </div>
-                                                                                <div>
-                                                                                    <p className="text-white font-medium text-xs">
+                                                                                <div className="min-w-0">
+                                                                                    <p className="text-white font-medium text-xs truncate max-w-[140px] sm:max-w-[220px]">
                                                                                         {item.name || `Game ${itemIndex + 1}`}
                                                                                     </p>
-                                                                                    <p className="text-gray-400 text-xs">
+                                                                                    <p className="text-gray-400 text-[10px] sm:text-xs">
                                                                                         {item.platform}
                                                                                     </p>
                                                                                 </div>
                                                                             </div>
                                                                             <div className="text-right">
-                                                                                <p className="text-white font-semibold text-sm">${item.price}</p>
+                                                                                <p className="text-white font-semibold text-xs sm:text-sm">${item.price}</p>
                                                                                 {item.downloadToken && (
-                                                                                    <p className="text-green-400 text-xs">
+                                                                                    <p className="text-green-400 text-[10px] sm:text-xs">
                                                                                         {item.downloadTokenUsed ? 'Downloaded' : 'Available'}
                                                                                     </p>
                                                                                 )}
@@ -837,8 +837,8 @@ export default function Profile() {
                                                         )}
 
                                                         {/* Order Footer */}
-                                                        <div className="flex items-center justify-between pt-3 border-t border-white/10">
-                                                            <div className="flex items-center gap-2 text-xs">
+                                                        <div className="flex items-center justify-between pt-3 border-t border-white/10 flex-wrap gap-2">
+                                                            <div className="flex items-center gap-2 text-xs order-2 sm:order-1">
                                                                 <span className="text-gray-300">
                                                                     {order.stripePaymentIntentId ? 'Stripe' : 'N/A'}
                                                                 </span>
@@ -847,7 +847,7 @@ export default function Profile() {
                                                                 </span>
                                                             </div>
                                                             <button
-                                                                className="flex items-center gap-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1.5 rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300 border border-purple-500/30 hover:scale-105 active:scale-95 cursor-pointer shadow-lg hover:shadow-purple-500/20"
+                                                                className="flex items-center gap-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1.5 rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300 border border-purple-500/30 hover:scale-105 active:scale-95 cursor-pointer shadow-lg hover:shadow-purple-500/20 w-full sm:w-auto order-1 sm:order-2"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     console.log('View details clicked for order:', order._id);
