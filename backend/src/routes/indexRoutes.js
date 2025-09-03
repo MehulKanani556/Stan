@@ -17,6 +17,8 @@ import { addToCart, clearCart, getCart, removeFromCart, updateCartItem } from ".
 import { addToWishlist, checkWishlistStatus, getWishlist, removeFromWishlist } from "../controllers/wishlist.controller.js";
 import websiteInfoRoutes from "./websiteInfo.routes.js";
 import { createOrder, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
+// import { createOrUpdateRating, deleteRating, getAllRatings, getGameRatings, getGameRatingStats, getUserGameRating, getUserRatings, markReviewHelpful, updateRating } from "../controllers/rating.controller.js";
+import { createOrUpdateRating,getAllRatings } from "../controllers/rating.controller.js";
 
 
 const indexRoutes = express.Router();
@@ -181,4 +183,14 @@ indexRoutes.get("/allorders", UserAuth, getUserOrders);
 indexRoutes.get("/getorders", getAllOrders);
 indexRoutes.get('/download/:token', downloadGame);
 
+// Rating and Review Routes
+indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
+// indexRoutes.get("/ratings/:gameId", getGameRatings);
+// indexRoutes.get("/ratings/user/:gameId", UserAuth, getUserGameRating);
+// indexRoutes.get("/ratings/user-ratings/:userId", getUserRatings);
+// indexRoutes.post("/ratings/:ratingId/helpful", UserAuth, markReviewHelpful);
+// indexRoutes.put("/ratings/:ratingId", UserAuth, updateRating);
+// indexRoutes.delete("/ratings/:ratingId", UserAuth, deleteRating);
+// indexRoutes.get("/ratings/:gameId/stats", getGameRatingStats);
+indexRoutes.get("/admin/ratings", UserAuth, isAdmin, getAllRatings);
 export default indexRoutes

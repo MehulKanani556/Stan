@@ -30,6 +30,7 @@ import AllGames from './Pages/AllGames.jsx';
 import Loader from './Pages/Loader.js';
 import Demo from './Pages/demo.jsx';
 import BackgroundColor from './components/BackgroundColor';
+import HomeSlider from './components/HomeSlider.jsx';
 
 // Component to conditionally render Header and Footer
 function AppContent() {
@@ -77,7 +78,7 @@ function AppContent() {
             <Route path="/wishlist" element={<Wishlist/>} />
             <Route path="/wishlist" element={<Wishlist/>} />
             <Route path="/allGames" element={<AllGames/>} />
-            <Route path="/demo" element={<Demo/>} />
+            <Route path="/demo" element={<HomeSlider/>} />
           </Routes>
           </BackgroundColor>
            { !chatwidegt &&<ChatWidget />}

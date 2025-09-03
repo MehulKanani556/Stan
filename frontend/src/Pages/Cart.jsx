@@ -97,7 +97,11 @@ const Cart = () => {
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {loading ? (
-                        [1,2,3].map((i)=> <CartSkeletonCard key={i} />)
+                        <>
+                            {Array.from({ length: 4 }).map((_, index) => (
+                                <CartSkeletonCard key={index} />
+                            ))}
+                        </>
                     ) : cartItems.length > 0 ? (
                         cartItems.map((item) => (
                             <div
@@ -137,7 +141,11 @@ const Cart = () => {
                                 <div className="flex flex-col items-end justify-between min-w-[120px]">
                                     <div className="text-white text-xs px-3 py-1 rounded-full">
                                         <button
-                                            onClick={(e) => { e.stopPropagation(); handleRemove(item); }}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleRemove(item);
+                                            }}
                                             className="text-red-400 hover:text-red-500 transition text-xl mr-4"
                                         >
                                             <RiDeleteBin6Line />
@@ -180,48 +188,48 @@ const Cart = () => {
                     </div>
 
                     {!loading && (
-                    <div className=" flex flex-col gap-3 border-b border-gray-700 pb-4 text-base">
-                        <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300 w-[40%]">
-                            Rewards: $0.00
-                        </span>
-                        <div className="flex justify-between">
-                            <span>Price</span>
-                            <span>${totalPrice.toLocaleString()}</span>
-                        </div>
+                        <div className=" flex flex-col gap-3 border-b border-gray-700 pb-4 text-base">
+                            <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300 w-[40%]">
+                                Rewards: $0.00
+                            </span>
+                            <div className="flex justify-between">
+                                <span>Price</span>
+                                <span>${totalPrice.toLocaleString()}</span>
+                            </div>
 
-                        <div className="flex justify-between text-gray-400">
-                            <span>Taxes</span>
-                            <span>Calculated at Checkout</span>
+                            <div className="flex justify-between text-gray-400">
+                                <span>Taxes</span>
+                                <span>Calculated at Checkout</span>
+                            </div>
                         </div>
-                    </div>
                     )}
 
                     {!loading && (
-                    <div className="flex justify-between text-lg font-bold">
-                        <span>Subtotal</span>
-                        <span>${subtotal.toLocaleString()}</span>
-                    </div>
+                        <div className="flex justify-between text-lg font-bold">
+                            <span>Subtotal</span>
+                            <span>${subtotal.toLocaleString()}</span>
+                        </div>
                     )}
 
                     {!loading && (
-                    <div className="gap-4">
-                        <button onClick={handleCheckout} className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
+                        <div className="gap-4">
+                            <button onClick={handleCheckout} className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
 
-                            Proceed to Checkout
-                        </button>
-                        <button
-                            onClick={handleClearCart}
-                            className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
-                        >
-                            Clear Cart
-                        </button>
-                        <button
-                            onClick={handleContinueShopping}
-                            className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
-                        >
-                            Continue Shopping
-                        </button>
-                    </div>
+                                Proceed to Checkout
+                            </button>
+                            <button
+                                onClick={handleClearCart}
+                                className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
+                            >
+                                Clear Cart
+                            </button>
+                            <button
+                                onClick={handleContinueShopping}
+                                className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
+                            >
+                                Continue Shopping
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

@@ -46,9 +46,9 @@ const Wishlist = () => {
           {loading ? (
             // Show skeletons while wishlist is loading
             <>
-              <WishlistSkeletonCard />
-              <WishlistSkeletonCard />
-              <WishlistSkeletonCard />
+              {Array.from({ length: 4 }).map((_, index) => (
+                <WishlistSkeletonCard key={index} />
+              ))}
             </>
           ) : items.length > 0 ? (
             items.map((item) => (
@@ -75,8 +75,8 @@ const Wishlist = () => {
                       </span>
 
                       <button
-                        onClick={() => handleRemove(item.game._id)}
-                        className="text-red-400 hover:text-red-500 transition text-lg"
+                        onClick={(e) => {handleRemove(item.game._id) ; e.stopPropagation();}}
+                        className="text-red-400 hover:text-red-500 transition text-lg relative z-[50]"
                       >
                         <RiDeleteBin6Line />
                       </button>
@@ -101,7 +101,11 @@ const Wishlist = () => {
                         const isInCart = cartItems.some(cartItem => cartItem?.game?._id === item.game?._id);
                         return (
                           <button
-                            onClick={() => handleAddToCart(item)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleAddToCart(item)
+                            }}
                             className={`px-5 py-2 rounded-lg text-sm shadow-md font-semibold transition
                               ${isInCart
                                 ? "bg-gray-500 text-gray-300 cursor-not-allowed"

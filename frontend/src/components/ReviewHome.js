@@ -1,11 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import Slider from 'react-slick'
-import { FaStar } from 'react-icons/fa'
-
-// Import slick styles
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
-import StylishDiv from './StylishDiv'
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
+import { motion } from "framer-motion";
+import { FaStar } from "react-icons/fa";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const reviews = [
   { id: 1, name: "Alex Johnson", avatar: "https://i.pravatar.cc/150?img=1", game: "Resident Evil Village", rating: 5, review: "An absolute masterpiece! The atmosphere is chilling, and the storyline kept me hooked till the end." },
@@ -15,148 +13,127 @@ const reviews = [
   { id: 5, name: "Ethan Brown", avatar: "https://i.pravatar.cc/150?img=5", game: "Cyberpunk 2077", rating: 4, review: "Amazing world-building and graphics. Still has some bugs, but definitely enjoyable." },
 ];
 
-const ReviewHome = () => {
+export default function ReviewHomeSlick() {
+  const [slidesToShow, setSlidesToShow] = useState(3);
 
-  const [selected, setSelected] = useState(0);
-  const [offset, setOffset] = useState(0); 
-  const [gap, setGap] = useState(340); // dynamic GAP (depends on card width)
-
-  const dragging = useRef(false);
-  const startX = useRef(null);
-  const n = reviews.length;
-  const visibleRange = 2;
-
-  // 🔹 Update GAP responsively based on screen size
   useEffect(() => {
-    const updateGap = () => {
-      if (window.innerWidth < 640) setGap(260); // mobile
-      else if (window.innerWidth < 1024) setGap(300); // tablet
-      else setGap(360); // desktop
+    const updateSlides = () => {
+      if (window.innerWidth >= 1280) setSlidesToShow(3);
+      else if (window.innerWidth >= 1024) setSlidesToShow(2);
+      else setSlidesToShow(1);
     };
-    updateGap();
-    window.addEventListener("resize", updateGap);
-    return () => window.removeEventListener("resize", updateGap);
+    updateSlides();
+    window.addEventListener("resize", updateSlides);
+    return () => window.removeEventListener("resize", updateSlides);
   }, []);
 
-  const handleStart = (e) => {
-    dragging.current = true;
-    startX.current = e.clientX || e.touches[0].clientX;
+  const settings = {
+    infinite: true,
+    centerMode: true,
+    centerPadding: "0px",
+    autoplay: true,
+    autoplaySpeed: 2500,
+    speed: 800,
+    cssEase: "ease-in-out",
+    arrows: false,
+    dots: false,
+    slidesToShow, // controlled by state + useEffect
   };
-
-  const handleMove = (e) => {
-    if (!dragging.current) return;
-    const x = e.clientX || e.touches[0].clientX;
-    const diff = x - startX.current;
-    setOffset(diff);
-  };
-
-  const handleEnd = () => {
-    if (!dragging.current) return;
-    dragging.current = false;
-  
-    const movedSlides = Math.round(offset / gap);
-    let newIndex = (selected - movedSlides + n) % n;
-  
-    setSelected(newIndex);
-    setOffset(0);
-  };
-  
-
-  const positions = useMemo(() => {
-    const arr = [];
-    for (let i = 0; i < n; i++) {
-      let delta = (i - selected + n) % n;
-      if (delta > n / 2) delta -= n;
-
-      const abs = Math.abs(delta);
-      const visible = abs <= visibleRange;
-
-      const z = 100 - abs;
-      const scale = 1 - abs * 0.08;
-      const opacity = 1 - abs * 0.18;
-
-      const baseTransform = `translate(-50%, -50%)`;
-      const translateX = `translateX(${delta * gap + offset}px)`;
-      const transform = `${baseTransform} ${translateX} scale(${scale})`;
-
-      arr.push({
-        index: i,
-        visible,
-        style: visible
-          ? { zIndex: z, opacity, transform, transition: dragging.current ? "none" : "transform 0.6s ease, opacity 0.6s ease" }
-          : {
-              zIndex: 0,
-              opacity: 0,
-              transform: `${baseTransform} translateX(${(delta >= 0 ? 1 : -1) * (visibleRange + 2) * gap}px) scale(0.7)`,
-              pointerEvents: "none",
-            },
-      });
-    }
-    return arr;
-  }, [selected, n, offset, gap]);
-
-  
-  
 
   return (
-    <div className=" pt-11 overflow-hidden">
-      <section className="md:py-12 text-white">
-        <h2 className="md:text-[35px] text-[28px] font-bold  text-center">
-          Player Reviews
-        </h2>
-        <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
-        <main className="relative flex flex-col items-center">
-      {/* Carousel */}
-      <div
-        id="carousel"
-        onMouseDown={handleStart}
-        onMouseMove={handleMove}
-        onMouseUp={handleEnd}
-        onMouseLeave={handleEnd}
-        onTouchStart={handleStart}
-        onTouchMove={handleMove}
-        onTouchEnd={handleEnd}
-      >
-        {positions.map((p) => {
-          const r = reviews[p.index];
-          return (
-            <div key={r.id} className="slide" style={p.style}>
-              <div className="ds_review_card">
-                <div className="flex flex-col justify-center items-center">
-                  <img
-                    src={r.avatar}
-                    alt={r.name}
-                    draggable="false"
-                    className="w-[90px] h-[90px] rounded-full object-cover border border-gray-700"
-                  />
-                  <div className="text-center mt-3">
-                    <p className="font-semibold text-white">{r.name}</p>
-                    <p className="text-sm text-gray-400">{r.game}</p>
-                  </div>
-                </div>
-                <div className="flex mb-3 mt-6 justify-center">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar
-                      key={i}
-                      className={`h-4 w-4 mx-1 ${i < r.rating ? "text-yellow-400" : "text-gray-600"}`}
+    <section className="relative ds_reviewHome_slide py-14 text-white bg-[#101012] overflow-hidden">
+      <h2 className="md:text-[36px] text-[28px] font-bold text-center mb-10">
+        Player Reviews
+      </h2>
+
+      <div className="mx-auto w-[94%] md:w-[86%]">
+        <Slider {...settings}>
+          {reviews.map((r) => (
+            <div key={r.id} className="px-2 sm:px-3">
+              <motion.div
+                className="card-wrapper"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="card">
+                  <div className="card__bg" aria-hidden />
+                  <div className="card__shine" aria-hidden />
+
+                  <div className="flex flex-col items-center">
+                    <motion.img
+                      src={r.avatar}
+                      alt={r.name}
+                      className="w-[96px] h-[96px] rounded-full object-cover border-2 border-[#902F7E] shadow-[0_8px_24px_rgba(144,47,126,0.35)]"
                     />
-                  ))}
+                    <div className="text-center mt-3">
+                      <p className="font-semibold text-white text-lg">{r.name}</p>
+                      <p className="text-sm text-gray-400">{r.game}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex mb-3 mt-6 justify-center">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <FaStar
+                        key={j}
+                        className={`h-5 w-5 mx-1 ${
+                          j < r.rating ? "text-yellow-400" : "text-gray-600"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <p className="text-gray-300 text-[15px] leading-relaxed mt-2 text-center">
+                    {r.review}
+                  </p>
                 </div>
-                <p className="text-gray-300 text-[15px] leading-relaxed mt-4 flex-grow text-center">
-                  {r.review}
-                </p>
-              </div>
+              </motion.div>
             </div>
-          );
-        })}
+          ))}
+        </Slider>
       </div>
 
-    
-    </main>
-        </div>
-      </section>
-    </div>
-  )
+      <style>{`
+        .ds_reviewHome_slide .slick-slide {
+          transform: scale(0.78);
+          opacity: 0.5;
+          transition: all 0.5s ease;
+          padding: 10px;
+        }
+        .ds_reviewHome_slide .slick-center {
+          transform: scale(1);
+          opacity: 1;
+        }
+        .ds_reviewHome_slide .card {
+          position: relative;
+          width: 100%;
+          min-height: 320px;
+          border-radius: 18px;
+          border: 1px solid #2d2d2d;
+          padding: 18px;
+          background: linear-gradient(145deg, #161616 0%, #1b1b1b 100%);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+          overflow: hidden;
+        }
+        @media (min-width:768px){
+          .ds_reviewHome_slide .card{ min-height: 360px; padding: 22px; }
+        }
+        .ds_reviewHome_slide .card__bg {
+          position: absolute; inset: 0; border-radius: 18px; overflow: hidden; pointer-events: none;
+          background: radial-gradient(600px 220px at 30% 0%, rgba(144,47,126,0.2), transparent 55%),
+                      radial-gradient(600px 220px at 70% 100%, rgba(111,53,255,0.18), transparent 55%);
+          transform: scale(1.06);
+        }
+        .ds_reviewHome_slide .card__shine {
+          position: absolute; inset: 0; border-radius: 18px; pointer-events: none;
+        }
+        .ds_reviewHome_slide .card__shine::before {
+          content: ""; position: absolute; inset: -40%; background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.09) 50%, transparent 60%);
+          transform: translateX(-60%) rotate(10deg);
+          animation: sheen 4.6s linear infinite;
+        }
+        @keyframes sheen { to { transform: translateX(60%) rotate(10deg); } }
+      `}</style>
+    </section>
+  );
 }
-
-export default ReviewHome
