@@ -228,7 +228,7 @@ const Store = () => {
               {/* Game Title */}
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="p-4">
-                  <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl leading-tight">
+                  <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl leading-tight">
                     {game?.title}
                   </h3>
                 </div>
@@ -245,16 +245,16 @@ const Store = () => {
               <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                   <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-                  <span className="text-base md:text-md lg:text-lg xl:text-xl font-black text-white">
+                  <span className="text-sm text-blue-400 font-semibold uppercase tracking-wider">Price</span>
+                  <span className="text-lg font-black text-white">
                     ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
                   </span>
                   <span className="text-xs text-slate-400 font-medium">USD</span>
                 </div>
                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-green-400 font-semibold uppercase tracking-wider">Size</span>
-                  <span className="text-base md:text-md lg:text-lg xl:text-xl font-black text-white">
+                  <span className="text-sm text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                  <span className="text-lg font-black text-white">
                     {game?.platforms?.windows?.size || 'N/A'}
                   </span>
                 </div>
