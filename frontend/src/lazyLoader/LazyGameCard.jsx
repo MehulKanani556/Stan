@@ -36,7 +36,7 @@ const LazyGameCard = ({ children, threshold = 0.1, delay = 300, suppressSkeleton
   }, [threshold, delay]);
 
   return (
-    <div ref={cardRef}>
+    <div ref={cardRef} className='w-full'>
       {suppressSkeleton || (isVisible && isLoaded) ? (
         <div className="animate-fadeIn">
           {children}
