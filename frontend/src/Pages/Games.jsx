@@ -130,12 +130,12 @@ const Games = () => {
 						onSlideChange={handleSlideChange}
 						onResize={syncEdges}
 						onBreakpoint={syncEdges}
-
+						style={{ padding: '20px 8px' }}
 						breakpoints={{
 							320: {
 								slidesPerView: 1.2,
 								slidesPerGroup: 1,
-								spaceBetween: 8,
+								spaceBetween: 10,
 							},
 							425: {
 								slidesPerView: 1.8,

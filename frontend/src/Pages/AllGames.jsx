@@ -11,6 +11,8 @@ import StylishDiv from "../components/StylishDiv";
 import { IoMdSearch } from "react-icons/io";
 import { IoFilter } from "react-icons/io5";
 import { allorders } from "../Redux/Slice/Payment.slice";
+import { MdArrowForwardIos, MdArrowBackIos } from "react-icons/md";
+
 
 // Custom CSS for select dropdowns
 const selectStyles = `
@@ -264,7 +266,7 @@ export default function AllGames() {
                         <img
                             src={imageUrl}
                             alt={game?.title}
-                            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                            className="w-full h-full object-cover "
                         />
 
                         {/* Gradient Overlay */}
@@ -560,14 +562,15 @@ export default function AllGames() {
                                        overflow-x-auto sm:overflow-x-visible max-w-full">
                                 <div className="flex items-center gap-2">
                                     <button
-                                        className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${currentPage === 1
-                                            ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
-                                            : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
+                                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === 1
+                                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-purple-600 hover:border-purple-500/80 hover:shadow-md"
                                             }`}
                                         onClick={() => handlePageChange(currentPage - 1)}
                                         disabled={currentPage === 1}
                                     >
-                                        Prev
+
+                                        <MdArrowBackIos />
                                     </button>
 
                                     {/* Pages with scroll */}
@@ -582,9 +585,9 @@ export default function AllGames() {
                                                     <button
                                                         key={pageNum}
                                                         onClick={() => handlePageChange(pageNum)}
-                                                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-medium ${isActive
-                                                            ? "bg-purple-600 text-white shadow-md"
-                                                            : "bg-gray-700/50 text-gray-300 hover:bg-gray-600 hover:text-white"
+                                                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
+                                                            ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
+                                                            : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
                                                             }`}
                                                     >
                                                         {pageNum}
@@ -608,14 +611,14 @@ export default function AllGames() {
                                     </div>
 
                                     <button
-                                        className={`px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
-                                            ? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
-                                            : "bg-purple-600 text-white hover:bg-purple-500 hover:shadow-md"
+                                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
+                                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-purple-600 hover:border-purple-500/80 hover:shadow-md"
                                             }`}
                                         onClick={() => handlePageChange(currentPage + 1)}
                                         disabled={currentPage === totalPages}
                                     >
-                                        Next
+                                        <MdArrowForwardIos />
                                     </button>
                                 </div>
                             </div>

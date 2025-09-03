@@ -67,11 +67,11 @@ export default function Header() {
         if (userId) {
             dispatch(fetchWishlist());
         }
-    }, [dispatch, authUser, currentUser]); 
+    }, [dispatch, authUser, currentUser]);
 
     useEffect(() => {
         const userId = authUser?._id || localStorage.getItem("userId");
-        if (userId && !currentUser) {   
+        if (userId && !currentUser) {
             dispatch(getUserById(userId));
         }
         if (currentUser?.name) {
@@ -79,7 +79,7 @@ export default function Header() {
             // setName(currentUser.name);
             dispatch(setUser(currentUser?.name))
         }
-        
+
     }, [dispatch, authUser, currentUser]);
 
 
@@ -119,7 +119,7 @@ export default function Header() {
                 <div className="drawer max-w-[95%] md:max-w-[85%] m-auto w-full  ">
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                     <div className="drawer-content flex flex-col">
-                
+
 
                         <div className="navbar  w-full px-0 justify-between">
 
@@ -132,7 +132,7 @@ export default function Header() {
                             <div className=" hidden md:flex justify-center">
                                 <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg px-0">
                                     <li>
-                                        <NavLink to="/" className={ ({ isActive }) =>
+                                        <NavLink to="/" className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Home</NavLink>
                                     </li>
@@ -222,7 +222,7 @@ export default function Header() {
                                                 alt="User"
                                             />
                                         </div>
-                                        <p 
+                                        <p
                                             className='text-base cursor-pointer hover:text-[#ab99e1] transition-colors'
                                             onClick={toggleDropdown}
                                         >
@@ -285,7 +285,7 @@ export default function Header() {
                                         </div>
                                     )}
                                 </div>
-                            
+
                                 <div className='flex gap-2 items-center md:hidden'>
                                     <NavLink to="/wishlist" className="me-2 relative">
                                           {({ isActive }) => (
@@ -344,10 +344,7 @@ export default function Header() {
                             </div>
                         </div>
                     </div>
-
-
-
-
+                    
                     <div className="drawer-side">
                         <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay"></label>
                         <div className="min-h-full w-80 p-4 relative text-white bg-gradient-to-b from-[#100f14]/95 via-[#16141c]/95 to-[#0e0d12]/95 backdrop-blur-xl border-l border-white/5 shadow-[0_10px_40px_-10px_rgba(171,153,225,0.35)]">
@@ -389,19 +386,19 @@ export default function Header() {
                                     </button>
                                 </div>
                             )
-                        :
-                        <div onClick={handleSigninClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[#ab99e1]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
+                                :
+                                <div onClick={handleSigninClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[#ab99e1]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
                                     <div className='flex gap-4 items-center'>
                                         <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center shadow-[0_0_0_3px_rgba(171,153,225,0.15)_inset]">
                                             <img
-                                                src={ stanUser}
+                                                src={stanUser}
                                                 className="w-full h-full object-cover object-top"
                                                 alt="User"
                                             />
                                         </div>
                                         <div className='flex flex-col gap-0.5 '>
                                             <h2 className="text-white text-base font-medium capitalize">Signin</h2>
-                                            
+
                                         </div>
                                     </div>
                                     <button className='text-[#ebe8f1] text-lg'>
@@ -409,7 +406,7 @@ export default function Header() {
                                     </button>
                                 </div>
 
-                        }
+                            }
                             <div className='w-full flex flex-col gap-5'>
                                 <div className='w-full mt-4'>
 
@@ -418,7 +415,7 @@ export default function Header() {
                                         <NavLink to="/rewards" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <SlBadge className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Rewards Offers
                                         </NavLink>
-                                                 
+
                                         {/* <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
                                         </NavLink> */}
@@ -426,7 +423,7 @@ export default function Header() {
                                         <NavLink to="/GGTalks" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
-                                                 
+
                                         {/* <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
                                         </NavLink> */}
@@ -434,20 +431,20 @@ export default function Header() {
                                         <NavLink to="/guides" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides
                                         </NavLink>
-                                                 
+
                                         <NavLink to="/games" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <IoGameController className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Free Games
                                         </NavLink>
-
+{/* 
                                         <NavLink to="/wishlist" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <FaHeart className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Wishlist
                                         </NavLink>
-                                                 
+
                                         <NavLink to="/cart" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
 
                                             <FaShoppingCart className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Cart
-                                        </NavLink>
-                              
+                                        </NavLink> */}
+
 
                                     </div>
                                 </div>

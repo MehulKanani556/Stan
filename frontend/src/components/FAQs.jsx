@@ -69,7 +69,7 @@ export default function FAQs() {
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="rounded-xl border border-slate-700 bg-[#211f2a]/40 shadow-lg"
+            className="rounded-xl border border-slate-700  shadow-lg"
           >
             <button
               onClick={() => toggleAccordion(index)}
