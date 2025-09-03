@@ -12,6 +12,7 @@ import { IoMdSearch } from "react-icons/io";
 import { IoFilter } from "react-icons/io5";
 import { allorders } from "../Redux/Slice/Payment.slice";
 import { MdArrowForwardIos, MdArrowBackIos } from "react-icons/md";
+import LazyGameCard from "../lazyLoader/LazyGameCard";
 
 
 // Custom CSS for select dropdowns
@@ -101,8 +102,8 @@ export default function AllGames() {
 
     useEffect(() => {
         dispatch(getAllGames({
-            page: currentPage, 
-            limit: gamesPerPage, 
+            page: currentPage,
+            limit: gamesPerPage,
             category: selectedCategory
         }));
         dispatch(getAllCategories());
@@ -112,8 +113,8 @@ export default function AllGames() {
     useEffect(() => {
         const timeoutId = setTimeout(() => {
             dispatch(getAllGames({
-                page: currentPage, 
-                limit: gamesPerPage, 
+                page: currentPage,
+                limit: gamesPerPage,
                 category: selectedCategory,
                 search: searchQuery
             }));
@@ -242,15 +243,15 @@ export default function AllGames() {
     }, [searchQuery, selectedCategory, sortBy, priceRange]);
 
     // Game Card Component
-    const GameCard = ({ game,orders }) => {
+    const GameCard = ({ game, orders }) => {
         const imageUrl = game?.cover_image?.url || game1;
         const priceValue = getGamePrice(game);
-        
+
         // Check if the game has been purchased
-        const isPurchased = orders.some(order => 
+        const isPurchased = orders.some(order =>
             order.items.some(item => item.game?._id === game?._id)
         );
-       
+
         return (
             <div
                 onClick={() => navigate(`/single/${game?._id}`)}
@@ -552,7 +553,9 @@ export default function AllGames() {
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
                         {games.map((game, index) => (
-                            <GameCard key={game.id || index} game={game} orders={orders} />
+                            <LazyGameCard key={game.id || index}>
+                                <GameCard game={game} orders={orders} />
+                            </LazyGameCard>
                         ))}
                     </div>
 
