@@ -10,7 +10,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-
 import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
 const slides = [
     {
@@ -77,7 +76,7 @@ export default function HomeSlider() {
         dispatch(getAllGames());
     }, [dispatch]);
 
-    const games = useSelector((state) => state.game.games)?.slice(0,7) || [];
+    const games = useSelector((state) => state.game.games)?.slice(0, 7) || [];
     const listRef = useRef(null);
     const carouselRef = useRef(null);
     const timeRunning = 3000;
@@ -165,115 +164,115 @@ export default function HomeSlider() {
 
     return (
         <div className="sp_slider">
-        <div className="carousel w-full h-[500px]  md:h-[500px] lg:h-[500px] xl:h-[700px]" ref={carouselRef}>
-            <div className="list hidden md:flex" ref={listRef}>
-                {games.map((slide, i) => {
-                    const imageUrl = getImageUrl(slide);
-                    console.log('img', i, imageUrl);
+            <div className="carousel w-full h-[500px]  md:h-[500px] lg:h-[500px] xl:h-[700px]" ref={carouselRef}>
+                <div className="list hidden md:flex" ref={listRef}>
+                    {games.map((slide, i) => {
+                        const imageUrl = getImageUrl(slide);
+                        console.log('img', i, imageUrl);
 
-                    return (
-                        <div
-                            className="item"
-                            style={{
-                                backgroundImage: `url("${imageUrl}")`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                                minHeight: '10px'
-                            }}
-                            key={slide.id || i}
-                        >
-                            <div className="image-overlay" style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                zIndex: 1
-                            }}></div>
-                            <div className="blob lg:w-[50%] md:w-[60%] w-full h-[600px] absolute bottom-0 right-0 bg-[#141414]/70 z-[2] bg-[0,0,0,0.1] ms-0 lg:px-14 px-10" >
-                                <div className="content w-[80%] m-auto  w-full z-10  md:h-full h-full flex flex-col lg:justify-center 3xl:px-16 xl:px-8 px-4 sp_font py-10" style={{ position: 'relative', zIndex: 2 }}>
-                                    <div className="name xl:text-[50px] md:text-[28px] text-[24px] z-10">{slide.title || slide.name || 'Untitled'}</div>
-                                    <div className="des xl:text-base md:text-sm  text-xs text-[#ccc]">{slide.description?.slice(0, 100) + '...' || 'No description available'}</div>
-                                    <Link to={'/single/' + slide._id} className='flex justify-center mt-5'>
-                                        <button className='btn xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
-                                            Learn More
-                                        </button>
-                                    </Link>
-                                </div>
-                            </div>
-
-
-
-                            <img
-                                className=""
-                                src={imageUrl}
-                                alt={slide.title || slide.name || 'Game image'}
-                                style={{ display: 'none' }}
-                                onError={() => console.warn('Image failed to load:', imageUrl)}
-                                onLoad={() => console.log('Image loaded successfully:', imageUrl)}
-                            />
-                        </div>
-                    );
-                })}
-            </div>
-            <div className="relative w-full sp_slider_dot md:hidden">
-                <Swiper
-                    modules={[EffectFade, Pagination, Autoplay]}
-                    effect="fade"
-                    speed={1200}
-                    slidesPerView={1}
-                    pagination={{
-                        clickable: true,
-                        renderBullet: (index, className) => {
-                            return `<span class="${className} custom-bullet"></span>`;
-                        },
-                    }}
-                    autoplay={{ delay: 5000 }}
-                    loop={true}
-                    className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
-                >
-                    {games && games.length > 0 ? (
-                        games.slice(0, 5).map((game, index) => (
-                            <SwiperSlide key={index}>
-                                <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
-                                    <div className='blob md:w-[60%] w-full h-[600px]' >
-                                        <img
-                                            src={game?.cover_image?.url}
-                                            alt={game.title || `Game ${index + 1}`}
-                                            className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
-                                        />
-                                        {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
-
-                                    </div>
-
-                                    <div className='md:w-[40%] w-full  md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font  '>
-                                        <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
-                                        <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
-                                            {game.description.slice(0, 200) + '...'}
-                                        </p>
-                                        <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
-                                            <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
+                        return (
+                            <div
+                                className="item overflow-hidden"
+                                style={{
+                                    backgroundImage: `url("${imageUrl}")`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat',
+                                    minHeight: '10px'
+                                }}
+                                key={slide.id || i}
+                            >
+                                <div className="image-overlay" style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    zIndex: 1
+                                }}></div>
+                                <div className="blob lg:w-[50%] md:w-[60%] w-full h-[600px] absolute bottom-0 right-0 bg-[#141414]/70 z-[2] bg-[0,0,0,0.1] ms-0 lg:px-14 px-10" >
+                                    <div className="content w-[80%] m-auto  w-full z-10  md:h-full h-full flex flex-col lg:justify-center 3xl:px-16 xl:px-8 px-4 sp_font py-10" style={{ position: 'relative', zIndex: 2 }}>
+                                        <div className="name xl:text-[50px] md:text-[28px] text-[24px] z-10">{slide.title || slide.name || 'Untitled'}</div>
+                                        <div className="des xl:text-base md:text-sm  text-xs text-[#ccc]">{slide.description?.slice(0, 100) + '...' || 'No description available'}</div>
+                                        <Link to={'/single/' + slide._id} className='flex justify-center mt-5'>
+                                            <button className='btn xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
                                                 Learn More
                                             </button>
                                         </Link>
                                     </div>
                                 </div>
-                            </SwiperSlide>
-                        ))
-                    ) : (
-                        <p className="text-center text-white py-10">No games available</p>
-                    )}
-                </Swiper>
-            </div>
-            <div className="arrows hidden">
-                <button className="prev hidden md:block" onClick={() => showSlider("prev")}>&lt;</button>
-                <button className="next hidden  md:block" onClick={() => showSlider("next")}>&gt;</button>
-            </div>
 
 
-            {/* old slider */}
-            {/* <div className="relative w-full sp_slider_dot ">
+
+                                <img
+                                    className=""
+                                    src={imageUrl}
+                                    alt={slide.title || slide.name || 'Game image'}
+                                    style={{ display: 'none' }}
+                                    onError={() => console.warn('Image failed to load:', imageUrl)}
+                                    onLoad={() => console.log('Image loaded successfully:', imageUrl)}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
+                <div className="relative w-full sp_slider_dot md:hidden">
+                    <Swiper
+                        modules={[EffectFade, Pagination, Autoplay]}
+                        effect="fade"
+                        speed={1200}
+                        slidesPerView={1}
+                        pagination={{
+                            clickable: true,
+                            renderBullet: (index, className) => {
+                                return `<span class="${className} custom-bullet"></span>`;
+                            },
+                        }}
+                        autoplay={{ delay: 5000 }}
+                        loop={true}
+                        className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
+                    >
+                        {games && games.length > 0 ? (
+                            games.slice(0, 5).map((game, index) => (
+                                <SwiperSlide key={index}>
+                                    <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
+                                        <div className='blob md:w-[60%] w-full h-[600px]' >
+                                            <img
+                                                src={game?.cover_image?.url}
+                                                alt={game.title || `Game ${index + 1}`}
+                                                className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
+                                            />
+                                            {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
+
+                                        </div>
+
+                                        <div className='md:w-[40%] w-full  md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font  '>
+                                            <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
+                                            <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
+                                                {game.description.slice(0, 200) + '...'}
+                                            </p>
+                                            <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
+                                                <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
+                                                    Learn More
+                                                </button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </SwiperSlide>
+                            ))
+                        ) : (
+                            <p className="text-center text-white py-10">No games available</p>
+                        )}
+                    </Swiper>
+                </div>
+                <div className="arrows hidden">
+                    <button className="prev hidden md:block" onClick={() => showSlider("prev")}>&lt;</button>
+                    <button className="next hidden  md:block" onClick={() => showSlider("next")}>&gt;</button>
+                </div>
+
+
+                {/* old slider */}
+                {/* <div className="relative w-full sp_slider_dot ">
           <Swiper
             modules={[EffectFade, Pagination, Autoplay]}
             effect="fade"
@@ -326,8 +325,8 @@ export default function HomeSlider() {
             )}
           </Swiper>
         </div> */}
-            {/* <div className="timeRunning" ref={timeBarRef}></div> */}
-        </div>
+                {/* <div className="timeRunning" ref={timeBarRef}></div> */}
+            </div>
         </div>
     );
 }
