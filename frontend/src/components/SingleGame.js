@@ -42,6 +42,7 @@ const SingleGame = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [amountToPay, setAmountToPay] = useState(0);
+  const [hasPaid, setHasPaid] = useState(false);
 
   // console.log("HIHIHI" , single);
 
@@ -271,9 +272,10 @@ const SingleGame = () => {
     setClientSecret("");
     setCurrentOrderId(null);
     setAmountToPay(0);
+    setHasPaid(true); // 👈 Add this line
   };
   const [open, setOpen] = useState(false)
-  
+
   return (
     <div className=''>
       <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
@@ -482,15 +484,27 @@ const SingleGame = () => {
                     </button>
                   )}
                 </div>
+                {hasPaid ? (
+                  <button
+                    onClick={() => {
+                      // Add your download logic here
+                      console.log("Starting download...");
+                      // You can trigger a function to handle the file download
+                    }}
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
+                  >
+                    Download Now
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleCheckout()}
+                    className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
+                  >
+                    Buy Now
+                  </button>
+                )}
                 <button
-
-                  onClick={() => handleCheckout()}
-
-                  className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
-                  Buy Now
-                </button>
-                <button
-                    onClick={() => setOpen(true)}
+                  onClick={() => setOpen(true)}
                   className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] hover:from-[#7a5cd6] hover:to-[#947ce8] active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
                   Review
                 </button>
@@ -598,10 +612,10 @@ const SingleGame = () => {
                   </div>
                 </details>
                 {/* review modal */}
-                      {open && (
-                      <ReviewForm open={open} onClose={()=>setOpen(false)}/>
-                    )}
-    
+                {open && (
+                  <ReviewForm open={open} onClose={() => setOpen(false)} />
+                )}
+
               </div>
             </div>
           </div>
