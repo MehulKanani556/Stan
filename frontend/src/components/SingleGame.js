@@ -213,15 +213,12 @@ const SingleGame = () => {
     return () => window.removeEventListener("resize", updateSlides);
   }, []);
 
-  const ratings = single?.ratings || [];
-  const total = ratings.reduce((sum, r) => sum + (r?.rating || 0), 0);
-  const rating = ratings.length ? total / ratings.length : 0;
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
+  const ratings = single?.reviews || [];
+  const fullStars = Math.floor(ratings.averageRating);
+  const hasHalfStar = ratings.averageRating % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   const handleWishList = (id) => {
-    console.log("welcome", id);
     dispatch(createWishlist(id))
 
   }
@@ -329,7 +326,7 @@ const SingleGame = () => {
                   {single?.video?.url ? (
                     <div className="flex justify-center  relative w-full">
                       <video src={single?.video?.url} muted className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" />
-                      <FaPlay className="absolute inset-0 m-auto text-white text-4xl transition" />
+                      <FaPlay className="absolute inset-0 m-auto text-white sm:text-4xl text-[20px] transition" />
                     </div>
                   ) : ""}
 
@@ -569,6 +566,7 @@ const SingleGame = () => {
                   </summary>
                   <div className="pb-5 px-4 md:px-5">
                     <div className="flex mt-2">
+                      {console.log(fullStars ,emptyStars)}
                       {Array.from({ length: fullStars }).map((_, i) => (
                         <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
                       ))}
@@ -576,7 +574,7 @@ const SingleGame = () => {
                       {Array.from({ length: emptyStars }).map((_, i) => (
                         <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
                       ))}
-                      <span className="ml-2 text-white font-medium">{rating?.toFixed(1)}</span>
+                      <span className="ml-2 text-white font-medium">{ratings.averageRating?.toFixed(1)}</span>
                     </div>
                   </div>
                 </details>

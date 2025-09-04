@@ -124,10 +124,69 @@ body {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* *********** Review Home Slider *********** */
+
+
+/* ********** Single Game Detail *********** */
+.ds_single_slider .slick-slide div{
+  width: 100%;
+}
+/* Highlight the center slide (red border, no overlay) */
+.ds_mini_slider .slick-center div div img {
+ border: 2px solid white !important;
+ position: relative;
+ z-index: 2;
+}
+
+.ds_mini_slider .slick-center div div::after {
+ content: none !important; 
+}
+
+.ds_mini_slider .slick-slide.slick-active div div {
+ position: relative;
+}
+
+.ds_mini_slider .slick-slide div div {
+ position: relative;
+}
+
+.ds_mini_slider .slick-slide div div::after {
+ content: "";
+ position: absolute;
+ inset: 0;
+ background: rgba(0, 0, 0, 0.7);
+ border-radius: 0.5rem;
+ pointer-events: none;
+}
+
+.ds_mini_slider .slick-center div div {
+ z-index: 3;
+}
+
+.ds_mini_slider .slick-slide > div:first-child {
+  width: 100%;
+  padding: 0px 10px;
+}
 
 
 
+@media (max-width:768px) {
+  
+  .ds_mini_slider .slick-current div div img{
+    border: 2px solid white !important;
+    position: relative;
+    z-index: 2;
+ }
+ .ds_mini_slider .slick-current div div video{
+  border: 2px solid white !important;
+  position: relative;
+  z-index: 2;
+}
+ .ds_mini_slider .slick-current div div svg{
+    /* position: relative; */
+    z-index: 2;
+ }
+
+} 
 
 
 
@@ -502,14 +561,7 @@ html {
 
 
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Turret+Road:wght@200;300;400;500;700;800&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
 
 /*Header*/
 /* 
@@ -536,7 +588,7 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
   background-position: 50% 50%;
   background-size: cover;
-  transition: .5s;
+  transition: .2s;
   display: flex;
 
 }
@@ -709,11 +761,11 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
 }
 
 
-.carousel .list .item .blob {
+.sp_slider  .carousel .list .item .blob {
   display: none !important;
 }
 
-.carousel .list .item:nth-child(2) .blob {
+.sp_slider  .carousel .list .item:nth-child(2) .blob {
   display: block !important;
 }
 

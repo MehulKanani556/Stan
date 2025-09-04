@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useDispatch, useSelector } from "react-redux";
+import { getReviewData } from "../Redux/Slice/game.slice";
+import { decryptData } from "../Utils/encryption";
+
 
 const reviews = [
   { id: 1, name: "Alex Johnson", avatar: "https://i.pravatar.cc/150?img=1", game: "Resident Evil Village", rating: 5, review: "An absolute masterpiece! The atmosphere is chilling, and the storyline kept me hooked till the end." },
@@ -15,6 +19,16 @@ const reviews = [
 
 export default function ReviewHomeSlick() {
   const [slidesToShow, setSlidesToShow] = useState(3);
+  const dispatch = useDispatch()
+
+  const revieData = useSelector((state)=> state?.game?.reviewData?.result?.ratings)
+
+  console.log("CVCVCVC" , revieData);
+  
+
+  useEffect(()=>{
+    dispatch(getReviewData())
+  },[])
 
   useEffect(() => {
     const updateSlides = () => {
@@ -48,8 +62,8 @@ export default function ReviewHomeSlick() {
 
       <div className="mx-auto w-[94%] md:w-[86%]">
         <Slider {...settings}>
-          {reviews.map((r) => (
-            <div key={r.id} className="px-2 sm:px-3">
+          {revieData?.map((r) => (
+            <div key={r?._id} className="px-2 sm:px-3">
               <motion.div
                 className="card-wrapper"
                 initial={{ opacity: 0, y: 40 }}
@@ -62,13 +76,13 @@ export default function ReviewHomeSlick() {
 
                   <div className="flex flex-col items-center">
                     <motion.img
-                      src={r.avatar}
-                      alt={r.name}
+                      // src={r?.avatar}
+                      // alt={r?.name}
                       className="w-[96px] h-[96px] rounded-full object-cover border-2 border-[#902F7E] shadow-[0_8px_24px_rgba(144,47,126,0.35)]"
                     />
                     <div className="text-center mt-3">
-                      <p className="font-semibold text-white text-lg">{r.name}</p>
-                      <p className="text-sm text-gray-400">{r.game}</p>
+                      <p className="font-semibold text-white text-lg">{decryptData(r?.user?.name)}</p>
+                      <p className="text-sm text-gray-400">""</p>
                     </div>
                   </div>
 
@@ -77,14 +91,14 @@ export default function ReviewHomeSlick() {
                       <FaStar
                         key={j}
                         className={`h-5 w-5 mx-1 ${
-                          j < r.rating ? "text-yellow-400" : "text-gray-600"
+                          j < r?.rating ? "text-yellow-400" : "text-gray-600"
                         }`}
                       />
                     ))}
                   </div>
 
                   <p className="text-gray-300 text-[15px] leading-relaxed mt-2 text-center">
-                    {r.review}
+                    {r?.review}
                   </p>
                 </div>
               </motion.div>

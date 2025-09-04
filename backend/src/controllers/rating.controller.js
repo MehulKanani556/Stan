@@ -8,7 +8,7 @@ export const createOrUpdateRating = async (req, res, next) => {
         const { gameId } = req.params;
         const { rating, review } = req.body;
         const userId = req.user._id;
-console.log(gameId , rating, review , userId)
+        console.log(gameId, rating, review, userId)
         // Validate input
         if (!rating || rating < 1 || rating > 5) {
             return sendBadRequestResponse(res, "Rating must be between 1 and 5");
@@ -31,7 +31,7 @@ console.log(gameId , rating, review , userId)
             await existingRating.save();
         } else {
             // Create new rating
-            console.log('rating ======================================================>',existingRating);
+            console.log('rating ======================================================>', existingRating);
 
             existingRating = await Rating.create({
                 user: userId,
@@ -45,12 +45,20 @@ console.log(gameId , rating, review , userId)
 
         // Update game's average rating and review count
         const ratingStats = await Rating.getAverageRating(gameId);
-        await Game.findByIdAndUpdate(gameId, {
-            "reviews.averageRating": ratingStats.averageRating,
-            "reviews.count": ratingStats.totalRatings,
-            "reviews.totalRating": ratingStats.averageRating * ratingStats.totalRatings
-        });
-
+        const averageRating = Number(ratingStats?.averageRating || 0);
+        const totalRatings = Number(ratingStats?.totalRatings || 0);
+        const totalRating = Math.round(averageRating * totalRatings * 10) / 10;
+        await Game.updateOne(
+            { _id: gameId },
+            {
+                $set: {
+                    "reviews.averageRating": averageRating,
+                    "reviews.count": totalRatings,
+                    "reviews.totalRating": totalRating,
+                },
+            }
+        );
+        console.log(ratingStats,averageRating,totalRatings,totalRating)
         // Populate user details for response
         await existingRating.populate("user", "name username profilePic");
 
