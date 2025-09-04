@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function BackgroundColor({ children, className = '' }) {
   return (
-    <div className={`relative z-10 min-h-screen text-gray-200 ${className}`}>
+    <div className={`relative z-10 h-full text-gray-200 ${className}`}>
       {/* Background layer fixed to viewport */}
       <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-gradient-to-b from-[#0f0d12] to-[#141216]">
         {/* Decorative blobs */}
