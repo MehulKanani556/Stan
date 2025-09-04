@@ -1,4 +1,4 @@
-  import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -404,6 +404,7 @@ const Login = () => {
           const res = await dispatch(register(values));
           if (res.meta.requestStatus === "fulfilled" && res.payload?.success) {
             navigate("/");
+            dispatch(handleMyToggle(true)) 
             resetForm();
           } else {
             setStatus({ error: "Signup failed. Try again." });
