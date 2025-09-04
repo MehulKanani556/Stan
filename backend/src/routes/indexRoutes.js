@@ -18,7 +18,7 @@ import { addToWishlist, checkWishlistStatus, getWishlist, removeFromWishlist } f
 import websiteInfoRoutes from "./websiteInfo.routes.js";
 import { createOrder, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
 // import { createOrUpdateRating, deleteRating, getAllRatings, getGameRatings, getGameRatingStats, getUserGameRating, getUserRatings, markReviewHelpful, updateRating } from "../controllers/rating.controller.js";
-import { createOrUpdateRating,getAllRatings } from "../controllers/rating.controller.js";
+import { createOrUpdateRating,getAllRatingByGame,getAllRatings } from "../controllers/rating.controller.js";
 
 
 const indexRoutes = express.Router();
@@ -193,4 +193,5 @@ indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
 // indexRoutes.delete("/ratings/:ratingId", UserAuth, deleteRating);
 // indexRoutes.get("/ratings/:gameId/stats", getGameRatingStats);
 indexRoutes.get("/admin/ratings", UserAuth, getAllRatings);
+indexRoutes.get("/gamerating/:gameId",getAllRatingByGame)
 export default indexRoutes

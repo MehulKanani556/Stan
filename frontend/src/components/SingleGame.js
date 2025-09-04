@@ -45,6 +45,7 @@ const SingleGame = () => {
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [amountToPay, setAmountToPay] = useState(0);
   const [hasPaid, setHasPaid] = useState(false);
+  const [open, setOpen] = useState(false)
 
   // console.log("HIHIHI" , single);
 
@@ -57,7 +58,7 @@ const SingleGame = () => {
     dispatch(getGameById(id));
     dispatch(fetchWishlist());
     dispatch(fetchCart());
-  }, [])
+  }, [open])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -275,7 +276,6 @@ const SingleGame = () => {
     setHasPaid(true);
   };
   // review modal hadnling
-  const [open, setOpen] = useState(false)
 
   const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
   console.log('orders', orders)
