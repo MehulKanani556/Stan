@@ -25,7 +25,6 @@ const ReviewForm = ({ open, onClose, game }) => {
             if (onSubmit) {
                 onSubmit({ rating, review });
             }
-            alert("Review submitted successfully!");
             setFullName("");
             setEmail("");
             setRating(0);
@@ -46,7 +45,6 @@ const ReviewForm = ({ open, onClose, game }) => {
                     }
                 }
             );
-            console.log(res);
             if (res.data.success) {
                 enqueueSnackbar("review added successfully", { variant: "success" });
                 onClose();
