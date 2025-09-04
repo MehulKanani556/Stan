@@ -89,7 +89,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                 </div>
 
                 {/* User list */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto h-full scrollbar-hide">
                     {!showUsers ? (
                         // Conversations view
                         sortedMessageUsers.length > 0 ? (
