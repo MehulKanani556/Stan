@@ -55,10 +55,10 @@ const SingleGame = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getGameById(id));
-    dispatch(fetchWishlist());
-    dispatch(fetchCart());
-  }, [open])
+      dispatch(getGameById(id));
+      dispatch(fetchWishlist());
+      dispatch(fetchCart());
+  }, [open,showPaymentForm])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -248,23 +248,23 @@ const SingleGame = () => {
     }
     alert('is called')
     // 1. Create order (calls backend)
-    // const resultAction = await dispatch(createOrder({
-    //   items: [
-    //     {
-    //       game: single._id,
-    //       name: single.title,
-    //       platform: "windows", // Assuming "windows" as a default platform
-    //       price: Number(single.platforms?.windows?.price || 0),
-    //     }
-    //   ], amount: single.platforms?.windows?.price || 0
-    // }));
-    // if (createOrder.fulfilled.match(resultAction)) {
-    //   const { clientSecret: newClientSecret, order } = resultAction.payload;
-    //   setClientSecret(newClientSecret);
-    //   setCurrentOrderId(order._id);
-    //   setAmountToPay(order.amount);
+    const resultAction = await dispatch(createOrder({
+      items: [
+        {
+          game: single._id,
+          name: single.title,
+          platform: "windows", // Assuming "windows" as a default platform
+          price: Number(single.platforms?.windows?.price || 0),
+        }
+      ], amount: single.platforms?.windows?.price || 0
+    }));
+    if (createOrder.fulfilled.match(resultAction)) {
+      const { clientSecret: newClientSecret, order } = resultAction.payload;
+      setClientSecret(newClientSecret);
+      setCurrentOrderId(order._id);
+      setAmountToPay(order.amount);
 
-    // }
+    }
     setShowPaymentForm(true);
   };
 
@@ -279,7 +279,8 @@ const SingleGame = () => {
 
   const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
   console.log('orders', orders)
-  const isBuyed = orders?.some(order =>
+  const isBuyed = Array.isArray(orders) && orders.some(order =>
+    order.status === 'paid' &&
     order?.items?.some(item => item.game._id === id)
   );
 
@@ -636,7 +637,6 @@ const SingleGame = () => {
                 {open && (
                   <ReviewForm open={open} onClose={() => setOpen(false)} game={id} />
                 )}
-
               </div>
             </div>
           </div>
