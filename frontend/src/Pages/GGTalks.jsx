@@ -184,7 +184,7 @@ export default function GGTalks() {
             />
 
             {/* Main Chat Area */}
-            <div className={`min-w-0 flex-1 ${(!selectedUser || showUserList) ? 'hidden' : 'flex'} md:flex flex-col`}>
+            <div className={`min-w-0 flex-1 h-full ${(!selectedUser || showUserList) ? 'hidden' : 'flex'} md:flex flex-col`}>
                 {/* Chat Header */}
                 {selectedUser &&
                     <ChatHeader
@@ -200,13 +200,13 @@ export default function GGTalks() {
 
                 {/* Message Input */}
                 {selectedUser && (
-                    <div className="p-3 sm:p-4 bg-gray-800 shadow-lg">
+                    <div className="p-3 sm:p-4 bg-gray-800 shadow-lg ">
                         <div className="flex items-end gap-2 sm:gap-3 max-w-[95%] mx-auto">
                             {/* Text input */}
                             <div className="flex-1 relative">
                                 <input
                                     placeholder={`Message ${selectedUser.name}...`}
-                                    className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-dark text-white"
+                                    className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-dark text-black"
                                     value={newMessage}
                                     onChange={handleTyping}
                                     onKeyPress={handleKeyPress}
