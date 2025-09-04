@@ -16,6 +16,7 @@ import { CartSkeletonCard, CartSkeletonSummary } from "../lazyLoader/CartSkeleto
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
 
@@ -234,28 +235,44 @@ const Cart = () => {
                 </div>
             </div>
 
-            {showPaymentForm && clientSecret && currentOrderId && (
-                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
-                        <Elements stripe={stripePromise} options={{ clientSecret }}>
-                            <PaymentForm
-                                clientSecret={clientSecret}
-                                orderId={currentOrderId}
-                                amount={amountToPay}
-                                onPaymentSuccess={handlePaymentSuccess}
-                                fromCartPage={true}
-                            />
-                        </Elements>
-                        <button
-                            onClick={() => setShowPaymentForm(false)}
-                            className="mt-4 text-gray-400 hover:text-white"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            )}
+            {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
+              
+<Dialog
+    open={!!(showPaymentForm && clientSecret && currentOrderId)}
+    onClose={() => setShowPaymentForm(false)}
+    className="relative z-50"
+>
+  {/* Background overlay */}
+  <DialogBackdrop className="fixed inset-0 bg-black/75" />
+
+  {/* Modal wrapper */}
+  <div className="fixed inset-0 flex items-center justify-center p-4">
+    <DialogPanel className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+      <DialogTitle className="text-2xl font-bold mb-4 text-white">
+        Complete Your Purchase
+      </DialogTitle>
+
+      <Elements stripe={stripePromise} options={{ clientSecret }}>
+        <PaymentForm
+          clientSecret={clientSecret}
+          orderId={currentOrderId}
+          amount={amountToPay}
+          onPaymentSuccess={handlePaymentSuccess}
+          fromCartPage={true}
+        />
+      </Elements>
+
+      <button
+        onClick={() => setShowPaymentForm(false)}
+        className="mt-4 text-gray-400 hover:text-white"
+      >
+        Cancel
+      </button>
+    </DialogPanel>
+  </div>
+</Dialog>
+            {/* )} */}
+
         </div>
     );
 };

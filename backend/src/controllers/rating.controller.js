@@ -81,7 +81,7 @@ export const getAllRatingByGame = async (req, res) => {
   
       // fetch ratings for the given game
       const ratings = await Rating.find({ game: gameId })
-        .populate("user") // optional: populate user fields
+        .populate("user","name profilePic ")// optional: populate user fields
         .sort(sortOptions);
   
       res.status(200).json({
@@ -399,7 +399,7 @@ export const getAllRatings = async (req, res, next) => {
 
         // Fetch all ratings that match the filter and sort criteria
         const allRatings = await Rating.find(filter)
-            .populate("user")
+            .populate("user","name profilePic ")
             .populate("game", "title cover_image")
             .sort(sortObj);
 

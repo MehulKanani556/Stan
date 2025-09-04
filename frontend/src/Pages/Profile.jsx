@@ -680,7 +680,7 @@ export default function Profile() {
                                 </div>
 
                                 {/* Tabs */}
-                                <div className='flex items-center justify-between text-center text-sm md:text-lg  backdrop-blur-xl px-4'>
+                                <div className='flex items-center justify-between text-center text-sm md:text-lg  backdrop-blur-xl sm:px-4 px-2'>
                                     <div onClick={() => setIsActive("fanCoin")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "fanCoin" ? 'text-white' : 'text-gray-300'}`}>
                                         FAN Coins
                                         <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "fanCoin" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>

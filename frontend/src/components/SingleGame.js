@@ -13,7 +13,7 @@ import game4 from '../images/game_img5.jpeg'
 import gtav from '../images/gtalogo.avif'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { createWishlist, getGameById } from '../Redux/Slice/game.slice'
+import { createWishlist, getGameById, getGameRating } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go";
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
@@ -22,6 +22,11 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from './PaymentForm';
 import ReviewForm from './ReviewForm'
+import { MdDateRange } from "react-icons/md";
+import { decryptData } from "../Utils/encryption";
+import { DialogBackdrop } from '@headlessui/react'
+
+
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
 
@@ -44,8 +49,10 @@ const SingleGame = () => {
   const [amountToPay, setAmountToPay] = useState(0);
   const [hasPaid, setHasPaid] = useState(false);
   const [open, setOpen] = useState(false)
+  const gameRating = useSelector((state)=> state?.game?.singleGameReview?.data)
 
-  // console.log("HIHIHI" , single);
+  console.log("YYYYYYYYY", gameRating);
+  
 
   useEffect(() => {
     setNav1(sliderRef1);
@@ -61,6 +68,10 @@ const SingleGame = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  useEffect(()=>{
+     dispatch(getGameRating(id))
+  },[])
 
 
   const handleSlideChange = (oldIndex, newIndex) => {
@@ -274,8 +285,7 @@ const SingleGame = () => {
   };
   // review modal hadnling
 
-  const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
-  console.log('orders', orders)
+  const { orders, loading: ordersLoading } = useSelector((state) => state?.payment);
   const isBuyed = orders?.some(order =>
     order?.items?.some(item => item.game._id === id)
   );
@@ -284,6 +294,15 @@ const SingleGame = () => {
   useEffect(() => {
     dispatch(allorders());
   }, [dispatch]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
+  };
 
   return (
     <div className=''>
@@ -523,26 +542,28 @@ const SingleGame = () => {
               </div>
 
               {showPaymentForm && clientSecret && currentOrderId && (
-                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                  <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
-                    <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
-                    <Elements stripe={stripePromise} options={{ clientSecret }}>
-                      <PaymentForm
-                        clientSecret={clientSecret}
-                        orderId={currentOrderId}
-                        amount={amountToPay}
-                        onPaymentSuccess={handlePaymentSuccess}
-                        fromCartPage={false}
-                      />
-                    </Elements>
-                    <button
-                      onClick={() => setShowPaymentForm(false)}
-                      className="mt-4 text-gray-400 hover:text-white"
-                    >
-                      Cancel
-                    </button>
+                  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <DialogBackdrop className="fixed inset-0 bg-gray-900/50" />
+                      <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
+                      <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <PaymentForm
+                          clientSecret={clientSecret}
+                          orderId={currentOrderId}
+                          amount={amountToPay}
+                          onPaymentSuccess={handlePaymentSuccess}
+                          fromCartPage={false}
+                        />
+                      </Elements>
+                      <button
+                        onClick={() => setShowPaymentForm(false)}
+                        className="mt-4 text-gray-400 hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                </div>
+
               )}
 
               {/* Accordion */}
@@ -576,7 +597,38 @@ const SingleGame = () => {
                       ))}
                       <span className="ml-2 text-white font-medium">{ratings.averageRating?.toFixed(1)}</span>
                     </div>
+                      {gameRating && <div className='mt-2'>
+                         {gameRating?.map((element)=>{
+                             let FullStar = Math.floor(element?.rating);
+                             let HasHalfStar = element?.rating % 1 >= 0.5;
+                             let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+                            return(
+                              <div className='mt-2' key={element?._id}>
+                                 <div className='flex items-center'>
+                                     <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] rounded-full' alt="" />
+                                     <div className='ms-3'>
+                                       <div>{decryptData(element?.user?.name)}</div>
+                                       <div className='flex items-center'>
+                                          {Array.from({ length: FullStar }).map((_, i) => (
+                                                 <FaStar key={`full-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                           ))}
+                                           {HasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />}
+                                           {Array.from({ length: EmptyStars }).map((_, i) => (
+                                             <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                           ))}
+                                           <span className="ms-2 text-white text-[14px]">{ratings.averageRating?.toFixed(1)}</span>
+                                       </div>
+                                     </div>
+                                 </div>
+                                  <p className='mt-2 text-[13px]'>{element?.review}</p>
+                                  <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p>
+                                  <div className='h-[1px] bg-gray-700 mt-3'></div>
+                              </div>  
+                            )
+                         })}
+                      </div>}
                   </div>
+                  
                 </details>
 
                 <details className="group open:shadow-lg open:bg-black/20 transition-all">
