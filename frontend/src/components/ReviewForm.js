@@ -21,7 +21,6 @@ const ReviewForm = ({ open, onClose, game }) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API call
         setTimeout(() => {
             if (onSubmit) {
                 onSubmit({ rating, review });
@@ -34,6 +33,7 @@ const ReviewForm = ({ open, onClose, game }) => {
             setIsLoading(false);
         }, 1000);
     };
+
     const onSubmit = async ({ rating, review }) => {
         var auth = localStorage.getItem('token');
         try {
@@ -49,6 +49,7 @@ const ReviewForm = ({ open, onClose, game }) => {
             console.log(res);
             if (res.data.success) {
                 enqueueSnackbar("review added successfully", { variant: "success" });
+                onClose();
             }
             return res.data.cart || [];
         } catch (err) {
