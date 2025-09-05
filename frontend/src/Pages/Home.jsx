@@ -135,7 +135,7 @@ export default function Home() {
       dispatch(fetchCart());
     }
 
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     dispatch(getAllGames({ page: 1, limit: 20 })); // Load first 20 games

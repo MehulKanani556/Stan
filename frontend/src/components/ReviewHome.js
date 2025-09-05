@@ -23,16 +23,16 @@ export default function ReviewHomeSlick() {
 
   const revieData = useSelector((state)=> state?.game?.reviewData?.result?.ratings)
 
-  console.log("CVCVCVC" , revieData);
+  // console.log("CVCVCVC" , revieData);
   
 
   useEffect(()=>{
-    const userId =  localStorage.getItem("userId");
-    if(userId){
+    // const userId =  localStorage.getItem("userId");
+    // if(userId){
 
       dispatch(getReviewData())
-    }
-  },[])
+    // }
+  },[dispatch])
 
   useEffect(() => {
     const updateSlides = () => {

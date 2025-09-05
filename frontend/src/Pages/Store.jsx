@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import Header from '../header/Header';
-import Footer from '../footer/Footer';
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -33,7 +31,7 @@ const Store = () => {
   const error = useSelector((state) => state.game.error);
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.cart);
-  const { wishlistStatus } = useSelector((state) => state.wishlist);
+  const wishlistStatus = useSelector((state) => state.wishlist.wishlistStatus);
 
 
 
@@ -41,22 +39,15 @@ const Store = () => {
     dispatch(getAllGames());
     dispatch(getPopularGames());
     dispatch(getAllCategories());
-
-    const userId =  localStorage.getItem("userId");
-    if(userId){
+    dispatch(getTopGames());
+    const userId = localStorage.getItem("userId");
+    if (userId) {
       dispatch(fetchWishlist());
       dispatch(fetchCart());
     }
   }, [dispatch]);
+  
 
-
-  useEffect(() => {
-    try {
-      dispatch(getTopGames());
-    } catch (error) {
-      console.error("Error dispatching getTopGames:", error);
-    }
-  }, [dispatch]);
 
   // Handle window resize for better mobile button states (matching Home.jsx)
   useEffect(() => {
