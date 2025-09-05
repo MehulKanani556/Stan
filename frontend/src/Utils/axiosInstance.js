@@ -69,16 +69,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       const refreshToken = localStorage.getItem("refreshToken");
-      const token = localStorage.getItem("token")
-      if (!token) {
-        // If no refresh token, logout and reject the error
-        const { store } = require("../Redux/Store").configureStore();
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/";
-        return Promise.reject(error);
-      }
+     
       
       try {
         const response = await axios.post(
@@ -88,7 +79,7 @@ axiosInstance.interceptors.response.use(
             headers: { Authorization: `Bearer ${refreshToken}` },
             withCredentials: true,
           }
-        );
+        ); 
 
         if (response.data.success && response.data.accessToken) {
           localStorage.setItem("token", response.data.accessToken);
@@ -105,6 +96,7 @@ axiosInstance.interceptors.response.use(
 
         const { store } = require("../Redux/Store").configureStore();
         store.dispatch(logoutUser());
+        // alert("Logout");
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         localStorage.removeItem("refreshToken");

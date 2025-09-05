@@ -39,11 +39,15 @@ const Store = () => {
 
   useEffect(() => {
     dispatch(getAllGames());
-    dispatch(fetchCart())
     dispatch(getPopularGames());
-    dispatch(fetchWishlist())
     dispatch(getAllCategories());
-  }, []);
+
+    const userId =  localStorage.getItem("userId");
+    if(userId){
+      dispatch(fetchWishlist());
+      dispatch(fetchCart());
+    }
+  }, [dispatch]);
 
 
   useEffect(() => {
@@ -52,7 +56,7 @@ const Store = () => {
     } catch (error) {
       console.error("Error dispatching getTopGames:", error);
     }
-  }, []);
+  }, [dispatch]);
 
   // Handle window resize for better mobile button states (matching Home.jsx)
   useEffect(() => {
