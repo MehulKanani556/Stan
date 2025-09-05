@@ -268,7 +268,6 @@ const SingleGame = () => {
   if (gameLoading || !single) {
     return <SingleGameSkeleton />;
   }
-
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -277,7 +276,6 @@ const SingleGame = () => {
     const year = String(date.getFullYear()).slice(-2);
     return `${day}-${month}-${year}`;
   };
-
   return (
     <div className=''>
       <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">

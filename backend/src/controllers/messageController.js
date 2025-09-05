@@ -175,7 +175,7 @@ export const getAllMessageUsers = async (req, res) => {
                     name: { $ifNull: ["$userData.name", ""] },
                     email: { $ifNull: ["$userData.email", null] },
                     photo: { $ifNull: ["$userData.photo", null] },
-                    profilePhoto: { $ifNull: ["$userData.profilePhoto", null] },
+                    profilePhoto: { $ifNull: ["$userData.profilePic", null] },
                     createdAt: { $ifNull: ["$userData.createdAt", null] },
                     phone: { $ifNull: ["$userData.phone", null] },
                     dob: { $ifNull: ["$userData.dob", null] },
@@ -187,8 +187,8 @@ export const getAllMessageUsers = async (req, res) => {
                     },
                     deleteChatFor: { $ifNull: ["$userData.deleteChatFor", null] },
                 },
-            },
 
+            },
             // Union with current user's data
             // {
             //     $unionWith: {
@@ -302,6 +302,7 @@ export const getAllMessageUsers = async (req, res) => {
 
         const formattedUsers = userResults
             .filter((user) => {
+            {console.log('$project',user)}
                 const isInDeleteChatFor = currentUser?.deleteChatFor?.includes(
                     user._id.toString()
                 );

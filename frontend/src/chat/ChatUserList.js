@@ -110,11 +110,13 @@ console.log('user',allMessageUsers, allUsers);
                                             onClick={() => handleUserSelect(user)}
                                         >
                                             <div className="flex items-center gap-3">
+
                                                 {/* Profile photo or initial */}
                                                 <div className="flex-shrink-0 relative">
                                                     {user.profilePhoto ? (
                                                         <img
-                                                            src={user.profilePhoto}
+                                                            src={user.profilePhoto
+                                                            }
                                                             alt="profile"
                                                             className="w-12 h-12 rounded-full object-cover"
                                                         />
@@ -213,11 +215,12 @@ console.log('user',allMessageUsers, allUsers);
                                                     {/* Profile photo or initial */}
                                                     <div className="flex-shrink-0 relative">
                                                         {user.profilePic ? (
-                                                            <img
-                                                                src={user.profilePic}
-                                                                alt="profile"
-                                                                className="w-12 h-12 rounded-full object-cover"
-                                                            />
+                                                        <img
+                                                            src={user.profilePic
+                                                            }
+                                                            alt="profile"
+                                                            className="w-12 h-12 rounded-full object-cover"
+                                                        />
                                                         ) : (
                                                             <div className="w-12 h-12 rounded-full font-bold bg-gray-800 flex items-center justify-center text-gray-300 capitalize text-lg border border-gray-700">
                                                                 {user.name.charAt(0)}

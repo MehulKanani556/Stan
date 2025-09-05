@@ -36,7 +36,7 @@ const Store = () => {
   const { wishlistStatus } = useSelector((state) => state.wishlist);
 
 
-
+alert('')
   useEffect(() => {
     dispatch(getAllGames());
     dispatch(fetchCart())

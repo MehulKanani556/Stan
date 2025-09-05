@@ -20,7 +20,7 @@ import LazyGameCard from '../lazyLoader/LazyGameCard';
 import GameCardSkeleton from '../lazyLoader/GameCardSkeleton';
 import TopGamesSkeleton from '../lazyLoader/TopGamesSkeleton';
 
-const GameCard = ({ item, isLoading = false }) => {
+const GameCard = ({ item, isLoading }) => {
   if (isLoading) {
     return (
       <div className='block mb-6'>
@@ -135,7 +135,6 @@ function TopGames() {
   const freeGame = useSelector((state) => state.freeGame.games);
   const gameLoading = useSelector((state) => state.game.topGamesInitialLoading);
   const freeGameLoading = useSelector((state) => state.freeGame.topGamesInitialLoading);
-
   useEffect(() => {
     console.log('TopGames: Dispatching API calls...');
     // dispatch(getAllActiveGames())

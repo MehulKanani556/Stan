@@ -792,3 +792,9 @@ export const getTopGames = function (req, res) {
         }
     })();
 };
+
+export const TopGames = async (req,res) =>{
+    const gameData = await Game.find();
+    const TopSellerData = gameData.sort((a, b) => b.rating - a.rating).limit(20);
+    
+}
