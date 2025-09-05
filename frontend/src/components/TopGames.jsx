@@ -138,7 +138,7 @@ function TopGames() {
 
   useEffect(() => {
     console.log('TopGames: Dispatching API calls...');
-    dispatch(getAllActiveGames())
+    // dispatch(getAllActiveGames())
     dispatch(getFreeGames())
   }, [])
 

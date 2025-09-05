@@ -147,7 +147,7 @@ export const userLogin = async (req, res) => {
 
         // Validate password (don't encrypt input password for comparison)
         const isPasswordValid = await user.validatePassword(password);
-        console.log(isPasswordValid)   
+        console.log(isPasswordValid)
         if (!isPasswordValid) {
             return sendUnauthorizedResponse(res, "Invalid password");
         }
@@ -163,7 +163,7 @@ export const userLogin = async (req, res) => {
             return sendErrorResponse(res, 500, "Failed to generate token");
         }
 
-     
+
         return res
             .cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 2 * 60 * 60 * 1000, sameSite: "Strict" })
             .cookie("refreshToken", refreshToken, {
@@ -188,6 +188,49 @@ export const userLogin = async (req, res) => {
             });
     } catch (error) {
         return ThrowError(res, 500, error.message);
+    }
+};
+
+// google login
+export const googleLogin = async (req, res) => {
+    try {
+        let { name, email, uid, picture } = req.body;
+        name = encryptData(name);
+        email = encryptData(email);
+
+        let checkUser = await User.findOne({ email: email });
+        if (!checkUser) {
+            checkUser = await User.create({ name, email, uid, picture, role: "user" });
+        }
+        const { accessToken, refreshToken } = await generateTokens(checkUser._id);
+
+
+        return res
+            .cookie("accessToken", accessToken, { httpOnly: true, secure: true, maxAge: 2 * 60 * 60 * 1000, sameSite: "Strict" })
+            .cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 15 * 24 * 60 * 60 * 1000,
+                sameSite: "Strict",
+            })
+            .status(201)
+            .json({
+                success: true,
+                message: "Login successful",
+                result: {
+                    id: checkUser._id,
+                    name: checkUser.name,
+                    email: checkUser.email,
+                    role: checkUser.role || 'user',
+                    isAdmin: checkUser.role === 'admin',
+                    lastLogin: checkUser.lastLogin,
+                    token: accessToken
+                }
+            });
+
+
+    } catch (error) {
+        return sendErrorResponse(res, 500, error.message);
     }
 };
 
@@ -351,7 +394,7 @@ export const VerifyOtp = async (req, res) => {
 // Reset Password using OTP
 export const resetPassword = async (req, res) => {
     try {
-        const { email, newPassword,  } = req.body;
+        const { email, newPassword, } = req.body;
         if (!newPassword) {
             return sendBadRequestResponse(res, "Please provide email and password.");
         }
@@ -382,7 +425,7 @@ export const changePassword = async (req, res) => {
         const { currentPassword, newPassword, confirmPassword } = req.body;
         const currentPasswordHash = currentPassword ? encryptData(currentPassword) : undefined;
 
-        const newPasswordHash = newPassword ? encryptData(newPassword) : undefined; 
+        const newPasswordHash = newPassword ? encryptData(newPassword) : undefined;
         if (!currentPassword || !newPassword || !confirmPassword) {
             return sendBadRequestResponse(res, "currentPassword, newPassword, and confirmPassword are required.");
         }
@@ -419,80 +462,80 @@ export const changePassword = async (req, res) => {
 };
 
 export const generateNewToken = async (req, res) => {
-    let  token =  req?.cookies?.refreshToken || req.header("Authorization").split(" ")[1];
+    let token = req?.cookies?.refreshToken || req.header("Authorization").split(" ")[1];
 
-    console.log(req?.cookies,req.header("Authorization"));
-    
-  
-    
+    console.log(req?.cookies, req.header("Authorization"));
+
+
+
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Token not available",
-      });
-    }
-  
-    jwt.verify(
-      token,
-      process.env.REFRESH_SECRET_KEY,
-      async function (err, decoded) {
-        try {
-          console.log(err);
-  
-          if (err) {
-            return res.status(400).json({
-              success: false,
-              message: "Token invalid",
-            });
-          }
-  
-          const USERS = await User.findOne({ _id: decoded._id });
-          // console.log("USERSss", USERS);
-  
-          if (!USERS) {
-            return res.status(404).json({
-              success: false,
-              message: "User not found..!!",
-            });
-          }
-          const { accessToken, refreshToken } = await generateTokens(decoded._id);
-  
-          const userDetails = await User
-            .findOne({ _id: USERS._id })
-            .select("-password -refreshToken");
-          // console.log("userDetailsss", userDetails);
-  
-          return res
-            .status(200)
-            .cookie("accessToken", accessToken, {
-              httpOnly: true,
-              secure: true,
-              maxAge: 2 *60 * 60 * 1000,
-              sameSite: "Strict",
-            })
-            .cookie("refreshToken", refreshToken, {
-              httpOnly: true,
-              secure: true,
-              maxAge: 15 * 24 * 60 * 60 * 1000,
-              sameSite: "Strict",
-            })
-            .json({
-              success: true,
-              finduser: userDetails,
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-            });
-        } catch (error) {
-          return res.status(500).json({
+        return res.status(401).json({
             success: false,
-            data: [],
-            error: "Error in register user: " + error.message,
-          });
+            message: "Token not available",
+        });
+    }
+
+    jwt.verify(
+        token,
+        process.env.REFRESH_SECRET_KEY,
+        async function (err, decoded) {
+            try {
+                console.log(err);
+
+                if (err) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "Token invalid",
+                    });
+                }
+
+                const USERS = await User.findOne({ _id: decoded._id });
+                // console.log("USERSss", USERS);
+
+                if (!USERS) {
+                    return res.status(404).json({
+                        success: false,
+                        message: "User not found..!!",
+                    });
+                }
+                const { accessToken, refreshToken } = await generateTokens(decoded._id);
+
+                const userDetails = await User
+                    .findOne({ _id: USERS._id })
+                    .select("-password -refreshToken");
+                // console.log("userDetailsss", userDetails);
+
+                return res
+                    .status(200)
+                    .cookie("accessToken", accessToken, {
+                        httpOnly: true,
+                        secure: true,
+                        maxAge: 2 * 60 * 60 * 1000,
+                        sameSite: "Strict",
+                    })
+                    .cookie("refreshToken", refreshToken, {
+                        httpOnly: true,
+                        secure: true,
+                        maxAge: 15 * 24 * 60 * 60 * 1000,
+                        sameSite: "Strict",
+                    })
+                    .json({
+                        success: true,
+                        finduser: userDetails,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                    });
+            } catch (error) {
+                return res.status(500).json({
+                    success: false,
+                    data: [],
+                    error: "Error in register user: " + error.message,
+                });
+            }
         }
-      }
     );
-  };
-  
+};
+
 
 //logoutUser
 // export const logoutUser = async (req, res) => {
@@ -508,18 +551,18 @@ export const generateNewToken = async (req, res) => {
 //     }
 // };
 
-export const logoutUser = async (req,res)=>{
+export const logoutUser = async (req, res) => {
     try {
         const userId = req.user._id;
-        const user  = User.findById(userId);
+        const user = User.findById(userId);
         return res.status(200)
             .clearCookie("accessToken")
             .clearCookie("refreshToken")
             .json({
                 success: true,
                 message: "User logged Out",
-              });
+            });
     } catch (error) {
-        
+
     }
 }
