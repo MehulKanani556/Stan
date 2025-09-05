@@ -32,6 +32,7 @@ import { handleMyToggle } from '../Redux/Slice/game.slice';
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state) => state.user);
     const { user: authUser } = useSelector((state) => state.auth);
@@ -90,11 +91,13 @@ export default function Header() {
 
     const handleProfileClick = () => {
         setIsDropdownOpen(false);
+        setIsDrawerOpen(false);
         navigate('/profile');
     };
 
     const handleSigninClick = () => {
         setIsDropdownOpen(false);
+        setIsDrawerOpen(false);
         navigate('/login');
     };
 
@@ -102,6 +105,7 @@ export default function Header() {
 
     const handleLogoutClick = () => {
         setIsDropdownOpen(false);
+        setIsDrawerOpen(false);
         const id = authUser?._id || currentUser?._id || localStorage.getItem("userId");
         if (id) {
             dispatch(logoutUser());
@@ -117,16 +121,16 @@ export default function Header() {
         <>
             <header className='bg-black/30 backdrop-blur-xl sticky w-full top-0 z-50 '>
                 <div className="drawer max-w-[95%] md:max-w-[85%] m-auto w-full  ">
-                    <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
+                    <input id="my-drawer-3" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={(e) => setIsDrawerOpen(e.target.checked)} />
                     <div className="drawer-content flex flex-col">
 
 
                         <div className="navbar  w-full px-0 justify-between">
 
-                            <div className="flex items-center gap-2 flex-none">
+                            <NavLink to="/" className="flex items-center gap-2 flex-none">
                                 <YOYO_LOGO className="svg-current-color h-12 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
                                 {/* <span className='text-[#ab99e1] font-semibold text-4xl'>YOYO</span> */}
-                            </div>
+                            </NavLink>
 
 
                             <div className=" hidden md:flex justify-center">
@@ -345,8 +349,8 @@ export default function Header() {
                         </div>
                     </div>
                     
-                    <div className="drawer-side">
-                        <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay"></label>
+                    <div className="drawer-side md:hidden">
+                        <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay" />
                         <div className="min-h-full w-80 p-4 relative text-white bg-gradient-to-b from-[#100f14]/95 via-[#16141c]/95 to-[#0e0d12]/95 backdrop-blur-xl border-l border-white/5 shadow-[0_10px_40px_-10px_rgba(171,153,225,0.35)]">
 
                             {/* ambient glows */}
