@@ -27,7 +27,11 @@ export default function ReviewHomeSlick() {
   
 
   useEffect(()=>{
-    dispatch(getReviewData())
+    const userId =  localStorage.getItem("userId");
+    if(userId){
+
+      dispatch(getReviewData())
+    }
   },[])
 
   useEffect(() => {
