@@ -257,7 +257,7 @@ const SingleGame = () => {
       console.error("Game data is not available for checkout.");
       return;
     }
-    alert('is called')
+    // alert('is called')
     // 1. Create order (calls backend)
     // const resultAction = await dispatch(createOrder({
     //   items: [
@@ -460,7 +460,9 @@ const SingleGame = () => {
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
               </div>
-              <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
+              <div className="flex">
+                <p className="text-xs font-bold text-white mb-6">Price <strong className='text-xl font-bold text-white'>${single?.platforms?.windows?.price}</strong></p>
+              </div>
 
               <div className="">
                 <div className='flex gap-4'>

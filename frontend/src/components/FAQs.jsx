@@ -60,7 +60,7 @@ export default function FAQs() {
   };
 
   return (
-    <section className="w-full max-w-[95%] md:max-w-[85%] mx-auto py-10">
+    <section className="w-full max-w-[95%] md:max-w-[85%] mx-auto py-6 md:py-10 lg:py-12">
       <h1 className="text-2xl md:text-3xl font-bold text-white text-center mb-8 underline underline-offset-4">
         Frequently Asked Questions
       </h1>
@@ -73,7 +73,7 @@ export default function FAQs() {
           >
             <button
               onClick={() => toggleAccordion(index)}
-              className="w-full flex justify-between items-center py-5 px-4 md:px-6 text-left text-white font-semibold"
+              className="w-full flex justify-between items-center py-3 md:py-5 lg:py-6 px-2 sm:px-3 md:px-6 lg:px-8 text-left text-white font-semibold"
             >
               <span>{faq.question}</span>
               <span
@@ -93,7 +93,7 @@ export default function FAQs() {
             </button>
 
             <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out mx-4 md:mx-6 ${
+              className={`overflow-hidden transition-all duration-300 ease-in-out mx-3 md:mx-6 ${
                 openIndex === index ? "max-h-40 pb-4 border-t-[1px]  border-slate-700" : "max-h-0  border-slate-700"
               }`}
             >

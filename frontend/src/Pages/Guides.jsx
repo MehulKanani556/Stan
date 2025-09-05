@@ -21,7 +21,7 @@ const SupportPage = () => {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-purple-800 via-purple-900/60 to-[#332a77] text-center py-20 px-6">
+      <section className="relative bg-gradient-to-r from-purple-800 via-purple-900/60 to-[#332a77] text-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-6 drop-shadow-lg">
             Game Guides
@@ -73,7 +73,7 @@ const SupportPage = () => {
         flip={true}
       />
 
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 bg-purple-500/10 blur-3xl" />
 
         <div className="relative max-w-5xl mx-auto text-center text-white">
@@ -140,8 +140,8 @@ const SectionWrapper = ({ title, description, img, items, flip }) => {
 
 
   return (
-    <section className="py-16 px-3 md:px-6 border-purple-500/30">
-      <div className={`w-full max-w-[95%] md:max-w-[85%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center ${flip ? "md:grid-flow-dense" : ""}`}>
+    <section className="py-12 sm:py-10 px-4 sm:px-6 lg:px-8">
+      <div className={`w-full max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center ${flip ? "md:grid-flow-dense" : ""}`}>
 
         {/* Content */}
         <div className={`${flip ? "md:col-start-2" : ""} order-2 md:order-1`}>
