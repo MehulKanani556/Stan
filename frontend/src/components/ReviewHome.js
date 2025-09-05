@@ -7,21 +7,17 @@ import "slick-carousel/slick/slick-theme.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getReviewData } from "../Redux/Slice/game.slice";
 import { decryptData } from "../Utils/encryption";
+import ReviewCardSkeleton from "./ReviewCardSkeleton";
 
 
-const reviews = [
-  { id: 1, name: "Alex Johnson", avatar: "https://i.pravatar.cc/150?img=1", game: "Resident Evil Village", rating: 5, review: "An absolute masterpiece! The atmosphere is chilling, and the storyline kept me hooked till the end." },
-  { id: 2, name: "Maria Gomez", avatar: "https://i.pravatar.cc/150?img=2", game: "The Last of Us Part II", rating: 4, review: "Incredible storytelling and emotional depth. Gameplay is smooth, but pacing could have been tighter." },
-  { id: 3, name: "James Lee", avatar: "https://i.pravatar.cc/150?img=3", game: "Minecraft", rating: 5, review: "Endless creativity! It never gets old. Perfect for solo adventures or playing with friends." },
-  { id: 4, name: "Sophia Turner", avatar: "https://i.pravatar.cc/150?img=4", game: "Elden Ring", rating: 5, review: "A breathtaking open world with challenging combat. Easily one of the best games I’ve ever played." },
-  { id: 5, name: "Ethan Brown", avatar: "https://i.pravatar.cc/150?img=5", game: "Cyberpunk 2077", rating: 4, review: "Amazing world-building and graphics. Still has some bugs, but definitely enjoyable." },
-];
+
 
 export default function ReviewHomeSlick() {
   const [slidesToShow, setSlidesToShow] = useState(3);
   const dispatch = useDispatch()
 
   const revieData = useSelector((state)=> state?.game?.reviewData?.result?.ratings)
+  const [loader, setLoader] = useState(true)
 
   console.log("CVCVCVC" , revieData);
   
@@ -29,8 +25,12 @@ export default function ReviewHomeSlick() {
   useEffect(()=>{
     const userId =  localStorage.getItem("userId");
     if(userId){
-
-      dispatch(getReviewData())
+      dispatch(getReviewData()).then((value)=>{
+        if(value?.meta?.requestStatus === "fulfilled"){
+           setLoader(false)
+        }
+        
+      })
     }
   },[])
 
@@ -91,7 +91,8 @@ export default function ReviewHomeSlick() {
       </h2>
 
       <div className="mx-auto w-[94%] md:w-[86%]">
-        <Slider {...settings} className="ds_review_slider">
+        {loader && <ReviewCardSkeleton/>}
+        {!loader && <Slider {...settings} className="ds_review_slider">
           {revieData?.map((r) => (
             <div key={r?._id} className="px-2 sm:px-3">
               <motion.div
@@ -128,14 +129,14 @@ export default function ReviewHomeSlick() {
                   </div>
 
                   <p className="text-gray-300 text-[15px] leading-relaxed mt-2 text-center">
-                    {r?.review?.split(" ").slice(0, 5).join(" ")}
-                    {r?.review?.split(" ").length > 5 && " ..."}
+                    {r?.review?.split(" ").slice(0, 20).join(" ")}
+                    {r?.review?.split(" ").length > 20 && " ..."}
                   </p>
                 </div>
               </motion.div>
             </div>
           ))}
-        </Slider>
+        </Slider>}
       </div>
 
       <style>{`

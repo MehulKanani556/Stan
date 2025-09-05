@@ -24,7 +24,7 @@ import PaymentForm from './PaymentForm';
 import ReviewForm from './ReviewForm'
 import { MdDateRange } from "react-icons/md";
 import { decryptData } from "../Utils/encryption";
-import { DialogBackdrop } from '@headlessui/react'
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
 
 
 import SingleGameSkeleton from '../lazyLoader/SingleGameSkeleton'
@@ -513,30 +513,39 @@ const SingleGame = () => {
 
               </div>
 
-              {showPaymentForm && clientSecret && currentOrderId && (
-                  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
-                    <DialogBackdrop className="fixed inset-0 bg-gray-900/50" />
-                      <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
-                      <Elements stripe={stripePromise} options={{ clientSecret }}>
-                        <PaymentForm
-                          clientSecret={clientSecret}
-                          orderId={currentOrderId}
-                          amount={amountToPay}
-                          onPaymentSuccess={handlePaymentSuccess}
-                          fromCartPage={false}
-                        />
-                      </Elements>
-                      <button
-                        onClick={() => setShowPaymentForm(false)}
-                        className="mt-4 text-gray-400 hover:text-white"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
+              {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
+              <Dialog open={!!(showPaymentForm && clientSecret && currentOrderId)} onClose={() => setShowPaymentForm(false)} className="relative z-50">
+                {/* Backdrop */}
+                <DialogBackdrop className="fixed inset-0 bg-black/75" />
+              
+                {/* Centered panel */}
+                <div className="fixed inset-0 flex items-center justify-center p-4">
+                  <DialogPanel className="w-full max-w-md rounded-xl bg-gray-900 sm:p-6 p-4 shadow-lg">
+                    <h3 className="text-2xl font-bold mb-4 text-white">
+                      Complete Your Purchase
+                    </h3>
+              
+                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                      <PaymentForm
+                        clientSecret={clientSecret}
+                        orderId={currentOrderId}
+                        amount={amountToPay}
+                        onPaymentSuccess={handlePaymentSuccess}
+                        fromCartPage={false}
+                      />
+                    </Elements>
+              
+                    <button
+                      onClick={() => setShowPaymentForm(false)}
+                      className="mt-4 text-gray-400 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                  </DialogPanel>
+                </div>
+               </Dialog>
 
-              )}
+              {/* )} */}
 
               {/* Accordion */}
               <div className="divide-y divide-gray-700/60 rounded-xl overflow-hidden bg-black/30">
