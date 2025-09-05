@@ -12,63 +12,64 @@ import "swiper/css/effect-fade";
 
 import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
 import HomesliderSkeleton from '../lazyLoader/HomesliderSkeleton';
-const slides = [
-    {
-        img: "https://u.cubeupload.com/Leo21/eagel1.jpg",
-        name: "EAGLE",
-        desc: "Eagles are majestic birds of prey known for their incredible strength, sharp vision, and powerful talons"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/owl1.jpg",
-        name: "OWL",
-        desc: "Owls are nocturnal birds of prey, shrouded in an aura of mystery and wisdom"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/crow.jpg",
-        name: "CROW",
-        desc: "Crows are highly intelligent and adaptable birds known for their glossy black plumage and distinctive calls."
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/butterfly1.jpeg",
-        name: "BUTTERFLY",
-        desc: "Butterflies, with their vibrant wings and graceful flight, are a symbol of transformation and beauty in the natural world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/owl2.jpg",
-        name: "OWL",
-        desc: "Owls have long been associated with mystery, wisdom, and the supernatural in various cultures"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/eagel3.jpg",
-        name: "EAGLE",
-        desc: "Eagles represent freedom, power, and nobility in many cultures"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/kingfirser2.jpeg",
-        name: "KINGFISHER",
-        desc: "Kingfishers, with their dazzling plumage, are vibrant jewels of the aquatic world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/parrot2.jpg",
-        name: "PARROT",
-        desc: "Parrots are social creatures, often living in flocks and exhibiting complex communication patterns"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/heron.jpeg",
-        name: "HERON",
-        desc: "Herons are known for their striking appearance, often characterized by graceful necks and stilt-like legs"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/butterfly2.jpg",
-        name: "BUTTERFLY",
-        desc: "Butterflies, with their delicate wings and vibrant colors, are among the most enchanting creatures in the natural world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/parrot1.jpg",
-        name: "PARROT",
-        desc: "Parrots are known for their long lifespans, with some species living for several decades"
-    }
-];
+
+// const slides = [
+//     {
+//         img: "https://u.cubeupload.com/Leo21/eagel1.jpg",
+//         name: "EAGLE",
+//         desc: "Eagles are majestic birds of prey known for their incredible strength, sharp vision, and powerful talons"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/owl1.jpg",
+//         name: "OWL",
+//         desc: "Owls are nocturnal birds of prey, shrouded in an aura of mystery and wisdom"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/crow.jpg",
+//         name: "CROW",
+//         desc: "Crows are highly intelligent and adaptable birds known for their glossy black plumage and distinctive calls."
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/butterfly1.jpeg",
+//         name: "BUTTERFLY",
+//         desc: "Butterflies, with their vibrant wings and graceful flight, are a symbol of transformation and beauty in the natural world"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/owl2.jpg",
+//         name: "OWL",
+//         desc: "Owls have long been associated with mystery, wisdom, and the supernatural in various cultures"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/eagel3.jpg",
+//         name: "EAGLE",
+//         desc: "Eagles represent freedom, power, and nobility in many cultures"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/kingfirser2.jpeg",
+//         name: "KINGFISHER",
+//         desc: "Kingfishers, with their dazzling plumage, are vibrant jewels of the aquatic world"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/parrot2.jpg",
+//         name: "PARROT",
+//         desc: "Parrots are social creatures, often living in flocks and exhibiting complex communication patterns"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/heron.jpeg",
+//         name: "HERON",
+//         desc: "Herons are known for their striking appearance, often characterized by graceful necks and stilt-like legs"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/butterfly2.jpg",
+//         name: "BUTTERFLY",
+//         desc: "Butterflies, with their delicate wings and vibrant colors, are among the most enchanting creatures in the natural world"
+//     },
+//     {
+//         img: "https://u.cubeupload.com/Leo21/parrot1.jpg",
+//         name: "PARROT",
+//         desc: "Parrots are known for their long lifespans, with some species living for several decades"
+//     }
+// ];
 
 export default function HomeSlider() {
     const dispatch = useDispatch();
@@ -79,69 +80,77 @@ export default function HomeSlider() {
 
     const games = useSelector((state) => state.game.games) || [];
 
-    
-    const leftGames = games.filter((_, index) => index % 2 === 0);
-    const rightGames = games.filter((_, index) => index % 2 === 1);
+    // Limit to 5 games on each side
+    const leftGames = games.filter((_, index) => index % 2 === 0).slice(0, 5);
+    const rightGames = games.filter((_, index) => index % 2 === 1).slice(0, 5);
 
     const [leftIndex, setLeftIndex] = useState(0);
     const [rightIndex, setRightIndex] = useState(0);
     const [centerGame, setCenterGame] = useState(null);
-    const [centerSource, setCenterSource] = useState('left'); 
+    const [centerSource, setCenterSource] = useState('left');
+    const [currentDisplayIndex, setCurrentDisplayIndex] = useState(0);
     const rightLockTimeoutRef = useRef(null);
 
     const leftItemRefs = useRef([]);
     const rightItemRefs = useRef([]);
 
-    const leftIntervalRef = useRef(null);
-    const rightIntervalRef = useRef(null);
+    const displayIntervalRef = useRef(null);
 
     const getImageUrl = (slide) => {
         if (slide?.cover_image?.url) return slide.cover_image.url;
         return "https://via.placeholder.com/800x600/333333/ffffff?text=No+Image";
     };
 
-    
+
+    // Sequential display: left games first, then right games
     useEffect(() => {
-        if (leftGames.length > 0) {
-            leftIntervalRef.current && clearInterval(leftIntervalRef.current);
-            leftIntervalRef.current = setInterval(() => {
-                setLeftIndex((prev) => (prev + 1) % leftGames.length);
-            }, 5000);
-        }
-        if (rightGames.length > 0) {
-            rightIntervalRef.current && clearInterval(rightIntervalRef.current);
-            rightIntervalRef.current = setInterval(() => {
-                setRightIndex((prev) => (prev + 1) % rightGames.length);
+        if (leftGames.length > 0 || rightGames.length > 0) {
+            displayIntervalRef.current && clearInterval(displayIntervalRef.current);
+            displayIntervalRef.current = setInterval(() => {
+                setCurrentDisplayIndex((prev) => {
+                    const totalGames = leftGames.length + rightGames.length;
+                    if (totalGames === 0) return 0;
+
+                    const nextIndex = (prev + 1) % totalGames;
+
+                    if (nextIndex < leftGames.length) {
+                        // Show left side game
+                        setLeftIndex(nextIndex);
+                        setCenterSource('left');
+                    } else {
+                        // Show right side game
+                        const rightGameIndex = nextIndex - leftGames.length;
+                        setRightIndex(rightGameIndex);
+                        setCenterSource('right');
+                    }
+
+                    return nextIndex;
+                });
             }, 5000);
         }
 
         return () => {
-            clearInterval(leftIntervalRef.current);
-            clearInterval(rightIntervalRef.current);
+            clearInterval(displayIntervalRef.current);
         };
     }, [leftGames.length, rightGames.length]);
 
-    
+
+    // Update center game when indices or source changes
     useEffect(() => {
-        if (leftGames.length > 0 && centerSource !== 'right') {
+        if (centerSource === 'left' && leftGames.length > 0) {
             setCenterGame(leftGames[leftIndex]);
+        } else if (centerSource === 'right' && rightGames.length > 0) {
+            setCenterGame(rightGames[rightIndex]);
         }
-    }, [leftIndex, leftGames, centerSource]);
+    }, [leftIndex, rightIndex, centerSource, leftGames, rightGames]);
 
-    
+    // Initialize with first left game
     useEffect(() => {
-        const el = leftItemRefs.current[leftIndex];
-        if (el && el.scrollIntoView) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (leftGames.length > 0 && !centerGame) {
+            setCenterGame(leftGames[0]);
+            setCenterSource('left');
         }
-    }, [leftIndex]);
-
-    useEffect(() => {
-        const el = rightItemRefs.current[rightIndex];
-        if (el && el.scrollIntoView) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }, [rightIndex]);
+    }, [leftGames, centerGame]);
 
     if (!games || games.length === 0) {
         return <HomesliderSkeleton />;
@@ -151,13 +160,13 @@ export default function HomeSlider() {
     const activeCenterImage = getImageUrl(activeCenterGame);
 
     return (
-        <div className="sp_slider">
-          
-            <div className="hidden md:grid grid-cols-12 gap-4 w-full min-h-[500px] lg:min-h-[500px] xl:min-h-[700px]">
+        <div className="sp_slider ">
+
+            <div className="hidden md:grid grid-cols-12 gap-4 w-full min-h-[500px] lg:min-h-[500px] xl:min-h-[700px] ">
                 {/* Left slider */}
                 <div className="col-span-12 md:col-span-3 xl:col-span-2">
-                    <div className="h-[500px] xl:h-[700px] overflow-hidden ">
-                        <div className="h-full overflow-y-auto no-scrollbar py-3 space-y-3 px-3">
+                    <div className="h-[500px] xl:h-[700px] overflow-hidden">
+                        <div className="h-full flex flex-col justify-center p-4 space-y-3 ">
                             {leftGames.map((game, index) => {
                                 const img = getImageUrl(game);
                                 const isActive = index === leftIndex;
@@ -173,11 +182,11 @@ export default function HomeSlider() {
                                                 clearTimeout(rightLockTimeoutRef.current);
                                             }
                                         }}
-                                        className={`block w-full rounded-md overflow-hidden bg-black/40 transition-transform ${isActive && centerSource === 'left' ? 'ring-2 ring-white' : 'hover:scale-[1.01]'}`}
+                                        className={`block w-full rounded-md overflow-hidden  bg-black/40 transition-all duration-300 ${isActive && centerSource === 'left' ? 'ring-2 ring-white scale-105 z-10 relative opacity-100' : 'hover:scale-[1.02] opacity-50'}`}
                                         aria-current={isActive ? 'true' : 'false'}
                                     >
                                         <div className="w-full h-24 md:h-28 xl:h-32 flex items-center justify-center">
-                                            <img src={img} alt={game.title || 'Game'} className="w-full h-full object-cover rounded" />
+                                            <img src={img} alt={game.title || 'Game'} className=" w-full h-full object-cover rounded" />
                                         </div>
                                     </button>
                                 );
@@ -207,8 +216,8 @@ export default function HomeSlider() {
 
                 {/* Right slider */}
                 <div className="col-span-12 md:col-span-3 xl:col-span-2">
-                    <div className="h-[500px] xl:h-[700px] overflow-hidden ">
-                        <div className="h-full overflow-y-auto no-scrollbar py-3 space-y-3 px-3">
+                    <div className="h-[500px] xl:h-[700px] overflow-hidden">
+                        <div className="h-full flex flex-col justify-center py-4 space-y-3 px-4">
                             {rightGames.map((game, index) => {
                                 const img = getImageUrl(game);
                                 const isActive = index === rightIndex;
@@ -227,10 +236,11 @@ export default function HomeSlider() {
                                                 setCenterSource('left');
                                             }, 8000);
                                         }}
-                                        className={`block w-full rounded-md overflow-hidden bg-black/40 transition-transform ${isActive && centerSource === 'right' ? 'ring-2 ring-white' : 'hover:scale-[1.01]'}`}
+                                        className={`block w-full rounded-md overflow-hidden bg-black/40 transition-all duration-300 ${isActive && centerSource === 'right' ? 'ring-2 ring-white scale-105  z-10 relative opacity-100' : 'hover:scale-[1.02] opacity-50'}`}
                                         aria-current={isActive ? 'true' : 'false'}
                                     >
-                                        <div className="w-full h-24 md:h-28 xl:h-32 flex items-center justify-center">
+
+                                        <div className="w-full h-24 md:h-28 xl:h-32 flex items-center justify-center ">
                                             <img src={img} alt={game.title || 'Game'} className="w-full h-full object-cover rounded" />
                                         </div>
                                     </button>
