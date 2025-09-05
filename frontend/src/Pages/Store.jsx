@@ -36,7 +36,6 @@ const Store = () => {
   const { wishlistStatus } = useSelector((state) => state.wishlist);
 
 
-alert('')
   useEffect(() => {
     dispatch(getAllGames());
     dispatch(fetchCart())
@@ -198,54 +197,53 @@ alert('')
           </button>
         </div>
       </div>
-
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={12}
-        slidesPerView={1.1}
-        breakpoints={{
-          320: { slidesPerView: 1, spaceBetween: 8 },
-          425: { slidesPerView: 1.5, spaceBetween: 10 },
-          575: { slidesPerView: 1.8, spaceBetween: 10 },
-          640: { slidesPerView: 2, spaceBetween: 12 },
-          768: { slidesPerView: 2.5, spaceBetween: 14 },
-          1024: { slidesPerView: 3, spaceBetween: 14 },
-          1280: { slidesPerView: 3.5, spaceBetween: 14 },
-          1480: { slidesPerView: 4.2, spaceBetween: 16 },
-        }}
-        style={{ padding: '20px 4px' }}
-        className="game-swiper"
-        ref={swiperRef}
-        onSwiper={(swiper) => {
-          swiperRef.current = swiper;
-          setTimeout(() => {
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }, 100);
-        }}
-        onSlideChange={(swiper) => {
-          setTimeout(() => {
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }, 50);
-        }}
-        onResize={(swiper) => {
-          setTimeout(() => {
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }, 100);
-        }}
-      >
-        {loading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <SwiperSlide key={i}>
-              <LazyGameCard />
-            </SwiperSlide>
-          ))
-        ) : games && games.length > 0 ? (
-          games.map((game) => (
-            <SwiperSlide key={game._id || game.id}>
-              <LazyGameCard>
+      {games.length > 0 ?
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={12}
+          slidesPerView={1.1}
+          breakpoints={{
+            320: { slidesPerView: 1, spaceBetween: 8 },
+            425: { slidesPerView: 1.5, spaceBetween: 10 },
+            575: { slidesPerView: 1.8, spaceBetween: 10 },
+            640: { slidesPerView: 2, spaceBetween: 12 },
+            768: { slidesPerView: 2.5, spaceBetween: 14 },
+            1024: { slidesPerView: 3, spaceBetween: 14 },
+            1280: { slidesPerView: 3.5, spaceBetween: 14 },
+            1480: { slidesPerView: 4.2, spaceBetween: 16 },
+          }}
+          style={{ padding: '20px 4px' }}
+          className="game-swiper"
+          ref={swiperRef}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+            setTimeout(() => {
+              setIsBeginning(swiper.isBeginning);
+              setIsEnd(swiper.isEnd);
+            }, 100);
+          }}
+          onSlideChange={(swiper) => {
+            setTimeout(() => {
+              setIsBeginning(swiper.isBeginning);
+              setIsEnd(swiper.isEnd);
+            }, 50);
+          }}
+          onResize={(swiper) => {
+            setTimeout(() => {
+              setIsBeginning(swiper.isBeginning);
+              setIsEnd(swiper.isEnd);
+            }, 100);
+          }}
+        >
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <SwiperSlide key={i}>
+                <LazyGameCard />
+              </SwiperSlide>
+            ))
+          ) : games && games.length > 0 ? (
+            games.map((game) => (
+              <SwiperSlide key={game._id || game.id}>
                 <div
                   onClick={() => navigate(`/single/${game?._id}`)}
                   className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
@@ -378,17 +376,39 @@ alert('')
                     </div>
                   </div>
                 </div>
-              </LazyGameCard>
+              </SwiperSlide>
+            ))
+          ) : (
+            <SwiperSlide>
+              <div className="text-gray-400 text-center py-8">
+                No games available
+              </div>
             </SwiperSlide>
-          ))
-        ) : (
-          <SwiperSlide>
-            <div className="text-gray-400 text-center py-8">
-              No games available
-            </div>
-          </SwiperSlide>
-        )}
-      </Swiper>
+          )}
+        </Swiper> :
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={12}
+          slidesPerView={1.1}
+          breakpoints={{
+            320: { slidesPerView: 1, spaceBetween: 8 },
+            425: { slidesPerView: 1.5, spaceBetween: 10 },
+            575: { slidesPerView: 1.8, spaceBetween: 10 },
+            640: { slidesPerView: 2, spaceBetween: 12 },
+            768: { slidesPerView: 2.5, spaceBetween: 14 },
+            1024: { slidesPerView: 3, spaceBetween: 14 },
+            1280: { slidesPerView: 3.5, spaceBetween: 14 },
+            1480: { slidesPerView: 4.2, spaceBetween: 16 },
+          }}>
+          <div >
+            {Array.from({ length: 4 }, (_, i) => (
+              <SwiperSlide key={i}>
+                <LazyGameCard key={i} />
+              </SwiperSlide>
+            ))}
+          </div>
+        </Swiper>
+      }
     </div>
   );
 
@@ -407,18 +427,18 @@ alert('')
                 </p>
               </div>
               <div className="flex gap-2">
-              <button
-            onClick={() => navigate('/allGames')}
-            className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
+                <button
+                  onClick={() => navigate('/allGames')}
+                  className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
            font-medium text-xs sm:text-sm transition-all duration-200 ease-out
            bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
     text-white shadow-lg shadow-fuchsia-500/30    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110            active:scale-95
            focus-visible:outline-none focus-visible:ring-2 
            focus-visible:ring-indigo-400 focus-visible:ring-offset-2 
            focus-visible:ring-offset-gray-900'
-          >
-            All Games
-          </button>
+                >
+                  All Games
+                </button>
                 <button
                   onClick={() => gameSwiperRef.current?.slidePrev()}
                   disabled={isBeginning}
@@ -441,47 +461,48 @@ alert('')
             </div>
 
             {/* Game Cards */}
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={12}
-              slidesPerView={1.1}
-              breakpoints={{
-                320: { slidesPerView: 1, spaceBetween: 8 },
-                425: { slidesPerView: 1.5, spaceBetween: 10 },
-                575: { slidesPerView: 1.8, spaceBetween: 10 },
-                640: { slidesPerView: 2, spaceBetween: 12 },
-                768: { slidesPerView: 2.5, spaceBetween: 14 },
-                1024: { slidesPerView: 3, spaceBetween: 14 },
-                1280: { slidesPerView: 3.5, spaceBetween: 14 },
-                1480: { slidesPerView: 4.2, spaceBetween: 16 },
-              }}
-              style={{ padding: '20px 4px' }}
-              className="game-swiper"
-              ref={gameSwiperRef}
-              onSwiper={(swiper) => {
-                gameSwiperRef.current = swiper;
-                setTimeout(() => {
-                  setIsBeginning(swiper.isBeginning);
-                  setIsEnd(swiper.isEnd);
-                }, 100);
-              }}
-              onSlideChange={(swiper) => {
-                setTimeout(() => {
-                  setIsBeginning(swiper.isBeginning);
-                  setIsEnd(swiper.isEnd);
-                }, 50);
-              }}
-              onResize={(swiper) => {
-                setTimeout(() => {
-                  setIsBeginning(swiper.isBeginning);
-                  setIsEnd(swiper.isEnd);
-                }, 100);
-              }}
-            >
-              {games && games.length > 0 ? (
-                games.slice(0, 8).map((game) => (
-                  <SwiperSlide key={game._id}>
-                    <LazyGameCard>
+
+            {games.length > 0 ?
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={12}
+                slidesPerView={1.1}
+                breakpoints={{
+                  320: { slidesPerView: 1, spaceBetween: 8 },
+                  425: { slidesPerView: 1.5, spaceBetween: 10 },
+                  575: { slidesPerView: 1.8, spaceBetween: 10 },
+                  640: { slidesPerView: 2, spaceBetween: 12 },
+                  768: { slidesPerView: 2.5, spaceBetween: 14 },
+                  1024: { slidesPerView: 3, spaceBetween: 14 },
+                  1280: { slidesPerView: 3.5, spaceBetween: 14 },
+                  1480: { slidesPerView: 4.2, spaceBetween: 16 },
+                }}
+                style={{ padding: '20px 4px' }}
+                className="game-swiper"
+                ref={gameSwiperRef}
+                onSwiper={(swiper) => {
+                  gameSwiperRef.current = swiper;
+                  setTimeout(() => {
+                    setIsBeginning(swiper.isBeginning);
+                    setIsEnd(swiper.isEnd);
+                  }, 100);
+                }}
+                onSlideChange={(swiper) => {
+                  setTimeout(() => {
+                    setIsBeginning(swiper.isBeginning);
+                    setIsEnd(swiper.isEnd);
+                  }, 50);
+                }}
+                onResize={(swiper) => {
+                  setTimeout(() => {
+                    setIsBeginning(swiper.isBeginning);
+                    setIsEnd(swiper.isEnd);
+                  }, 100);
+                }}
+              >
+                {games && games.length > 0 ? (
+                  games.slice(0, 8).map((game) => (
+                    <SwiperSlide key={game._id}>
                       <div
                         onClick={() => navigate(`/single/${game._id}`)}
                         className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
@@ -614,13 +635,34 @@ alert('')
                           </div>
                         </div>
                       </div>
-                    </LazyGameCard>
-                  </SwiperSlide>
-                ))
-              ) : (
-                <p className="text-center text-white py-10">Loading...</p>
-              )}
-            </Swiper>
+                    </SwiperSlide>
+                  ))
+                ) : (
+                  <p className="text-center text-white py-10">Loading...</p>
+                )}
+              </Swiper> :
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={12}
+                slidesPerView={1.1}
+                breakpoints={{
+                  320: { slidesPerView: 1, spaceBetween: 8 },
+                  425: { slidesPerView: 1.5, spaceBetween: 10 },
+                  575: { slidesPerView: 1.8, spaceBetween: 10 },
+                  640: { slidesPerView: 2, spaceBetween: 12 },
+                  768: { slidesPerView: 2.5, spaceBetween: 14 },
+                  1024: { slidesPerView: 3, spaceBetween: 14 },
+                  1280: { slidesPerView: 3.5, spaceBetween: 14 },
+                  1480: { slidesPerView: 4.2, spaceBetween: 16 },
+                }}>
+                <div >
+                  {Array.from({ length: 4 }, (_, i) => (
+                    <SwiperSlide key={i}>
+                      <LazyGameCard key={i} />
+                    </SwiperSlide>
+                  ))}
+                </div>
+              </Swiper>}
           </div>
         </div>
 

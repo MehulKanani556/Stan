@@ -301,88 +301,89 @@ export default function Home() {
         <HomeSlider />
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
           <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
-          <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
-                  <div
-                    ref={scrollRef}
-                    className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none"
-                  >
-                    {/* All Games */}
-                    <button
-                      className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+            <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
+              <div
+                ref={scrollRef}
+                className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none"
+              >
+                {/* All Games */}
+                <button
+                  className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
                  rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
                  transition-all duration-200 ease-out border border-transparent whitespace-nowrap
                  ${activeTab === null
-                          ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                          : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'}
+                      ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                      : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'}
                `}
-                      onClick={() => handle(null)}
-                    >
-                      All Games
-                    </button>
+                  onClick={() => handle(null)}
+                >
+                  All Games
+                </button>
 
-                    {/* Dynamic Categories */}
-                    {cateData?.map((element) => (
-                      <button
-                        key={element._id}
-                        className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
+                {/* Dynamic Categories */}
+                {cateData?.map((element) => (
+                  <button
+                    key={element._id}
+                    className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6
                    rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg
                    transition-all duration-200 ease-out border border-transparent whitespace-nowrap
                    ${activeTab === element._id
-                            ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
-                            : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'}
+                        ? 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+                        : 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5'}
                  `}
-                        onClick={() => handle(element._id)}
-                      >
-                        {element.name || element.categoryName}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-            {mainGameData.length > 0 ?
-              <>
-               
-
-                <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white">
-                      {activeTab
-                        ? `${cateData?.find(c => c._id === activeTab)?.name || "Category"} Games`
-                        : "All Games"}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => navigate('/allGames')}
-                      className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-lg 
+                    onClick={() => handle(element._id)}
+                  >
+                    {element.name || element.categoryName}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white">
+                  {activeTab
+                    ? `${cateData?.find(c => c._id === activeTab)?.name || "Category"} Games`
+                    : "All Games"}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => navigate('/allGames')}
+                  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-lg 
  font-medium text-sm transition-all duration-200 ease-out
  bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
  text-white shadow-lg shadow-fuchsia-500/30
  hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
  active:scale-95 focus-visible:outline-none 
  focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                    >
-                      All Games
-                    </button>
-                    <button
-                      onClick={() => gameSwiperRef.current?.slidePrev()}
-                      disabled={isBeginning}
-                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
-                        ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                        : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white rotate-180`}
-                    >
-                      <FaArrowRight size={16} />
-                    </button>
-                    <button
-                      onClick={() => gameSwiperRef.current?.slideNext()}
-                      disabled={isEnd}
-                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
-                        ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                        : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white`}
-                    >
-                      <FaArrowRight size={16} />
-                    </button>
-                  </div>
-                </div>
+                >
+                  All Games
+                </button>
+                <button
+                  onClick={() => gameSwiperRef.current?.slidePrev()}
+                  disabled={isBeginning}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
+                    ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white rotate-180`}
+                >
+                  <FaArrowRight size={16} />
+                </button>
+                <button
+                  onClick={() => gameSwiperRef.current?.slideNext()}
+                  disabled={isEnd}
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
+                    ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white`}
+                >
+                  <FaArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+            {mainGameData.length > 0 ?
+              <>
+
+
+
 
                 {/* Game Cards */}
                 <Swiper

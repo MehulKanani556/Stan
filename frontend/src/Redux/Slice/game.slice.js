@@ -226,6 +226,18 @@ export const getGameRating = createAsyncThunk(
   }
 );
 
+export const getHomeTopGame = createAsyncThunk(
+  "game/getHomeTopGame",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("/homeTopGame");
+      return res.data || [];
+    } catch (err) {
+      console.error("getHomeTopGame API error:", err);
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
 
 
 
@@ -233,6 +245,7 @@ const gameSlice = createSlice({
   name: "game",
   initialState: {
     games: [],
+    homeTopGame:[],
     popularGames: [],
     topGames: [],
     singleGame: null,
@@ -453,6 +466,20 @@ const gameSlice = createSlice({
         state.singleGameReview = action.payload;
       })
       .addCase(getGameRating.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ********** get home top games **********
+      .addCase(getHomeTopGame.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getHomeTopGame.fulfilled, (state, action) => {
+        state.loading = false;
+        state.homeTopGame = action.payload;
+      })
+      .addCase(getHomeTopGame.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
