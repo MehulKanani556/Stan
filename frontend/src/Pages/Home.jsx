@@ -32,7 +32,7 @@ import MultiHome from '../components/MultiHome';
 import StylishDiv from '../components/StylishDiv';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import { addToCart, addToCartLocal, fetchCart } from '../Redux/Slice/cart.slice';
 import { BiLogoWindows } from 'react-icons/bi';
@@ -580,13 +580,13 @@ export default function Home() {
               <p className="text-sm md:text-base text-gray-300 mb-4 md:mb-6">
                 All of our games, in their most premium editions.
               </p>
-              <button className="bg-gradient-to-r from-purple-400 to-purple-600
+              <NavLink to={"/allGames"} className="bg-gradient-to-r from-purple-400 to-purple-600
                   hover:from-purple-500 hover:to-purple-700 font-semibold
                   text-sm py-1 px-3 sm:text-base sm:py-2 sm:px-4 md:py-2.5 md:px-6
                   rounded-full shadow-md transition-all duration-300
                   hover:scale-105 active:scale-95">
-                Buy Now
-              </button>
+                View More
+              </NavLink>
             </div>
           </section>
         ) : (
