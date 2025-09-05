@@ -73,13 +73,13 @@ const PaymentForm = ({ clientSecret, orderId, amount, onPaymentSuccess, fromCart
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 bg-gray-900 rounded-2xl shadow-lg space-y-5 border border-gray-700"
+      className="sm:px-6 sm:py-6 px-3 py-4  bg-gray-900 rounded-2xl shadow-lg space-y-5 border border-gray-700"
     >
       {/* Card Number */}
       <div className="relative group">
         <FaRegCreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-          <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 px-1">
+          <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 sm:px-1">
             Card Number
           </label>
           <CardNumberElement options={CARD_STYLE} />
@@ -91,7 +91,7 @@ const PaymentForm = ({ clientSecret, orderId, amount, onPaymentSuccess, fromCart
         <div className="relative group flex-1">
           <BsCalendar2Event className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-            <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 px-1">
+            <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 sm:px-1">
               Expiry Date
             </label>
             <CardExpiryElement options={CARD_STYLE} />
@@ -101,7 +101,7 @@ const PaymentForm = ({ clientSecret, orderId, amount, onPaymentSuccess, fromCart
         <div className="relative group flex-1">
           <BiLockAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-            <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 px-1">
+            <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 sm:px-1">
               CVC
             </label>
             <CardCvcElement options={CARD_STYLE} />

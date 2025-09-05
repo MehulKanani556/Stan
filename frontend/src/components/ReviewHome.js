@@ -124,7 +124,8 @@ export default function ReviewHomeSlick() {
                   </div>
 
                   <p className="text-gray-300 text-[15px] leading-relaxed mt-2 text-center">
-                    {r?.review}
+                    {r?.review?.split(" ").slice(0, 5).join(" ")}
+                    {r?.review?.split(" ").length > 5 && " ..."}
                   </p>
                 </div>
               </motion.div>

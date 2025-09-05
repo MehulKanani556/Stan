@@ -94,24 +94,30 @@ const SingleGame = () => {
     });
   };
 
-  const NextArrow = ({ onClick }) => (
-    <div
-      onClick={onClick}
-      className="absolute top-1/2 right-4 z-10 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white ms:p-3 p-2 rounded-full cursor-pointer transition"
-    >
-      <FaChevronRight size={20} />
-    </div>
-  );
-
-  const PrevArrow = ({ onClick }) => (
-    <div
-      onClick={onClick}
-      className="absolute top-1/2 left-4 z-10 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white ms:p-3 p-2 rounded-full cursor-pointer transition"
-    >
-      <FaChevronLeft size={20} />
-    </div>
-  );
-
+  const NextArrow = (props) => {
+    const { onClick } = props;
+    return (
+      <div
+        onClick={onClick}
+        className="absolute top-1/2 right-4 z-10 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full cursor-pointer transition"
+      >
+        <FaChevronRight size={20} />
+      </div>
+    );
+  };
+  
+  const PrevArrow = (props) => {
+    const { onClick } = props;
+    return (
+      <div
+        onClick={onClick}
+        className="absolute top-1/2 left-4 z-10 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full cursor-pointer transition"
+      >
+        <FaChevronLeft size={20} />
+      </div>
+    );
+  };
+  
   const ThumbNextArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -132,15 +138,13 @@ const SingleGame = () => {
 
   const mainSettings = {
     asNavFor: nav2,
-    ref: (slider) => (sliderRef1 = slider),
     beforeChange: handleSlideChange,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
   };
-
+  
   const thumbSettings = {
     asNavFor: nav1,
-    ref: (slider) => (sliderRef2 = slider),
     slidesToShow,
     swipeToSlide: true,
     focusOnSelect: true,
@@ -148,53 +152,13 @@ const SingleGame = () => {
     nextArrow: <ThumbNextArrow />,
     prevArrow: <ThumbPrevArrow />,
     responsive: [
-      {
-        breakpoint: 1650, // <= 1650px
-        settings: {
-          slidesToShow: 4,
-        },
-      },
-      {
-        breakpoint: 1280, // <= 1280px
-        settings: {
-          slidesToShow: 4,
-        },
-      },
-      {
-        breakpoint: 768, // <= 768px
-        settings: {
-          slidesToShow: 4,
-          centerMode: false,
-        },
-      },
-      {
-        breakpoint: 576, // <= 768px
-        settings: {
-          slidesToShow: 3,
-          centerMode: false,
-        },
-      },
-      {
-        breakpoint: 426, // <= 480px
-        settings: {
-          slidesToShow: 3,
-          centerMode: false,
-        },
-      },
-      {
-        breakpoint: 376, // <= 480px
-        settings: {
-          slidesToShow: 3,
-          centerMode: false,
-        },
-      },
-      {
-        breakpoint: 321, // <= 480px
-        settings: {
-          slidesToShow: 2,
-          centerMode: false,
-        },
-      },
+      { breakpoint: 1650, settings: { slidesToShow: 4 } },
+      { breakpoint: 1280, settings: { slidesToShow: 4 } },
+      { breakpoint: 768,  settings: { slidesToShow: 4, centerMode: false } },
+      { breakpoint: 576,  settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 426,  settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 376,  settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 321,  settings: { slidesToShow: 2, centerMode: false } },
     ],
   };
 
@@ -303,6 +267,15 @@ const SingleGame = () => {
     return <SingleGameSkeleton />;
   }
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
+  };
+
   return (
     <div className=''>
       <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
@@ -313,33 +286,33 @@ const SingleGame = () => {
         <div className="flex flex-col-reverse xl:flex-row lg:mt-11">
           <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 w-full xl:mt-0 mt-5'>
             <div>
-              <Slider {...mainSettings} className='ds_single_slider'>
-                {single?.video?.url ? (
-                  <div>
-                    <video
-                      src={single.video.url}
-                      autoPlay
-                      muted
-                      loop
-                      controls
-                      className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
-                    />
-                  </div>
-                ) : ""}
-
-                {single?.images?.map((element) => (
-                  <div key={element._id}>
-                    <img
-                      src={element.url}
-                      alt=""
-                      className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg"
-                    />
-                  </div>
-                ))}
-              </Slider>
+               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
+                  {single?.video?.url && (
+                    <div>
+                      <video
+                        src={single.video.url}
+                        autoPlay
+                        muted
+                        loop
+                        controls
+                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
+                      />
+                    </div>
+                  )}
+                
+                  {single?.images?.map((element) => (
+                    <div key={element._id}>
+                      <img
+                        src={element.url}
+                        alt=""
+                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg"
+                      />
+                    </div>
+                  ))}
+               </Slider>
 
               <div className='px-5'>
-                <Slider {...thumbSettings} className='mt-3 ds_mini_slider' >
+                <Slider {...thumbSettings} ref={setNav2} className='mt-3 ds_mini_slider' >
 
                   {single?.video?.url ? (
                     <div className="flex justify-center  relative w-full">
@@ -514,14 +487,10 @@ const SingleGame = () => {
                 {isBuyed ? (
                   <>
                     <button
-                      onClick={() => {
-                        // Add your download logic here
-                        console.log("Starting download...");
-                        // You can trigger a function to handle the file download
-                      }}
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
+                      className="w-full bg-gradient-to-r cursor-not-allowed from-emerald-600 to-green-600 active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
                     >
-                      Download Now
+                      <span className="text-white font-bold text-sm me-2">✓</span>
+                       Purchased
                     </button>
                     <button
                       onClick={() => setOpen(true)}
@@ -585,7 +554,7 @@ const SingleGame = () => {
                     <svg className="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                   </summary>
                   <div className="pb-5 px-4 md:px-5">
-                    <div className="flex mt-2">
+                    <div className="flex">
                       {console.log(fullStars, emptyStars)}
                       {Array.from({ length: fullStars }).map((_, i) => (
                         <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
@@ -596,7 +565,7 @@ const SingleGame = () => {
                       ))}
                       <span className="ml-2 text-white font-medium">{ratings.averageRating?.toFixed(1)}</span>
                     </div>
-                      {gameRating && <div className='mt-2'>
+                      {gameRating && <div className='mt-4'>
                          {gameRating?.map((element)=>{
                              let FullStar = Math.floor(element?.rating);
                              let HasHalfStar = element?.rating % 1 >= 0.5;
@@ -604,7 +573,7 @@ const SingleGame = () => {
                             return(
                               <div className='mt-2' key={element?._id}>
                                  <div className='flex items-center'>
-                                     <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] rounded-full' alt="" />
+                                     <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] object-cover rounded-full' alt="" />
                                      <div className='ms-3'>
                                        <div>{decryptData(element?.user?.name)}</div>
                                        <div className='flex items-center'>
