@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllGames } from "../Redux/Slice/game.slice";
 import { Link } from "react-router-dom";
-// import "./style.css";
+
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -11,6 +11,7 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
 import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
+import HomesliderSkeleton from '../lazyLoader/HomesliderSkeleton';
 const slides = [
     {
         img: "https://u.cubeupload.com/Leo21/eagel1.jpg",
@@ -70,262 +71,218 @@ const slides = [
 ];
 
 export default function HomeSlider() {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(getAllGames());
     }, [dispatch]);
 
-    const games = useSelector((state) => state.game.games)?.slice(0, 7) || [];
-    const listRef = useRef(null);
-    const carouselRef = useRef(null);
-    const timeRunning = 3000;
-    const timeAutoNext = 3000;
-    const runTimeOut = useRef(null);
-    const runNextAuto = useRef(null);
-    const timeBarRef = useRef(null);
+    const games = useSelector((state) => state.game.games) || [];
 
-    // Function to get image URL with fallback
+    
+    const leftGames = games.filter((_, index) => index % 2 === 0);
+    const rightGames = games.filter((_, index) => index % 2 === 1);
+
+    const [leftIndex, setLeftIndex] = useState(0);
+    const [rightIndex, setRightIndex] = useState(0);
+    const [centerGame, setCenterGame] = useState(null);
+    const [centerSource, setCenterSource] = useState('left'); 
+    const rightLockTimeoutRef = useRef(null);
+
+    const leftItemRefs = useRef([]);
+    const rightItemRefs = useRef([]);
+
+    const leftIntervalRef = useRef(null);
+    const rightIntervalRef = useRef(null);
+
     const getImageUrl = (slide) => {
-        // Check if slide has cover_image url
-        if (slide?.cover_image?.url) {
-            return slide.cover_image.url;
-        }
-        // Fallback to default image if no cover_image
+        if (slide?.cover_image?.url) return slide.cover_image.url;
         return "https://via.placeholder.com/800x600/333333/ffffff?text=No+Image";
     };
 
-    const resetTimeAnimation = () => {
-        if (timeBarRef.current) {
-            timeBarRef.current.style.animation = "none";
-            void timeBarRef.current.offsetHeight;
-            timeBarRef.current.style.animation = null;
-            timeBarRef.current.style.animation = "runningTime 7s linear 1 forwards";
-        }
-    };
-
-    const showSlider = (type) => {
-        const list = listRef.current;
-        const carousel = carouselRef.current;
-        if (!list || !carousel) return;
-
-        const items = list.querySelectorAll(".item");
-
-        // Check if items exist and have length
-        if (!items || items.length === 0) return;
-
-        if (type === "next") {
-            // Check if first item exists before trying to append it
-            if (items[0]) {
-                list.appendChild(items[0]);
-                carousel.classList.add("next");
-            }
-        } else {
-            // Check if last item exists before trying to prepend it
-            if (items[items.length - 1]) {
-                list.prepend(items[items.length - 1]);
-                carousel.classList.add("prev");
-            }
-        }
-
-        clearTimeout(runTimeOut.current);
-        runTimeOut.current = setTimeout(() => {
-            carousel.classList.remove("next");
-            carousel.classList.remove("prev");
-        }, timeRunning);
-
-        clearTimeout(runNextAuto.current);
-        runNextAuto.current = setTimeout(() => {
-            showSlider("next");
-        }, timeAutoNext);
-
-        resetTimeAnimation();
-    };
-
+    
     useEffect(() => {
-        // Only start auto-slide if games are loaded
-        if (games && games.length > 0) {
-            runNextAuto.current = setTimeout(() => {
-                showSlider("next");
-            }, timeAutoNext);
-            resetTimeAnimation();
+        if (leftGames.length > 0) {
+            leftIntervalRef.current && clearInterval(leftIntervalRef.current);
+            leftIntervalRef.current = setInterval(() => {
+                setLeftIndex((prev) => (prev + 1) % leftGames.length);
+            }, 5000);
+        }
+        if (rightGames.length > 0) {
+            rightIntervalRef.current && clearInterval(rightIntervalRef.current);
+            rightIntervalRef.current = setInterval(() => {
+                setRightIndex((prev) => (prev + 1) % rightGames.length);
+            }, 5000);
         }
 
         return () => {
-            clearTimeout(runNextAuto.current);
-            clearTimeout(runTimeOut.current);
+            clearInterval(leftIntervalRef.current);
+            clearInterval(rightIntervalRef.current);
         };
-    }, [games]);
+    }, [leftGames.length, rightGames.length]);
 
-    // Don't render carousel until games are loaded
+    
+    useEffect(() => {
+        if (leftGames.length > 0 && centerSource !== 'right') {
+            setCenterGame(leftGames[leftIndex]);
+        }
+    }, [leftIndex, leftGames, centerSource]);
+
+    
+    useEffect(() => {
+        const el = leftItemRefs.current[leftIndex];
+        if (el && el.scrollIntoView) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, [leftIndex]);
+
+    useEffect(() => {
+        const el = rightItemRefs.current[rightIndex];
+        if (el && el.scrollIntoView) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, [rightIndex]);
+
     if (!games || games.length === 0) {
-        return <div>Loading...</div>;
+        return <HomesliderSkeleton />;
     }
+
+    const activeCenterGame = centerGame || leftGames[leftIndex] || games[0];
+    const activeCenterImage = getImageUrl(activeCenterGame);
 
     return (
         <div className="sp_slider">
-            <div className="carousel w-full h-[500px]  md:h-[500px] lg:h-[500px] xl:h-[700px]" ref={carouselRef}>
-                <div className="list hidden md:flex" ref={listRef}>
-                    {games.map((slide, i) => {
-                        const imageUrl = getImageUrl(slide);
-                        console.log('img', i, imageUrl);
+          
+            <div className="hidden md:grid grid-cols-12 gap-4 w-full min-h-[500px] lg:min-h-[500px] xl:min-h-[700px]">
+                {/* Left slider */}
+                <div className="col-span-12 md:col-span-3 xl:col-span-2">
+                    <div className="h-[500px] xl:h-[700px] overflow-hidden ">
+                        <div className="h-full overflow-y-auto no-scrollbar py-3 space-y-3 px-3">
+                            {leftGames.map((game, index) => {
+                                const img = getImageUrl(game);
+                                const isActive = index === leftIndex;
+                                return (
+                                    <button
+                                        key={game._id || index}
+                                        ref={(el) => (leftItemRefs.current[index] = el)}
+                                        onClick={() => {
+                                            setLeftIndex(index);
+                                            setCenterGame(leftGames[index]);
+                                            setCenterSource('left');
+                                            if (rightLockTimeoutRef.current) {
+                                                clearTimeout(rightLockTimeoutRef.current);
+                                            }
+                                        }}
+                                        className={`block w-full rounded-md overflow-hidden bg-black/40 transition-transform ${isActive && centerSource === 'left' ? 'ring-2 ring-white' : 'hover:scale-[1.01]'}`}
+                                        aria-current={isActive ? 'true' : 'false'}
+                                    >
+                                        <div className="w-full h-24 md:h-28 xl:h-32 flex items-center justify-center">
+                                            <img src={img} alt={game.title || 'Game'} className="w-full h-full object-cover rounded" />
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
 
-                        return (
-                            <div
-                                className="item overflow-hidden"
-                                style={{
-                                    backgroundImage: `url("${imageUrl}")`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat',
-                                    minHeight: '10px'
-                                }}
-                                key={slide.id || i}
-                            >
-                                <div className="image-overlay" style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    zIndex: 1
-                                }}></div>
-                                <div className="blob lg:w-[50%] md:w-[60%] w-full h-[600px] absolute bottom-0 right-0 bg-[#141414]/70 z-[2] bg-[0,0,0,0.1] ms-0 lg:px-14 px-10" >
-                                    <div className="content w-[80%] m-auto  w-full z-10  md:h-full h-full flex flex-col lg:justify-center 3xl:px-16 xl:px-8 px-4 sp_font py-10" style={{ position: 'relative', zIndex: 2 }}>
-                                        <div className="name xl:text-[50px] md:text-[28px] text-[24px] z-10">{slide.title || slide.name || 'Untitled'}</div>
-                                        <div className="des xl:text-base md:text-sm  text-xs text-[#ccc]">{slide.description?.slice(0, 100) + '...' || 'No description available'}</div>
-                                        <Link to={'/single/' + slide._id} className='flex justify-center mt-5'>
-                                            <button className='btn xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
-                                                Learn More
-                                            </button>
-                                        </Link>
-                                    </div>
-                                </div>
-
-
-
-                                <img
-                                    className=""
-                                    src={imageUrl}
-                                    alt={slide.title || slide.name || 'Game image'}
-                                    style={{ display: 'none' }}
-                                    onError={() => console.warn('Image failed to load:', imageUrl)}
-                                    onLoad={() => console.log('Image loaded successfully:', imageUrl)}
-                                />
+                {/* Center hero  */}
+                <div className="col-span-12 md:col-span-6 xl:col-span-8">
+                    <div className="relative h-[500px] xl:h-[700px] rounded-lg overflow-hidden border border-white/10">
+                        <img src={activeCenterImage} alt={activeCenterGame?.title || 'Game'} className="absolute inset-0 w-full h-full object-cover " />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                        <div className="relative z-[1] h-full flex items-end p-6 md:p-8 lg:p-10">
+                            <div className="max-w-2xl">
+                                <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-semibold mb-2">{activeCenterGame?.title || 'Untitled'}</h2>
+                                <p className="text-white/80 text-sm md:text-base lg:text-lg line-clamp-3 mb-4">{(activeCenterGame?.description || 'No description available').slice(0, 180)}{activeCenterGame?.description && activeCenterGame.description.length > 180 ? '…' : ''}</p>
+                                <Link to={'/single/' + (activeCenterGame?._id || '')}>
+                                    <button className='xl:text-base md:text-sm text-xs p-2 md:px-8 px-4 bg-white text-black rounded border hover:bg-transparent hover:text-white'>
+                                        Learn More
+                                    </button>
+                                </Link>
                             </div>
-                        );
-                    })}
-                </div>
-                <div className="relative w-full sp_slider_dot md:hidden">
-                    <Swiper
-                        modules={[EffectFade, Pagination, Autoplay]}
-                        effect="fade"
-                        speed={1200}
-                        slidesPerView={1}
-                        pagination={{
-                            clickable: true,
-                            renderBullet: (index, className) => {
-                                return `<span class="${className} custom-bullet"></span>`;
-                            },
-                        }}
-                        autoplay={{ delay: 5000 }}
-                        loop={true}
-                        className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
-                    >
-                        {games && games.length > 0 ? (
-                            games.slice(0, 5).map((game, index) => (
-                                <SwiperSlide key={index}>
-                                    <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
-                                        <div className='blob md:w-[60%] w-full h-[600px]' >
-                                            <img
-                                                src={game?.cover_image?.url}
-                                                alt={game.title || `Game ${index + 1}`}
-                                                className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
-                                            />
-                                            {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
-
-                                        </div>
-
-                                        <div className='md:w-[40%] w-full  md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font  '>
-                                            <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
-                                            <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
-                                                {game.description.slice(0, 200) + '...'}
-                                            </p>
-                                            <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
-                                                <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
-                                                    Learn More
-                                                </button>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))
-                        ) : (
-                            <p className="text-center text-white py-10">No games available</p>
-                        )}
-                    </Swiper>
-                </div>
-                <div className="arrows hidden">
-                    <button className="prev hidden md:block" onClick={() => showSlider("prev")}>&lt;</button>
-                    <button className="next hidden  md:block" onClick={() => showSlider("next")}>&gt;</button>
-                </div>
-
-
-                {/* old slider */}
-                {/* <div className="relative w-full sp_slider_dot ">
-          <Swiper
-            modules={[EffectFade, Pagination, Autoplay]}
-            effect="fade"
-            speed={1200}
-            slidesPerView={1}
-            pagination={{
-              clickable: true,
-              renderBullet: (index, className) => {
-                return `<span class="${className} custom-bullet"></span>`;
-              },
-            }}
-            autoplay={{ delay: 5000 }}
-            loop={true}
-            className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
-          >
-            {loading ? (
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-                <span className="ml-3 text-white">Loading games...</span>
-              </div>
-            ) : games && games.length > 0 ? (
-              games.slice(0, 5).map((game, index) => (
-                <SwiperSlide key={index}>
-                  <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
-                    <div className='blob md:w-[60%] w-full h-[600px]' >
-                      <img
-                        src={game?.cover_image?.url || game1}
-                        alt={game.title || `Game ${index + 1}`}
-                        className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
-                      />
-
+                        </div>
                     </div>
+                </div>
 
-                    <div className='md:w-[40%] w-full  md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font  '>
-                      <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
-                      <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
-                        {game.description.slice(0, 200) + '...'}
-                      </p>
-                      <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
-                        <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
-                          Learn More
-                        </button>
-                      </Link>
+                {/* Right slider */}
+                <div className="col-span-12 md:col-span-3 xl:col-span-2">
+                    <div className="h-[500px] xl:h-[700px] overflow-hidden ">
+                        <div className="h-full overflow-y-auto no-scrollbar py-3 space-y-3 px-3">
+                            {rightGames.map((game, index) => {
+                                const img = getImageUrl(game);
+                                const isActive = index === rightIndex;
+                                return (
+                                    <button
+                                        key={game._id || index}
+                                        ref={(el) => (rightItemRefs.current[index] = el)}
+                                        onClick={() => {
+                                            setRightIndex(index);
+                                            setCenterGame(game);
+                                            setCenterSource('right');
+                                            if (rightLockTimeoutRef.current) {
+                                                clearTimeout(rightLockTimeoutRef.current);
+                                            }
+                                            rightLockTimeoutRef.current = setTimeout(() => {
+                                                setCenterSource('left');
+                                            }, 8000);
+                                        }}
+                                        className={`block w-full rounded-md overflow-hidden bg-black/40 transition-transform ${isActive && centerSource === 'right' ? 'ring-2 ring-white' : 'hover:scale-[1.01]'}`}
+                                        aria-current={isActive ? 'true' : 'false'}
+                                    >
+                                        <div className="w-full h-24 md:h-28 xl:h-32 flex items-center justify-center">
+                                            <img src={img} alt={game.title || 'Game'} className="w-full h-full object-cover rounded" />
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
-                  </div>
-                </SwiperSlide>
-              ))
-            ) : (
-              <p className="text-center text-white py-10">No games available</p>
-            )}
-          </Swiper>
-        </div> */}
-                {/* <div className="timeRunning" ref={timeBarRef}></div> */}
+                </div>
+            </div>
+
+            {/* Mobile*/}
+            <div className="relative w-full sp_slider_dot md:hidden">
+                <Swiper
+                    modules={[EffectFade, Pagination, Autoplay]}
+                    effect="fade"
+                    speed={1200}
+                    slidesPerView={1}
+                    pagination={{
+                        clickable: true,
+                        renderBullet: (index, className) => {
+                            return `<span class="${className} custom-bullet"></span>`;
+                        },
+                    }}
+                    autoplay={{ delay: 5000 }}
+                    loop={true}
+                    className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
+                >
+                    {(games && games.length > 0 ? games : []).slice(0, 6).map((game, index) => (
+                        <SwiperSlide key={index}>
+                            <div className="relative md:flex w-full md:h-[500px] h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
+                                <div className='blob md:w-[60%] w-full h-[600px]'>
+                                    <img
+                                        src={game?.cover_image?.url}
+                                        alt={game.title || `Game ${index + 1}`}
+                                        className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover"
+                                    />
+                                </div>
+                                <div className='md:w-[40%] w-full md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font'>
+                                    <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
+                                    <p className='xl:text-base md:text-sm text-xs text-[#ccc]'>
+                                        {(game.description || '').slice(0, 200)}{game.description && game.description.length > 200 ? '…' : ''}
+                                    </p>
+                                    <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
+                                        <button className='xl:text-base md:text-sm text-xs p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
+                                            Learn More
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
         </div>
     );

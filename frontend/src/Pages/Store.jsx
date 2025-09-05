@@ -170,8 +170,8 @@ const Store = () => {
             onClick={() => navigate('/allGames')}
             className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
            font-medium text-xs sm:text-sm transition-all duration-200 ease-out
-           bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110
-           active:scale-95
+           bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+    text-white shadow-lg shadow-fuchsia-500/30    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110            active:scale-95
            focus-visible:outline-none focus-visible:ring-2 
            focus-visible:ring-indigo-400 focus-visible:ring-offset-2 
            focus-visible:ring-offset-gray-900'
@@ -183,7 +183,7 @@ const Store = () => {
             disabled={isBeginning}
             className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
               ? 'bg-gray-500 cursor-not-allowed opacity-50'
-              : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white rotate-180`}
+              : 'bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]   hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110'} text-white rotate-180`}
           >
             <FaArrowRight size={16} />
           </button>
@@ -192,7 +192,7 @@ const Store = () => {
             disabled={isEnd}
             className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
               ? 'bg-gray-500 cursor-not-allowed opacity-50'
-              : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white`}
+              : 'bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]   hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110'} text-white`}
           >
             <FaArrowRight size={16} />
           </button>
@@ -407,24 +407,24 @@ const Store = () => {
                 </p>
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => navigate('/allGames')}
-                  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-lg 
-    font-medium text-sm transition-all duration-200 ease-out
-    bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-    text-white shadow-lg shadow-fuchsia-500/30
-    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-    active:scale-95 focus-visible:outline-none 
-    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                >
-                  All Games
-                </button>
+              <button
+            onClick={() => navigate('/allGames')}
+            className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
+           font-medium text-xs sm:text-sm transition-all duration-200 ease-out
+           bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+    text-white shadow-lg shadow-fuchsia-500/30    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110            active:scale-95
+           focus-visible:outline-none focus-visible:ring-2 
+           focus-visible:ring-indigo-400 focus-visible:ring-offset-2 
+           focus-visible:ring-offset-gray-900'
+          >
+            All Games
+          </button>
                 <button
                   onClick={() => gameSwiperRef.current?.slidePrev()}
                   disabled={isBeginning}
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
                     ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white rotate-180`}
+                    : ' bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]  hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110'} text-white rotate-180`}
                 >
                   <FaArrowRight size={16} />
                 </button>
@@ -433,7 +433,7 @@ const Store = () => {
                   disabled={isEnd}
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
                     ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'} text-white`}
+                    : 'bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]   hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110'} text-white`}
                 >
                   <FaArrowRight size={16} />
                 </button>
@@ -441,7 +441,7 @@ const Store = () => {
             </div>
 
             {/* Game Cards */}
-          <Swiper
+            <Swiper
               modules={[Navigation]}
               spaceBetween={12}
               slidesPerView={1.1}
@@ -477,8 +477,8 @@ const Store = () => {
                   setIsEnd(swiper.isEnd);
                 }, 100);
               }}
-          >
-            {games && games.length > 0 ? (
+            >
+              {games && games.length > 0 ? (
                 games.slice(0, 8).map((game) => (
                   <SwiperSlide key={game._id}>
                     <LazyGameCard>
@@ -493,8 +493,8 @@ const Store = () => {
 
                           {/* Image Container with Enhanced Effects */}
                           <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
-                    <img
-                      src={game?.cover_image?.url || game1}
+                            <img
+                              src={game?.cover_image?.url || game1}
                               alt={game?.title}
                               className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110 rounded-2xl"
                             />
@@ -613,14 +613,14 @@ const Store = () => {
                             <div className="w-12 h-12 border-2 border-pink-400/30 rounded-full"></div>
                           </div>
                         </div>
-                  </div>
+                      </div>
                     </LazyGameCard>
-                </SwiperSlide>
-              ))
-            ) : (
-              <p className="text-center text-white py-10">Loading...</p>
-            )}
-          </Swiper>
+                  </SwiperSlide>
+                ))
+              ) : (
+                <p className="text-center text-white py-10">Loading...</p>
+              )}
+            </Swiper>
           </div>
         </div>
 

@@ -8,7 +8,7 @@ import { RxCross2 } from "react-icons/rx";
 export default function ChatUserList({ showUserList, setShowUserList }) {
     const { allMessageUsers, allUsers } = useSelector((state) => state.user);
     const { selectedUser, onlineUsers, typingUsers } = useSelector((state) => state.manageState);
-
+console.log('user',allMessageUsers, allUsers);
     const [showUsers, setShowUsers] = useState(false);
     const dispatch = useDispatch();
 
@@ -212,9 +212,9 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                 <div className="flex items-center gap-3">
                                                     {/* Profile photo or initial */}
                                                     <div className="flex-shrink-0 relative">
-                                                        {user.profilePhoto ? (
+                                                        {user.profilePic ? (
                                                             <img
-                                                                src={user.profilePhoto}
+                                                                src={user.profilePic}
                                                                 alt="profile"
                                                                 className="w-12 h-12 rounded-full object-cover"
                                                             />

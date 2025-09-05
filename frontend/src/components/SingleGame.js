@@ -62,10 +62,10 @@ const SingleGame = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getGameById(id));
-    dispatch(fetchWishlist());
-    dispatch(fetchCart());
-  }, [open])
+      dispatch(getGameById(id));
+      dispatch(fetchWishlist());
+      dispatch(fetchCart());
+  }, [open,showPaymentForm])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -221,25 +221,25 @@ const SingleGame = () => {
       console.error("Game data is not available for checkout.");
       return;
     }
-    alert('is called')
+    // alert('is called')
     // 1. Create order (calls backend)
-    // const resultAction = await dispatch(createOrder({
-    //   items: [
-    //     {
-    //       game: single._id,
-    //       name: single.title,
-    //       platform: "windows", // Assuming "windows" as a default platform
-    //       price: Number(single.platforms?.windows?.price || 0),
-    //     }
-    //   ], amount: single.platforms?.windows?.price || 0
-    // }));
-    // if (createOrder.fulfilled.match(resultAction)) {
-    //   const { clientSecret: newClientSecret, order } = resultAction.payload;
-    //   setClientSecret(newClientSecret);
-    //   setCurrentOrderId(order._id);
-    //   setAmountToPay(order.amount);
+    const resultAction = await dispatch(createOrder({
+      items: [
+        {
+          game: single._id,
+          name: single.title,
+          platform: "windows", // Assuming "windows" as a default platform
+          price: Number(single.platforms?.windows?.price || 0),
+        }
+      ], amount: single.platforms?.windows?.price || 0
+    }));
+    if (createOrder.fulfilled.match(resultAction)) {
+      const { clientSecret: newClientSecret, order } = resultAction.payload;
+      setClientSecret(newClientSecret);
+      setCurrentOrderId(order._id);
+      setAmountToPay(order.amount);
 
-    // }
+    }
     setShowPaymentForm(true);
   };
 
@@ -252,8 +252,10 @@ const SingleGame = () => {
   };
   // review modal hadnling
 
-  const { orders, loading: ordersLoading } = useSelector((state) => state?.payment);
-  const isBuyed = orders?.some(order =>
+  const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
+  console.log('orders', orders)
+  const isBuyed = Array.isArray(orders) && orders.some(order =>
+    order.status === 'paid' &&
     order?.items?.some(item => item.game._id === id)
   );
 
@@ -433,7 +435,9 @@ const SingleGame = () => {
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
               </div>
-              <p className="text-xl font-bold text-white mb-6">${single?.platforms?.windows?.price}</p>
+              <div className="flex">
+                <p className="text-xs font-bold text-white mb-6">Price <strong className='text-xl font-bold text-white'>${single?.platforms?.windows?.price}</strong></p>
+              </div>
 
               <div className="">
                 <div className='flex gap-4'>
@@ -648,7 +652,6 @@ const SingleGame = () => {
                 {open && (
                   <ReviewForm open={open} onClose={() => setOpen(false)} game={id} />
                 )}
-
               </div>
             </div>
           </div>

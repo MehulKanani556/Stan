@@ -46,7 +46,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Information We Collect */}
-        <div id="information" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="information" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
             <FaDatabase className="text-purple-400 text-2xl md:text-xl" />
             1. Information We Collect
@@ -83,7 +83,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* How We Use Your Information */}
-        <div id="usage" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="usage" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
             <FaEye className="text-purple-400 text-2xl md:text-xl" />
             2. How We Use Your Information
@@ -120,7 +120,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Information Sharing */}
-        <div id="sharing" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="sharing" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">3. Information Sharing</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
@@ -136,7 +136,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Data Security */}
-        <div id="security" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="security" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
             <FaLock className="text-purple-400 text-xl" />
             4. Data Security
@@ -160,7 +160,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Cookies & Tracking */}
-        <div id="cookies" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="cookies" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">5. Cookies & Tracking Technologies</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
@@ -191,7 +191,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Your Rights */}
-        <div id="rights" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="rights" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
             <FaUser className="text-purple-400 text-xl" />
             6. Your Rights & Choices
@@ -227,7 +227,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Children's Privacy */}
-        <div id="children" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="children" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">7. Children's Privacy</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
@@ -246,7 +246,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Policy Changes */}
-        <div id="changes" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="changes" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
             <FaCog className="text-purple-400 text-2xl md:text-xl" />
             8. Changes to This Policy
@@ -269,7 +269,7 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Contact Us */}
-        <div id="contact" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
+        <div id="contact" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
           <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">9. Contact Us</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
