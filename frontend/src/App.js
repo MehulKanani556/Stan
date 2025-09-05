@@ -33,7 +33,7 @@ import BackgroundColor from './components/BackgroundColor';
 import HomeSlider from './components/HomeSlider.jsx';
 
 // Component to conditionally render Header and Footer
-function AppContent() {
+function App() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register" ;
   const showFooter  = isAuthPage || location.pathname === "/GGTalks" || location.pathname === "/ggtalks";
@@ -90,8 +90,5 @@ function AppContent() {
   );
 }
 
-function App() {
-  return <AppContent />;
-}
 
 export default App;

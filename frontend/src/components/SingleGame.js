@@ -593,7 +593,7 @@ const SingleGame = () => {
                                      </div>
                                  </div>
                                   <p className='mt-2 text-[13px]'>{element?.review}</p>
-                                  <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p>
+                                  {/* <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p> */}
                                   <div className='h-[1px] bg-gray-700 mt-3'></div>
                               </div>  
                             )

@@ -13,64 +13,6 @@ import "swiper/css/effect-fade";
 import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
 import HomesliderSkeleton from '../lazyLoader/HomesliderSkeleton';
 
-// const slides = [
-//     {
-//         img: "https://u.cubeupload.com/Leo21/eagel1.jpg",
-//         name: "EAGLE",
-//         desc: "Eagles are majestic birds of prey known for their incredible strength, sharp vision, and powerful talons"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/owl1.jpg",
-//         name: "OWL",
-//         desc: "Owls are nocturnal birds of prey, shrouded in an aura of mystery and wisdom"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/crow.jpg",
-//         name: "CROW",
-//         desc: "Crows are highly intelligent and adaptable birds known for their glossy black plumage and distinctive calls."
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/butterfly1.jpeg",
-//         name: "BUTTERFLY",
-//         desc: "Butterflies, with their vibrant wings and graceful flight, are a symbol of transformation and beauty in the natural world"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/owl2.jpg",
-//         name: "OWL",
-//         desc: "Owls have long been associated with mystery, wisdom, and the supernatural in various cultures"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/eagel3.jpg",
-//         name: "EAGLE",
-//         desc: "Eagles represent freedom, power, and nobility in many cultures"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/kingfirser2.jpeg",
-//         name: "KINGFISHER",
-//         desc: "Kingfishers, with their dazzling plumage, are vibrant jewels of the aquatic world"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/parrot2.jpg",
-//         name: "PARROT",
-//         desc: "Parrots are social creatures, often living in flocks and exhibiting complex communication patterns"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/heron.jpeg",
-//         name: "HERON",
-//         desc: "Herons are known for their striking appearance, often characterized by graceful necks and stilt-like legs"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/butterfly2.jpg",
-//         name: "BUTTERFLY",
-//         desc: "Butterflies, with their delicate wings and vibrant colors, are among the most enchanting creatures in the natural world"
-//     },
-//     {
-//         img: "https://u.cubeupload.com/Leo21/parrot1.jpg",
-//         name: "PARROT",
-//         desc: "Parrots are known for their long lifespans, with some species living for several decades"
-//     }
-// ];
-
 export default function HomeSlider() {
     const dispatch = useDispatch();
 
