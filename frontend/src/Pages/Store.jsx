@@ -392,6 +392,17 @@ const Store = () => {
     </div>
   );
 
+  const isNewGame = (createdAt) => {
+    if (!createdAt) return false;
+  
+    const createdDate = new Date(createdAt);  
+    const now = new Date();                    
+  
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+  
+    return createdDate >= oneMonthAgo && createdDate <= now;
+  };
 
   return (
     <>
@@ -503,11 +514,13 @@ const Store = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
 
                               {/* Top Badge */}
-                              <div className="absolute top-4 left-4">
-                                <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
-                                  <span className="text-xs font-bold text-white tracking-wider">NEW</span>
+                              {isNewGame(game?.createdAt) && (
+                                <div className="absolute top-4 left-4">
+                                  <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                                    <span className="text-xs font-bold text-white tracking-wider">NEW</span>
+                                  </div>
                                 </div>
-                              </div>
+                              )}
 
                               {/* Wishlist Button */}
                               <button
