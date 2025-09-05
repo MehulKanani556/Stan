@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaArrowUp, FaPaperPlane } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../Utils/axiosInstance";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,6 +42,11 @@ const ChatWidget = () => {
     },
   ]);
   const scrollRef = useRef(null);
+  const myManage = useLocation()
+
+  console.log("NNNNNNNNNNNNN", myManage);
+
+
 
   // Auto scroll
   useEffect(() => {
@@ -217,7 +222,7 @@ const ChatWidget = () => {
   return (
     <div>
       {/* Floating button */}
-      {!isContactModalOpen && (
+      {(!isContactModalOpen && myManage?.pathname !== "/login") && (
         <button
           onClick={() => setIsContactModalOpen(true)}
           className="fixed md:bottom-6 right-6 bottom-16 z-50 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"

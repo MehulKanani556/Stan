@@ -189,6 +189,12 @@ body {
 } 
 
 
+/* ****************** Review Slider ************* */
+.ds_review_slider .slick-slide div{
+    width: 100%;
+}
+
+
 
 /* chat */
 /* Responsive Chat Application Styles */

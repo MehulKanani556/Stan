@@ -13,7 +13,7 @@ import game4 from '../images/game_img5.jpeg'
 import gtav from '../images/gtalogo.avif'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { createWishlist, getGameById } from '../Redux/Slice/game.slice'
+import { createWishlist, getGameById, getGameRating } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go";
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
@@ -22,6 +22,12 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from './PaymentForm';
 import ReviewForm from './ReviewForm'
+import { MdDateRange } from "react-icons/md";
+import { decryptData } from "../Utils/encryption";
+import { DialogBackdrop } from '@headlessui/react'
+
+
+import SingleGameSkeleton from '../lazyLoader/SingleGameSkeleton'
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
 
@@ -36,6 +42,7 @@ const SingleGame = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
   const single = useSelector((state) => state?.game?.singleGame);
+  const { loading: gameLoading } = useSelector((state) => state?.game);
   const cartItems = useSelector((state) => state.cart.cart);
   const { wishlistStatus } = useSelector((state) => state.wishlist);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
@@ -43,8 +50,11 @@ const SingleGame = () => {
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [amountToPay, setAmountToPay] = useState(0);
   const [hasPaid, setHasPaid] = useState(false);
+  const [open, setOpen] = useState(false)
+  const gameRating = useSelector((state)=> state?.game?.singleGameReview?.data)
 
-  // console.log("HIHIHI" , single);
+  console.log("YYYYYYYYY", gameRating);
+  
 
   useEffect(() => {
     setNav1(sliderRef1);
@@ -55,11 +65,15 @@ const SingleGame = () => {
     dispatch(getGameById(id));
     dispatch(fetchWishlist());
     dispatch(fetchCart());
-  }, [])
+  }, [open])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  useEffect(()=>{
+     dispatch(getGameRating(id))
+  },[])
 
 
   const handleSlideChange = (oldIndex, newIndex) => {
@@ -243,25 +257,26 @@ const SingleGame = () => {
       console.error("Game data is not available for checkout.");
       return;
     }
-
+    alert('is called')
     // 1. Create order (calls backend)
-    const resultAction = await dispatch(createOrder({
-      items: [
-        {
-          game: single._id,
-          name: single.title,
-          platform: "windows", // Assuming "windows" as a default platform
-          price: Number(single.platforms?.windows?.price || 0),
-        }
-      ], amount: single.platforms?.windows?.price || 0
-    }));
-    if (createOrder.fulfilled.match(resultAction)) {
-      const { clientSecret: newClientSecret, order } = resultAction.payload;
-      setClientSecret(newClientSecret);
-      setCurrentOrderId(order._id);
-      setAmountToPay(order.amount);
-      setShowPaymentForm(true);
-    }
+    // const resultAction = await dispatch(createOrder({
+    //   items: [
+    //     {
+    //       game: single._id,
+    //       name: single.title,
+    //       platform: "windows", // Assuming "windows" as a default platform
+    //       price: Number(single.platforms?.windows?.price || 0),
+    //     }
+    //   ], amount: single.platforms?.windows?.price || 0
+    // }));
+    // if (createOrder.fulfilled.match(resultAction)) {
+    //   const { clientSecret: newClientSecret, order } = resultAction.payload;
+    //   setClientSecret(newClientSecret);
+    //   setCurrentOrderId(order._id);
+    //   setAmountToPay(order.amount);
+
+    // }
+    setShowPaymentForm(true);
   };
 
   const handlePaymentSuccess = () => {
@@ -269,13 +284,11 @@ const SingleGame = () => {
     setClientSecret("");
     setCurrentOrderId(null);
     setAmountToPay(0);
-    setHasPaid(true); // 👈 Add this line
+    setHasPaid(true);
   };
   // review modal hadnling
-  const [open, setOpen] = useState(false)
 
-  const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
-  console.log('orders', orders)
+  const { orders, loading: ordersLoading } = useSelector((state) => state?.payment);
   const isBuyed = orders?.some(order =>
     order?.items?.some(item => item.game._id === id)
   );
@@ -284,6 +297,11 @@ const SingleGame = () => {
   useEffect(() => {
     dispatch(allorders());
   }, [dispatch]);
+
+  // Show skeleton while loading
+  if (gameLoading || !single) {
+    return <SingleGameSkeleton />;
+  }
 
   return (
     <div className=''>
@@ -351,7 +369,7 @@ const SingleGame = () => {
                   </h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <div className="bg-black/15 p-6 rounded-lg shadow-lg">
+                    <div className="bg-black/30 p-6 rounded-lg shadow-lg">
                       <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
                       <div className="flex flex-wrap gap-3">
                         {single?.tags?.map((genre, index) => (
@@ -362,7 +380,7 @@ const SingleGame = () => {
                       </div>
                     </div>
 
-                    <div className="bg-black/15 p-6 rounded-lg shadow-lg ">
+                    <div className="bg-black/30 p-6 rounded-lg shadow-lg ">
                       <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Features</h3>
                       <div className="flex flex-wrap gap-3">
                         {['Achievements', 'Co-op', 'Multiplayer', 'Single Player'].map((feature, index) => (
@@ -374,7 +392,7 @@ const SingleGame = () => {
                     </div>
                   </div>
 
-                  <div className="bg-black/15 p-8 rounded-lg shadow-lg mb-8">
+                  <div className="bg-black/30 p-8 rounded-lg shadow-lg mb-8">
                     <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#ab99e1] capitalize">{single?.title}</h3>
                     <p className="mb-4">(also Includes {single?.title} Legacy)</p>
                     <p className="text-gray-300 text-sm md:text-base">
@@ -438,7 +456,7 @@ const SingleGame = () => {
 
           {/* right side copntent */}
           <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
-            <div className="p-6 sticky top-24 bg-black/15 ">
+            <div className="p-6 sticky top-24 bg-black/30 ">
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
               </div>
@@ -523,30 +541,32 @@ const SingleGame = () => {
               </div>
 
               {showPaymentForm && clientSecret && currentOrderId && (
-                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                  <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
-                    <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
-                    <Elements stripe={stripePromise} options={{ clientSecret }}>
-                      <PaymentForm
-                        clientSecret={clientSecret}
-                        orderId={currentOrderId}
-                        amount={amountToPay}
-                        onPaymentSuccess={handlePaymentSuccess}
-                        fromCartPage={false}
-                      />
-                    </Elements>
-                    <button
-                      onClick={() => setShowPaymentForm(false)}
-                      className="mt-4 text-gray-400 hover:text-white"
-                    >
-                      Cancel
-                    </button>
+                  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <DialogBackdrop className="fixed inset-0 bg-gray-900/50" />
+                      <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
+                      <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <PaymentForm
+                          clientSecret={clientSecret}
+                          orderId={currentOrderId}
+                          amount={amountToPay}
+                          onPaymentSuccess={handlePaymentSuccess}
+                          fromCartPage={false}
+                        />
+                      </Elements>
+                      <button
+                        onClick={() => setShowPaymentForm(false)}
+                        className="mt-4 text-gray-400 hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                </div>
+
               )}
 
               {/* Accordion */}
-              <div className="divide-y divide-gray-700/60 rounded-xl overflow-hidden bg-black/10">
+              <div className="divide-y divide-gray-700/60 rounded-xl overflow-hidden bg-black/30">
                 <details className="group open:shadow-lg open:bg-black/20 transition-all">
                   <summary className="flex items-center justify-between cursor-pointer py-4 px-4 md:px-5 text-white">
                     <span className="text-lg font-semibold">Platform</span>
@@ -566,7 +586,7 @@ const SingleGame = () => {
                   </summary>
                   <div className="pb-5 px-4 md:px-5">
                     <div className="flex mt-2">
-                      {console.log(fullStars ,emptyStars)}
+                      {console.log(fullStars, emptyStars)}
                       {Array.from({ length: fullStars }).map((_, i) => (
                         <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
                       ))}
@@ -576,7 +596,38 @@ const SingleGame = () => {
                       ))}
                       <span className="ml-2 text-white font-medium">{ratings.averageRating?.toFixed(1)}</span>
                     </div>
+                      {gameRating && <div className='mt-2'>
+                         {gameRating?.map((element)=>{
+                             let FullStar = Math.floor(element?.rating);
+                             let HasHalfStar = element?.rating % 1 >= 0.5;
+                             let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+                            return(
+                              <div className='mt-2' key={element?._id}>
+                                 <div className='flex items-center'>
+                                     <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] rounded-full' alt="" />
+                                     <div className='ms-3'>
+                                       <div>{decryptData(element?.user?.name)}</div>
+                                       <div className='flex items-center'>
+                                          {Array.from({ length: FullStar }).map((_, i) => (
+                                                 <FaStar key={`full-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                           ))}
+                                           {HasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />}
+                                           {Array.from({ length: EmptyStars }).map((_, i) => (
+                                             <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                           ))}
+                                           <span className="ms-2 text-white text-[14px]">{ratings.averageRating?.toFixed(1)}</span>
+                                       </div>
+                                     </div>
+                                 </div>
+                                  <p className='mt-2 text-[13px]'>{element?.review}</p>
+                                  <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p>
+                                  <div className='h-[1px] bg-gray-700 mt-3'></div>
+                              </div>  
+                            )
+                         })}
+                      </div>}
                   </div>
+                  
                 </details>
 
                 <details className="group open:shadow-lg open:bg-black/20 transition-all">

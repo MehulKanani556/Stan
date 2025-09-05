@@ -33,7 +33,7 @@ export default function ReviewHomeSlick() {
   useEffect(() => {
     const updateSlides = () => {
       if (window.innerWidth >= 1280) setSlidesToShow(3);
-      else if (window.innerWidth >= 1024) setSlidesToShow(2);
+      else if (window.innerWidth >= 1024) setSlidesToShow(3);
       else setSlidesToShow(1);
     };
     updateSlides();
@@ -52,6 +52,32 @@ export default function ReviewHomeSlick() {
     arrows: false,
     dots: false,
     slidesToShow, // controlled by state + useEffect
+    responsive: [
+      {
+        breakpoint: 1536, // ≥1536px (2XL screens)
+        settings: { slidesToShow: 3 }
+      },
+      {
+        breakpoint: 1280, // ≥1280px (XL screens)
+        settings: { slidesToShow: 3 }
+      },
+      {
+        breakpoint: 1024, // ≥1024px (LG screens)
+        settings: { slidesToShow: 3 }
+      },
+      {
+        breakpoint: 768, // ≥768px (MD screens)
+        settings: { slidesToShow: 1 }
+      },
+      {
+        breakpoint: 640, // ≥640px (SM screens)
+        settings: { slidesToShow: 1 }
+      },
+      {
+        breakpoint: 480, // extra small phones
+        settings: { slidesToShow: 1 }
+      }
+    ]
   };
 
   return (
@@ -61,7 +87,7 @@ export default function ReviewHomeSlick() {
       </h2>
 
       <div className="mx-auto w-[94%] md:w-[86%]">
-        <Slider {...settings}>
+        <Slider {...settings} className="ds_review_slider">
           {revieData?.map((r) => (
             <div key={r?._id} className="px-2 sm:px-3">
               <motion.div
@@ -76,13 +102,13 @@ export default function ReviewHomeSlick() {
 
                   <div className="flex flex-col items-center">
                     <motion.img
-                      // src={r?.avatar}
+                      src={r?.user?.profilePic}
                       // alt={r?.name}
                       className="w-[96px] h-[96px] rounded-full object-cover border-2 border-[#902F7E] shadow-[0_8px_24px_rgba(144,47,126,0.35)]"
                     />
                     <div className="text-center mt-3">
                       <p className="font-semibold text-white text-lg">{decryptData(r?.user?.name)}</p>
-                      <p className="text-sm text-gray-400">""</p>
+                      <p className="text-sm text-gray-400">{r?.game?.title || ""}</p>
                     </div>
                   </div>
 

@@ -71,6 +71,32 @@ export const createOrUpdateRating = async (req, res, next) => {
     }
 };
 
+export const getAllRatingByGame = async (req, res) => {
+    try {
+      const { gameId } = req.params; // assuming the gameId comes from route params
+      const { sort = "createdAt", order = "desc" } = req.query;
+  
+      // build sorting object dynamically
+      const sortOptions = { [sort]: order === "asc" ? 1 : -1 };
+  
+      // fetch ratings for the given game
+      const ratings = await Rating.find({ game: gameId })
+        .populate("user","name profilePic ")// optional: populate user fields
+        .sort(sortOptions);
+  
+      res.status(200).json({
+        success: true,
+        count: ratings.length,
+        data: ratings,
+      });
+    } catch (error) {
+      console.error("Error fetching ratings:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error while fetching ratings",
+      });
+    }
+  };
 // Get all ratings for a specific game
 // export const getGameRatings = async (req, res, next) => {
 //     try {
@@ -373,7 +399,7 @@ export const getAllRatings = async (req, res, next) => {
 
         // Fetch all ratings that match the filter and sort criteria
         const allRatings = await Rating.find(filter)
-            .populate("user", "name username email")
+            .populate("user","name profilePic ")
             .populate("game", "title cover_image")
             .sort(sortObj);
 

@@ -212,6 +212,21 @@ export const getReviewData = createAsyncThunk(
 );
 
 
+// ********** Single Game Review Data ***********
+export const getGameRating = createAsyncThunk(
+  "game/getGameRating",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(`/gamerating/${id}`);
+      return res.data || [];
+    } catch (err) {
+      console.error("getGameRating API error:", err);
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+
 
 
 const gameSlice = createSlice({
@@ -234,7 +249,8 @@ const gameSlice = createSlice({
     trailer: [],
     wishData: [],
     myToggle:true,
-    reviewData:[]
+    reviewData:[],
+    singleGameReview:{}
   },
   reducers: {
     clearGameError: (state) => {
@@ -423,6 +439,20 @@ const gameSlice = createSlice({
         state.reviewData = action.payload;
       })
       .addCase(getReviewData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ********* Review Data ******
+      .addCase(getGameRating.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getGameRating.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleGameReview = action.payload;
+      })
+      .addCase(getGameRating.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
