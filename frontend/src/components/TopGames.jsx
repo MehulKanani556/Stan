@@ -137,10 +137,10 @@ function TopGames() {
   const freeGameLoading = useSelector((state) => state.freeGame.topGamesInitialLoading);
 
   useEffect(() => {
-    console.log('TopGames: Dispatching API calls...');
+    // console.log('TopGames: Dispatching API calls...');
     // dispatch(getAllActiveGames())
     dispatch(getFreeGames())
-  }, [])
+  }, [dispatch])
 
   // Array of all available game images
   const gameImages = [
@@ -156,23 +156,23 @@ function TopGames() {
   useEffect(() => {
     // Don't initialize sections while loading
     if (gameLoading || freeGameLoading) {
-      console.log('TopGames: Skipping section initialization - still loading...');
+      // console.log('TopGames: Skipping section initialization - still loading...');
       return;
     }
 
     const initializeSections = () => {
-      console.log('TopGames: Initializing sections with data:', { game: game.length, freeGame: freeGame.length });
+      // console.log('TopGames: Initializing sections with data:', { game: game.length, freeGame: freeGame.length });
       const newGames = [...game] // clone the array first
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 10);
       if (game.length < 5 || freeGame.length < 5 || newGames.length < 5) {
         var minLength = Math.min(game.length, freeGame.length, newGames.length)
         setLength(minLength);
-        console.log('TopGames: Setting length to:', minLength);
+        // console.log('TopGames: Setting length to:', minLength);
       }
       else {
         setLength(5);
-        console.log('TopGames: Setting length to: 5');
+        // console.log('TopGames: Setting length to: 5');
       }
       const newSections = [
         {
@@ -192,7 +192,7 @@ function TopGames() {
         },
       ];
       setSections(newSections);
-      console.log('TopGames: Sections initialized:', newSections.length);
+      // console.log('TopGames: Sections initialized:', newSections.length);
 
     };
 
@@ -201,13 +201,13 @@ function TopGames() {
 
   // Show skeleton while loading or if no data is available yet
   if (gameLoading || freeGameLoading || !game || !freeGame || game.length === 0 || freeGame.length === 0) {
-    console.log('TopGames: Showing skeleton - loading or no data:', { gameLoading, freeGameLoading, gameLength: game?.length, freeGameLength: freeGame?.length });
+    // console.log('TopGames: Showing skeleton - loading or no data:', { gameLoading, freeGameLoading, gameLength: game?.length, freeGameLength: freeGame?.length });
     return <TopGamesSkeleton />;
   }
 
   // Check if we have data but sections are still being initialized
   if (sections.length === 0 && (game.length > 0 || freeGame.length > 0)) {
-    console.log('TopGames: Showing skeleton - sections not initialized yet:', { sectionsLength: sections.length, gameLength: game.length, freeGameLength: freeGame.length });
+    // console.log('TopGames: Showing skeleton - sections not initialized yet:', { sectionsLength: sections.length, gameLength: game.length, freeGameLength: freeGame.length });
     return <TopGamesSkeleton />;
   }
 
@@ -217,13 +217,7 @@ function TopGames() {
   // Check if we're in a loading state but have some data
   const isLoadingWithData = (gameLoading || freeGameLoading) && (game.length > 0 || freeGame.length > 0);
 
-  console.log('TopGames: Rendering component with data:', { 
-    sectionsLength: sections.length, 
-    gameLength: game.length, 
-    freeGameLength: freeGame.length,
-    isRefreshing,
-    isLoadingWithData
-  });
+
 
   return (
     <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-16 md:pb-20 relative">

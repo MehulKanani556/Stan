@@ -19,7 +19,7 @@ export default function ReviewHomeSlick() {
   const revieData = useSelector((state)=> state?.game?.reviewData?.result?.ratings)
   const [loader, setLoader] = useState(true)
 
-  console.log("CVCVCVC" , revieData);
+  // console.log("CVCVCVC" , revieData);
   
 
   useEffect(()=>{
@@ -29,10 +29,9 @@ export default function ReviewHomeSlick() {
         if(value?.meta?.requestStatus === "fulfilled"){
            setLoader(false)
         }
-        
       })
     }
-  },[])
+  },[dispatch])
 
   useEffect(() => {
     const updateSlides = () => {

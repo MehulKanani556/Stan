@@ -17,16 +17,17 @@ if (typeof window !== 'undefined') {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <BrowserRouter>
+    <BrowserRouter>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
           <GoogleOAuthProvider clientId="740597259200-767dkgoh1htbm0njb2r6nk9soai53c85.apps.googleusercontent.com">
             <App />
           </GoogleOAuthProvider>
-        </BrowserRouter>
-      </PersistGate>
-    </Provider>
-  </React.StrictMode>
+        </PersistGate>
+      </Provider>
+    </BrowserRouter>
+
+  </React.StrictMode >
 );
 
 // If you want to start measuring performance in your app, pass a function

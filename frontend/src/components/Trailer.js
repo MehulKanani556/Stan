@@ -21,7 +21,7 @@ const Trailer = () => {
           setLoader(false)
        }       
     });
-  }, []);
+  }, [dispatch]);
 
   const handleSlideChange = (swiper) => {
     videoRefs.current.forEach((video, index) => {

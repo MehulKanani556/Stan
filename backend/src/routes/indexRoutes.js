@@ -171,7 +171,7 @@ indexRoutes.put(
 );
 indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
-indexRoutes.get("/chatWidget", chatWidGetController);
+indexRoutes.get("/chatWidget", chatWidGetController); 
 indexRoutes.use('/website', websiteInfoRoutes);
 
 
@@ -193,6 +193,6 @@ indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
 // indexRoutes.put("/ratings/:ratingId", UserAuth, updateRating);
 // indexRoutes.delete("/ratings/:ratingId", UserAuth, deleteRating);
 // indexRoutes.get("/ratings/:gameId/stats", getGameRatingStats);
-indexRoutes.get("/admin/ratings", UserAuth, getAllRatings);
+indexRoutes.get("/admin/ratings",  getAllRatings);
 indexRoutes.get("/gamerating/:gameId",getAllRatingByGame)
 export default indexRoutes
