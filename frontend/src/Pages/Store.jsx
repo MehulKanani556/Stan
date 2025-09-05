@@ -418,18 +418,18 @@ const Store = () => {
                 </p>
               </div>
               <div className="flex gap-2">
-              <button
-            onClick={() => navigate('/allGames')}
-            className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
+                <button
+                  onClick={() => navigate('/allGames')}
+                  className='px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md 
            font-medium text-xs sm:text-sm transition-all duration-200 ease-out
            bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
     text-white shadow-lg shadow-fuchsia-500/30    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110            active:scale-95
            focus-visible:outline-none focus-visible:ring-2 
            focus-visible:ring-indigo-400 focus-visible:ring-offset-2 
            focus-visible:ring-offset-gray-900'
-          >
-            All Games
-          </button>
+                >
+                  All Games
+                </button>
                 <button
                   onClick={() => gameSwiperRef.current?.slidePrev()}
                   disabled={isBeginning}

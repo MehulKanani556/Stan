@@ -171,7 +171,7 @@ indexRoutes.put(
 );
 indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
-indexRoutes.get("/chatWidget", chatWidGetController);
+indexRoutes.get("/chatWidget", chatWidGetController); 
 indexRoutes.use('/website', websiteInfoRoutes);
 
 

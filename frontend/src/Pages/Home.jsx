@@ -309,8 +309,8 @@ export default function Home() {
       )}
 
       <section className="relative">
-    
-       <HomeSlider/>
+
+        <HomeSlider />
 
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
           <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
