@@ -9,14 +9,13 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { configureStore } from './Redux/Store';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 const { store, persistor } = configureStore();
-// Expose persistor for places that reference window.persistor
 if (typeof window !== 'undefined') {
   window.persistor = persistor;
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <>
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
@@ -26,11 +25,7 @@ root.render(
         </PersistGate>
       </Provider>
     </BrowserRouter>
-
-  </React.StrictMode >
+  </>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
