@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllGames } from "../Redux/Slice/game.slice";
 import { Link } from "react-router-dom";
-
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -10,7 +10,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { EffectFade, Pagination, Autoplay } from 'swiper/modules';
 import HomesliderSkeleton from '../lazyLoader/HomesliderSkeleton';
 
 export default function HomeSlider() {
@@ -22,20 +22,13 @@ export default function HomeSlider() {
 
     const games = useSelector((state) => state.game.games) || [];
 
-    // Limit to 5 games on each side
-    const leftGames = games.filter((_, index) => index % 2 === 0).slice(0, 5);
-    const rightGames = games.filter((_, index) => index % 2 === 1).slice(0, 5);
+    // Limit to 5 games for left slider
+    const leftGames = games.slice(0, 5);
 
     const [leftIndex, setLeftIndex] = useState(0);
-    const [rightIndex, setRightIndex] = useState(0);
     const [centerGame, setCenterGame] = useState(null);
-    const [centerSource, setCenterSource] = useState('left');
-    const [currentDisplayIndex, setCurrentDisplayIndex] = useState(0);
-    const rightLockTimeoutRef = useRef(null);
 
     const leftItemRefs = useRef([]);
-    const rightItemRefs = useRef([]);
-
     const displayIntervalRef = useRef(null);
 
     const getImageUrl = (slide) => {
@@ -43,54 +36,29 @@ export default function HomeSlider() {
         return "https://via.placeholder.com/800x600/333333/ffffff?text=No+Image";
     };
 
-
-    // Sequential display: left games first, then right games
+    // Auto change active slide every 5s
     useEffect(() => {
-        if (leftGames.length > 0 || rightGames.length > 0) {
+        if (leftGames.length > 0) {
             displayIntervalRef.current && clearInterval(displayIntervalRef.current);
             displayIntervalRef.current = setInterval(() => {
-                setCurrentDisplayIndex((prev) => {
-                    const totalGames = leftGames.length + rightGames.length;
-                    if (totalGames === 0) return 0;
-
-                    const nextIndex = (prev + 1) % totalGames;
-
-                    if (nextIndex < leftGames.length) {
-                        // Show left side game
-                        setLeftIndex(nextIndex);
-                        setCenterSource('left');
-                    } else {
-                        // Show right side game
-                        const rightGameIndex = nextIndex - leftGames.length;
-                        setRightIndex(rightGameIndex);
-                        setCenterSource('right');
-                    }
-
-                    return nextIndex;
-                });
+                setLeftIndex((prev) => (prev + 1) % leftGames.length);
             }, 5000);
         }
 
-        return () => {
-            clearInterval(displayIntervalRef.current);
-        };
-    }, [leftGames.length, rightGames.length]);
+        return () => clearInterval(displayIntervalRef.current);
+    }, [leftGames.length]);
 
-
-    // Update center game when indices or source changes
+    // Update center game when left index changes
     useEffect(() => {
-        if (centerSource === 'left' && leftGames.length > 0) {
+        if (leftGames.length > 0) {
             setCenterGame(leftGames[leftIndex]);
-        } else if (centerSource === 'right' && rightGames.length > 0) {
-            setCenterGame(rightGames[rightIndex]);
         }
-    }, [leftIndex, rightIndex, centerSource, leftGames, rightGames]);
+    }, [leftIndex, leftGames]);
 
     // Initialize with first left game
     useEffect(() => {
         if (leftGames.length > 0 && !centerGame) {
             setCenterGame(leftGames[0]);
-            setCenterSource('left');
         }
     }, [leftGames, centerGame]);
 
@@ -104,91 +72,84 @@ export default function HomeSlider() {
     return (
         <div className="sp_slider ">
 
+            {/* Desktop layout (Left slider + Center hero only) */}
             <div className="hidden md:grid grid-cols-12 gap-4 w-full min-h-[500px] lg:min-h-[500px] xl:min-h-[700px] ">
                 {/* Left slider */}
                 <div className="col-span-12 md:col-span-3 xl:col-span-2">
-                    <div className="h-[500px] xl:h-[700px] overflow-hidden">
-                        <div className="h-full flex flex-col justify-center p-4 space-y-3 ">
+                    <div className="h-[500px] xl:h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="flex flex-col space-y-3">
                             {leftGames.map((game, index) => {
                                 const img = getImageUrl(game);
                                 const isActive = index === leftIndex;
                                 return (
-                                    <button
+                                    <motion.button
                                         key={game._id || index}
-                                        ref={(el) => (leftItemRefs.current[index] = el)}
                                         onClick={() => {
                                             setLeftIndex(index);
                                             setCenterGame(leftGames[index]);
-                                            setCenterSource('left');
-                                            if (rightLockTimeoutRef.current) {
-                                                clearTimeout(rightLockTimeoutRef.current);
-                                            }
                                         }}
-                                        className={`block w-full rounded-md overflow-hidden  bg-black/40 transition-all duration-300 ${isActive && centerSource === 'left' ? 'ring-2 ring-white scale-105 z-10 relative opacity-100' : 'hover:scale-[1.02] opacity-50'}`}
-                                        aria-current={isActive ? 'true' : 'false'}
+                                        initial={false}
+                                        animate={{
+                                            scale: isActive ? 1.05 : 1,
+                                            opacity: isActive ? 1 : 0.6,
+                                            boxShadow: isActive
+                                                ? "0px 0px 20px rgba(255,255,255,0.6)"
+                                                : "0px 0px 0px rgba(0,0,0,0)"
+                                        }}
+                                        transition={{ duration: 0.3 }}
+                                        className="block w-full rounded-md overflow-hidden bg-black/40"
                                     >
                                         <div className="w-full h-24 md:h-28 xl:h-32 flex items-center justify-center">
-                                            <img src={img} alt={game.title || 'Game'} className=" w-full h-full object-cover rounded" />
+                                            <img
+                                                src={img}
+                                                alt={game.title || "Game"}
+                                                className="w-full h-full object-cover rounded"
+                                            />
                                         </div>
-                                    </button>
+                                    </motion.button>
                                 );
                             })}
                         </div>
                     </div>
                 </div>
-
-                {/* Center hero  */}
-                <div className="col-span-12 md:col-span-6 xl:col-span-8">
+                {/* Center hero with animation */}
+                <div className="col-span-12 md:col-span-9 xl:col-span-10">
                     <div className="relative h-[500px] xl:h-[700px] rounded-lg overflow-hidden border border-white/10">
-                        <img src={activeCenterImage} alt={activeCenterGame?.title || 'Game'} className="absolute inset-0 w-full h-full object-cover " />
+                        <AnimatePresence mode="wait">
+                            <motion.img
+                                key={activeCenterGame?._id || activeCenterImage}
+                                src={activeCenterImage}
+                                alt={activeCenterGame?.title || 'Game'}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                initial={{ opacity: 0, scale: 1.05 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.6 }}
+                            />
+                        </AnimatePresence>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                        <div className="relative z-[1] h-full flex items-end p-6 md:p-8 lg:p-10">
+                        <motion.div
+                            key={activeCenterGame?._id}
+                            className="relative z-[1] h-full flex items-end p-6 md:p-8 lg:p-10 w-full"
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                        >
                             <div className="max-w-2xl">
-                                <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-semibold mb-2">{activeCenterGame?.title || 'Untitled'}</h2>
-                                <p className="text-white/80 text-sm md:text-base lg:text-lg line-clamp-3 mb-4">{(activeCenterGame?.description || 'No description available').slice(0, 180)}{activeCenterGame?.description && activeCenterGame.description.length > 180 ? '…' : ''}</p>
+                                <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-semibold mb-2">
+                                    {activeCenterGame?.title || 'Untitled'}
+                                </h2>
+                                <p className="text-white/80 text-sm md:text-base lg:text-lg line-clamp-3 mb-4">
+                                    {(activeCenterGame?.description || 'No description available').slice(0, 180)}
+                                    {activeCenterGame?.description && activeCenterGame.description.length > 180 ? '…' : ''}
+                                </p>
                                 <Link to={'/single/' + (activeCenterGame?._id || '')}>
                                     <button className='xl:text-base md:text-sm text-xs p-2 md:px-8 px-4 bg-white text-black rounded border hover:bg-transparent hover:text-white'>
                                         Learn More
                                     </button>
                                 </Link>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right slider */}
-                <div className="col-span-12 md:col-span-3 xl:col-span-2">
-                    <div className="h-[500px] xl:h-[700px] overflow-hidden">
-                        <div className="h-full flex flex-col justify-center py-4 space-y-3 px-4">
-                            {rightGames.map((game, index) => {
-                                const img = getImageUrl(game);
-                                const isActive = index === rightIndex;
-                                return (
-                                    <button
-                                        key={game._id || index}
-                                        ref={(el) => (rightItemRefs.current[index] = el)}
-                                        onClick={() => {
-                                            setRightIndex(index);
-                                            setCenterGame(game);
-                                            setCenterSource('right');
-                                            if (rightLockTimeoutRef.current) {
-                                                clearTimeout(rightLockTimeoutRef.current);
-                                            }
-                                            rightLockTimeoutRef.current = setTimeout(() => {
-                                                setCenterSource('left');
-                                            }, 8000);
-                                        }}
-                                        className={`block w-full rounded-md overflow-hidden bg-black/40 transition-all duration-300 ${isActive && centerSource === 'right' ? 'ring-2 ring-white scale-105  z-10 relative opacity-100' : 'hover:scale-[1.02] opacity-50'}`}
-                                        aria-current={isActive ? 'true' : 'false'}
-                                    >
-
-                                        <div className="w-full h-24 md:h-28 xl:h-32 flex items-center justify-center ">
-                                            <img src={img} alt={game.title || 'Game'} className="w-full h-full object-cover rounded" />
-                                        </div>
-                                    </button>
-                                );
-                            })}
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
             </div>
