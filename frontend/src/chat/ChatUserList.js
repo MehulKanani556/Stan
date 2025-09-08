@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllMessageUsers, getAllUsers } from '../Redux/Slice/user.slice';
 import { setSelectedUser } from '../Redux/Slice/manageState.slice';
@@ -8,11 +8,10 @@ import { RxCross2 } from "react-icons/rx";
 export default function ChatUserList({ showUserList, setShowUserList }) {
     const { allMessageUsers, allUsers } = useSelector((state) => state.user);
     const { selectedUser, onlineUsers, typingUsers } = useSelector((state) => state.manageState);
-console.log('user',allMessageUsers, allUsers);
     const [showUsers, setShowUsers] = useState(false);
     const dispatch = useDispatch();
 
-    const formatMessageTimestamp = (timestamp) => {
+    const formatMessageTimestamp = useCallback((timestamp) => {
         const now = new Date();
         const messageDate = new Date(timestamp);
         const diffMinutes = Math.round((now - messageDate) / (1000 * 60));
@@ -28,41 +27,42 @@ console.log('user',allMessageUsers, allUsers);
         } else {
             return messageDate.toLocaleDateString('en-GB'); // dd/mm/yyyy
         }
-    };
+    },[]);
 
     useEffect(() => {
-        dispatch(getAllMessageUsers());
         dispatch(getAllUsers());
     }, [dispatch]);
 
-    const handleUserSelect = (user) => {
+    const handleUserSelect = useCallback((user) => {
         dispatch(setSelectedUser(user));
         if (window.innerWidth < 768) {
             setShowUserList(false);
         }
-    };
+    },[dispatch,setShowUserList]);
 
     // 🔑 Sort conversations by latest message timestamp
-    const sortedMessageUsers = [...(allMessageUsers || [])].sort((a, b) => {
-        const aIsTyping = typingUsers && typingUsers.includes(a._id);
-        const bIsTyping = typingUsers && typingUsers.includes(b._id);
+    const sortedMessageUsers = useMemo(() => {
+        return [...(allMessageUsers || [])].sort((a, b) => {
+            const aIsTyping = typingUsers && typingUsers.includes(a._id);
+            const bIsTyping = typingUsers && typingUsers.includes(b._id);
 
-        // Prioritize typing users
-        if (aIsTyping && !bIsTyping) return -1;
-        if (!aIsTyping && bIsTyping) return 1;
+            // Prioritize typing users
+            if (aIsTyping && !bIsTyping) return -1;
+            if (!aIsTyping && bIsTyping) return 1;
 
-        // Then sort by latest message
-        const aLast = a.messages?.[0]?.createdAt ? new Date(a.messages[0].createdAt) : new Date(0);
-        const bLast = b.messages?.[0]?.createdAt ? new Date(b.messages[0].createdAt) : new Date(0);
-        return bLast - aLast;
-    });
+            // Then sort by latest message
+            const aLast = a.messages?.[0]?.createdAt ? new Date(a.messages[0].createdAt) : new Date(0);
+            const bLast = b.messages?.[0]?.createdAt ? new Date(b.messages[0].createdAt) : new Date(0);
+            return bLast - aLast;
+        });
+    }, [allMessageUsers, typingUsers]);
 
     // Check if user is typing
-    const isUserTyping = (userId) => {
+    const isUserTyping = useCallback((userId) => {
         return typingUsers && typingUsers.includes(userId);
-    };
+    },[typingUsers]);
     // Typing indicator component
-    const TypingIndicator = ({ className = "" }) => (
+    const TypingIndicator = React.memo(({ className = "" }) => (
         <div className={`flex items-center gap-2 ${className}`}>
             <div className="flex space-x-1">
                 <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-bounce"></div>
@@ -71,7 +71,7 @@ console.log('user',allMessageUsers, allUsers);
             </div>
             <span className="text-green-400 font-medium text-sm">typing</span>
         </div>
-    );
+    ));
 
     return (
         <>
@@ -184,16 +184,16 @@ console.log('user',allMessageUsers, allUsers);
                         )
                     ) : (
                         <>
-                        {/* // All users view */}
+                            {/* // All users view */}
                             <div className="p-3 pb-0">
                                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">All Users</h3>
                             </div>
                             <ul className="divide-y divide-gray-800">
                                 {allUsers
-                                     .filter(user => 
+                                    .filter(user =>
                                         user._id !== localStorage.getItem("userId") &&  // exclude self
                                         !allMessageUsers.some(msgUser => msgUser._id === user._id) // exclude already messaged users
-                                      )
+                                    )
                                     .map((user) => {
                                         const userIsTyping = isUserTyping(user._id);
                                         const isOnline = onlineUsers.includes(user._id);
@@ -207,7 +207,7 @@ console.log('user',allMessageUsers, allUsers);
                                                 ${isSelected ? 'bg-gray-800 border-r-4 border-blue-500' : ''}
                                                 ${userIsTyping ? 'bg-gray-800/30 ring-1 ring-green-400/20' : ''}
                                             `}
-                                                onClick={() => {handleUserSelect(user); }}
+                                                onClick={() => { handleUserSelect(user); }}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     {/* Profile photo or initial */}

@@ -1,51 +1,55 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllMessageUsers } from '../Redux/Slice/user.slice';
 import { setMessages, setSelectedUser } from '../Redux/Slice/manageState.slice';
 
 export default function ChatMessage({ isTyping }) {
-    const { selectedUser, messages } = useSelector((state) => state.manageState);
     const dispatch = useDispatch();
     const messagesEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
-
-    useEffect(() => {
-        dispatch(getAllMessageUsers());
-    }, [dispatch]);
-
+    const { selectedUser, messages } = useSelector((state) => state.manageState);
     const { allMessageUsers } = useSelector((state) => state.user);
 
+
     // Auto scroll to bottom when new messages arrive
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+ 
+
+    const scrollToBottom = useCallback(()=>{
+        messagesEndRef.current?.scrollIntoView({behavior:"smooth"});
+    },[]);
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isTyping]);
+    }, [messages, isTyping,scrollToBottom]);
+
 
     // Set selected user and their messages when users update or selectedUser changes
-    useEffect(() => {
-        if (allMessageUsers && allMessageUsers.length > 0 && !selectedUser) {
-            // dispatch(setSelectedUser(allMessageUsers[0]));
-        } else if (selectedUser) {
+
+
+    const  processSelectedUserMessages = useCallback(()=>{
+        if(allMessageUsers && allMessageUsers.length > 0 && selectedUser){
             const currentSelectedUser = allMessageUsers.find(
                 (user) => user._id === selectedUser._id
             );
-            // console.log(currentSelectedUser);
-            if (currentSelectedUser) {
+            if(currentSelectedUser){
                 const sortedMessages = [...(currentSelectedUser.messages || [])].sort(
                     (a, b) => new Date(a?.createdAt) - new Date(b?.createdAt)
                 );
-                dispatch(setMessages(sortedMessages.map(msg => ({
+                return sortedMessages.map(msg => ({
                     ...msg,
                     time: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                }))));
+                }));
             } else {
-                dispatch(setMessages([])); // Set to an empty array instead of null
+                return [];
             }
         }
-    }, [allMessageUsers, selectedUser, dispatch]);
+        return [];
+    },[allMessageUsers, selectedUser]);
+
+    useEffect(()=>{
+        const messages = processSelectedUserMessages();
+        dispatch(setMessages(messages));
+    },[allMessageUsers,selectedUser,dispatch,processSelectedUserMessages]);
 
     const formatMessageTime = (timestamp) => {
         const now = new Date();

@@ -51,10 +51,10 @@ const SingleGame = () => {
   const [amountToPay, setAmountToPay] = useState(0);
   const [hasPaid, setHasPaid] = useState(false);
   const [open, setOpen] = useState(false)
-  const gameRating = useSelector((state)=> state?.game?.singleGameReview?.data)
+  const gameRating = useSelector((state) => state?.game?.singleGameReview?.data)
 
   console.log("YYYYYYYYY", gameRating);
-  
+
 
   useEffect(() => {
     setNav1(sliderRef1);
@@ -62,18 +62,18 @@ const SingleGame = () => {
   }, []);
 
   useEffect(() => {
-      dispatch(getGameById(id));
-      dispatch(fetchWishlist());
-      dispatch(fetchCart());
-  }, [open,showPaymentForm])
+    dispatch(getGameById(id));
+    dispatch(fetchWishlist());
+    dispatch(fetchCart());
+  }, [open, showPaymentForm])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  useEffect(()=>{
-     dispatch(getGameRating(id))
-  },[])
+  useEffect(() => {
+    dispatch(getGameRating(id))
+  }, [])
 
 
   const handleSlideChange = (oldIndex, newIndex) => {
@@ -105,7 +105,7 @@ const SingleGame = () => {
       </div>
     );
   };
-  
+
   const PrevArrow = (props) => {
     const { onClick } = props;
     return (
@@ -117,7 +117,7 @@ const SingleGame = () => {
       </div>
     );
   };
-  
+
   const ThumbNextArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -142,7 +142,7 @@ const SingleGame = () => {
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
   };
-  
+
   const thumbSettings = {
     asNavFor: nav1,
     slidesToShow,
@@ -154,11 +154,11 @@ const SingleGame = () => {
     responsive: [
       { breakpoint: 1650, settings: { slidesToShow: 4 } },
       { breakpoint: 1280, settings: { slidesToShow: 4 } },
-      { breakpoint: 768,  settings: { slidesToShow: 4, centerMode: false } },
-      { breakpoint: 576,  settings: { slidesToShow: 3, centerMode: false } },
-      { breakpoint: 426,  settings: { slidesToShow: 3, centerMode: false } },
-      { breakpoint: 376,  settings: { slidesToShow: 3, centerMode: false } },
-      { breakpoint: 321,  settings: { slidesToShow: 2, centerMode: false } },
+      { breakpoint: 768, settings: { slidesToShow: 4, centerMode: false } },
+      { breakpoint: 576, settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 426, settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 376, settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 321, settings: { slidesToShow: 2, centerMode: false } },
     ],
   };
 
@@ -243,21 +243,21 @@ const SingleGame = () => {
     setShowPaymentForm(true);
   };
 
-  const formatDate = (dateString) => {
+  // const formatDate = (dateString) => {
 
-    if (!dateString) return "";
+  //   if (!dateString) return "";
   
-    const date = new Date(dateString);
+  //   const date = new Date(dateString);
   
-    const day = String(date.getDate()).padStart(2, "0");
+  //   const day = String(date.getDate()).padStart(2, "0");
   
-    const month = String(date.getMonth() + 1).padStart(2, "0");
+  //   const month = String(date.getMonth() + 1).padStart(2, "0");
   
-    const year = String(date.getFullYear()).slice(-2);
+  //   const year = String(date.getFullYear()).slice(-2);
   
-    return `${day}-${month}-${year}`;
+  //   return `${day}-${month}-${year}`;
   
-  };
+  // };
    
 
   const handlePaymentSuccess = () => {
@@ -305,30 +305,30 @@ const SingleGame = () => {
         <div className="flex flex-col-reverse xl:flex-row lg:mt-11">
           <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 w-full xl:mt-0 mt-5'>
             <div>
-               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
-                  {single?.video?.url && (
-                    <div>
-                      <video
-                        src={single.video.url}
-                        autoPlay
-                        muted
-                        loop
-                        controls
-                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
-                      />
-                    </div>
-                  )}
-                
-                  {single?.images?.map((element) => (
-                    <div key={element._id}>
-                      <img
-                        src={element.url}
-                        alt=""
-                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg"
-                      />
-                    </div>
-                  ))}
-               </Slider>
+              <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
+                {single?.video?.url && (
+                  <div>
+                    <video
+                      src={single.video.url}
+                      autoPlay
+                      muted
+                      loop
+                      controls
+                      className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
+                    />
+                  </div>
+                )}
+
+                {single?.images?.map((element) => (
+                  <div key={element._id}>
+                    <img
+                      src={element.url}
+                      alt=""
+                      className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg"
+                    />
+                  </div>
+                ))}
+              </Slider>
 
               <div className='px-5'>
                 <Slider {...thumbSettings} ref={setNav2} className='mt-3 ds_mini_slider' >
@@ -360,24 +360,13 @@ const SingleGame = () => {
                     {single?.description}
                   </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-8">
                     <div className="bg-black/30 p-6 rounded-lg shadow-lg">
                       <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
                       <div className="flex flex-wrap gap-3">
                         {single?.tags?.map((genre, index) => (
                           <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer capitalize">
                             {genre}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="bg-black/30 p-6 rounded-lg shadow-lg ">
-                      <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Features</h3>
-                      <div className="flex flex-wrap gap-3">
-                        {['Achievements', 'Co-op', 'Multiplayer', 'Single Player'].map((feature, index) => (
-                          <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer">
-                            {feature}
                           </span>
                         ))}
                       </div>
@@ -511,7 +500,7 @@ const SingleGame = () => {
                       className="w-full bg-gradient-to-r cursor-not-allowed from-emerald-600 to-green-600 active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
                     >
                       <span className="text-white font-bold text-sm me-2">✓</span>
-                       Purchased
+                      Purchased
                     </button>
                     <button
                       onClick={() => setOpen(true)}
@@ -534,14 +523,14 @@ const SingleGame = () => {
               <Dialog open={!!(showPaymentForm && clientSecret && currentOrderId)} onClose={() => setShowPaymentForm(false)} className="relative z-50">
                 {/* Backdrop */}
                 <DialogBackdrop className="fixed inset-0 bg-black/75" />
-              
+
                 {/* Centered panel */}
                 <div className="fixed inset-0 flex items-center justify-center p-4">
                   <DialogPanel className="w-full max-w-md rounded-xl bg-gray-900 sm:p-6 p-4 shadow-lg">
                     <h3 className="text-2xl font-bold mb-4 text-white">
                       Complete Your Purchase
                     </h3>
-              
+
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
                       <PaymentForm
                         clientSecret={clientSecret}
@@ -551,7 +540,7 @@ const SingleGame = () => {
                         fromCartPage={false}
                       />
                     </Elements>
-              
+
                     <button
                       onClick={() => setShowPaymentForm(false)}
                       className="mt-4 text-gray-400 hover:text-white"
@@ -560,7 +549,7 @@ const SingleGame = () => {
                     </button>
                   </DialogPanel>
                 </div>
-               </Dialog>
+              </Dialog>
 
               {/* )} */}
 
@@ -626,7 +615,7 @@ const SingleGame = () => {
                          })}
                       </div>}
                   </div>
-                  
+
                 </details>
 
                 <details className="group open:shadow-lg open:bg-black/20 transition-all">

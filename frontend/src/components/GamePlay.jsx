@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Header from '../header/Header'
@@ -11,6 +11,8 @@ const GamePlay = () => {
     const { selectedGame: game, loading } = useSelector((state) => state.freeGame)
     const [iframeError, setIframeError] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [isFullScreen, setIsFullScreen] = useState(false)
+    const iframeRef = useRef(null)
 
     useEffect(() => {
         if (slug) {
@@ -25,6 +27,8 @@ const GamePlay = () => {
 
     const handleIframeLoad = () => {
         setIsLoading(false)
+        // Automatically enter full-screen when game loads
+        enterFullScreen()
     }
 
     const handleIframeError = () => {
@@ -38,12 +42,42 @@ const GamePlay = () => {
         }
     }
 
+    const enterFullScreen = () => {
+        const iframe = iframeRef.current
+
+        if (iframe) {
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { // Firefox
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { // IE/Edge
+                iframe.msRequestFullscreen();
+            }
+            setIsFullScreen(true);
+        }
+    }
+
+
+    const toggleFullScreen = () => {       
+        enterFullScreen();        
+    }
+
     return (
         <>
             <div className='container pt-28 pb-24'>
                 <div className='flex items-center justify-between sm:flex-row flex-col gap-4'>
                     <h1 className='text-white text-2xl font-semibold uppercase'>{game ? game.name : 'Game'}</h1>
-                    <Link to='/games' className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40">Back to Games</Link>
+                    <div className='flex items-center gap-4'>
+                        <button 
+                            onClick={toggleFullScreen} 
+                            className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40"
+                        >
+                            Full Screen
+                        </button>
+                        <Link to='/games' className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40">Back to Games</Link>
+                    </div>
                 </div>
                 {game ? (
                     <div className='mt-4 bg-[#221f2a] rounded-xl overflow-hidden relative'>
@@ -70,6 +104,7 @@ const GamePlay = () => {
                             </div>
                         ) : (
                             <iframe
+                                ref={iframeRef}
                                 title={game.name}
                                 src={game.iframeSrc}
                                 width='100%'

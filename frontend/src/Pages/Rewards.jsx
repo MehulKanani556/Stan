@@ -1,14 +1,10 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import greenGem from "../images/green-gem.png"
-import gemesLogo from "../images/gens-logo1.png"
-import { FaGem, FaWhatsapp, FaInfoCircle, FaMoneyBillWave, FaArrowUp } from "react-icons/fa";
-import { IoArrowBack } from "react-icons/io5";
+import React, { useEffect, useState } from 'react'
+import greenGem from "../images/green-gem.png";
+import { FaGem, FaInfoCircle, FaMoneyBillWave } from "react-icons/fa";
 import phonePe from "../images/phonepe.jpg"
 import Amazon from "../images/Amazon.png"
 import dominos from "../images/dominos.png"
 import flipkart from "../images/flipkart.png"
-import referlcash from "../images/referl-cash.png"
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { MdOutlineContentCopy } from "react-icons/md";
@@ -65,9 +61,9 @@ const swiperStyles = `
 `;
 
 export default function Rewards() {
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const style = document.createElement('style');
         style.textContent = swiperStyles;
         document.head.appendChild(style);
@@ -97,10 +93,10 @@ export default function Rewards() {
 }
 
 const RedeemAndWin = () => {
-    const [showAllTasks, setShowAllTasks] = React.useState(false);
-    const [copySuccess, setCopySuccess] = React.useState(false);
-    const [showPopup, setShowPopup] = React.useState(false);
-  
+    const [showAllTasks, setShowAllTasks] = useState(false);
+    const [copySuccess, setCopySuccess] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+
 
     const copyToClipboard = async (text) => {
         try {
@@ -201,22 +197,13 @@ const RedeemAndWin = () => {
                     </div>
                 </div>
             )}
-
-           
-
-
-
-
             <div className='max-w-[95%] md:max-w-[85%] m-auto '>
-
                 <div className="flex flex-col w-full items-center justify-center md:pt-20 pt-10">
-
                     <img
                         src={greenGem}
                         className="md:w-[150px]  w-[100px] mb-10 opacity-100 hover:opacity-50 duration-500"
                         alt="Gem"
                     />
-
                     <StylishDiv>
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3 md:gap-4">
@@ -244,7 +231,7 @@ const RedeemAndWin = () => {
 
                 <div className="py-10 w-full">
                     <h5 className="text-white font-bold text-lg md:text-2xl  mb-6 flex items-center gap-4">
-                       <SiPhonepe className='text-4xl' /> PhonePe E-Gift Vouchers
+                        <SiPhonepe className='text-4xl' /> PhonePe E-Gift Vouchers
                     </h5>
 
                     <div className=" flex items-center justify-center pt-8 w-full relative  ">
@@ -298,7 +285,7 @@ const RedeemAndWin = () => {
 
                 <div className="py-10 w-full">
                     <h5 className="text-white font-bold text-lg md:text-2xl flex items-center gap-4  mb-6">
-                        <BsCart4 className='text-4xl'/> Amazon E-Gift Vouchers 
+                        <BsCart4 className='text-4xl' /> Amazon E-Gift Vouchers
                     </h5>
 
                     <div className=" flex items-center justify-center pt-8 w-full relative  ">
@@ -351,7 +338,7 @@ const RedeemAndWin = () => {
 
                 <div className="py-10 w-full">
                     <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6 flex items-center gap-4">
-                        <RiCoupon2Fill className='text-4xl'/> Exciting Coupons 
+                        <RiCoupon2Fill className='text-4xl' /> Exciting Coupons
                     </h5>
 
                     <div className=" flex items-center justify-center pt-8 w-full relative">
@@ -410,7 +397,7 @@ const RedeemAndWin = () => {
 
                 <div className="py-10 w-full">
                     <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-8 flex items-center gap-4">
-                        <IoRocketOutline className='text-4xl'/> Earn With
+                        <IoRocketOutline className='text-4xl' /> Earn With
                     </h5>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -452,7 +439,7 @@ const RedeemAndWin = () => {
                             <div className="absolute -bottom-12 -left-12 w-28 h-28 bg-gradient-to-br from-green-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
                             <div className="relative z-10 flex flex-col">
                                 <p className="text-gray-400 text-sm lg:text-base mb-2 italic">
-                                    Complete quests and redeem amazing coupons 
+                                    Complete quests and redeem amazing coupons
                                 </p>
                                 <h3 className="text-yellow-400 font-extrabold text-2xl mb-6 tracking-wide">
                                     Earn & Redeem
@@ -478,7 +465,7 @@ const RedeemAndWin = () => {
 
                 <div className="py-14 w-full">
                     <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-10 flex items-center gap-4">
-                        <MdAddTask className='text-4xl'/> Complete Tasks & Earn
+                        <MdAddTask className='text-4xl' /> Complete Tasks & Earn
                     </h5>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -516,13 +503,11 @@ const RedeemAndWin = () => {
                     <div className="flex justify-center mt-12">
                         <button
                             onClick={() => setShowAllTasks(!showAllTasks)}
-                          className="px-6 py-2 rounded-xl text-sm font-semibold 	bg-white/10 backdrop-blur-md border border-white/20 	text-purple-300 hover:text-white 	hover:bg-purple-500/30 transition-all duration-300 	shadow-lg shadow-purple-900/40"
+                            className="px-6 py-2 rounded-xl text-sm font-semibold 	bg-white/10 backdrop-blur-md border border-white/20 	text-purple-300 hover:text-white 	hover:bg-purple-500/30 transition-all duration-300 	shadow-lg shadow-purple-900/40"
                         >
-                            
-                                {showAllTasks ? "Show Less" : "View More"}
-                             </button>
+                            {showAllTasks ? "Show Less" : "View More"}
+                        </button>
                     </div>
-
                 </div>
 
             </div>

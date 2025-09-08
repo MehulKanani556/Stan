@@ -29,6 +29,7 @@ import axiosInstance from '../Utils/axiosInstance';
 import { BASE_URL } from '../Utils/baseUrl';
 import axios from 'axios';
 import { handleMyToggle } from '../Redux/Slice/game.slice';
+import { fetchCart } from '../Redux/Slice/cart.slice';
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -65,10 +66,11 @@ export default function Header() {
 
     useEffect(() => {
         const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
-        if (userId) {
+        if (userId && (!items?.length || !cartItems?.length)) {
             dispatch(fetchWishlist());
+            dispatch(fetchCart());
         }
-    }, [dispatch, authUser, currentUser]);
+    }, [dispatch, authUser?._id, currentUser?._id, items?.length, cartItems?.length]);
 
     useEffect(() => {
         const userId = authUser?._id || localStorage.getItem("userId");
@@ -77,11 +79,9 @@ export default function Header() {
         }
         if (currentUser?.name) {
             localStorage.setItem("userName", JSON.stringify(currentUser.name ? currentUser.name : ""));
-            // setName(currentUser.name);
             dispatch(setUser(currentUser?.name))
         }
-
-    }, [dispatch, authUser, currentUser]);
+    }, [dispatch, authUser?._id, currentUser, currentUser?.name]);
 
 
 
