@@ -18,6 +18,7 @@ import TopGames from "./components/TopGames";
 import Profile from "./Pages/Profile";
 import GGTalks from './Pages/GGTalks';
 import { SocketProvider } from './context/SocketContext';
+import { LoaderProvider } from './context/LoaderContext';
 import SingleGame from './components/SingleGame';
 import ChatWidget from './components/ChatWidget';
 import Guides from './Pages/Guides';
@@ -31,6 +32,7 @@ import Loader from './Pages/Loader.js';
 import Demo from './Pages/demo.jsx';
 import BackgroundColor from './components/BackgroundColor';
 import HomeSlider from './components/HomeSlider.jsx';
+import LoaderWrapper from './components/LoaderWrapper';
 
 // Component to conditionally render Header and Footer
 function App() {
@@ -52,38 +54,42 @@ function App() {
           autoHideDuration={3000}
         >
           <SocketProvider>
-            <BackgroundColor>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/loader" element={<Loader />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/store" element={<Store />} />
-            <Route path="/rewards" element={<Rewards />} />
-            <Route path="/transaction" element={<Transaction />} />
-            <Route path='/support' element={<Support />} />
-            <Route path='/GGTalks' element={<GGTalks />} />
-            <Route path='/manageAddress' element={<ManageAddress />} />
-            <Route path="/games" element={<Games />} />
-            <Route path="/games/:slug" element={<GamePlay />} />
-            <Route path="/TopGames" element={<TopGames />} />
-            <Route path="/Profile" element={<Profile />} />
-            <Route path="/single" element={<SingleGame/>} />
-            <Route path="/guides" element={<Guides/>} />
-            <Route path="/single/:id" element={<SingleGame/>} />
-            <Route path="/faqs" element={<FAQs/>} />
-            <Route path="/terms" element={<TermsService/>} />
-            <Route path="/privacy" element={<PrivacyPolicy/>} />
-            <Route path="/cart" element={<Cart/>} />
-            <Route path="/wishlist" element={<Wishlist/>} />
-            <Route path="/wishlist" element={<Wishlist/>} />
-            <Route path="/allGames" element={<AllGames/>} />
-            <Route path="/demo" element={<HomeSlider/>} />
-          </Routes>
-          </BackgroundColor>
-           { !chatwidegt &&<ChatWidget />}
-          </SocketProvider>
-        </SnackbarProvider>
+            <LoaderProvider>
+              <LoaderWrapper>
+                <BackgroundColor>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/loader" element={<Loader />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/store" element={<Store />} />
+                <Route path="/rewards" element={<Rewards />} />
+                <Route path="/transaction" element={<Transaction />} />
+                <Route path='/support' element={<Support />} />
+                <Route path='/GGTalks' element={<GGTalks />} />
+                <Route path='/manageAddress' element={<ManageAddress />} />
+                <Route path="/games" element={<Games />} />
+                <Route path="/games/:slug" element={<GamePlay />} />
+                <Route path="/TopGames" element={<TopGames />} />
+                <Route path="/Profile" element={<Profile />} />
+                <Route path="/single" element={<SingleGame/>} />
+                <Route path="/guides" element={<Guides/>} />
+                <Route path="/single/:id" element={<SingleGame/>} />
+                <Route path="/faqs" element={<FAQs/>} />
+                <Route path="/terms" element={<TermsService/>} />
+                <Route path="/privacy" element={<PrivacyPolicy/>} />
+                <Route path="/cart" element={<Cart/>} />
+                <Route path="/wishlist" element={<Wishlist/>} />
+                <Route path="/wishlist" element={<Wishlist/>} />
+                <Route path="/allGames" element={<AllGames/>} />
+                <Route path="/demo" element={<HomeSlider/>} />
+              </Routes>
+              </BackgroundColor>
+               { !chatwidegt &&<ChatWidget />}
+              </LoaderWrapper>
+            </LoaderProvider>
+            </SocketProvider>
+          </SnackbarProvider>
 
       {(!showFooter ) && <Footer />}
     </>
