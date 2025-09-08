@@ -15,6 +15,7 @@ export default function GGTalks() {
     const { socket } = useSocket();
     const dispatch = useDispatch();
     const typingTimeoutRef = useRef(null);
+    
 
     const { allMessageUsers } = useSelector((state) => state.user);
     const { selectedUser, messages, typingUsers } = useSelector((state) => state.manageState);

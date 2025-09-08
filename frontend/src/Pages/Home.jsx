@@ -135,7 +135,7 @@ export default function Home() {
       dispatch(fetchCart());
     }
 
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     dispatch(getAllGames({ page: 1, limit: 20 })); // Load first 20 games
@@ -283,6 +283,19 @@ export default function Home() {
     dispatch(addToCart({ gameId: ele._id, platform: "windows", qty: 1 }));
   }
 
+  const isNewGame = (createdAt) => {
+    if (!createdAt) return false;
+  
+    const createdDate = new Date(createdAt);  
+    const now = new Date();                    
+  
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+  
+    return createdDate >= oneMonthAgo && createdDate <= now;
+  };
+  
+
   return (
     <>
       {/* Success Notification */}
@@ -296,8 +309,8 @@ export default function Home() {
       )}
 
       <section className="relative">
-    
-       <HomeSlider/>
+
+        <HomeSlider />
 
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
           <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
@@ -444,11 +457,13 @@ export default function Home() {
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
 
                             {/* Top Badge */}
-                            <div className="absolute top-4 left-4">
-                              <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
-                                <span className="text-xs font-bold text-white tracking-wider">NEW</span>
-                              </div>
-                            </div>
+                            {isNewGame(element?.createdAt) && (
+                               <div className="absolute top-4 left-4">
+                                 <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                                   <span className="text-xs font-bold text-white tracking-wider">NEW</span>
+                                 </div>
+                               </div>
+                             )}
 
                             {/* Wishlist Button */}
                             <button

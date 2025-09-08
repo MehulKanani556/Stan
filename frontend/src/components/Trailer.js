@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 
@@ -6,16 +6,22 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { getHomeTrailer } from "../Redux/Slice/game.slice";
+import TrailerSkeleton from "../lazyLoader/TrailerSkeleton";
 
 const Trailer = () => {
   const swiperRef = useRef(null);
   const videoRefs = useRef([]);
   const { trailer , loading, error} = useSelector((state) => state?.game);
   const dispatch = useDispatch();
+  const [loader, setLoader] = useState(true)
 
   useEffect(() => {
-    dispatch(getHomeTrailer());
-  }, []);
+    dispatch(getHomeTrailer()).then((value)=>{
+       if(value?.meta?.requestStatus === "fulfilled"){
+          setLoader(false)
+       }       
+    });
+  }, [dispatch]);
 
   const handleSlideChange = (swiper) => {
     videoRefs.current.forEach((video, index) => {
@@ -37,7 +43,8 @@ const Trailer = () => {
 
   return (
     <div className="">
-      <Swiper
+      {loader && <TrailerSkeleton/>}
+      {!loader && <Swiper
         className="ds_trailer"
         modules={[Pagination]}
         spaceBetween={50}
@@ -83,7 +90,7 @@ const Trailer = () => {
             </div>
           </SwiperSlide>
         ))}
-      </Swiper>
+      </Swiper>}
     </div>
   );
 };

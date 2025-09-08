@@ -40,7 +40,7 @@ export const login = createAsyncThunk(
       localStorage.setItem("refreshToken", response.data.result?.refreshToken);
       localStorage.setItem("role", response.data.result?.role || "user");
       enqueueSnackbar(response.data.message || "Login successful", { variant: "success" });
-      console.log(response.data.message);
+
       return response.data.result;
     } catch (error) {
       enqueueSnackbar(error.response?.data?.message || "Login failed", {
@@ -143,12 +143,13 @@ export const googleLogin = createAsyncThunk(
   async ({ uid, userName, fullName, email, photo }, { dispatch, rejectWithValue }) => {
     try {
       const response = await axios.post(`${BASE_URL}/google-login`, { uid, userName, fullName, email, photo }, { withCredentials: true });
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userId", response.data.user._id);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
-      localStorage.setItem("role", response.data.user?.role || "user");
-      // enqueueSnackbar(response.data.message || "Google Login successful", { variant: "success" });
-      return response.data;
+      localStorage.setItem("token", response.data.result.token);
+      localStorage.setItem("userId", response.data.result.id);
+      localStorage.setItem("refreshToken", response.data.result?.refreshToken);
+      localStorage.setItem("role", response.data.result?.role || "user");
+      enqueueSnackbar(response.data.message || "Login successful", { variant: "success" });
+
+      return response.data.result;
     } catch (error) {
       // Optionally handle errors here
       return rejectWithValue(error.response?.data || error.message);

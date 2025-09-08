@@ -8,6 +8,7 @@ import loginBg from "../images/login-bg-video.mp4";
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
 import {
   forgotPassword,
+  googleLogin,
   login,
   register,
   resetPassword,
@@ -17,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../Redux/Slice/user.slice";
 import { motion, AnimatePresence } from "framer-motion";
 import { handleMyToggle } from "../Redux/Slice/game.slice";
+import {  useGoogleLogin } from "@react-oauth/google";
 
 
 function cn(...args) {
@@ -240,7 +242,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         delay: Math.random() * 2,
         className: `h-${Math.floor(Math.random() * 8) + 8}`,
       });
-    }    
+    }
     return beams;
   };
 
@@ -257,20 +259,20 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
       {/* Starry sky background */}
       <div className="absolute inset-0 stars-background">
         {[...Array(500)].map((_, i) => (
-          <div 
-            key={i} 
-            className="star" 
+          <div
+            key={i}
+            className="star"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 3}s`,
               width: `${Math.random() * 2}px`,
               height: `${Math.random() * 2}px`
-            }} 
+            }}
           />
         ))}
       </div>
-      
+
       {/* <video
         autoPlay
         loop
@@ -281,7 +283,7 @@ const BackgroundBeamsWithCollision = ({ children, className }) => {
         <source src={loginBg} type="video/mp4" />
         Your browser does not support the video tag.
       </video> */}
-      
+
       {beams.map((beam) => (
         <CollisionMechanism
           key={beam.initialX + "beam-idx"}
@@ -334,7 +336,7 @@ const Login = () => {
           if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
             console.log("Login successful:", res?.payload?.name);
             navigate("/");
-            dispatch(handleMyToggle(true)) 
+            dispatch(handleMyToggle(true))
             dispatch(setUser({ name: res?.payload?.name }));
             resetForm();
           } else {
@@ -404,7 +406,7 @@ const Login = () => {
           const res = await dispatch(register(values));
           if (res.meta.requestStatus === "fulfilled" && res.payload?.success) {
             navigate("/");
-            dispatch(handleMyToggle(true)) 
+            dispatch(handleMyToggle(true))
             resetForm();
           } else {
             setStatus({ error: "Signup failed. Try again." });
@@ -524,24 +526,24 @@ const Login = () => {
           const [error, setError] = useState("");
           const [isLoading, setIsLoading] = useState(false);
           const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
-    
+
           const handleOtpChange = (index, value) => {
             const newOtpInputs = [...otpInputs];
             newOtpInputs[index] = value.replace(/\D/g, ""); // only digits
             setOtpInputs(newOtpInputs);
             setError("");
-    
+
             if (value && index < 3) {
               otpRefs[index + 1].current.focus();
             }
           };
-    
+
           const handleOtpKeyDown = (index, e) => {
             if (e.key === "Backspace" && !otpInputs[index] && index > 0) {
               otpRefs[index - 1].current.focus();
             }
           };
-    
+
           const handlePaste = (e) => {
             e.preventDefault();
             const pastedText = e.clipboardData.getData("text").slice(0, 4);
@@ -551,26 +553,26 @@ const Login = () => {
               if (i < 4) newOtp[i] = d;
             });
             setOtpInputs(newOtp);
-    
+
             const lastIndex = digits.length - 1;
             if (lastIndex >= 0 && lastIndex < 4) {
               otpRefs[lastIndex].current.focus();
             }
           };
-    
+
           const verifyOtpHandler = async () => {
             const otp = otpInputs.join("");
             if (otp.length !== 4) {
               setError("Please enter a 4-digit OTP");
               return;
             }
-    
+
             setIsLoading(true);
             setError("");
-    
+
             try {
               const res = await dispatch(verifyOtp({ email: resetEmail, otp })).unwrap();
-    
+
               if (res?.success) {
                 setActiveForm("reset");
               } else {
@@ -583,7 +585,7 @@ const Login = () => {
               setIsLoading(false);
             }
           };
-    
+
           return (
             <>
               <div className="flex justify-center space-x-2 mb-4">
@@ -603,13 +605,13 @@ const Login = () => {
                   />
                 ))}
               </div>
-    
+
               {error && (
                 <div className="text-red-400 text-center mb-4 p-2 rounded-xl bg-red-800/80 shadow-lg">
                   {error}
                 </div>
               )}
-    
+
               <button
                 type="button"
                 onClick={verifyOtpHandler}
@@ -674,7 +676,7 @@ const Login = () => {
             </>
           );
         };
-    
+
         return (
           <>
             <p className="text-sm text-gray-300 text-center mb-4">
@@ -685,7 +687,7 @@ const Login = () => {
         );
       },
     },
-    
+
     reset: {
       title: "Set New Password",
       initialValues: { password: "", confirmPassword: "" },
@@ -749,47 +751,78 @@ const Login = () => {
 
   const { title, initialValues, validationSchema, onSubmit, render } = formConfigs[activeForm];
 
+
+  // google login
+  const googleLoginn = useGoogleLogin({
+    onSuccess: async (credentialResponse)=>{
+      console.log(credentialResponse);
+      try {
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
+          headers:{
+            Authorization:`Bearer ${credentialResponse.access_token}`
+          }
+        });
+        const data = await res.json();
+        console.log(data);
+        const {name, email, sub, picture } = data;
+        dispatch(googleLogin({name, email, uid: sub, picture})).then((res)=>{
+          console.log("aa",res);
+          if(res.meta.requestStatus === 'fulfilled'){
+            navigate('/');
+          }
+        });
+      } catch (error) {
+        console.error('Google Login Fetch Error:', error);
+      }
+    },
+    onError: (error)=>{
+      console.error('Google Login Failed', error);
+    },
+    flow: 'implicit', // Use implicit flow to handle popup blocking
+  })
+
   return (
     <BackgroundBeamsWithCollision className="z-10 relative">
-      <div className="relative p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-sm mx-auto z-20 shadow shadow-white/50">
-      <div className="absolute top-0 left-0 h-full w-full   backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-sm mx-auto z-0 shadow shadow-white/50"></div>
+      <div className="relative p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-lg mx-auto z-20 shadow shadow-white/50">
+        <div className="absolute top-0 left-0 h-full w-full   backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-lg mx-auto z-0 shadow shadow-white/50"></div>
         <div className="relative z-10">
-        <div className="flex justify-center mb-4 sm:mb-6">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 p-2 bg-black border rounded-full">
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 p-2 bg-black border rounded-full">
 
-            <YOYO_LOGO className="svg-current-color h-full w-full text-white" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+              <YOYO_LOGO className="svg-current-color h-full w-full text-white" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+            </div>
           </div>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 text-white drop-shadow-lg">
-          {title}
-        </h1>
-        <Formik
-          enableReinitialize
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {({ status, isSubmitting }) => (
-            <Form className="space-y-3 sm:space-y-4">
-              {render()}
-              {status?.error && (
-                <div className="text-red-400 text-center mt-4 p-2 rounded-xl bg-red-800/80 shadow-lg">{status.error}</div>
-              )}
-            </Form>
-          )}
-        </Formik>
+          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 text-white drop-shadow-lg">
+            {title}
+          </h1>
+          <Formik
+            enableReinitialize
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+          >
+            {({ status, isSubmitting }) => (
+              <Form className="space-y-3 sm:space-y-4">
+                {render()}
+                {status?.error && (
+                  <div className="text-red-400 text-center mt-4 p-2 rounded-xl bg-red-800/80 shadow-lg">{status.error}</div>
+                )}
+              </Form>
+            )}
+          </Formik>
 
 
-        {activeForm === "login" || activeForm === "signup" ?
-          <div className="mt-4 sm:mt-6">
-            <button className="btn bg-gradient-to-r from-gray-50 to-white text-black border-[#e5e5e5] w-full py-2.5 sm:py-3 rounded-xl hover:from-gray-100 hover:to-gray-50 transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 shadow-lg">
-              <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
-              <span>{title} with Google</span>
-            </button>
-          </div>
-          :
-          ""
-        }
+          {activeForm === "login" || activeForm === "signup" ?
+            <div className="mt-4 sm:mt-6">
+              <button onClick={() => googleLoginn()} className="btn bg-gradient-to-r from-gray-50 to-white text-black border-[#e5e5e5] w-full py-2.5 sm:py-3 rounded-xl hover:from-gray-100 hover:to-gray-50 transition-all duration-300 flex items-center justify-center space-x-2 sm:space-x-3 shadow-lg">
+                <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
+                <span>{title} with Google</span>
+              </button>
+             
+            </div>
+            :
+            ""
+          }
         </div>
       </div>
 

@@ -137,6 +137,10 @@ body {
  z-index: 2;
 }
 
+.ds_mini_slider .slick-slide  div div img{
+ border: 2px solid black
+}
+
 .ds_mini_slider .slick-center div div::after {
  content: none !important; 
 }

@@ -247,7 +247,7 @@ const Cart = () => {
 
   {/* Modal wrapper */}
   <div className="fixed inset-0 flex items-center justify-center p-4">
-    <DialogPanel className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
+    <DialogPanel className="bg-gray-900 sm:p-8 p-4 rounded-lg shadow-lg w-full max-w-md">
       <DialogTitle className="text-2xl font-bold mb-4 text-white">
         Complete Your Purchase
       </DialogTitle>
