@@ -44,15 +44,17 @@ const Footer = () => {
               </p>
               <div className="flex justify-center md:justify-start gap-3 sm:gap-4 md:gap-5 flex-wrap ">
                 {[
-                  { Icon: FaFacebook, href: "#" },
-                  { Icon: FaTwitter, href: "#" },
-                  { Icon: FaInstagram, href: "#" },
-                  { Icon: FaLinkedin, href: "#" },
-                  { Icon: FaYoutube, href: "#" },
+                  { Icon: FaFacebook, href: "https://www.facebook.com" },
+                  { Icon: FaTwitter, href: "https://www.twitter.com" },
+                  { Icon: FaInstagram, href: "https://www.instagram.com" },
+                  { Icon: FaLinkedin, href: "https://www.linkedin.com" },
+                  { Icon: FaYoutube, href: "https://www.youtube.com" },
                 ].map(({ Icon, href }, i) => (
                   <a
                     key={i}
                     href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="p-2  xl:p-2.5 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300 flex items-center justify-center"
                   >
                     <Icon className="text-sm sm:text-base md:text-lg lg:text-xl" />
@@ -117,9 +119,6 @@ const Footer = () => {
               </div>
             </div>
           </div>
-
-
-
           <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
             <p>© 2025 YOYO Gaming. All rights reserved.</p>
           </div>

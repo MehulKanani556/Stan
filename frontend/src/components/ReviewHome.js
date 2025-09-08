@@ -157,7 +157,7 @@ export default function ReviewHomeSlick() {
           border: 1px solid #2d2d2d;
           padding: 18px;
           background: linear-gradient(145deg, #161616 0%, #1b1b1b 100%);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+          /* box-shadow: 0 20px 50px rgba(0,0,0,0.55); */
           overflow: hidden;
         }
         @media (min-width:768px){
