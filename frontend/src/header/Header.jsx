@@ -45,7 +45,7 @@ export default function Header() {
     //     return stored ? JSON.parse(stored) : "";
     // });
     const name = useSelector((state) => state?.user?.name);
-    const myManage = localStorage.getItem("userId")
+    const myManage = useSelector((state)=> state?.game?.myToggle)
 
     
          
