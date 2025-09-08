@@ -40,13 +40,13 @@ export default function HomeSlider() {
     const leftItemRefs = useRef([]);
     const displayIntervalRef = useRef(null);
 
-    // Function to get image URL with fallback
+   
     const getImageUrl = (slide) => {
-        // Check if slide has cover_image url
+      
         if (slide?.cover_image?.url) {
             return slide.cover_image.url;
         }
-        // Fallback to default image if no cover_image
+        
         return "https://via.placeholder.com/800x600/333333/ffffff?text=No+Image";
     };
 
