@@ -25,7 +25,6 @@ const Games = () => {
 		dispatch(getFreeGames())
 	}, [dispatch])
 
-
 	useEffect(() => {
 		return () => dispatch(clearError())
 	}, [dispatch])
@@ -63,6 +62,10 @@ const Games = () => {
 	}, [safeGames])
 
 	const isInitialLoading = loading && (!Array.isArray(games) || games.length === 0)
+
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}, []);
 
 	return (
 		<div className="max-w-[95%] md:max-w-[85%] m-auto pt-16 sm:pt-20 md:pt-28 pb-12 sm:pb-16 md:pb-24 px-3 sm:px-4">

@@ -286,14 +286,14 @@ const SingleGame = () => {
     return <SingleGameSkeleton />;
   }
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = String(date.getFullYear()).slice(-2);
-    return `${day}-${month}-${year}`;
-  };
+  // const formatDate = (dateString) => {
+  //   if (!dateString) return "";
+  //   const date = new Date(dateString);
+  //   const day = String(date.getDate()).padStart(2, "0");
+  //   const month = String(date.getMonth() + 1).padStart(2, "0");
+  //   const year = String(date.getFullYear()).slice(-2);
+  //   return `${day}-${month}-${year}`;
+  // };
 
   return (
     <div className=''>
@@ -619,7 +619,7 @@ const SingleGame = () => {
                                      </div>
                                  </div>
                                   <p className='mt-2 text-[13px]'>{element?.review}</p>
-                                  {/* <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p> */}
+                                    <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p>
                                   <div className='h-[1px] bg-gray-700 mt-3'></div>
                               </div>  
                             )
