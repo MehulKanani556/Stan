@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllGames } from "../Redux/Slice/game.slice";
 import { Link } from "react-router-dom";
-// import "./style.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -10,65 +10,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-
-import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
-const slides = [
-    {
-        img: "https://u.cubeupload.com/Leo21/eagel1.jpg",
-        name: "EAGLE",
-        desc: "Eagles are majestic birds of prey known for their incredible strength, sharp vision, and powerful talons"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/owl1.jpg",
-        name: "OWL",
-        desc: "Owls are nocturnal birds of prey, shrouded in an aura of mystery and wisdom"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/crow.jpg",
-        name: "CROW",
-        desc: "Crows are highly intelligent and adaptable birds known for their glossy black plumage and distinctive calls."
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/butterfly1.jpeg",
-        name: "BUTTERFLY",
-        desc: "Butterflies, with their vibrant wings and graceful flight, are a symbol of transformation and beauty in the natural world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/owl2.jpg",
-        name: "OWL",
-        desc: "Owls have long been associated with mystery, wisdom, and the supernatural in various cultures"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/eagel3.jpg",
-        name: "EAGLE",
-        desc: "Eagles represent freedom, power, and nobility in many cultures"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/kingfirser2.jpeg",
-        name: "KINGFISHER",
-        desc: "Kingfishers, with their dazzling plumage, are vibrant jewels of the aquatic world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/parrot2.jpg",
-        name: "PARROT",
-        desc: "Parrots are social creatures, often living in flocks and exhibiting complex communication patterns"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/heron.jpeg",
-        name: "HERON",
-        desc: "Herons are known for their striking appearance, often characterized by graceful necks and stilt-like legs"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/butterfly2.jpg",
-        name: "BUTTERFLY",
-        desc: "Butterflies, with their delicate wings and vibrant colors, are among the most enchanting creatures in the natural world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/parrot1.jpg",
-        name: "PARROT",
-        desc: "Parrots are known for their long lifespans, with some species living for several decades"
-    }
-];
+import { EffectFade, Pagination, Autoplay } from 'swiper/modules';
+import HomesliderSkeleton from '../lazyLoader/HomesliderSkeleton';
 
 export default function HomeSlider() {
     const dispatch = useDispatch()
@@ -85,6 +28,16 @@ export default function HomeSlider() {
     const runTimeOut = useRef(null);
     const runNextAuto = useRef(null);
     const timeBarRef = useRef(null);
+    // const games = useSelector((state) => state.game.games) || [];
+
+    // Limit to 5 games for left slider
+    const leftGames = games.slice(0, 5);
+
+    const [leftIndex, setLeftIndex] = useState(0);
+    const [centerGame, setCenterGame] = useState(null);
+
+    const leftItemRefs = useRef([]);
+    const displayIntervalRef = useRef(null);
 
     // Function to get image URL with fallback
     const getImageUrl = (slide) => {
@@ -157,6 +110,31 @@ export default function HomeSlider() {
             clearTimeout(runTimeOut.current);
         };
     }, [games]);
+    // Auto change active slide every 5s
+    useEffect(() => {
+        if (leftGames.length > 0) {
+            displayIntervalRef.current && clearInterval(displayIntervalRef.current);
+            displayIntervalRef.current = setInterval(() => {
+                setLeftIndex((prev) => (prev + 1) % leftGames.length);
+            }, 5000);
+        }
+
+        return () => clearInterval(displayIntervalRef.current);
+    }, [leftGames.length]);
+
+    // Update center game when left index changes
+    useEffect(() => {
+        if (leftGames.length > 0) {
+            setCenterGame(leftGames[leftIndex]);
+        }
+    }, [leftIndex, leftGames]);
+
+    // Initialize with first left game
+    useEffect(() => {
+        if (leftGames.length > 0 && !centerGame) {
+            setCenterGame(leftGames[0]);
+        }
+    }, [leftGames, centerGame]);
 
     // Don't render carousel until games are loaded
     if (!games || games.length === 0) {

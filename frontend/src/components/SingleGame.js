@@ -360,24 +360,13 @@ const SingleGame = () => {
                     {single?.description}
                   </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-8">
                     <div className="bg-black/30 p-6 rounded-lg shadow-lg">
                       <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
                       <div className="flex flex-wrap gap-3">
                         {single?.tags?.map((genre, index) => (
                           <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer capitalize">
                             {genre}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="bg-black/30 p-6 rounded-lg shadow-lg ">
-                      <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Features</h3>
-                      <div className="flex flex-wrap gap-3">
-                        {['Achievements', 'Co-op', 'Multiplayer', 'Single Player'].map((feature, index) => (
-                          <span key={index} className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer">
-                            {feature}
                           </span>
                         ))}
                       </div>

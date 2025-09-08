@@ -19,6 +19,7 @@ import StylishDiv from '../components/StylishDiv';
 import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import LazyGameCard from '../lazyLoader/LazyGameCard';
+import HomeSlider from '../components/HomeSlider';
 
 
 const Store = () => {
@@ -46,7 +47,7 @@ const Store = () => {
       dispatch(fetchCart());
     }
   }, [dispatch]);
-  
+
 
 
   // Handle window resize for better mobile button states (matching Home.jsx)
@@ -389,19 +390,20 @@ const Store = () => {
 
   const isNewGame = (createdAt) => {
     if (!createdAt) return false;
-  
-    const createdDate = new Date(createdAt);  
-    const now = new Date();                    
-  
+
+    const createdDate = new Date(createdAt);
+    const now = new Date();
+
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(now.getMonth() - 1);
-  
+
     return createdDate >= oneMonthAgo && createdDate <= now;
   };
 
   return (
     <>
       <section className="">
+        <HomeSlider />
         {/* Game Slider (matching Home.jsx) */}
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
           <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
