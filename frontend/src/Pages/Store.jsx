@@ -241,7 +241,7 @@ const Store = () => {
         ) : games && games.length > 0 ? (
           games.map((game) => (
             <SwiperSlide key={game._id || game.id}>
-              <LazyGameCard>
+              {/* <LazyGameCard> */}
                 <div
                   onClick={() => navigate(`/single/${game?._id}`)}
                   className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
@@ -374,7 +374,7 @@ const Store = () => {
                     </div>
                   </div>
                 </div>
-              </LazyGameCard>
+              {/* </LazyGameCard> */}
             </SwiperSlide>
           ))
         ) : (
