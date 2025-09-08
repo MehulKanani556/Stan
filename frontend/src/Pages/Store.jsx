@@ -19,7 +19,7 @@ import StylishDiv from '../components/StylishDiv';
 import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import LazyGameCard from '../lazyLoader/LazyGameCard';
-import HomeSlider from '../components/HomeSlider';
+import StoreSlider from '../components/StoreSlider';
 
 
 const Store = () => {
@@ -403,7 +403,7 @@ const Store = () => {
   return (
     <>
       <section className="">
-        <HomeSlider />
+        <StoreSlider />
         {/* Game Slider (matching Home.jsx) */}
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
           <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">

@@ -23,7 +23,7 @@ export default function HomesliderSkeleton() {
         </div>
 
 
-        <div className="col-span-12 md:col-span-6 xl:col-span-8">
+        <div className="col-span-12 md:col-span-9 xl:col-span-10">
           <div className="relative h-[500px] xl:h-[700px] rounded-lg overflow-hidden border border-white/10">
             <div className="absolute inset-0 w-full h-full bg-white/10 animate-pulse" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -42,7 +42,7 @@ export default function HomesliderSkeleton() {
         </div>
 
 
-        <div className="col-span-12 md:col-span-3 xl:col-span-2">
+        {/* <div className="col-span-12 md:col-span-3 xl:col-span-2">
           <div className="h-[500px] xl:h-[700px] overflow-hidden ">
             <div className="h-full overflow-y-auto no-scrollbar py-3 space-y-3 px-3">
               {[...Array(8)].map((_, idx) => (
@@ -57,7 +57,7 @@ export default function HomesliderSkeleton() {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Mobile skeleton */}

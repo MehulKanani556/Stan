@@ -51,10 +51,10 @@ const SingleGame = () => {
   const [amountToPay, setAmountToPay] = useState(0);
   const [hasPaid, setHasPaid] = useState(false);
   const [open, setOpen] = useState(false)
-  const gameRating = useSelector((state)=> state?.game?.singleGameReview?.data)
+  const gameRating = useSelector((state) => state?.game?.singleGameReview?.data)
 
   console.log("YYYYYYYYY", gameRating);
-  
+
 
   useEffect(() => {
     setNav1(sliderRef1);
@@ -62,18 +62,18 @@ const SingleGame = () => {
   }, []);
 
   useEffect(() => {
-      dispatch(getGameById(id));
-      dispatch(fetchWishlist());
-      dispatch(fetchCart());
-  }, [open,showPaymentForm])
+    dispatch(getGameById(id));
+    dispatch(fetchWishlist());
+    dispatch(fetchCart());
+  }, [open, showPaymentForm])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  useEffect(()=>{
-     dispatch(getGameRating(id))
-  },[])
+  useEffect(() => {
+    dispatch(getGameRating(id))
+  }, [])
 
 
   const handleSlideChange = (oldIndex, newIndex) => {
@@ -105,7 +105,7 @@ const SingleGame = () => {
       </div>
     );
   };
-  
+
   const PrevArrow = (props) => {
     const { onClick } = props;
     return (
@@ -117,7 +117,7 @@ const SingleGame = () => {
       </div>
     );
   };
-  
+
   const ThumbNextArrow = ({ onClick }) => (
     <div
       onClick={onClick}
@@ -142,7 +142,7 @@ const SingleGame = () => {
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
   };
-  
+
   const thumbSettings = {
     asNavFor: nav1,
     slidesToShow,
@@ -154,11 +154,11 @@ const SingleGame = () => {
     responsive: [
       { breakpoint: 1650, settings: { slidesToShow: 4 } },
       { breakpoint: 1280, settings: { slidesToShow: 4 } },
-      { breakpoint: 768,  settings: { slidesToShow: 4, centerMode: false } },
-      { breakpoint: 576,  settings: { slidesToShow: 3, centerMode: false } },
-      { breakpoint: 426,  settings: { slidesToShow: 3, centerMode: false } },
-      { breakpoint: 376,  settings: { slidesToShow: 3, centerMode: false } },
-      { breakpoint: 321,  settings: { slidesToShow: 2, centerMode: false } },
+      { breakpoint: 768, settings: { slidesToShow: 4, centerMode: false } },
+      { breakpoint: 576, settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 426, settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 376, settings: { slidesToShow: 3, centerMode: false } },
+      { breakpoint: 321, settings: { slidesToShow: 2, centerMode: false } },
     ],
   };
 
@@ -305,30 +305,30 @@ const SingleGame = () => {
         <div className="flex flex-col-reverse xl:flex-row lg:mt-11">
           <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 w-full xl:mt-0 mt-5'>
             <div>
-               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
-                  {single?.video?.url && (
-                    <div>
-                      <video
-                        src={single.video.url}
-                        autoPlay
-                        muted
-                        loop
-                        controls
-                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
-                      />
-                    </div>
-                  )}
-                
-                  {single?.images?.map((element) => (
-                    <div key={element._id}>
-                      <img
-                        src={element.url}
-                        alt=""
-                        className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg"
-                      />
-                    </div>
-                  ))}
-               </Slider>
+              <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
+                {single?.video?.url && (
+                  <div>
+                    <video
+                      src={single.video.url}
+                      autoPlay
+                      muted
+                      loop
+                      controls
+                      className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
+                    />
+                  </div>
+                )}
+
+                {single?.images?.map((element) => (
+                  <div key={element._id}>
+                    <img
+                      src={element.url}
+                      alt=""
+                      className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg"
+                    />
+                  </div>
+                ))}
+              </Slider>
 
               <div className='px-5'>
                 <Slider {...thumbSettings} ref={setNav2} className='mt-3 ds_mini_slider' >
@@ -500,7 +500,7 @@ const SingleGame = () => {
                       className="w-full bg-gradient-to-r cursor-not-allowed from-emerald-600 to-green-600 active:scale-95 text-white font-bold py-3 px-4 mb-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
                     >
                       <span className="text-white font-bold text-sm me-2">✓</span>
-                       Purchased
+                      Purchased
                     </button>
                     <button
                       onClick={() => setOpen(true)}
@@ -523,14 +523,14 @@ const SingleGame = () => {
               <Dialog open={!!(showPaymentForm && clientSecret && currentOrderId)} onClose={() => setShowPaymentForm(false)} className="relative z-50">
                 {/* Backdrop */}
                 <DialogBackdrop className="fixed inset-0 bg-black/75" />
-              
+
                 {/* Centered panel */}
                 <div className="fixed inset-0 flex items-center justify-center p-4">
                   <DialogPanel className="w-full max-w-md rounded-xl bg-gray-900 sm:p-6 p-4 shadow-lg">
                     <h3 className="text-2xl font-bold mb-4 text-white">
                       Complete Your Purchase
                     </h3>
-              
+
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
                       <PaymentForm
                         clientSecret={clientSecret}
@@ -540,7 +540,7 @@ const SingleGame = () => {
                         fromCartPage={false}
                       />
                     </Elements>
-              
+
                     <button
                       onClick={() => setShowPaymentForm(false)}
                       className="mt-4 text-gray-400 hover:text-white"
@@ -549,7 +549,7 @@ const SingleGame = () => {
                     </button>
                   </DialogPanel>
                 </div>
-               </Dialog>
+              </Dialog>
 
               {/* )} */}
 
@@ -584,38 +584,38 @@ const SingleGame = () => {
                       ))}
                       <span className="ml-2 text-white font-medium">{ratings.averageRating?.toFixed(1)}</span>
                     </div>
-                      {gameRating && <div className='mt-4'>
-                         {gameRating?.map((element)=>{
-                             let FullStar = Math.floor(element?.rating);
-                             let HasHalfStar = element?.rating % 1 >= 0.5;
-                             let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
-                            return(
-                              <div className='mt-2' key={element?._id}>
-                                 <div className='flex items-center'>
-                                     <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] object-cover rounded-full' alt="" />
-                                     <div className='ms-3'>
-                                       <div>{decryptData(element?.user?.name)}</div>
-                                       <div className='flex items-center'>
-                                          {Array.from({ length: FullStar }).map((_, i) => (
-                                                 <FaStar key={`full-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
-                                           ))}
-                                           {HasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />}
-                                           {Array.from({ length: EmptyStars }).map((_, i) => (
-                                             <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
-                                           ))}
-                                           <span className="ms-2 text-white text-[14px]">{ratings.averageRating?.toFixed(1)}</span>
-                                       </div>
-                                     </div>
-                                 </div>
-                                  <p className='mt-2 text-[13px]'>{element?.review}</p>
-                                  {/* <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p> */}
-                                  <div className='h-[1px] bg-gray-700 mt-3'></div>
-                              </div>  
-                            )
-                         })}
-                      </div>}
+                    {gameRating && <div className='mt-4'>
+                      {gameRating?.map((element) => {
+                        let FullStar = Math.floor(element?.rating);
+                        let HasHalfStar = element?.rating % 1 >= 0.5;
+                        let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+                        return (
+                          <div className='mt-2' key={element?._id}>
+                            <div className='flex items-center'>
+                              <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] object-cover rounded-full' alt="" />
+                              <div className='ms-3'>
+                                <div>{decryptData(element?.user?.name)}</div>
+                                <div className='flex items-center'>
+                                  {Array.from({ length: FullStar }).map((_, i) => (
+                                    <FaStar key={`full-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                  ))}
+                                  {HasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />}
+                                  {Array.from({ length: EmptyStars }).map((_, i) => (
+                                    <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                  ))}
+                                  <span className="ms-2 text-white text-[14px]">{ratings.averageRating?.toFixed(1)}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <p className='mt-2 text-[13px]'>{element?.review}</p>
+                            {/* <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p> */}
+                            <div className='h-[1px] bg-gray-700 mt-3'></div>
+                          </div>
+                        )
+                      })}
+                    </div>}
                   </div>
-                  
+
                 </details>
 
                 <details className="group open:shadow-lg open:bg-black/20 transition-all">
