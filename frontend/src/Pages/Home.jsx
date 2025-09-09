@@ -114,7 +114,6 @@ const GameCard = ({
   isInWishlist, 
   isInCart 
 }) => (
-  <LazyGameCard>
     <div
       onClick={() => onGameClick(game._id)}
       className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
@@ -125,6 +124,7 @@ const GameCard = ({
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
         {/* Image Container */}
+        {/* {console.log('games image',game?.cover_image?.url)} */}
         <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
           <img
             src={game?.cover_image?.url}
@@ -246,7 +246,6 @@ const GameCard = ({
         </div>
       </div>
     </div>
-  </LazyGameCard>
 );
 
 const NotificationToast = ({ show, message }) => (
@@ -428,13 +427,15 @@ export default function Home() {
               <div className="flex gap-2">
                 <button
                   onClick={() => navigate('/allGames')}
-                  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 rounded-lg 
+                  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 
                     font-medium text-sm transition-all duration-200 ease-out
-                    bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
+                    border-[1px] border-transparent
+                    rounded-[20px]
+                    text-white
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
                     active:scale-95 focus-visible:outline-none 
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    style={{ borderImage: 'linear-gradient(to right, #9333EA, #DB2777) 1' }}
                 >
                   All Games
                 </button>
@@ -464,6 +465,8 @@ export default function Home() {
             </div>
 
             {/* Games Swiper */}
+            {filteredGames?.length > 0 ?
+              <>
             <Swiper
               modules={[Navigation]}
               spaceBetween={12}
@@ -491,6 +494,19 @@ export default function Home() {
                 </SwiperSlide>
               ))}
             </Swiper>
+            </>: <Swiper
+          modules={[Navigation]}
+          spaceBetween={12}
+          slidesPerView={1.1}
+          breakpoints={SWIPER_BREAKPOINTS}>
+          <div >
+            {Array.from({ length: 4 }, (_, i) => (
+              <SwiperSlide key={i}>
+                <LazyGameCard key={i} />
+              </SwiperSlide>
+            ))}
+          </div>
+        </Swiper>}
           </div>
         </div>
 

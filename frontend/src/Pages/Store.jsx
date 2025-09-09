@@ -127,7 +127,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
       className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
     >
       <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
-        
+
         {/* Enhanced Glow Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
@@ -142,7 +142,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
-            
+
             {/* NEW Badge */}
             {isNewGame && (
               <div className="absolute top-4 left-4">
@@ -154,11 +154,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
             {/* Wishlist Button */}
             <button
-              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${
-                inWishlist
+              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${inWishlist
                   ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
                   : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
-              }`}
+                }`}
               onClick={(e) => {
                 e.stopPropagation();
                 inWishlist ? handleRemoveFromWishlist(game._id) : handleAddWishlist(game);
@@ -184,7 +183,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
         {/* Content Section */}
         <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
-          
+
           {/* Game Info */}
           <div className="bg-slate-700/50 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
             <div className="flex flex-wrap items-center space-x-2 mb-2">
@@ -211,11 +210,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
               handleAddToCart(game);
             }}
             disabled={inCart}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${
-              inCart
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${inCart
                 ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
                 : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
-            }`}
+              }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
               <div>
@@ -305,7 +303,18 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
           isBeginning={isBeginning}
           isEnd={isEnd}
         />
-        <div className="text-gray-400 text-center py-8">No games available</div>
+        <Swiper
+          modules={[Navigation]}
+          ref={swiperRef}
+          {...SWIPER_CONFIG}
+          {...swiperEvents}
+        >
+          {Array.from({ length: 4 }, (_, i) => (
+            <SwiperSlide key={i}>
+              <LazyGameCard />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     );
   }
@@ -345,10 +354,10 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
 const Store = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   // Redux selectors
   const { games, popularGames, topGames, loading, error } = useSelector((state) => state.game);
-  
+
   // Custom hooks
   const gameActions = useGameActions();
   const featuredNavigation = useSwiperNavigation();
@@ -358,7 +367,7 @@ const Store = () => {
     if (!Array.isArray(games)) return [];
     return games.filter((game) => {
       const byCategory = (game?.category?.categoryName || "").toLowerCase() === "action";
-      const byTag = Array.isArray(game?.tags) && game.tags.some((tag) => 
+      const byTag = Array.isArray(game?.tags) && game.tags.some((tag) =>
         String(tag).toLowerCase() === "action"
       );
       return byCategory || byTag;
@@ -379,7 +388,7 @@ const Store = () => {
         dispatch(getTopGames())
       ]);
     };
-    
+
     loadData();
 
     const userId = localStorage.getItem("userId");
@@ -430,7 +439,7 @@ const Store = () => {
   return (
     <section>
       <StoreSlider />
-      
+
       {/* Featured Games Section */}
       <div className="mx-auto flex flex-col items-center sm:max-w-full">
         <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
@@ -458,13 +467,11 @@ const Store = () => {
             ) : featuredGames.length > 0 ? (
               featuredGames.map((game) => (
                 <SwiperSlide key={game._id}>
-                  <LazyGameCard>
-                    <MemoizedGameCard
-                      game={game}
-                      onNavigate={handleNavigate}
-                      gameActions={gameActions}
-                    />
-                  </LazyGameCard>
+                  <MemoizedGameCard
+                    game={game}
+                    onNavigate={handleNavigate}
+                    gameActions={gameActions}
+                  />
                 </SwiperSlide>
               ))
             ) : (

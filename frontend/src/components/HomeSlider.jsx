@@ -148,7 +148,6 @@ export default function HomeSlider() {
                 <div className="list hidden md:flex" ref={listRef}>
                     {games.map((slide, i) => {
                         const imageUrl = getImageUrl(slide);
-                        console.log('img', i, imageUrl);
 
                         return (
                             <div

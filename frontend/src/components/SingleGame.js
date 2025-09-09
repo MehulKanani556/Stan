@@ -270,13 +270,13 @@ const SingleGame = () => {
   // review modal hadnling
 
   const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
-  console.log('orders', orders)
+  // console.log('orders', orders)
   const isBuyed = Array.isArray(orders) && orders.some(order =>
     order.status === 'paid' &&
     order?.items?.some(item => item.game._id === id)
   );
 
-  console.log(isBuyed);
+  // console.log(isBuyed);
   useEffect(() => {
     dispatch(allorders());
   }, [dispatch]);
@@ -286,14 +286,14 @@ const SingleGame = () => {
     return <SingleGameSkeleton />;
   }
 
-  // const formatDate = (dateString) => {
-  //   if (!dateString) return "";
-  //   const date = new Date(dateString);
-  //   const day = String(date.getDate()).padStart(2, "0");
-  //   const month = String(date.getMonth() + 1).padStart(2, "0");
-  //   const year = String(date.getFullYear()).slice(-2);
-  //   return `${day}-${month}-${year}`;
-  // };
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
+  };
 
   return (
     <div className=''>
@@ -574,7 +574,7 @@ const SingleGame = () => {
                   </summary>
                   <div className="pb-5 px-4 md:px-5">
                     <div className="flex">
-                      {console.log(fullStars, emptyStars)}
+                      {/* {console.log(fullStars, emptyStars)} */}
                       {Array.from({ length: fullStars }).map((_, i) => (
                         <FaStar key={`full-${i}`} className="text-yellow-400 h-5 w-5 mx-0.5" />
                       ))}

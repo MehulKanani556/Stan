@@ -112,12 +112,13 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                             <div className="flex items-center gap-3">
                                                 {/* Profile photo or initial */}
                                                 <div className="flex-shrink-0 relative">
+                                                    {/* {console.log('user,user',user)} */}
                                                     {user.profilePhoto ? (
-                                                        <img
-                                                            src={user.profilePhoto}
-                                                            alt="profile"
-                                                            className="w-12 h-12 rounded-full object-cover"
-                                                        />
+                                                     <img
+                                                     src={user.profilePhoto}
+                                                     alt="profile"
+                                                     className="w-12 h-12 rounded-full object-cover"
+                                                 />
                                                     ) : (
                                                         <div className="w-12 h-12 rounded-full font-bold bg-gray-600 flex items-center justify-center text-gray-300 capitalize text-lg">
                                                             {user.name.charAt(0)}
