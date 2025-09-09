@@ -564,14 +564,23 @@ export const getAllActiveGames = function (req, res) {
             
             query = query.where(`platforms.windows.available`).equals(true);
             query = query.where(`platforms.windows.download_link`).ne("");
+            
+            // Remove any default limit to ensure we get all games
+            query = query.limit(null);
+            
             if (mongoose.modelNames().includes("category")) {
                 query = query.populate("category");
             }
+            
             const games = await query.exec();
+            
+            console.log(`getAllActiveGames: Found ${games ? games.length : 0} active games`);
+            
             if (!games || games.length === 0)
                 return ThrowError(res, 404, "No games found");
             res.json(games);
         } catch (error) {
+            console.error("getAllActiveGames error:", error);
             return ThrowError(res, 500, error.message);
         }
     })();
@@ -788,6 +797,190 @@ export const getTopGames = function (req, res) {
                 }
             });
         } catch (error) {
+            return ThrowError(res, 500, error.message);
+        }
+    })();
+};
+
+// Get trending games based on recent purchases
+export const getTrendingGames = function (req, res) {
+    (async function () {
+        try {
+            const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+            const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1);
+            const days = Math.max(parseInt(req.query.days, 10) || 30, 1); // Default to last 30 days
+
+            console.log("getTrendingGames called with:", { page, limit, days });
+
+            // Calculate date range for recent purchases
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - days);
+
+            // Import Order model
+            const Order = mongoose.model("OrderStan");
+
+            // Aggregate to get games with most purchases in the specified time period
+            const trendingGames = await Order.aggregate([
+                // Match orders from the specified time period with paid status
+                {
+                    $match: {
+                        status: "paid",
+                        createdAt: { $gte: startDate }
+                    }
+                },
+                // Unwind the items array to get individual game purchases
+                {
+                    $unwind: "$items"
+                },
+                // Group by game ID and count purchases
+                {
+                    $group: {
+                        _id: "$items.game",
+                        purchaseCount: { $sum: 1 },
+                        totalRevenue: { $sum: "$items.price" },
+                        lastPurchaseDate: { $max: "$createdAt" }
+                    }
+                },
+                // Sort by purchase count (descending) and then by last purchase date
+                {
+                    $sort: {
+                        purchaseCount: -1,
+                        lastPurchaseDate: -1
+                    }
+                },
+                // Skip and limit for pagination
+                {
+                    $skip: (page - 1) * limit
+                },
+                {
+                    $limit: limit
+                },
+                // Lookup game details
+                {
+                    $lookup: {
+                        from: "games",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "game"
+                    }
+                },
+                // Unwind the game array
+                {
+                    $unwind: "$game"
+                },
+                // Match only active games
+                {
+                    $match: {
+                        "game.isActive": true
+                    }
+                },
+                // Lookup category information
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "game.category",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                // Project the final structure
+                {
+                    $project: {
+                        _id: "$game._id",
+                        title: "$game.title",
+                        description: "$game.description",
+                        cover_image: "$game.cover_image",
+                        video: "$game.video",
+                        images: "$game.images",
+                        platforms: "$game.platforms",
+                        tags: "$game.tags",
+                        instructions: "$game.instructions",
+                        views: "$game.views",
+                        downloads: "$game.downloads",
+                        reviews: "$game.reviews",
+                        isActive: "$game.isActive",
+                        createdAt: "$game.createdAt",
+                        updatedAt: "$game.updatedAt",
+                        category: { $arrayElemAt: ["$category", 0] },
+                        trendingMetrics: {
+                            purchaseCount: "$purchaseCount",
+                            totalRevenue: "$totalRevenue",
+                            lastPurchaseDate: "$lastPurchaseDate"
+                        }
+                    }
+                }
+            ]);
+
+            // Get total count for pagination
+            const totalCount = await Order.aggregate([
+                {
+                    $match: {
+                        status: "paid",
+                        createdAt: { $gte: startDate }
+                    }
+                },
+                {
+                    $unwind: "$items"
+                },
+                {
+                    $group: {
+                        _id: "$items.game"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "games",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "game"
+                    }
+                },
+                {
+                    $unwind: "$game"
+                },
+                {
+                    $match: {
+                        "game.isActive": true
+                    }
+                },
+                {
+                    $count: "total"
+                }
+            ]);
+
+            const total = totalCount.length > 0 ? totalCount[0].total : 0;
+
+            if (!trendingGames || trendingGames.length === 0) {
+                return res.status(200).json({
+                    success: true,
+                    data: [],
+                    pagination: {
+                        page,
+                        limit,
+                        total: 0,
+                        totalPages: 0
+                    },
+                    message: "No trending games found for the specified period"
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                data: trendingGames,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit)
+                },
+                filters: {
+                    days,
+                    startDate,
+                    endDate: new Date()
+                }
+            });
+        } catch (error) {
+            console.error("getTrendingGames error:", error);
             return ThrowError(res, 500, error.message);
         }
     })();

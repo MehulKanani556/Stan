@@ -157,6 +157,26 @@ export const getTopGames = createAsyncThunk(
   }
 );
 
+export const getTrendingGames = createAsyncThunk(
+  "game/getTrendingGames",
+  async ({ page = 1, limit = 10, days = 30 } = {}, { rejectWithValue }) => {
+    try {
+      console.log("Calling getTrendingGames API...");
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        days: days.toString()
+      });
+      const res = await axiosInstance.get(`/getTrendingGames?${params}`);
+      console.log("getTrendingGames API response:", res.data);
+      return res.data;
+    } catch (err) {
+      console.error("getTrendingGames API error:", err);
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
 // ********* WishList ******
 export const getWishlist = createAsyncThunk(
   "game/getWishlist",
@@ -235,10 +255,12 @@ const gameSlice = createSlice({
     games: [],
     popularGames: [],
     topGames: [],
+    trendingGames: [],
     singleGame: null,
     loading: false,
     topGamesLoading: false,
     popularGamesLoading: false,
+    trendingGamesLoading: false,
     topGamesInitialLoading: false, // New loading state for initial load
     error: null,
     success: null,
@@ -292,6 +314,8 @@ const gameSlice = createSlice({
       .addCase(getAllActiveGames.fulfilled, (state, action) => {
         state.loading = false;
         state.topGamesInitialLoading = false;
+        console.log("getAllActiveGames fulfilled - payload:", action.payload);
+        console.log("getAllActiveGames fulfilled - payload length:", action.payload?.length);
         state.games = action.payload;
       })
       .addCase(getAllActiveGames.rejected, (state, action) => {
@@ -371,6 +395,20 @@ const gameSlice = createSlice({
       })
       .addCase(getTopGames.rejected, (state, action) => {
         state.topGamesLoading = false;
+        state.error = action.payload;
+      })
+      // GET TRENDING GAMES
+      .addCase(getTrendingGames.pending, (state) => {
+        state.trendingGamesLoading = true;
+        state.error = null;
+      })
+      .addCase(getTrendingGames.fulfilled, (state, action) => {
+        state.trendingGamesLoading = false;
+        state.trendingGames = action.payload?.data || [];
+        state.pagination = action.payload?.pagination || null;
+      })
+      .addCase(getTrendingGames.rejected, (state, action) => {
+        state.trendingGamesLoading = false;
         state.error = action.payload;
       })
       // Get by ID
