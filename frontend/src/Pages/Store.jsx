@@ -9,7 +9,7 @@ import '../css/Store.css';
 import { Navigation } from "swiper/modules";
 import game1 from '../images/game1.jpg';
 import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
-import { getAllGames, getPopularGames, getTopGames } from '../Redux/Slice/game.slice';
+import { getAllGames, getAllActiveGames, getPopularGames, getTopGames, getTrendingGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../Redux/Slice/category.slice';
 import { useNavigate } from 'react-router-dom';
@@ -127,7 +127,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
       className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
     >
       <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
-        
+
         {/* Enhanced Glow Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
@@ -142,7 +142,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
-            
+
             {/* NEW Badge */}
             {isNewGame && (
               <div className="absolute top-4 left-4">
@@ -154,11 +154,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
             {/* Wishlist Button */}
             <button
-              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${
-                inWishlist
-                  ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
-                  : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
-              }`}
+              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${inWishlist
+                ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
+                : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
+                }`}
               onClick={(e) => {
                 e.stopPropagation();
                 inWishlist ? handleRemoveFromWishlist(game._id) : handleAddWishlist(game);
@@ -184,7 +183,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
         {/* Content Section */}
         <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
-          
+
           {/* Game Info */}
           <div className="bg-slate-700/50 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
             <div className="flex flex-wrap items-center space-x-2 mb-2">
@@ -211,11 +210,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
               handleAddToCart(game);
             }}
             disabled={inCart}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${
-              inCart
-                ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
-                : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
-            }`}
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${inCart
+              ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
+              : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
+              }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
               <div>
@@ -345,10 +343,10 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
 const Store = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   // Redux selectors
-  const { games, popularGames, topGames, loading, error } = useSelector((state) => state.game);
-  
+  const { games, popularGames, topGames, trendingGames, loading, error, category } = useSelector((state) => state.game);
+
   // Custom hooks
   const gameActions = useGameActions();
   const featuredNavigation = useSwiperNavigation();
@@ -356,12 +354,31 @@ const Store = () => {
   // Memoized filtered games
   const actionGames = useMemo(() => {
     if (!Array.isArray(games)) return [];
+
+    console.log("All Games", games);
+    console.log("Total games", games.length);
+    console.log("Games array type:", typeof games, "Is array:", Array.isArray(games));
+
     return games.filter((game) => {
-      const byCategory = (game?.category?.categoryName || "").toLowerCase() === "action";
-      const byTag = Array.isArray(game?.tags) && game.tags.some((tag) => 
+      // Check both categoryName and name fields from populated category
+      const categoryName = game?.category?.categoryName || game?.category?.name || "";
+      const byCategory = categoryName.toLowerCase() === "action";
+
+      // Also check if category is just a string (not populated)
+      const categoryString = typeof game?.category === 'string' ? game.category.toLowerCase() : "";
+      const byCategoryString = categoryString === "action";
+
+      const byTag = Array.isArray(game?.tags) && game.tags.some((tag) =>
         String(tag).toLowerCase() === "action"
       );
-      return byCategory || byTag;
+
+      const isActionGame = byCategory || byCategoryString || byTag;
+
+      if (isActionGame) {
+        console.log("Found action game:", game.title, "Category:", game.category);
+      }
+
+      return isActionGame;
     });
   }, [games]);
 
@@ -369,17 +386,46 @@ const Store = () => {
     return Array.isArray(games) ? games.slice(0, 8) : [];
   }, [games]);
 
+  // Parse a size value to MB (supports numbers, "MB", "GB", "TB")
+  const parseSizeToMB = useCallback((size) => {
+    if (size == null) return -Infinity; // treat missing size as smallest
+    if (typeof size === 'number') return size; // assume number is already MB
+    if (typeof size !== 'string') return -Infinity;
+    const s = size.trim().toUpperCase();
+    const match = s.match(/([0-9]*\.?[0-9]+)/);
+    if (!match) return -Infinity;
+    const value = parseFloat(match[1]);
+    if (s.includes('TB')) return value * 1024 * 1024;
+    if (s.includes('GB')) return value * 1024;
+
+    return value;
+  }, []);
+
+  const featuredMaxSizeGames = useMemo(() => {
+    if (!Array.isArray(games)) return [];
+    const withSize = games.map((g) => {
+      const sizeVal = g?.platforms?.windows?.size ?? g?.size;
+      return { game: g, sizeMB: parseSizeToMB(sizeVal) };
+    });
+    withSize.sort((a, b) => (b.sizeMB - a.sizeMB));
+    const sortedGames = withSize.map((x) => x.game).filter(Boolean);
+    const top = sortedGames.slice(0, 8);
+
+    return top.length ? top : (Array.isArray(games) ? games.slice(0, 8) : []);
+  }, [games, parseSizeToMB]);
+
   // Effects
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([
-        dispatch(getAllGames()),
+        dispatch(getAllActiveGames()), // Fetch all active games without pagination
         dispatch(getPopularGames()),
         dispatch(getAllCategories()),
-        dispatch(getTopGames())
+        dispatch(getTopGames()),
+        dispatch(getTrendingGames({ page: 1, limit: 10, days: 30 })) // Get trending games from last 30 days
       ]);
     };
-    
+
     loadData();
 
     const userId = localStorage.getItem("userId");
@@ -430,10 +476,17 @@ const Store = () => {
   return (
     <section>
       <StoreSlider />
-      
+
       {/* Featured Games Section */}
       <div className="mx-auto flex flex-col items-center sm:max-w-full">
         <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+          <SwiperSection
+            title="All Games"
+            games={Array.isArray(games) ? games : []}
+            gameActions={gameActions}
+            onNavigate={handleNavigate}
+          />
+
           <SwiperNavigation
             title="Featured Games"
             onAllGamesClick={handleAllGames}
@@ -455,8 +508,8 @@ const Store = () => {
                   <LazyGameCard />
                 </SwiperSlide>
               ))
-            ) : featuredGames.length > 0 ? (
-              featuredGames.map((game) => (
+            ) : featuredMaxSizeGames.length > 0 ? (
+              featuredMaxSizeGames.map((game) => (
                 <SwiperSlide key={game._id}>
                   <LazyGameCard>
                     <MemoizedGameCard
@@ -478,16 +531,10 @@ const Store = () => {
 
       {/* Game Sections */}
       <div className="md:max-w-[85%] max-w-[95%] mx-auto space-y-4">
-        <SwiperSection
-          title="All Games"
-          games={Array.isArray(games) ? games : []}
-          gameActions={gameActions}
-          onNavigate={handleNavigate}
-        />
 
         <SwiperSection
           title="Trending Games"
-          games={Array.isArray(games) ? games : []}
+          games={Array.isArray(trendingGames) ? trendingGames : []}
           gameActions={gameActions}
           onNavigate={handleNavigate}
         />
@@ -501,7 +548,7 @@ const Store = () => {
 
         <SwiperSection
           title="Action Games"
-          games={actionGames}
+          games={Array.isArray(actionGames) && actionGames.length > 0 ? actionGames : (Array.isArray(games) ? games.slice(0, 8) : [])}
           gameActions={gameActions}
           onNavigate={handleNavigate}
         />
