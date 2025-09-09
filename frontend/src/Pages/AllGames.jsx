@@ -219,7 +219,6 @@ export default function AllGames() {
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const handleAddWishlist = (ele) => {
@@ -263,7 +262,7 @@ export default function AllGames() {
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                     {/* Image Container with Enhanced Effects */}
-                    <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden">
+                    <div className="relative w-full h-36 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden">
                         <img
                             src={imageUrl}
                             alt={game?.title}
@@ -302,7 +301,7 @@ export default function AllGames() {
 
                             {/* Game Title */}
                             <div className="absolute bottom-4 left-4 right-4">
-                                <div className="p-4">
+                                <div className="md:p-4">
                                     <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl leading-tight">
                                         {game?.title}
                                     </h3>
@@ -551,7 +550,7 @@ export default function AllGames() {
 
             {games && games.length > 0 ? (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
                         {games.map((game, index) => (
                             <LazyGameCard key={game.id || index}>
                                 <GameCard game={game} orders={orders} />
@@ -576,42 +575,48 @@ export default function AllGames() {
                                         <MdArrowBackIos />
                                     </button>
 
-                                    {/* Pages with scroll */}
-                                    <div className="flex items-center gap-1 flex-nowrap">
-                                        {Array.from({ length: totalPages }, (_, index) => {
-                                            const pageNum = index + 1;
-                                            const isActive = currentPage === pageNum;
-                                            const isNear = Math.abs(currentPage - pageNum) <= 2;
+                                     {/* Pages with scroll */}
+                                     <div className="flex items-center gap-1 flex-nowrap">
+                                         {Array.from({ length: totalPages }, (_, index) => {
+                                             const pageNum = index + 1;
+                                             const isActive = currentPage === pageNum;
+                                             const isFirstPage = pageNum === 1;
+                                             const isLastPage = pageNum === totalPages;
+                                             const isAdjacent = Math.abs(currentPage - pageNum) === 1;
+                                             const isCurrentPage = pageNum === currentPage;
 
-                                            if (pageNum === 1 || pageNum === totalPages || isNear) {
-                                                return (
-                                                    <button
-                                                        key={pageNum}
-                                                        onClick={() => handlePageChange(pageNum)}
-                                                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
-                                                            ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
-                                                            : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
-                                                            }`}
-                                                    >
-                                                        {pageNum}
-                                                    </button>
-                                                );
-                                            } else if (
-                                                pageNum === currentPage - 3 ||
-                                                pageNum === currentPage + 3
-                                            ) {
-                                                return (
-                                                    <span
-                                                        key={pageNum}
-                                                        className="px-2 text-gray-400 font-medium"
-                                                    >
-                                                        ...
-                                                    </span>
-                                                );
-                                            }
-                                            return null;
-                                        })}
-                                    </div>
+                                             // Show: first page, last page, current page, and adjacent pages
+                                             if (isFirstPage || isLastPage || isCurrentPage || isAdjacent) {
+                                                 return (
+                                                     <button
+                                                         key={pageNum}
+                                                         onClick={() => handlePageChange(pageNum)}
+                                                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
+                                                             ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
+                                                             : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
+                                                             }`}
+                                                     >
+                                                         {pageNum}
+                                                     </button>
+                                                 );
+                                             } else if (
+                                                 // Show ellipsis between first page and current page range
+                                                 (pageNum === 2 && currentPage > 4) ||
+                                                 // Show ellipsis between current page range and last page
+                                                 (pageNum === totalPages - 1 && currentPage < totalPages - 3)
+                                             ) {
+                                                 return (
+                                                     <span
+                                                         key={pageNum}
+                                                         className="px-2 text-gray-400 font-medium"
+                                                     >
+                                                         ...
+                                                     </span>
+                                                 );
+                                             }
+                                             return null;
+                                         })}
+                                     </div>
 
                                     <button
                                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages

@@ -243,21 +243,21 @@ const SingleGame = () => {
     setShowPaymentForm(true);
   };
 
-  // const formatDate = (dateString) => {
+  const formatDate = (dateString) => {
 
-  //   if (!dateString) return "";
+    if (!dateString) return "";
   
-  //   const date = new Date(dateString);
+    const date = new Date(dateString);
   
-  //   const day = String(date.getDate()).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
   
-  //   const month = String(date.getMonth() + 1).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
   
-  //   const year = String(date.getFullYear()).slice(-2);
+    const year = String(date.getFullYear()).slice(-2);
   
-  //   return `${day}-${month}-${year}`;
+    return `${day}-${month}-${year}`;
   
-  // };
+  };
    
 
   const handlePaymentSuccess = () => {
@@ -302,7 +302,7 @@ const SingleGame = () => {
           <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize'>{single?.title}</h2>
         </div>
 
-        <div className="flex flex-col-reverse xl:flex-row lg:mt-11">
+        <div className="flex  xl:flex-row lg:mt-11">
           <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 w-full xl:mt-0 mt-5'>
             <div>
               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
