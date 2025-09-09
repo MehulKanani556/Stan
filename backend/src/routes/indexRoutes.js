@@ -9,7 +9,7 @@ import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUs
 import { changePassword, forgotPassword, generateNewToken, googleLogin, logoutUser, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
 import { getMessage, sendMessage, getAllMessageUsers, deleteChat, markMessagesAsRead } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
-import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames, getTrendingGames } from "../controllers/game.controller.js";
+import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames, getTrendingGames ,HomeTopGames } from "../controllers/game.controller.js";
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
 import { chatWidGetController } from "../controllers/chatWidGet.controller.js";
 import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateTrailer } from "../controllers/HomeTrailerController.js";
@@ -104,6 +104,7 @@ indexRoutes.get("/getPopularGames", getPopularGames);
 indexRoutes.get("/getTopGames", getTopGames);
 indexRoutes.get("/getTrendingGames", getTrendingGames);
 indexRoutes.get("/games-by-category", getTopGames);
+indexRoutes.get("/homeTopGame", HomeTopGames);
 indexRoutes.post(
   "/createGame",
   upload.fields([

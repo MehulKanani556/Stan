@@ -121,7 +121,6 @@ export const removeFromWishlist = async (req, res) => {
 export const getWishlist = async (req, res) => {
     try {
         const userId = req.user._id;
-
         // Check if user exists and populate wishlist with game details
         const userData = await User.findById(userId).populate({
             path: 'wishlist.game',

@@ -35,7 +35,7 @@ export const LoaderProvider = ({ children }) => {
         
         const timer = setTimeout(() => {
           setShowLoader(false);
-        }, 2000);
+        }, 3000);
         
         return () => clearTimeout(timer);
       } else {
@@ -50,7 +50,7 @@ export const LoaderProvider = ({ children }) => {
           
           const timer = setTimeout(() => {
             setShowLoader(false);
-          }, 2000);
+          }, 3000);
           
           return () => clearTimeout(timer);
         }

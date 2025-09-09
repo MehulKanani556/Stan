@@ -4,7 +4,8 @@ import fs from "fs";
 import Game from "../models/Games.model.js";
 import fileupload from "../helper/cloudinary.js";
 import deleteFile from "../helper/cloudinary.js";
-
+import Order from "../models/Order.model.js";
+import FreeGame from "../models/freeGamesModel.js";
 // Create a new game
 export const createGame = function (req, res) {
     (async function () {
@@ -985,3 +986,40 @@ export const getTrendingGames = function (req, res) {
         }
     })();
 };
+export const HomeTopGames = async (req, res) => {
+    try {
+      // --- Top selling ---
+      const topSelling = await Order.aggregate([
+        { $unwind: "$items" },
+        {
+          $group: {
+            _id: "$items.game",
+            totalSales: { $sum: 1 }
+          }
+        },
+        { $sort: { totalSales: -1 } },
+        { $limit: 20 }
+      ]);
+  
+      const gameIds = topSelling.map(item => item._id);
+      const games = await Game.find({ _id: { $in: gameIds } });
+  
+      const topGamesWithSales = topSelling.map(item => {
+        const game = games.find(g => g._id.toString() === item._id.toString());
+        return {...game?._doc};
+      });
+  
+      // --- Free games ---
+      const freegames = await FreeGame.find().sort({ createdAt: -1 }).limit(20);
+  
+      // --- New games ---
+      const newGames = await Game.find().sort({ createdAt: -1 }).limit(20);
+      res.status(200).json({
+        topSelling: topGamesWithSales,
+        freegames,
+        newGames
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
