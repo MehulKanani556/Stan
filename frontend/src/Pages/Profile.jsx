@@ -31,6 +31,7 @@ import { handleMyToggle } from '../Redux/Slice/game.slice';
 
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { RiLockPasswordLine } from "react-icons/ri";
+import {useFormik} from 'formik'
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -427,6 +428,15 @@ export default function Profile() {
         closeChangePasswordModal();
         // Optionally show a toast/snackbar
     };
+
+    const changePassVal = {
+        currentPass:"",
+        newPass:"",
+        confirmPass:""
+    }
+    const changePassFormik = useFormik({
+        initialValues:""
+    }) 
 
     // handle  input change 
     const handleInputChange = (e) => {
@@ -1049,16 +1059,17 @@ export default function Profile() {
                                         </button>
                                     </Dialog.Title>
 
-                                    <div className="mt-5 space-y-4">
+                                    <form className="mt-5 space-y-4">
                                         {/* Current Password */}
                                         <div className="flex flex-col gap-2">
                                             <label className="text-sm text-gray-300">Current Password</label>
                                             <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                                 <input
                                                     type={showPassword.current ? "text" : "password"}
-                                                    name="currentPassword"
-                                                    value={passwordData.currentPassword}
-                                                    onChange={handlePasswordInput}
+                                                    name="currentPass"
+                                                    value={changePassFormik.values.currentPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
                                                     placeholder="Enter current password"
                                                     className="w-full bg-transparent outline-none text-white placeholder-gray-500"
                                                 />
@@ -1066,6 +1077,7 @@ export default function Profile() {
                                                     {showPassword.current ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
                                                 </button>
                                             </div>
+                                            {changePassFormik.touched.currentPass && changePassFormik.errors.currentPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.currentPass}</p>)}
                                         </div>
 
                                         {/* New Password */}
@@ -1074,9 +1086,10 @@ export default function Profile() {
                                             <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                                 <input
                                                     type={showPassword.newPass ? "text" : "password"}
-                                                    name="newPassword"
-                                                    value={passwordData.newPassword}
-                                                    onChange={handlePasswordInput}
+                                                    name="newPass"
+                                                    value={changePassFormik.values.newPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
                                                     placeholder="Enter new password"
                                                     className="w-full bg-transparent outline-none text-white placeholder-gray-500"
                                                 />
@@ -1084,7 +1097,7 @@ export default function Profile() {
                                                     {showPassword.newPass ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
                                                 </button>
                                             </div>
-                                            
+                                            {changePassFormik.touched.newPass && changePassFormik.errors.newPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.newPass}</p>)}
                                         </div>
 
                                         {/* Confirm Password */}
@@ -1093,9 +1106,10 @@ export default function Profile() {
                                             <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                                 <input
                                                     type={showPassword.confirm ? "text" : "password"}
-                                                    name="confirmPassword"
-                                                    value={passwordData.confirmPassword}
-                                                    onChange={handlePasswordInput}
+                                                    name="confirmPass"
+                                                    value={changePassFormik.values.confirmPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
                                                     placeholder="Re-enter new password"
                                                     className="w-full bg-transparent outline-none text-white placeholder-gray-500"
                                                 />
@@ -1103,6 +1117,7 @@ export default function Profile() {
                                                     {showPassword.confirm ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
                                                 </button>
                                             </div>
+                                            {changePassFormik.touched.confirmPass && changePassFormik.errors.confirmPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.confirmPass}</p>)}
                                         </div>
 
                                         {passwordError && (
@@ -1123,7 +1138,7 @@ export default function Profile() {
                                                 Update Password
                                             </button>
                                         </div>
-                                    </div>
+                                    </form>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
