@@ -290,7 +290,7 @@ export default function Home() {
   const isExploreLoaded = useImageLoader(ExploreGames);
   const { onMouseDown } = useMomentumScroll(categorySwiperRef);
   
-  // Memoized values
+
   const userId = useMemo(() => 
     authUser?._id || currentUser?._id || localStorage.getItem("userId"),
     [authUser, currentUser]
@@ -310,7 +310,6 @@ export default function Home() {
   // Handlers
   const handleCategoryChange = useCallback((cateId) => {
     setActiveTab(cateId);
-    // Reset swiper to first slide
     if (gameSwiperRef.current?.slideTo) {
       gameSwiperRef.current.slideTo(0);
     }
@@ -393,7 +392,7 @@ export default function Home() {
         <HomeSlider />
 
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
-          <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+          <div className="py-4 sm:py-6 md:py-8 lg:py-10 md:w-[85%] w-[95%] mx-auto">
             
             {/* Category Filter */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">

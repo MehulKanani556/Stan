@@ -800,3 +800,16 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
   border-radius: 50%;
   animation: twinkle 2s infinite;
 }
+
+
+@media (min-width : 550px) and (max-width : 767px) {
+  .all-games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width : 550px) {
+  .all-games-image {
+    height: 144px;
+  }
+}

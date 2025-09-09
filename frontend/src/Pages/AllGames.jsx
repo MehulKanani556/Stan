@@ -262,7 +262,7 @@ export default function AllGames() {
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                     {/* Image Container with Enhanced Effects */}
-                    <div className="relative w-full h-36 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden">
+                    <div className="relative w-full h-36 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden all-games-image">
                         <img
                             src={imageUrl}
                             alt={game?.title}
@@ -311,12 +311,12 @@ export default function AllGames() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
+                    <div className="p-4  md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 gap-4">
                             {/* Price */}
-                            <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                            <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 py-2.5  md:px-6 md:py-3.5">
                                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                                     <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                                     <span className="text-sm text-blue-400 font-semibold uppercase tracking-wider">Price</span>
@@ -325,7 +325,7 @@ export default function AllGames() {
                                     </span>
                                     <span className="text-xs text-slate-400 font-medium">USD</span>
                                 </div>
-                                <div className="flex flex-wrap items-center space-x-2 mb-2">
+                                <div className="flex flex-wrap items-center space-x-2 ">
                                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                                     <span className="text-xs md:text-sm text-green-400 font-semibold uppercase tracking-wider">Size</span>
                                     <span className="text-md md:text-lg font-black text-white">
@@ -550,7 +550,7 @@ export default function AllGames() {
 
             {games && games.length > 0 ? (
                 <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
+                    <div className="grid  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 mb-12 all-games-grid">
                         {games.map((game, index) => (
                             <LazyGameCard key={game.id || index}>
                                 <GameCard game={game} orders={orders} />
