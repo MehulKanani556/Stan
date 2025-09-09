@@ -618,6 +618,7 @@ export default function Profile() {
                                                 onChange={handleInputChange}
                                                 placeholder="Enter your name"
                                                 className="w-full bg-transparent outline-none text-white placeholder-gray-500"
+                                                maxLength={16}
                                             />
                                         ) : (
                                             <div className="text-white">{decryptData(user?.name) || "User"}</div>

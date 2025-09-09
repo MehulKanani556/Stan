@@ -32,6 +32,8 @@ import Loader from './Pages/Loader.js';
 import Demo from './Pages/demo.jsx';
 import BackgroundColor from './components/BackgroundColor';
 import HomeSlider from './components/HomeSlider.jsx';
+import LoaderWrapper from './components/LoaderWrapper.jsx';
+
 // Component to conditionally render Header and Footer
 function App() {
   const location = useLocation();

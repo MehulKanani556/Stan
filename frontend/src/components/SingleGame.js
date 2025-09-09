@@ -243,21 +243,21 @@ const SingleGame = () => {
     setShowPaymentForm(true);
   };
 
-  // const formatDate = (dateString) => {
+  const formatDate = (dateString) => {
 
-  //   if (!dateString) return "";
+    if (!dateString) return "";
   
-  //   const date = new Date(dateString);
+    const date = new Date(dateString);
   
-  //   const day = String(date.getDate()).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
   
-  //   const month = String(date.getMonth() + 1).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
   
-  //   const year = String(date.getFullYear()).slice(-2);
+    const year = String(date.getFullYear()).slice(-2);
   
-  //   return `${day}-${month}-${year}`;
+    return `${day}-${month}-${year}`;
   
-  // };
+  };
    
 
   const handlePaymentSuccess = () => {
@@ -629,7 +629,7 @@ const SingleGame = () => {
                       <p className="text-white text-base">{single?.platforms?.windows?.size}</p>
                     </div>
                     <div className="flex justify-between">
-                      <h4 className="text-base text-gray-400">Epic Rewards</h4>
+                      <h4 className="text-base text-gray-400">YOYO Rewards</h4>
                       <p className="text-white text-base">Earn 20% Back</p>
                     </div>
                   </div>

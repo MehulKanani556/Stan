@@ -171,7 +171,7 @@ export default function HomeSlider() {
                                     zIndex: 1
                                 }}></div>
                                 <div className="blob md:w-[50%] w-full h-[600px] absolute bottom-0 right-0 bg-[#141414]/70 z-[2] bg-[0,0,0,0.1] ms-0" >
-                                    <div className="content w-[80%] m-auto  w-full z-10  md:h-full h-full flex flex-col lg:justify-center 3xl:px-16 xl:px-8 px-4 sp_font py-10" style={{ position: 'relative', zIndex: 2 }}>
+                                    <div className="content w-[80%] m-auto  w-full z-10  md:h-full h-full flex flex-col lg:justify-center 3xl:px-16 md:px-16 px-4 sp_font py-10" style={{ position: 'relative', zIndex: 2 }}>
                                         <div className="name xl:text-[50px] md:text-[28px] text-[24px] z-10">{slide.title || slide.name || 'Untitled'}</div>
                                         <div className="des xl:text-base md:text-sm  text-xs text-[#ccc]">{slide.description?.slice(0, 100) + '...' || 'No description available'}</div>
                                         <Link to={'/single/' + slide._id} className='flex justify-center mt-5'>
