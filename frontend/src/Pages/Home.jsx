@@ -517,33 +517,39 @@ export default function Home() {
             </div>
 
             {/* Games Swiper */}
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={12}
-              slidesPerView={1.1}
-              breakpoints={SWIPER_BREAKPOINTS}
-              style={{ padding: '20px 4px' }}
-              className="game-swiper"
-              onSwiper={(swiper) => {
-                gameSwiperRef.current = swiper;
-                setTimeout(() => updateSwiperStates(swiper), 100);
-              }}
-              onSlideChange={updateSwiperStates}
-              onResize={updateSwiperStates}
-            >
-              {filteredGames?.map((game) => (
-                <SwiperSlide key={game._id}>
-                  <GameCard
-                    game={game}
-                    onGameClick={handleGameClick}
-                    onWishlistToggle={handleWishlistToggle}
-                    onAddToCart={handleAddToCart}
-                    isInWishlist={wishlistStatus[game._id]}
-                    isInCart={cartItems.some(item => item.game?._id === game._id)}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            {filteredGames && filteredGames.length > 0 ? (
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={12}
+                slidesPerView={1.1}
+                breakpoints={SWIPER_BREAKPOINTS}
+                style={{ padding: '20px 4px' }}
+                className="game-swiper"
+                onSwiper={(swiper) => {
+                  gameSwiperRef.current = swiper;
+                  setTimeout(() => updateSwiperStates(swiper), 100);
+                }}
+                onSlideChange={updateSwiperStates}
+                onResize={updateSwiperStates}
+              >
+                {filteredGames.map((game) => (
+                  <SwiperSlide key={game._id}>
+                    <GameCard
+                      game={game}
+                      onGameClick={handleGameClick}
+                      onWishlistToggle={handleWishlistToggle}
+                      onAddToCart={handleAddToCart}
+                      isInWishlist={wishlistStatus[game._id]}
+                      isInCart={cartItems.some(item => item.game?._id === game._id)}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
+                No games found for this category.
+              </div>
+            )}
           </div>
         </div>
 
