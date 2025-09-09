@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import {  getGameById, getGameRating } from '../Redux/Slice/game.slice'
+import { getGameById, getGameRating } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go"
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
@@ -71,7 +71,7 @@ const StarRating = ({ rating, size = "h-5 w-5" }) => {
 const CustomArrow = ({ direction, onClick, className = "" }) => {
   const Icon = direction === 'next' ? FaChevronRight : FaChevronLeft
   const positionClass = direction === 'next' ? 'right-4' : 'left-4'
-  
+
   return (
     <div
       onClick={onClick}
@@ -87,7 +87,7 @@ const CustomArrow = ({ direction, onClick, className = "" }) => {
 const ThumbArrow = ({ direction, onClick }) => {
   const Icon = direction === 'next' ? FaChevronRight : FaChevronLeft
   const positionClass = direction === 'next' ? '-right-6' : '-left-6'
-  
+
   return (
     <div
       onClick={onClick}
@@ -105,21 +105,21 @@ const GameInfo = ({ single }) => (
     <div className="space-y-5">
       <InfoItem label="Memory" value={single?.platforms?.windows?.system_requirements?.memory} />
       <InfoItem label="Storage" value={single?.platforms?.windows?.system_requirements?.storage} />
-      <InfoItem 
-        label="Graphics" 
-        value={`(${single?.platforms?.windows?.system_requirements?.graphics})`} 
+      <InfoItem
+        label="Graphics"
+        value={`(${single?.platforms?.windows?.system_requirements?.graphics})`}
       />
     </div>
     <div className="space-y-5">
-      <InfoItem 
-        label="OS" 
-        value={single?.platforms?.windows?.system_requirements?.os} 
-        capitalize 
+      <InfoItem
+        label="OS"
+        value={single?.platforms?.windows?.system_requirements?.os}
+        capitalize
       />
-      <InfoItem 
-        label="Processor" 
-        value={single?.platforms?.windows?.system_requirements?.processor} 
-        capitalize 
+      <InfoItem
+        label="Processor"
+        value={single?.platforms?.windows?.system_requirements?.processor}
+        capitalize
       />
     </div>
   </div>
@@ -136,10 +136,10 @@ const AccordionItem = ({ title, children, defaultOpen = false }) => (
   <details className="group open:shadow-lg open:bg-black/20 transition-all" open={defaultOpen}>
     <summary className="flex items-center justify-between cursor-pointer py-4 px-4 md:px-5 text-white">
       <span className="text-lg font-semibold">{title}</span>
-      <svg 
-        className="w-5 h-5 transition-transform group-open:rotate-180" 
-        fill="none" 
-        stroke="currentColor" 
+      <svg
+        className="w-5 h-5 transition-transform group-open:rotate-180"
+        fill="none"
+        stroke="currentColor"
         viewBox="0 0 24 24"
       >
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -165,10 +165,10 @@ const ReviewItem = ({ review, gameRating }) => {
   return (
     <div className='mt-2' key={review?._id}>
       <div className='flex items-center'>
-        <img 
-          src={review?.user?.profilePic} 
-          className='w-[50px] h-[50px] object-cover rounded-full' 
-          alt={decryptData(review?.user?.name)} 
+        <img
+          src={review?.user?.profilePic}
+          className='w-[50px] h-[50px] object-cover rounded-full'
+          alt={decryptData(review?.user?.name)}
         />
         <div className='ms-3'>
           <div>{decryptData(review?.user?.name)}</div>
@@ -186,7 +186,7 @@ const ReviewItem = ({ review, gameRating }) => {
       </div>
       <p className='mt-2 text-[13px]'>{review?.review}</p>
       <p className='text-[13px] mt-1 flex items-center'>
-        <MdDateRange className='text-[16px] me-2' /> 
+        <MdDateRange className='text-[16px] me-2' />
         {formatDate(review?.createdAt)}
       </p>
       <div className='h-[1px] bg-gray-700 mt-3'></div>
@@ -215,7 +215,7 @@ const SingleGame = () => {
   // Redux
   const { id } = useParams()
   const dispatch = useDispatch()
-  
+
   // Selectors
   const single = useSelector((state) => state?.game?.singleGame)
   const { loading: gameLoading } = useSelector((state) => state?.game)
@@ -226,19 +226,19 @@ const SingleGame = () => {
 
   // Computed values
   const ratings = useMemo(() => single?.reviews || [], [single?.reviews])
-  const isInCart = useMemo(() => 
-    cartItems.some(item => item.game?._id === single?._id), 
+  const isInCart = useMemo(() =>
+    cartItems.some(item => item.game?._id === single?._id),
     [cartItems, single?._id]
   )
-  const isInWishlist = useMemo(() => 
-    Boolean(wishlistStatus[single?._id]), 
+  const isInWishlist = useMemo(() =>
+    Boolean(wishlistStatus[single?._id]),
     [wishlistStatus, single?._id]
   )
-  const isBuyed = useMemo(() => 
+  const isBuyed = useMemo(() =>
     Array.isArray(orders) && orders.some(order =>
       order.status === 'paid' &&
       order?.items?.some(item => item.game._id === id)
-    ), 
+    ),
     [orders, id]
   )
 
@@ -255,7 +255,7 @@ const SingleGame = () => {
     }
 
     const userId = localStorage.getItem("userId")
-    if(userId){
+    if (userId) {
 
       dispatch(allorders())
     }
@@ -268,8 +268,8 @@ const SingleGame = () => {
   useEffect(() => {
     if (open || showPaymentForm) {
       const userId = localStorage.getItem("userId")
-      if(userId){
-        dispatch(fetchWishlist())      
+      if (userId) {
+        dispatch(fetchWishlist())
         dispatch(fetchCart())
       }
     }
@@ -319,7 +319,7 @@ const SingleGame = () => {
           name: single.title,
           platform: "windows",
           price: Number(single.platforms?.windows?.price || 0),
-        }], 
+        }],
         amount: single.platforms?.windows?.price || 0
       }))
 
@@ -425,20 +425,20 @@ const SingleGame = () => {
                 <Slider {...thumbSettings} ref={setNav2} className='mt-3 ds_mini_slider'>
                   {single?.video?.url && (
                     <div className="flex justify-center relative w-full">
-                      <video 
-                        src={single.video.url} 
-                        muted 
-                        className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" 
+                      <video
+                        src={single.video.url}
+                        muted
+                        className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer"
                       />
                       <FaPlay className="absolute inset-0 m-auto text-white sm:text-4xl text-[20px] transition" />
                     </div>
                   )}
                   {single?.images?.map((element) => (
                     <div key={element._id} className="flex justify-center relative w-full">
-                      <img 
-                        src={element.url} 
-                        alt="Thumbnail" 
-                        className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer" 
+                      <img
+                        src={element.url}
+                        alt="Thumbnail"
+                        className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer"
                       />
                     </div>
                   ))}
@@ -457,8 +457,8 @@ const SingleGame = () => {
                     <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">Genres</h3>
                     <div className="flex flex-wrap gap-3">
                       {single?.tags?.map((genre, index) => (
-                        <span 
-                          key={index} 
+                        <span
+                          key={index}
                           className="bg-gray-700 px-3 py-1 rounded-md text-sm hover:bg-gray-500/40 cursor-pointer capitalize"
                         >
                           {genre}
@@ -512,10 +512,10 @@ const SingleGame = () => {
           <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/30 ">
               <div className="flex justify-center mb-6">
-                <img 
-                  src={single?.cover_image?.url} 
-                  alt="Game Cover" 
-                  className="w-[330px] h-auto" 
+                <img
+                  src={single?.cover_image?.url}
+                  alt="Game Cover"
+                  className="w-[330px] h-auto"
                 />
               </div>
 
@@ -536,24 +536,26 @@ const SingleGame = () => {
                     <button
                       onClick={() => handleRemoveFromWishlist(single._id)}
                       className="w-full flex items-center justify-center gap-2 
-                               bg-gradient-to-r from-green-500 to-green-700 
-                               hover:from-green-600 hover:to-green-800 
-                               active:scale-95 text-white font-bold py-3 px-4 
-                               rounded-xl shadow-md hover:shadow-lg 
-                               transition-all duration-300 ease-in-out"
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <FaHeart size={16} />
                       <span className="text-xs">WishListed</span>
                     </button>
                   ) : (
-                    <button 
-                      onClick={() => handleAddWishlist(single)} 
+                    <button
+                      onClick={() => handleAddWishlist(single)}
                       className="w-full flex items-center justify-center gap-2 
-                               bg-gradient-to-r from-[#8c71e0] to-[#a493d9] 
-                               hover:from-[#7a5cd6] hover:to-[#947ce8] 
-                               active:scale-95 text-white font-bold py-3 px-4 
-                               rounded-xl shadow-md hover:shadow-lg 
-                               transition-all duration-300 ease-in-out"
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <FaHeart size={16} />
                       <span className="text-xs">Add To WishList</span>
@@ -565,10 +567,12 @@ const SingleGame = () => {
                     <button
                       disabled
                       className="w-full flex items-center justify-center gap-2 
-                               bg-gradient-to-r from-green-500 to-green-700 
-                               text-white font-bold py-3 px-4 
-                               rounded-xl shadow-md transition-all duration-300 ease-in-out
-                               opacity-70 cursor-not-allowed"
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <FaShoppingCart size={16} />
                       <span className="text-xs">Added to cart</span>
@@ -577,11 +581,12 @@ const SingleGame = () => {
                     <button
                       onClick={() => handleAddToCart(single)}
                       className="w-full flex items-center justify-center gap-2 
-                               bg-gradient-to-r from-[#8c71e0] to-[#a493d9] 
-                               hover:from-[#7a5cd6] hover:to-[#947ce8] 
-                               active:scale-95 text-white font-bold 
-                               py-3 px-4 rounded-xl shadow-md hover:shadow-lg 
-                               transition-all duration-300 ease-in-out"
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <FaShoppingCart size={16} />
                       <span className="text-xs">Add To Cart</span>
@@ -593,22 +598,26 @@ const SingleGame = () => {
                 {isBuyed ? (
                   <>
                     <button
-                      className="w-full bg-gradient-to-r cursor-not-allowed 
-                               from-emerald-600 to-green-600 active:scale-95 
-                               text-white font-bold py-3 px-4 
-                               rounded-xl shadow-md hover:shadow-lg 
-                               transition-all duration-300 ease-in-out"
+                      className="w-full cursor-not-allowed 
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       <span className="text-white font-bold text-sm me-2">✓</span>
                       Purchased
                     </button>
                     <button
                       onClick={() => setOpen(true)}
-                      className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] 
-                               hover:from-[#7a5cd6] hover:to-[#947ce8] 
-                               active:scale-95 text-white font-bold py-3 px-4 
-                               rounded-xl shadow-md hover:shadow-lg 
-                               transition-all duration-300 ease-in-out"
+                      className="w-full cursor-not-allowed 
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       Review
                     </button>
@@ -616,11 +625,13 @@ const SingleGame = () => {
                 ) : (
                   <button
                     onClick={handleCheckout}
-                    className="w-full bg-gradient-to-r from-[#8c71e0] to-[#a493d9] 
-                             hover:from-[#7a5cd6] hover:to-[#947ce8] 
-                             active:scale-95 text-white font-bold py-3 px-4 
-                             rounded-xl shadow-md hover:shadow-lg 
-                             transition-all duration-300 ease-in-out"
+                    className="w-full cursor-not-allowed 
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                   >
                     Buy Now
                   </button>
@@ -628,9 +639,9 @@ const SingleGame = () => {
               </div>
 
               {/* Payment Modal */}
-              <Dialog 
-                open={!!(showPaymentForm && clientSecret && currentOrderId)} 
-                onClose={() => setShowPaymentForm(false)} 
+              <Dialog
+                open={!!(showPaymentForm && clientSecret && currentOrderId)}
+                onClose={() => setShowPaymentForm(false)}
                 className="relative z-50"
               >
                 <DialogBackdrop className="fixed inset-0 bg-black/75" />
