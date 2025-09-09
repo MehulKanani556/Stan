@@ -814,7 +814,7 @@ export const HomeTopGames = async (req, res) => {
   
       const topGamesWithSales = topSelling.map(item => {
         const game = games.find(g => g._id.toString() === item._id.toString());
-        return {...game._doc};
+        return {...game?._doc};
       });
   
       // --- Free games ---

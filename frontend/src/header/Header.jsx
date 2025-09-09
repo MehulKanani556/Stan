@@ -66,11 +66,11 @@ export default function Header() {
 
     useEffect(() => {
         const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
-        if (userId && (!items?.length || !cartItems?.length)) {
+        if (userId && (!items?.length && !cartItems?.length)) {
             dispatch(fetchWishlist());
             dispatch(fetchCart());
         }
-    }, [dispatch, authUser?._id, currentUser?._id, items?.length, cartItems?.length]);
+    }, [dispatch]);
 
     useEffect(() => {
         const userId = authUser?._id || localStorage.getItem("userId");

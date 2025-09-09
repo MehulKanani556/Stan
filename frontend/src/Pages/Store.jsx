@@ -442,7 +442,7 @@ const Store = () => {
 
       {/* Featured Games Section */}
       <div className="mx-auto flex flex-col items-center sm:max-w-full">
-        <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+        <div className="py-4 sm:py-6 md:py-8 lg:py-10 md:w-[85%] w-[95%] mx-auto">
           <SwiperNavigation
             title="Featured Games"
             onAllGamesClick={handleAllGames}

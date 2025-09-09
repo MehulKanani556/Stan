@@ -12,16 +12,19 @@ import { NavLink } from "react-router-dom";
 const Trailer = () => {
   const swiperRef = useRef(null);
   const videoRefs = useRef([]);
-  const { trailer , loading, error} = useSelector((state) => state?.game);
+  const { trailer, loading, error } = useSelector((state) => state?.game);
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(true)
 
   useEffect(() => {
-    dispatch(getHomeTrailer()).then((value)=>{
-       if(value?.meta?.requestStatus === "fulfilled"){
+    // if (!trailer) {
+      dispatch(getHomeTrailer()).then((value) => {
+        if (value?.meta?.requestStatus === "fulfilled") {
           setLoader(false)
-       }       
-    });
+        }
+      });
+    // }
+
   }, [dispatch]);
 
   const handleSlideChange = (swiper) => {
@@ -44,7 +47,7 @@ const Trailer = () => {
 
   return (
     <div className="">
-      {loader && <TrailerSkeleton/>}
+      {loader && <TrailerSkeleton />}
       {!loader && <Swiper
         className="ds_trailer"
         modules={[Pagination]}
@@ -81,7 +84,7 @@ const Trailer = () => {
                 </p>
                 {element?.link && (
                   <NavLink
-                  to={"/store"}
+                    to={"/store"}
                     className="bg-white rounded-[5px] border-[1px] block text-center border-white text-black ms:w-[150px] w-[100px] py-2 mt-5 hover:bg-transparent hover:text-white ease-in-out transition-all duration-300"
                   >
                     View More

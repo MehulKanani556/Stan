@@ -183,11 +183,11 @@ const SectionHeader = React.memo(({ title, isRefreshing }) => (
       {title}
     </h3>
 
-    {isRefreshing && (
+    {/* {isRefreshing && (
       <div className="ml-auto">
         <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
       </div>
-    )}
+    )} */}
   </div>
 ));
 
@@ -210,8 +210,8 @@ const LoadingIndicator = () => (
 const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
-
-    <div className="space-y-4 md:space-y-5 lg:space-y-6">
+    
+    <div className="space-y-4 sm:space-y-0 md:grid md:grid-cols-2 md:gap-4 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
         console.log('data',item),
@@ -282,7 +282,9 @@ function TopGames() {
   }, [isLoading, gameData]);
   // Fetch data on mount
   useEffect(() => {
-    dispatch(getHomeTopGame());
+    if(!isLoading){
+      dispatch(getHomeTopGame());
+    }
   }, [dispatch]);
 
   // Show skeleton while loading or no data
