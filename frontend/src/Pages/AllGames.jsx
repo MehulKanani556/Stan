@@ -608,6 +608,18 @@ export default function AllGames() {
         setCurrentPage(1);
     }, [debouncedSearchQuery, selectedCategory, sortBy, priceRange]);
 
+    // Wishlist and Cart Handlers for the second GameCard component
+    const handleRemoveFromWishlist = useCallback((gameId) => {
+        dispatch(removeFromWishlist({ gameId }));
+    }, [dispatch]);
+
+    const handleAddWishlist = useCallback((game) => {
+        dispatch(addToWishlist({ gameId: game._id }));
+    }, [dispatch]);
+
+    // Determine if there are games to display
+    const hasGames = games && games.length > 0;
+
     // Game Card Component
     const GameCard = ({ game, orders }) => {
         const imageUrl = game?.cover_image?.url || game1;
