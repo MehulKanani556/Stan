@@ -505,9 +505,58 @@ export const logoutUser = createAsyncThunk(
   
 );
 
+// Add fan coins after purchase
+export const addFanCoins = createAsyncThunk(
+  "user/addFanCoins",
+  async ({ userId, amount }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post('/fan-coins/add', { userId, amount });
+      return response.data;
+    } catch (error) {
+      return handleErrors(error, null, rejectWithValue);
+    }
+  }
+);
+
+// Use fan coins for purchase
+export const useFanCoins = createAsyncThunk(
+  "user/useFanCoins",
+  async ({ userId, gamePrice, fanCoinsToUse }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post('/fan-coins/use', { 
+        userId, 
+        gamePrice, 
+        fanCoinsToUse 
+      });
+      return response.data;
+    } catch (error) {
+      return handleErrors(error, null, rejectWithValue);
+    }
+  }
+);
+
+// Get fan coin details
+export const getFanCoinDetails = createAsyncThunk(
+  "user/getFanCoinDetails",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/fan-coins/${userId}`);
+      return response.data;
+    } catch (error) {
+      return handleErrors(error, null, rejectWithValue);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
-  initialState,
+  initialState: {
+    ...initialState,
+    fanCoins: 0,
+    fanCoinTransactions: [],
+    fanCoinLoading: false,
+    fanCoinError: null
+  },
   reducers: {
     logout: (state, action) => {
       state.user = null;
@@ -870,7 +919,49 @@ const userSlice = createSlice({
         state.error = action.payload?.message || "Failed to update profile";
       });
 
-  },
+    // Add fan coins reducer
+    builder.addCase(addFanCoins.pending, (state) => {
+      state.fanCoinLoading = true;
+      state.fanCoinError = null;
+    })
+    .addCase(addFanCoins.fulfilled, (state, action) => {
+      state.fanCoinLoading = false;
+      state.fanCoins = action.payload.fanCoins;
+    })
+    .addCase(addFanCoins.rejected, (state, action) => {
+      state.fanCoinLoading = false;
+      state.fanCoinError = action.payload;
+    })
+
+    // Use fan coins reducer
+    .addCase(useFanCoins.pending, (state) => {
+      state.fanCoinLoading = true;
+      state.fanCoinError = null;
+    })
+    .addCase(useFanCoins.fulfilled, (state, action) => {
+      state.fanCoinLoading = false;
+      state.fanCoins = action.payload.fanCoins;
+    })
+    .addCase(useFanCoins.rejected, (state, action) => {
+      state.fanCoinLoading = false;
+      state.fanCoinError = action.payload;
+    })
+
+    // Get fan coin details reducer
+    .addCase(getFanCoinDetails.pending, (state) => {
+      state.fanCoinLoading = true;
+      state.fanCoinError = null;
+    })
+    .addCase(getFanCoinDetails.fulfilled, (state, action) => {
+      state.fanCoinLoading = false;
+      state.fanCoins = action.payload.fanCoins;
+      state.fanCoinTransactions = action.payload.transactions;
+    })
+    .addCase(getFanCoinDetails.rejected, (state, action) => {
+      state.fanCoinLoading = false;
+      state.fanCoinError = action.payload;
+    });
+  }
 });
 
 export const { logout, clearUsers, clearCurrentUser, setCurrentUser  , clearUser , setUser , chatToggleFunc , clearError , updateUnreadCount , resetUnreadCount} = userSlice.actions;

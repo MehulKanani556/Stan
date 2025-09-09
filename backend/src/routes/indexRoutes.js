@@ -19,6 +19,11 @@ import websiteInfoRoutes from "./websiteInfo.routes.js";
 import { createOrder, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
 // import { createOrUpdateRating, deleteRating, getAllRatings, getGameRatings, getGameRatingStats, getUserGameRating, getUserRatings, markReviewHelpful, updateRating } from "../controllers/rating.controller.js";
 import { createOrUpdateRating,getAllRatingByGame,getAllRatings } from "../controllers/rating.controller.js";
+import { 
+    addFanCoinsAfterPurchase, 
+    useFanCoinsForPurchase, 
+    getFanCoinDetails 
+} from '../controllers/fanCoinController.js';
 
 
 const indexRoutes = express.Router();
@@ -197,7 +202,10 @@ indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
 indexRoutes.get("/admin/ratings",  getAllRatings);
 indexRoutes.get("/gamerating/:gameId",getAllRatingByGame)
 
-
+// Fan Coin Routes
+indexRoutes.post('/fan-coins/add', addFanCoinsAfterPurchase);
+indexRoutes.post('/fan-coins/use', useFanCoinsForPurchase);
+indexRoutes.get('/fan-coins/:userId', getFanCoinDetails);
 
 
 indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
