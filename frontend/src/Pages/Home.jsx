@@ -12,11 +12,12 @@ import Trailer from '../components/Trailer';
 import ReviewHome from '../components/ReviewHome';
 import MultiHome from '../components/MultiHome';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
+import { getAllCategories, getAllGames, getAllActiveGames } from '../Redux/Slice/game.slice';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
 import HomeSlider from '../components/HomeSlider';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 // Constants
 const SWIPER_BREAKPOINTS = {
@@ -48,59 +49,52 @@ const useImageLoader = (src) => {
   return isLoaded;
 };
 
-const useMomentumScroll = (ref) => {
+// Custom hook for mouse drag scrolling
+const useMouseDragScroll = (ref) => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [lastX, setLastX] = useState(0);
-  const [velocity, setVelocity] = useState(0);
 
-  // Momentum effect after releasing mouse
-  useEffect(() => {
-    let frame;
-    const animate = () => {
-      if (Math.abs(velocity) > 0.1 && ref.current) {
-        ref.current.scrollLeft -= velocity;
-        setVelocity((v) => v * 0.95); // friction
-        frame = requestAnimationFrame(animate);
-      }
-    };
-    if (!isDragging && Math.abs(velocity) > 0.1) {
-      frame = requestAnimationFrame(animate);
+  const handleMouseDown = (e) => {
+    if (!ref.current) return;
+    
+    setIsDragging(true);
+    setStartX(e.pageX - ref.current.offsetLeft);
+    setScrollLeft(ref.current.scrollLeft);
+    
+    // Prevent text selection during drag
+    ref.current.style.userSelect = 'none';
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    if (ref.current) {
+      ref.current.style.userSelect = 'auto';
     }
-    return () => cancelAnimationFrame(frame);
-  }, [isDragging, velocity, ref]);
+  };
 
-  const onMouseDown = useCallback(
-    (e) => {
-      if (!ref.current) return;
-      setIsDragging(true);
-      setStartX(e.pageX - ref.current.offsetLeft);
-      setScrollLeft(ref.current.scrollLeft);
-      setLastX(e.pageX);
-    },
-    [ref]
-  );
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (ref.current) {
+      ref.current.style.userSelect = 'auto';
+    }
+  };
 
-  const onMouseMove = useCallback(
-    (e) => {
-      if (!isDragging || !ref.current) return;
-      e.preventDefault();
-      const x = e.pageX - ref.current.offsetLeft;
-      const walk = x - startX;
-      ref.current.scrollLeft = scrollLeft - walk;
+  const handleMouseMove = (e) => {
+    if (!isDragging || !ref.current) return;
+    
+    e.preventDefault();
+    const x = e.pageX - ref.current.offsetLeft;
+    const walk = (x - startX) * 2; // Multiply by 2 to increase scroll speed
+    ref.current.scrollLeft = scrollLeft - walk;
+  };
 
-      // track velocity
-      setVelocity(e.pageX - lastX);
-      setLastX(e.pageX);
-    },
-    [isDragging, startX, scrollLeft, lastX, ref]
-  );
-
-  const onMouseUp = useCallback(() => setIsDragging(false), []);
-  const onMouseLeave = useCallback(() => setIsDragging(false), []);
-
-  return { onMouseDown, onMouseMove, onMouseUp, onMouseLeave, isDragging };
+  return {
+    handleMouseDown,
+    handleMouseLeave,
+    handleMouseUp,
+    handleMouseMove
+  };
 };
 
 
@@ -296,6 +290,10 @@ export default function Home() {
   const [showAddedToCart, setShowAddedToCart] = useState(false);
   const [addedGameTitle, setAddedGameTitle] = useState("");
   
+  // Add state for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const gamesPerPage = 10; // Adjust as needed
+
   // Redux state
   const { games: gameData, category: cateData, loading } = useSelector(
     (state) => state.game,
@@ -306,11 +304,20 @@ export default function Home() {
   const { user: authUser } = useSelector((state) => state.auth);
   const cartItems = useSelector((state) => state.cart.cart);
   
+  // Add pagination state from Redux
+  const pagination = useSelector((state) => state.game.pagination);
+  const totalPages = pagination?.totalPages || 1;
+
   // Custom hooks
   const isExploreLoaded = useImageLoader(ExploreGames);
-  const {  onMouseDown, onMouseMove, onMouseUp, onMouseLeave, isDragging } = useMomentumScroll(categorySwiperRef);
+  const { 
+    handleMouseDown, 
+    handleMouseLeave, 
+    handleMouseUp, 
+    handleMouseMove 
+  } = useMouseDragScroll(scrollRef);
   
-  // Memoized values
+
   const userId = useMemo(() => 
     authUser?._id || currentUser?._id || localStorage.getItem("userId"),
     [authUser, currentUser]
@@ -330,7 +337,6 @@ export default function Home() {
   // Handlers
   const handleCategoryChange = useCallback((cateId) => {
     setActiveTab(cateId);
-    // Reset swiper to first slide
     if (gameSwiperRef.current?.slideTo) {
       gameSwiperRef.current.slideTo(0);
     }
@@ -360,6 +366,16 @@ export default function Home() {
     setIsBeginning(swiper.isBeginning);
     setIsEnd(swiper.isEnd);
   }, []);
+
+  // Add page change handler
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Reset to first page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
   
   // Effects
   useEffect(() => {
@@ -373,6 +389,20 @@ export default function Home() {
     dispatch(getAllGames({ page: 1, limit: 20 }));
     dispatch(getAllCategories());
   }, [dispatch]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      dispatch(getAllGames({
+        page: currentPage,
+        limit: gamesPerPage,
+        category: activeTab
+      }));
+    }, 300); // Debounce the API call by 300ms
+
+    return () => {
+      clearTimeout(handler); // Clear the timeout if dependencies change before the delay
+    };
+  }, [dispatch, currentPage, activeTab, gamesPerPage]);
   
   // Hide scrollbars and navigation
   useEffect(() => {
@@ -413,17 +443,17 @@ export default function Home() {
         <HomeSlider />
 
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
-          <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+          <div className="py-4 sm:py-6 md:py-8 lg:py-10 md:w-[85%] w-[95%] mx-auto">
             
             {/* Category Filter */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
               <div
                 ref={categorySwiperRef}
                 className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none"
-                onMouseDown={onMouseDown}
-                onMouseMove={onMouseMove}
-                onMouseUp={onMouseUp}
-                onMouseLeave={onMouseLeave}
+                onMouseDown={handleMouseDown}
+                onMouseLeave={handleMouseLeave}
+                onMouseUp={handleMouseUp}
+                onMouseMove={handleMouseMove}
               >
                 <CategoryButton
                   category={{ name: 'All Games' }}
@@ -487,33 +517,39 @@ export default function Home() {
             </div>
 
             {/* Games Swiper */}
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={12}
-              slidesPerView={1.1}
-              breakpoints={SWIPER_BREAKPOINTS}
-              style={{ padding: '20px 4px' }}
-              className="game-swiper"
-              onSwiper={(swiper) => {
-                gameSwiperRef.current = swiper;
-                setTimeout(() => updateSwiperStates(swiper), 100);
-              }}
-              onSlideChange={updateSwiperStates}
-              onResize={updateSwiperStates}
-            >
-              {filteredGames?.map((game) => (
-                <SwiperSlide key={game._id}>
-                  <GameCard
-                    game={game}
-                    onGameClick={handleGameClick}
-                    onWishlistToggle={handleWishlistToggle}
-                    onAddToCart={handleAddToCart}
-                    isInWishlist={wishlistStatus[game._id]}
-                    isInCart={cartItems.some(item => item.game?._id === game._id)}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            {filteredGames && filteredGames.length > 0 ? (
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={12}
+                slidesPerView={1.1}
+                breakpoints={SWIPER_BREAKPOINTS}
+                style={{ padding: '20px 4px' }}
+                className="game-swiper"
+                onSwiper={(swiper) => {
+                  gameSwiperRef.current = swiper;
+                  setTimeout(() => updateSwiperStates(swiper), 100);
+                }}
+                onSlideChange={updateSwiperStates}
+                onResize={updateSwiperStates}
+              >
+                {filteredGames.map((game) => (
+                  <SwiperSlide key={game._id}>
+                    <GameCard
+                      game={game}
+                      onGameClick={handleGameClick}
+                      onWishlistToggle={handleWishlistToggle}
+                      onAddToCart={handleAddToCart}
+                      isInWishlist={wishlistStatus[game._id]}
+                      isInCart={cartItems.some(item => item.game?._id === game._id)}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
+                No games found for this category.
+              </div>
+            )}
           </div>
         </div>
 
