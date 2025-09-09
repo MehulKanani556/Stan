@@ -148,7 +148,7 @@ export default function HomeSlider() {
                 <div className="list hidden md:flex" ref={listRef}>
                     {games.map((slide, i) => {
                         const imageUrl = getImageUrl(slide);
-                        console.log('img', i, imageUrl);
+                        // console.log('img', i, imageUrl);
 
                         return (
                             <div
@@ -190,7 +190,7 @@ export default function HomeSlider() {
                                     alt={slide.title || slide.name || 'Game image'}
                                     style={{ display: 'none' }}
                                     onError={() => console.warn('Image failed to load:', imageUrl)}
-                                    onLoad={() => console.log('Image loaded successfully:', imageUrl)}
+                                    // onLoad={() => console.log('Image loaded successfully:', imageUrl)}
                                 />
                             </div>
                         );

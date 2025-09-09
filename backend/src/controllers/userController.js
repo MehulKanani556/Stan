@@ -236,7 +236,7 @@ export const getAllUsers = async (req, res) => {
         // }
 
         // Find all users with role 'user'
-        const users = await User.find({ role: 'user' }).select('-password');
+        const users = await User.find().select('-password');
 
         // Check if any users were found
         if (!users || users.length === 0) {

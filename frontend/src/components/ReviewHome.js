@@ -24,13 +24,13 @@ export default function ReviewHomeSlick() {
 
   useEffect(()=>{
     const userId =  localStorage.getItem("userId");
-    if(userId){
+    // if(userId){
       dispatch(getReviewData()).then((value)=>{
         if(value?.meta?.requestStatus === "fulfilled"){
            setLoader(false)
         }
       })
-    }
+    // }
   },[dispatch])
 
   useEffect(() => {
