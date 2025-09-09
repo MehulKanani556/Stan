@@ -7,7 +7,7 @@ import {
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, generateNewToken, googleLogin, logoutUser, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
-import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
+import { getMessage, sendMessage, getAllMessageUsers, deleteChat, markMessagesAsRead } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
 import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames, getTrendingGames } from "../controllers/game.controller.js";
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
@@ -196,4 +196,9 @@ indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
 // indexRoutes.get("/ratings/:gameId/stats", getGameRatingStats);
 indexRoutes.get("/admin/ratings",  getAllRatings);
 indexRoutes.get("/gamerating/:gameId",getAllRatingByGame)
+
+
+
+
+indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
 export default indexRoutes
