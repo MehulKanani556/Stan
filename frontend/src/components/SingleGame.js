@@ -286,14 +286,14 @@ const SingleGame = () => {
     return <SingleGameSkeleton />;
   }
 
-  // const formatDate = (dateString) => {
-  //   if (!dateString) return "";
-  //   const date = new Date(dateString);
-  //   const day = String(date.getDate()).padStart(2, "0");
-  //   const month = String(date.getMonth() + 1).padStart(2, "0");
-  //   const year = String(date.getFullYear()).slice(-2);
-  //   return `${day}-${month}-${year}`;
-  // };
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
+  };
 
   return (
     <div className=''>
@@ -302,8 +302,8 @@ const SingleGame = () => {
           <h2 className='md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize'>{single?.title}</h2>
         </div>
 
-        <div className="flex flex-col-reverse xl:flex-row lg:mt-11">
-          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 w-full xl:mt-0 mt-5'>
+        <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
+          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5'>
             <div>
               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
                 {single?.video?.url && (
@@ -436,7 +436,7 @@ const SingleGame = () => {
           </div>
 
           {/* right side copntent */}
-          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
+          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
             <div className="p-6 sticky top-24 bg-black/30 ">
               <div className="flex justify-center mb-6">
                 <img src={single?.cover_image?.url} alt="Game Logo" className="w-[330px] h-auto" />
@@ -586,6 +586,8 @@ const SingleGame = () => {
                     </div>
                       {gameRating && <div className='mt-4'>
                          {gameRating?.map((element)=>{
+                             console.log("YEYEYE", element);
+                             
                              let FullStar = Math.floor(element?.rating);
                              let HasHalfStar = element?.rating % 1 >= 0.5;
                              let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
@@ -603,10 +605,10 @@ const SingleGame = () => {
                                            {Array.from({ length: EmptyStars }).map((_, i) => (
                                              <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
                                            ))}
-                                           <span className="ms-2 text-white text-[14px]">{ratings.averageRating?.toFixed(1)}</span>
+                                           <span className="ms-2 text-white text-[14px]">{element?.rating?.toFixed(1)}</span>
                                        </div>
                                      </div>
-                                 </div>
+                                 </div>m
                                   <p className='mt-2 text-[13px]'>{element?.review}</p>
                                     <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p>
                                   <div className='h-[1px] bg-gray-700 mt-3'></div>

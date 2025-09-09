@@ -230,7 +230,7 @@ export default function Header() {
                                             className='text-base cursor-pointer hover:text-[#ab99e1] transition-colors'
                                             onClick={toggleDropdown}
                                         >
-                                            {decryptData(name)}
+                                            {decryptData(name)?.split(" ")[0]}
                                         </p>
                                     </div>
 

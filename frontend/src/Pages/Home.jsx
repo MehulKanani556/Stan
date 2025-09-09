@@ -50,39 +50,59 @@ const useImageLoader = (src) => {
 
 const useMomentumScroll = (ref) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [velocity, setVelocity] = useState(0);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [lastX, setLastX] = useState(0);
+  const [velocity, setVelocity] = useState(0);
 
-  // Momentum effect
+  // Momentum effect after releasing mouse
   useEffect(() => {
-    let animationFrame;
-    const momentum = () => {
+    let frame;
+    const animate = () => {
       if (Math.abs(velocity) > 0.1 && ref.current) {
         ref.current.scrollLeft -= velocity;
-        setVelocity(velocity * 0.95);
-        animationFrame = requestAnimationFrame(momentum);
+        setVelocity((v) => v * 0.95); // friction
+        frame = requestAnimationFrame(animate);
       }
     };
-    
     if (!isDragging && Math.abs(velocity) > 0.1) {
-      animationFrame = requestAnimationFrame(momentum);
+      frame = requestAnimationFrame(animate);
     }
-    
-    return () => cancelAnimationFrame(animationFrame);
+    return () => cancelAnimationFrame(frame);
   }, [isDragging, velocity, ref]);
 
-  const onMouseDown = useCallback((e) => {
-    if (!ref.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - ref.current.offsetLeft);
-    setScrollLeft(ref.current.scrollLeft);
-    setLastX(e.pageX);
-  }, [ref]);
+  const onMouseDown = useCallback(
+    (e) => {
+      if (!ref.current) return;
+      setIsDragging(true);
+      setStartX(e.pageX - ref.current.offsetLeft);
+      setScrollLeft(ref.current.scrollLeft);
+      setLastX(e.pageX);
+    },
+    [ref]
+  );
 
-  return { isDragging, onMouseDown, setIsDragging };
+  const onMouseMove = useCallback(
+    (e) => {
+      if (!isDragging || !ref.current) return;
+      e.preventDefault();
+      const x = e.pageX - ref.current.offsetLeft;
+      const walk = x - startX;
+      ref.current.scrollLeft = scrollLeft - walk;
+
+      // track velocity
+      setVelocity(e.pageX - lastX);
+      setLastX(e.pageX);
+    },
+    [isDragging, startX, scrollLeft, lastX, ref]
+  );
+
+  const onMouseUp = useCallback(() => setIsDragging(false), []);
+  const onMouseLeave = useCallback(() => setIsDragging(false), []);
+
+  return { onMouseDown, onMouseMove, onMouseUp, onMouseLeave, isDragging };
 };
+
 
 // Utility functions
 const isNewGame = (createdAt) => {
@@ -288,7 +308,7 @@ export default function Home() {
   
   // Custom hooks
   const isExploreLoaded = useImageLoader(ExploreGames);
-  const { onMouseDown } = useMomentumScroll(categorySwiperRef);
+  const {  onMouseDown, onMouseMove, onMouseUp, onMouseLeave, isDragging } = useMomentumScroll(categorySwiperRef);
   
   // Memoized values
   const userId = useMemo(() => 
@@ -296,8 +316,8 @@ export default function Home() {
     [authUser, currentUser]
   );
   
-  const filteredGames = useMemo(() => {
-    if (!activeTab || !gameData) return gameData;
+  const filteredGames = useMemo(() => {    
+    if (!activeTab || !gameData) return gameData;    
     return gameData.filter(game => game?.category?._id === activeTab);
   }, [gameData, activeTab]);
   
@@ -398,9 +418,12 @@ export default function Home() {
             {/* Category Filter */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
               <div
-                ref={scrollRef}
+                ref={categorySwiperRef}
                 className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none"
                 onMouseDown={onMouseDown}
+                onMouseMove={onMouseMove}
+                onMouseUp={onMouseUp}
+                onMouseLeave={onMouseLeave}
               >
                 <CategoryButton
                   category={{ name: 'All Games' }}

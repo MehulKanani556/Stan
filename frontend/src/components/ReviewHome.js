@@ -48,7 +48,7 @@ export default function ReviewHomeSlick() {
     infinite: true,
     centerMode: true,
     centerPadding: "0px",
-    // autoplay: true,
+    autoplay: true,
     autoplaySpeed: 2500,
     speed: 800,
     cssEase: "ease-in-out",
