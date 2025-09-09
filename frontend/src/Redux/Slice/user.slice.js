@@ -465,6 +465,19 @@ export const muteChat = createAsyncThunk(
 );
 
 
+export const markMessagesAsRead = createAsyncThunk(
+  "user/markMessagesAsRead",
+  async ({ senderId }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/message/mark-read", { senderId });
+      return { senderId, count: response.data.count };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to mark messages as read");
+    }
+  }
+);
+
+
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { dispatch, rejectWithValue }) => {
@@ -539,7 +552,26 @@ const userSlice = createSlice({
         state.chatToggle = action.payload;
       } 
        
-    }
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+    // Reducer to update unread count locally
+    updateUnreadCount: (state, action) => {
+      const { userId, count } = action.payload;
+      const user = state.allMessageUsers.find(user => user._id === userId);
+      if (user) {
+        user.unreadCount = Math.max(0, (user.unreadCount || 0) - count);
+      }
+    },
+    // Reducer to reset unread count for a specific user
+    resetUnreadCount: (state, action) => {
+      const userId = action.payload;
+      const user = state.allMessageUsers.find(user => user._id === userId);
+      if (user) {
+        user.unreadCount = 0;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -779,6 +811,15 @@ const userSlice = createSlice({
         state.message = action.payload?.message || "Failed to muteChat chat";
       })
     
+      .addCase(markMessagesAsRead.fulfilled, (state, action) => {
+        const { senderId } = action.payload;
+        // Reset unread count for the sender
+        const user = state.allMessageUsers.find(user => user._id === senderId);
+        if (user) {
+          user.unreadCount = 0;
+        }
+      })
+
       .addCase(logoutUser.fulfilled, (state, action) => {
 
         state.user = null;
@@ -832,5 +873,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, clearUsers, clearCurrentUser, setCurrentUser  , clearUser , setUser , chatToggleFunc} = userSlice.actions;
+export const { logout, clearUsers, clearCurrentUser, setCurrentUser  , clearUser , setUser , chatToggleFunc , clearError , updateUnreadCount , resetUnreadCount} = userSlice.actions;
 export default userSlice.reducer;

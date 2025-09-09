@@ -68,7 +68,8 @@ function initializeSocket(io) {
         const newMessage = await Message.create({
           receiverId,
           message: message.trim(),
-          senderId
+          senderId,
+          isRead: false // New messages are unread by default
         });
 
         // Add timestamp for frontend
@@ -101,6 +102,56 @@ function initializeSocket(io) {
         console.error("Error handling sendMessage:", error);
         socket.emit("messageError", { 
           error: "Failed to send message",
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+      }
+    });
+
+    // Handle marking messages as read
+    socket.on("markMessagesRead", async (data) => {
+      try {
+        const { senderId } = data;
+        const receiverId = socketUserMap.get(socket.id);
+        
+        if (!receiverId) {
+          console.log("Mark read event from unregistered socket");
+          return;
+        }
+
+        // Mark all unread messages from senderId to receiverId as read
+        const result = await Message.updateMany(
+          {
+            senderId: senderId,
+            receiverId: receiverId,
+            isRead: false
+          },
+          {
+            isRead: true,
+            readAt: new Date()
+          }
+        );
+
+        console.log(`Marked ${result.modifiedCount} messages as read from ${senderId} to ${receiverId}`);
+
+        // Notify the sender that their messages have been read
+        const senderSocketId = userSocketMap.get(senderId);
+        if (senderSocketId) {
+          io.to(senderSocketId).emit("messagesRead", {
+            readBy: receiverId,
+            timestamp: new Date()
+          });
+        }
+
+        // Send confirmation back to the reader
+        socket.emit("messagesMarkedRead", {
+          senderId,
+          count: result.modifiedCount
+        });
+
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+        socket.emit("markReadError", { 
+          error: "Failed to mark messages as read",
           details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
       }

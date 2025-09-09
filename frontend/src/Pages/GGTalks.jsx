@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSocket } from "../context/SocketContext";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllMessageUsers } from "../Redux/Slice/user.slice";
+import { getAllMessageUsers, markMessagesAsRead } from "../Redux/Slice/user.slice";
 import ChatUserList from "../chat/ChatUserList";
 import ChatHeader from "../chat/ChatHeader";
 import ChatMessage from "../chat/ChatMessage";
 import { addMessage, setMessages, setSelectedUser, removeTypingUser } from "../Redux/Slice/manageState.slice";
+import { resetUnreadCount } from "../Redux/Slice/user.slice";
 import { GrSend } from "react-icons/gr";
 
 export default function GGTalks() {
@@ -15,7 +16,7 @@ export default function GGTalks() {
     const { socket } = useSocket();
     const dispatch = useDispatch();
     const typingTimeoutRef = useRef(null);
-    
+    const currentUserId = localStorage.getItem('userId');
 
     const { allMessageUsers } = useSelector((state) => state.user);
     const { selectedUser, messages, typingUsers } = useSelector((state) => state.manageState);
@@ -32,10 +33,7 @@ export default function GGTalks() {
             }
         };
 
-        // Check on initial render and whenever selectedUser changes
         checkMobileView();
-
-        // Add resize listener to handle orientation changes or window resizing
         window.addEventListener('resize', checkMobileView);
 
         return () => {
@@ -65,6 +63,28 @@ export default function GGTalks() {
         }
     }, [allMessageUsers, selectedUser, dispatch]);
 
+    // Mark messages as read when user opens a chat
+    useEffect(() => {
+        if (selectedUser && currentUserId) {
+            // Find the selected user's unread count
+            const userWithUnread = allMessageUsers.find(user => user._id === selectedUser._id);
+            
+            // Only mark as read if there are unread messages
+            if (userWithUnread && userWithUnread.unreadCount > 0) {
+                // Mark messages as read in backend
+                dispatch(markMessagesAsRead({ senderId: selectedUser._id }));
+                
+                // Reset unread count locally immediately for better UX
+                dispatch(resetUnreadCount(selectedUser._id));
+                
+                // Emit socket event to notify the sender that messages have been read
+                if (socket) {
+                    socket.emit("markMessagesRead", { senderId: selectedUser._id });
+                }
+            }
+        }
+    }, [selectedUser, allMessageUsers, dispatch, socket, currentUserId]);
+
     // Check if selected user is typing
     useEffect(() => {
         if (selectedUser && typingUsers) {
@@ -77,34 +97,58 @@ export default function GGTalks() {
     // Socket.IO for real-time messages and typing
     useEffect(() => {
         if (socket) {
+            // Handle new messages
             socket.on("newMessage", (message) => {
+                // Update the conversation if message is for current chat
                 if (selectedUser &&
-                    ((message.senderId === selectedUser._id && message.receiverId === localStorage.getItem('userId')) ||
-                        (message.senderId === localStorage.getItem('userId') && message.receiverId === selectedUser._id))
+                    ((message.senderId === selectedUser._id && message.receiverId === currentUserId) ||
+                        (message.senderId === currentUserId && message.receiverId === selectedUser._id))
                 ) {
                     dispatch(addMessage({
                         ...message,
                         time: new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                     }));
-                    dispatch(getAllMessageUsers());
+
+                    // If message is from selected user, mark as read immediately
+                    if (message.senderId === selectedUser._id) {
+                        setTimeout(() => {
+                            socket.emit("markMessagesRead", { senderId: selectedUser._id });
+                        }, 100);
+                    }
                 }
+
+                // Always refresh message users list to update unread counts
+                dispatch(getAllMessageUsers());
 
                 // Remove typing indicator when message is received
                 dispatch(removeTypingUser(message.senderId));
             });
 
+            // Handle messages read confirmation
+            socket.on("messagesRead", (data) => {
+                console.log(`${data.messageCount} messages read by user ${data.readBy}`);
+                // You can add UI feedback here if needed
+            });
+
+            // Handle mark read error
+            socket.on("markReadError", (error) => {
+                console.error("Error marking messages as read:", error);
+            });
+
             return () => {
                 socket.off("newMessage");
+                socket.off("messagesRead");
+                socket.off("markReadError");
             };
         }
-    }, [socket, selectedUser, dispatch]);
+    }, [socket, selectedUser, dispatch, currentUserId]);
 
     const handleSendMessage = async () => {
         if (newMessage.trim() && selectedUser && socket) {
             const messageData = {
                 receiverId: selectedUser._id,
                 message: newMessage.trim(),
-                senderId: localStorage.getItem('userId'),
+                senderId: currentUserId,
             };
 
             socket.emit("sendMessage", messageData);
