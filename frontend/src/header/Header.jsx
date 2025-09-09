@@ -29,6 +29,7 @@ import axiosInstance from '../Utils/axiosInstance';
 import { BASE_URL } from '../Utils/baseUrl';
 import axios from 'axios';
 import { handleMyToggle } from '../Redux/Slice/game.slice';
+import { fetchCart } from '../Redux/Slice/cart.slice';
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -65,10 +66,11 @@ export default function Header() {
 
     useEffect(() => {
         const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
-        if (userId) {
+        if (userId && (!items?.length || !cartItems?.length)) {
             dispatch(fetchWishlist());
+            dispatch(fetchCart());
         }
-    }, [dispatch, authUser, currentUser]);
+    }, [dispatch, authUser?._id, currentUser?._id, items?.length, cartItems?.length]);
 
     useEffect(() => {
         const userId = authUser?._id || localStorage.getItem("userId");
@@ -77,11 +79,9 @@ export default function Header() {
         }
         if (currentUser?.name) {
             localStorage.setItem("userName", JSON.stringify(currentUser.name ? currentUser.name : ""));
-            // setName(currentUser.name);
             dispatch(setUser(currentUser?.name))
         }
-
-    }, [dispatch, authUser, currentUser]);
+    }, [dispatch, authUser?._id, currentUser, currentUser?.name]);
 
 
 
@@ -307,7 +307,7 @@ export default function Header() {
                                               </div>
                                         
                                               {(items?.length > 0 && myManage) && (
-                                                <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                                                <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
                                                   {items?.length}
                                                 </span>
                                               )}
@@ -330,7 +330,7 @@ export default function Header() {
                                               </div>
                                         
                                               {(cartItems?.length > 0 && myManage) && (
-                                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center ">
+                                                <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center ">
                                                   {cartItems?.length}
                                                 </span>
                                               )}
@@ -415,8 +415,8 @@ export default function Header() {
                                 <div className='w-full mt-4'>
 
                                     <div className='flex flex-wrap justify-between gap-y-3'>
-
-                                        <NavLink to="/rewards" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+        
+                                        <NavLink to="/rewards" onClick={()=> setIsDrawerOpen(false)}  className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <SlBadge className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Rewards Offers
                                         </NavLink>
 
@@ -424,7 +424,7 @@ export default function Header() {
                                             <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
                                         </NavLink> */}
 
-                                        <NavLink to="/GGTalks" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/GGTalks" onClick={()=> setIsDrawerOpen(false)}  className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
 
@@ -432,11 +432,11 @@ export default function Header() {
                                             <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
                                         </NavLink> */}
 
-                                        <NavLink to="/guides" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/guides" onClick={()=> setIsDrawerOpen(false)}  className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides
                                         </NavLink>
 
-                                        <NavLink to="/games" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/games" onClick={()=> setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <IoGameController className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Free Games
                                         </NavLink>
 {/* 

@@ -48,7 +48,7 @@ export default function ReviewHomeSlick() {
     infinite: true,
     centerMode: true,
     centerPadding: "0px",
-    autoplay: true,
+    // autoplay: true,
     autoplaySpeed: 2500,
     speed: 800,
     cssEase: "ease-in-out",
@@ -117,7 +117,7 @@ export default function ReviewHomeSlick() {
                   </div>
 
                   <div className="flex mb-3 mt-6 justify-center">
-                    {Array.from({ length: 5 }).map((_, j) => (
+                    {Array.from({ length: 5 })?.map((_, j) => (
                       <FaStar
                         key={j}
                         className={`h-5 w-5 mx-1 ${
@@ -127,9 +127,9 @@ export default function ReviewHomeSlick() {
                     ))}
                   </div>
 
-                  <p className="text-gray-300 text-[15px] leading-relaxed mt-2 text-center">
-                    {r?.review?.split(" ").slice(0, 20).join(" ")}
-                    {r?.review?.split(" ").length > 20 && " ..."}
+                  <p className="text-gray-300 text-[15px] leading-relaxed mt-2 text-center break-words">
+                    {r?.review?.split(" ")?.slice(0, 20)?.join(" ")}
+                    {r?.review?.split(" ")?.length > 20 && " ..."}
                   </p>
                 </div>
               </motion.div>
@@ -157,7 +157,7 @@ export default function ReviewHomeSlick() {
           border: 1px solid #2d2d2d;
           padding: 18px;
           background: linear-gradient(145deg, #161616 0%, #1b1b1b 100%);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+          /* box-shadow: 0 20px 50px rgba(0,0,0,0.55); */
           overflow: hidden;
         }
         @media (min-width:768px){

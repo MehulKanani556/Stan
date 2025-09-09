@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearError, getFreeGames } from '../Redux/Slice/freeGame.slice'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Autoplay } from 'swiper/modules'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -24,7 +23,6 @@ const Games = () => {
 	useEffect(() => {
 		dispatch(getFreeGames())
 	}, [dispatch])
-
 
 	useEffect(() => {
 		return () => dispatch(clearError())
@@ -63,6 +61,10 @@ const Games = () => {
 	}, [safeGames])
 
 	const isInitialLoading = loading && (!Array.isArray(games) || games.length === 0)
+
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}, []);
 
 	return (
 		<div className="max-w-[95%] md:max-w-[85%] m-auto pt-16 sm:pt-20 md:pt-28 pb-12 sm:pb-16 md:pb-24 px-3 sm:px-4">

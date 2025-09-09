@@ -2,10 +2,11 @@ import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaArrowUp } from 'react-icons/fa';
 import { IoMailOutline, IoCallOutline, IoLocationOutline } from 'react-icons/io5';
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg";
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Footer = () => {
   const [showGoUp, setShowGoUp] = React.useState(false);
+  const location = useLocation();
 
   React.useEffect(() => {
     const handleScroll = () => setShowGoUp(window.scrollY > 300);
@@ -43,15 +44,17 @@ const Footer = () => {
               </p>
               <div className="flex justify-center md:justify-start gap-3 sm:gap-4 md:gap-5 flex-wrap ">
                 {[
-                  { Icon: FaFacebook, href: "#" },
-                  { Icon: FaTwitter, href: "#" },
-                  { Icon: FaInstagram, href: "#" },
-                  { Icon: FaLinkedin, href: "#" },
-                  { Icon: FaYoutube, href: "#" },
+                  { Icon: FaFacebook, href: "https://www.facebook.com" },
+                  { Icon: FaTwitter, href: "https://www.twitter.com" },
+                  { Icon: FaInstagram, href: "https://www.instagram.com" },
+                  { Icon: FaLinkedin, href: "https://www.linkedin.com" },
+                  { Icon: FaYoutube, href: "https://www.youtube.com" },
                 ].map(({ Icon, href }, i) => (
                   <a
                     key={i}
                     href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="p-2  xl:p-2.5 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300 flex items-center justify-center"
                   >
                     <Icon className="text-sm sm:text-base md:text-lg lg:text-xl" />
@@ -69,7 +72,7 @@ const Footer = () => {
                   <li key={i}>
                     <Link
                       to={link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#"}
-                      className="text-gray-300 hover:text-[#ab99e1] transition-colors text-sm"
+                      className={` hover:text-[#ab99e1] transition-colors text-sm ${location.pathname === (link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#") ? "font-semibold text-[#ab99e1]" : "text-gray-300"}`}
                     >
                       {link}
                     </Link>
@@ -87,7 +90,7 @@ const Footer = () => {
                   <li key={i}>
                     <Link
                       to={link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#"}
-                      className="text-gray-300 hover:text-[#ab99e1] transition-colors text-sm"
+                      className={` hover:text-[#ab99e1] transition-colors text-sm ${location.pathname === (link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#") ? "font-semibold text-[#ab99e1]" : "text-gray-300"}`}
                     >
                       {link}
                     </Link>
@@ -101,27 +104,23 @@ const Footer = () => {
                 Contact Us
               </h4>
               <div className="space-y-4 text-sm text-gray-300">
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-3 items-center ">
                   <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
-                  <p>123 Gaming Street, Digital City, DC 12345</p>
+                  <a href="https://maps.app.goo.gl/Rm9PcQeQUdoSXuKYA" target="_blank" rel="noopener noreferrer" className='hover:text-[#ab99e1]'>123 Gaming Street, Digital City, DC 12345</a>
                 </div>
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-3 items-center ">
                   <IoCallOutline className="text-[#ab99e1]" />
-                  <p>+1 (555) 123-4567</p>
+                  <a href="tel:+919876543210" target="_blank" rel="noopener noreferrer" className='hover:text-[#ab99e1]'>+91 9876543210</a>
                 </div>
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-3 items-center ">
                   <IoMailOutline className="text-[#ab99e1]" />
-                  <p>support@YOYO.com</p>
+                  <a href="mailto:support@YOYO.com" target="_blank" rel="noopener noreferrer" className='hover:text-[#ab99e1]'>support@YOYO.com</a> 
                 </div>
               </div>
             </div>
           </div>
-
-
-
           <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
-            <p>© 2024 YOYO Gaming. All rights reserved.</p>
-
+            <p>© 2025 YOYO Gaming. All rights reserved.</p>
           </div>
         </div>
       </footer>

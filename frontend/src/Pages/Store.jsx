@@ -19,6 +19,7 @@ import StylishDiv from '../components/StylishDiv';
 import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import LazyGameCard from '../lazyLoader/LazyGameCard';
+import StoreSlider from '../components/StoreSlider';
 
 
 const Store = () => {
@@ -46,7 +47,7 @@ const Store = () => {
       dispatch(fetchCart());
     }
   }, [dispatch]);
-  
+
 
 
   // Handle window resize for better mobile button states (matching Home.jsx)
@@ -240,7 +241,7 @@ const Store = () => {
         ) : games && games.length > 0 ? (
           games.map((game) => (
             <SwiperSlide key={game._id || game.id}>
-              <LazyGameCard>
+              {/* <LazyGameCard> */}
                 <div
                   onClick={() => navigate(`/single/${game?._id}`)}
                   className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
@@ -373,7 +374,7 @@ const Store = () => {
                     </div>
                   </div>
                 </div>
-              </LazyGameCard>
+              {/* </LazyGameCard> */}
             </SwiperSlide>
           ))
         ) : (
@@ -389,19 +390,20 @@ const Store = () => {
 
   const isNewGame = (createdAt) => {
     if (!createdAt) return false;
-  
-    const createdDate = new Date(createdAt);  
-    const now = new Date();                    
-  
+
+    const createdDate = new Date(createdAt);
+    const now = new Date();
+
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(now.getMonth() - 1);
-  
+
     return createdDate >= oneMonthAgo && createdDate <= now;
   };
 
   return (
     <>
       <section className="">
+        <StoreSlider />
         {/* Game Slider (matching Home.jsx) */}
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
           <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">

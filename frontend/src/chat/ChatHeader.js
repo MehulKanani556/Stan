@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { GoTrash } from "react-icons/go";
@@ -11,9 +11,13 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
+    const isUserOnline = useMemo(() => {
+        return selectedUser && onlineUsers.includes(selectedUser._id);
+    }, [selectedUser, onlineUsers]);
 
-    const isUserOnline = selectedUser && onlineUsers.includes(selectedUser._id);
-    const isUserTyping = selectedUser && typingUsers && typingUsers.includes(selectedUser._id);
+    const isUserTyping = useMemo(() => {
+        return selectedUser && typingUsers && typingUsers.includes(selectedUser._id);
+    }, [selectedUser, typingUsers]);
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
@@ -84,7 +88,7 @@ export default function ChatHeader({ onMenuClick, showUserList }) {
                                         // className="w-6 h-6 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
                                         onClick={toggleDropdown}
                                     >
-                                        <TbDotsVertical className='text-grey-400' />
+                                        <TbDotsVertical className='text-gray-400' />
                                     </button>
 
                                 </div>
