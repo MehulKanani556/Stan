@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { createWishlist, getGameById, getGameRating } from '../Redux/Slice/game.slice'
+import {  getGameById, getGameRating } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go"
 import { addToCart, fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
@@ -253,8 +253,7 @@ const SingleGame = () => {
       dispatch(getGameById(id))
       dispatch(getGameRating(id))
     }
-    dispatch(fetchWishlist())
-    dispatch(fetchCart())
+    
     dispatch(allorders())
   }, [dispatch, id])
 
@@ -264,8 +263,11 @@ const SingleGame = () => {
 
   useEffect(() => {
     if (open || showPaymentForm) {
-      dispatch(fetchWishlist())
-      dispatch(fetchCart())
+      const userId = localStorage.getItem("userId")
+      if(userId){
+        dispatch(fetchWishlist())      
+        dispatch(fetchCart())
+      }
     }
   }, [open, showPaymentForm, dispatch])
 
