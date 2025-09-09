@@ -209,7 +209,7 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
     
-    <div className="space-y-4 md:space-y-5 lg:space-y-6">
+    <div className="space-y-4 sm:space-y-0 md:grid md:grid-cols-2 md:gap-4 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
           <GameCard key={item._id || item.id} item={item} />
