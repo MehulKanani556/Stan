@@ -383,6 +383,7 @@ const SingleGame = () => {
             {/* Image/Video Slider */}
             <div>
               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
+                {/* {console.log(single.video)} */}
                 {single?.video?.url && (
                   <div>
                     <video
