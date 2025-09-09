@@ -26,9 +26,21 @@ export default function GGTalks() {
 
     // On mobile, show the user list first until a chat is selected
     useEffect(() => {
-        if (window.innerWidth < 768 && !selectedUser) {
-            setShowUserList(true);
-        }
+        const checkMobileView = () => {
+            if (window.innerWidth < 768 && !selectedUser) {
+                setShowUserList(true);
+            }
+        };
+
+        // Check on initial render and whenever selectedUser changes
+        checkMobileView();
+
+        // Add resize listener to handle orientation changes or window resizing
+        window.addEventListener('resize', checkMobileView);
+
+        return () => {
+            window.removeEventListener('resize', checkMobileView);
+        };
     }, [selectedUser]);
 
     // Auto-select first user on desktop, but not on mobile to show welcome screen
@@ -185,7 +197,7 @@ export default function GGTalks() {
             />
 
             {/* Main Chat Area */}
-            <div className={`min-w-0 flex-1 h-full ${(!selectedUser || showUserList) ? 'hidden' : 'flex'} md:flex flex-col`}>
+            <div className={`min-w-0 flex-1 h-full ${(window.innerWidth < 768 && !selectedUser) || showUserList ? 'hidden' : 'flex'} md:flex flex-col`}>
                 {/* Chat Header */}
                 {selectedUser &&
                     <ChatHeader
