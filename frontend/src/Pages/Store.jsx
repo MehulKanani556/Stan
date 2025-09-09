@@ -303,7 +303,18 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
           isBeginning={isBeginning}
           isEnd={isEnd}
         />
-        <div className="text-gray-400 text-center py-8">No games available</div>
+        <Swiper
+          modules={[Navigation]}
+          ref={swiperRef}
+          {...SWIPER_CONFIG}
+          {...swiperEvents}
+        >
+          {Array.from({ length: 4 }, (_, i) => (
+            <SwiperSlide key={i}>
+              <LazyGameCard />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     );
   }
@@ -511,13 +522,11 @@ const Store = () => {
             ) : featuredMaxSizeGames.length > 0 ? (
               featuredMaxSizeGames.map((game) => (
                 <SwiperSlide key={game._id}>
-                  <LazyGameCard>
-                    <MemoizedGameCard
-                      game={game}
-                      onNavigate={handleNavigate}
-                      gameActions={gameActions}
-                    />
-                  </LazyGameCard>
+                  <MemoizedGameCard
+                    game={game}
+                    onNavigate={handleNavigate}
+                    gameActions={gameActions}
+                  />
                 </SwiperSlide>
               ))
             ) : (

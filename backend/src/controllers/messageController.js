@@ -201,12 +201,13 @@ export const getAllMessageUsers = async (req, res) => {
                 },
             },
             {
+               
                 $project: {
                     _id: 1,
                     name: { $ifNull: ["$userData.name", ""] },
                     email: { $ifNull: ["$userData.email", null] },
                     photo: { $ifNull: ["$userData.photo", null] },
-                    profilePhoto: { $ifNull: ["$userData.profilePhoto", null] },
+                    profilePhoto: { $ifNull: ["$userData.profilePic", null] },
                     createdAt: { $ifNull: ["$userData.createdAt", null] },
                     phone: { $ifNull: ["$userData.phone", null] },
                     dob: { $ifNull: ["$userData.dob", null] },

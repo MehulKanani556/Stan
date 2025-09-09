@@ -107,6 +107,8 @@ body {
   bottom: -40px !important;
 }
 
+
+
 /* Success message animation */
 @keyframes fadeIn {
   from {
@@ -188,6 +190,9 @@ body {
  .ds_mini_slider .slick-current div div svg{
     /* position: relative; */
     z-index: 2;
+ }
+ .ds_single_slider .slick_next{
+
  }
 
 } 

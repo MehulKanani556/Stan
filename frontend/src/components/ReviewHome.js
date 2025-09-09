@@ -20,7 +20,6 @@ export default function ReviewHomeSlick() {
   const [loader, setLoader] = useState(true)
 
   // console.log("CVCVCVC" , revieData);
-  
 
   useEffect(()=>{
     const userId =  localStorage.getItem("userId");
@@ -55,6 +54,7 @@ export default function ReviewHomeSlick() {
     arrows: false,
     dots: false,
     slidesToShow, // controlled by state + useEffect
+    slidesToScroll: 1, 
     responsive: [
       {
         breakpoint: 1536, // ≥1536px (2XL screens)
