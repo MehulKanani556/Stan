@@ -67,7 +67,7 @@ const Games = () => {
 	}, []);
 
 	return (
-		<div className="max-w-[95%] md:max-w-[85%] m-auto pt-16 sm:pt-20 md:pt-28 pb-12 sm:pb-16 md:pb-24 px-3 sm:px-4">
+		<div className="max-w-[95%] md:max-w-[85%] m-auto pt-10 ms:pt-15 xl:pt-28 pb-5 ms:pb-16 xl:pb-24 px-3 sm:px-4">
 
 
 

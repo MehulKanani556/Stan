@@ -68,21 +68,40 @@ const StarRating = ({ rating, size = "h-5 w-5" }) => {
   )
 }
 
-const CustomArrow = ({ direction, onClick, className = "" }) => {
-  const Icon = direction === 'next' ? FaChevronRight : FaChevronLeft
-  const positionClass = direction === 'next' ? 'right-4' : 'left-4'
+// const CustomArrow = ({ direction, onClick, className = "" }) => {
+//   const Icon = direction === 'next' ? FaChevronRight : FaChevronLeft
+//   const positionClass = direction === 'next' ? 'right-4' : 'left-4'
 
-  return (
-    <div
-      onClick={onClick}
-      className={`absolute top-1/2 ${positionClass} z-10 -translate-y-1/2 
-                 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full 
-                 cursor-pointer transition ${className}`}
-    >
-      <Icon size={20} />
-    </div>
-  )
-}
+//   return (
+//     <div
+//       onClick={onClick}
+//       className={`absolute top-1/2 ${positionClass} z-10 -translate-y-1/2 
+//                  bg-black/50 hover:bg-black/70 text-white p-2 rounded-full 
+//                  cursor-pointer transition ${className}`}
+//     >
+//       <Icon size={20} />
+//     </div>
+//   )
+// }
+
+const NextArrow = ({ onClick }) => (
+  <div
+    onClick={onClick}
+    className="absolute top-1/2 right-4 z-10 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white ms:p-3 p-2 rounded-full cursor-pointer transition"
+  >
+    <FaChevronRight size={20} />
+  </div>
+);
+
+const PrevArrow = ({ onClick }) => (
+  <div
+    onClick={onClick}
+    className="absolute top-1/2 left-4 z-10 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white ms:p-3 p-2 rounded-full cursor-pointer transition"
+  >
+    <FaChevronLeft size={20} />
+  </div>
+);
+
 
 const ThumbArrow = ({ direction, onClick }) => {
   const Icon = direction === 'next' ? FaChevronRight : FaChevronLeft
@@ -346,8 +365,8 @@ const SingleGame = () => {
   const mainSettings = useMemo(() => ({
     asNavFor: nav2,
     beforeChange: handleSlideChange,
-    nextArrow: <CustomArrow direction="next" />,
-    prevArrow: <CustomArrow direction="prev" />,
+    nextArrow: <NextArrow direction="next" />,
+    prevArrow: <PrevArrow direction="prev" />,
   }), [nav2, handleSlideChange])
 
   const thumbSettings = useMemo(() => ({
@@ -393,7 +412,7 @@ const SingleGame = () => {
         </div>
 
         <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
-          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5'>
+          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5'>
             <div>
               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
                 {/* {console.log(single.video)} */}
@@ -686,10 +705,10 @@ const SingleGame = () => {
                        <div className="mt-4">
                          {gameRating.map((element) => {
                            let FullStar = Math.floor(element?.rating);
-        let HasHalfStar = element?.rating % 1 >= 0.5;
-        let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+                               let HasHalfStar = element?.rating % 1 >= 0.5;
+                               let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
 
-        return (
+                           return (
                              <div className="mt-2" key={element?._id}>
                                <div className="flex items-center">
                                  <img

@@ -315,7 +315,7 @@ export default function Home() {
     handleMouseLeave, 
     handleMouseUp, 
     handleMouseMove 
-  } = useMouseDragScroll(scrollRef);
+  } = useMouseDragScroll(categorySwiperRef);
   
 
   const userId = useMemo(() => 
