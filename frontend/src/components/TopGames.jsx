@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getAllActiveGames } from '../Redux/Slice/game.slice';
 import { getFreeGames } from '../Redux/Slice/freeGame.slice';
 import TopGamesSkeleton from '../lazyLoader/TopGamesSkeleton';
 

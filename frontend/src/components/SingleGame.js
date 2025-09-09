@@ -253,8 +253,12 @@ const SingleGame = () => {
       dispatch(getGameById(id))
       dispatch(getGameRating(id))
     }
-    
-    dispatch(allorders())
+
+    const userId = localStorage.getItem("userId")
+    if(userId){
+
+      dispatch(allorders())
+    }
   }, [dispatch, id])
 
   useEffect(() => {

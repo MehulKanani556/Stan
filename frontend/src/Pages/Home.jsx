@@ -12,11 +12,12 @@ import Trailer from '../components/Trailer';
 import ReviewHome from '../components/ReviewHome';
 import MultiHome from '../components/MultiHome';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { getAllCategories, getAllGames } from '../Redux/Slice/game.slice';
+import { getAllCategories, getAllGames, getAllActiveGames } from '../Redux/Slice/game.slice';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
 import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
 import HomeSlider from '../components/HomeSlider';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 // Constants
 const SWIPER_BREAKPOINTS = {
@@ -48,40 +49,52 @@ const useImageLoader = (src) => {
   return isLoaded;
 };
 
-const useMomentumScroll = (ref) => {
+// Custom hook for mouse drag scrolling
+const useMouseDragScroll = (ref) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [velocity, setVelocity] = useState(0);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [lastX, setLastX] = useState(0);
 
-  // Momentum effect
-  useEffect(() => {
-    let animationFrame;
-    const momentum = () => {
-      if (Math.abs(velocity) > 0.1 && ref.current) {
-        ref.current.scrollLeft -= velocity;
-        setVelocity(velocity * 0.95);
-        animationFrame = requestAnimationFrame(momentum);
-      }
-    };
-    
-    if (!isDragging && Math.abs(velocity) > 0.1) {
-      animationFrame = requestAnimationFrame(momentum);
-    }
-    
-    return () => cancelAnimationFrame(animationFrame);
-  }, [isDragging, velocity, ref]);
-
-  const onMouseDown = useCallback((e) => {
+  const handleMouseDown = (e) => {
     if (!ref.current) return;
+    
     setIsDragging(true);
     setStartX(e.pageX - ref.current.offsetLeft);
     setScrollLeft(ref.current.scrollLeft);
-    setLastX(e.pageX);
-  }, [ref]);
+    
+    // Prevent text selection during drag
+    ref.current.style.userSelect = 'none';
+  };
 
-  return { isDragging, onMouseDown, setIsDragging };
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    if (ref.current) {
+      ref.current.style.userSelect = 'auto';
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (ref.current) {
+      ref.current.style.userSelect = 'auto';
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging || !ref.current) return;
+    
+    e.preventDefault();
+    const x = e.pageX - ref.current.offsetLeft;
+    const walk = (x - startX) * 2; // Multiply by 2 to increase scroll speed
+    ref.current.scrollLeft = scrollLeft - walk;
+  };
+
+  return {
+    handleMouseDown,
+    handleMouseLeave,
+    handleMouseUp,
+    handleMouseMove
+  };
 };
 
 // Utility functions
@@ -276,6 +289,10 @@ export default function Home() {
   const [showAddedToCart, setShowAddedToCart] = useState(false);
   const [addedGameTitle, setAddedGameTitle] = useState("");
   
+  // Add state for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const gamesPerPage = 10; // Adjust as needed
+
   // Redux state
   const { games: gameData, category: cateData, loading } = useSelector(
     (state) => state.game,
@@ -286,9 +303,18 @@ export default function Home() {
   const { user: authUser } = useSelector((state) => state.auth);
   const cartItems = useSelector((state) => state.cart.cart);
   
+  // Add pagination state from Redux
+  const pagination = useSelector((state) => state.game.pagination);
+  const totalPages = pagination?.totalPages || 1;
+
   // Custom hooks
   const isExploreLoaded = useImageLoader(ExploreGames);
-  const { onMouseDown } = useMomentumScroll(categorySwiperRef);
+  const { 
+    handleMouseDown, 
+    handleMouseLeave, 
+    handleMouseUp, 
+    handleMouseMove 
+  } = useMouseDragScroll(scrollRef);
   
   // Memoized values
   const userId = useMemo(() => 
@@ -340,6 +366,16 @@ export default function Home() {
     setIsBeginning(swiper.isBeginning);
     setIsEnd(swiper.isEnd);
   }, []);
+
+  // Add page change handler
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Reset to first page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
   
   // Effects
   useEffect(() => {
@@ -353,6 +389,20 @@ export default function Home() {
     dispatch(getAllGames({ page: 1, limit: 20 }));
     dispatch(getAllCategories());
   }, [dispatch]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      dispatch(getAllGames({
+        page: currentPage,
+        limit: gamesPerPage,
+        category: activeTab
+      }));
+    }, 300); // Debounce the API call by 300ms
+
+    return () => {
+      clearTimeout(handler); // Clear the timeout if dependencies change before the delay
+    };
+  }, [dispatch, currentPage, activeTab, gamesPerPage]);
   
   // Hide scrollbars and navigation
   useEffect(() => {
@@ -400,7 +450,10 @@ export default function Home() {
               <div
                 ref={scrollRef}
                 className="flex space-x-2 overflow-x-auto ds_home_scrollbar cursor-grab active:cursor-grabbing select-none"
-                onMouseDown={onMouseDown}
+                onMouseDown={handleMouseDown}
+                onMouseLeave={handleMouseLeave}
+                onMouseUp={handleMouseUp}
+                onMouseMove={handleMouseMove}
               >
                 <CategoryButton
                   category={{ name: 'All Games' }}
