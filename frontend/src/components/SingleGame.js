@@ -286,14 +286,14 @@ const SingleGame = () => {
     return <SingleGameSkeleton />;
   }
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = String(date.getFullYear()).slice(-2);
-    return `${day}-${month}-${year}`;
-  };
+  // const formatDate = (dateString) => {
+  //   if (!dateString) return "";
+  //   const date = new Date(dateString);
+  //   const day = String(date.getDate()).padStart(2, "0");
+  //   const month = String(date.getMonth() + 1).padStart(2, "0");
+  //   const year = String(date.getFullYear()).slice(-2);
+  //   return `${day}-${month}-${year}`;
+  // };
 
   return (
     <div className=''>
@@ -584,36 +584,36 @@ const SingleGame = () => {
                       ))}
                       <span className="ml-2 text-white font-medium">{ratings.averageRating?.toFixed(1)}</span>
                     </div>
-                    {gameRating && <div className='mt-4'>
-                      {gameRating?.map((element) => {
-                        let FullStar = Math.floor(element?.rating);
-                        let HasHalfStar = element?.rating % 1 >= 0.5;
-                        let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
-                        return (
-                          <div className='mt-2' key={element?._id}>
-                            <div className='flex items-center'>
-                              <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] object-cover rounded-full' alt="" />
-                              <div className='ms-3'>
-                                <div>{decryptData(element?.user?.name)}</div>
-                                <div className='flex items-center'>
-                                  {Array.from({ length: FullStar }).map((_, i) => (
-                                    <FaStar key={`full-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
-                                  ))}
-                                  {HasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />}
-                                  {Array.from({ length: EmptyStars }).map((_, i) => (
-                                    <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
-                                  ))}
-                                  <span className="ms-2 text-white text-[14px]">{ratings.averageRating?.toFixed(1)}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <p className='mt-2 text-[13px]'>{element?.review}</p>
-                            {/* <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p> */}
-                            <div className='h-[1px] bg-gray-700 mt-3'></div>
-                          </div>
-                        )
-                      })}
-                    </div>}
+                      {gameRating && <div className='mt-4'>
+                         {gameRating?.map((element)=>{
+                             let FullStar = Math.floor(element?.rating);
+                             let HasHalfStar = element?.rating % 1 >= 0.5;
+                             let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+                            return(
+                              <div className='mt-2' key={element?._id}>
+                                 <div className='flex items-center'>
+                                     <img src={`${element?.user?.profilePic}`} className='w-[50px] h-[50px] object-cover rounded-full' alt="" />
+                                     <div className='ms-3'>
+                                       <div>{decryptData(element?.user?.name)}</div>
+                                       <div className='flex items-center'>
+                                          {Array.from({ length: FullStar }).map((_, i) => (
+                                                 <FaStar key={`full-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                           ))}
+                                           {HasHalfStar && <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />}
+                                           {Array.from({ length: EmptyStars }).map((_, i) => (
+                                             <FaRegStar key={`empty-${i}`} className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                           ))}
+                                           <span className="ms-2 text-white text-[14px]">{ratings.averageRating?.toFixed(1)}</span>
+                                       </div>
+                                     </div>
+                                 </div>
+                                  <p className='mt-2 text-[13px]'>{element?.review}</p>
+                                    <p className='text-[13px] mt-1 flex'><MdDateRange className='text-[16px] me-2' /> {formatDate(element?.createdAt)}</p>
+                                  <div className='h-[1px] bg-gray-700 mt-3'></div>
+                              </div>  
+                            )
+                         })}
+                      </div>}
                   </div>
 
                 </details>

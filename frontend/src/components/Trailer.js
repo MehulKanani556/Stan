@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { getHomeTrailer } from "../Redux/Slice/game.slice";
 import TrailerSkeleton from "../lazyLoader/TrailerSkeleton";
+import { NavLink } from "react-router-dom";
 
 const Trailer = () => {
   const swiperRef = useRef(null);
@@ -79,12 +80,12 @@ const Trailer = () => {
                   {element.description || "No description available"}
                 </p>
                 {element?.link && (
-                  <button
-                    className="bg-white rounded-[5px] border-[1px] border-white text-black ms:w-[150px] w-[100px] py-2 mt-5 hover:bg-transparent hover:text-white ease-in-out transition-all duration-300"
-                    onClick={() => window.open(element.link, "_blank")}
+                  <NavLink
+                  to={"/store"}
+                    className="bg-white rounded-[5px] border-[1px] block text-center border-white text-black ms:w-[150px] w-[100px] py-2 mt-5 hover:bg-transparent hover:text-white ease-in-out transition-all duration-300"
                   >
-                    Buy Now
-                  </button>
+                    View More
+                  </NavLink>
                 )}
               </div>
             </div>
