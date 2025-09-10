@@ -90,8 +90,8 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
   const linkTo = isFree ? `/games/${item.slug}` : `/single/${item?._id}`;
   const price = item?.platforms?.windows?.price;
   return (
-    <Link to={linkTo} className='block mb-6'>
-      <div className="group relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2 cursor-pointer">
+    <Link to={linkTo} className='block '>
+      <div className="group relative bg-gradient-to-br cursor-pointer md:mb-0 mb-6 from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2 cursor-pointer">
 
         {/* Background gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

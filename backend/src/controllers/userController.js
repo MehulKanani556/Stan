@@ -140,7 +140,7 @@ export const register = async (req, res) => {
                     token: accessToken
                 }
             });
-        
+
     } catch (error) {
         return sendErrorResponse(res, 500, error.message);
     }
@@ -377,7 +377,19 @@ export const deleteUser = async (req, res) => {
         if (!user) {
             return sendErrorResponse(res, 404, "User not found");
         }
-
+        if (!user.otp || !user.otpExpiry) {
+            return sendBadRequestResponse(res, "No OTP found. Please request a new OTP.");
+        }
+        if (user.otp !== otp) {
+            return sendBadRequestResponse(res, "Invalid OTP.");
+        }
+        if (user.otpExpiry < Date.now()) {
+            return sendBadRequestResponse(res, "OTP has expired. Please request a new OTP.");
+        }
+        user.lastLogin = new Date();
+        user.otp = undefined;
+        user.otpExpiry = undefined;
+        await user.save();
         // 1. Delete profile image from AWS S3 if it exists
         if (user.profilePic) {
             try {
@@ -412,7 +424,6 @@ export const deleteUser = async (req, res) => {
         return sendErrorResponse(res, 500, "Something went wrong while deleting the user");
     }
 };
-
 
 export const searchUsers = async (req, res) => {
     try {
@@ -554,3 +565,32 @@ export const followOrUnfollow = async (req, res) => {
         return ThrowError(res, 500, error.message)
     }
 };
+
+
+export const sendDeleteOtp = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (email) {
+            const otp = generateOTP()
+            // Find user by email
+            const user = await User.findOne({ email: emailHash });
+            if (!user) {
+                return sendErrorResponse(res, 404, "User not found");
+            }
+
+            // Send OTP to the original email (not encrypted)
+            await sendOtpEmail(email, otp);
+            // Set OTP and expiry (e.g., 5 minutes from now)
+            user.otp = otp;
+            user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+            await user.save();
+            // Send OTP to email
+            return sendSuccessResponse(res, "OTP sent to email", { email });
+        }
+
+        // If neither provided
+        return sendBadRequestResponse(res, "Please provide either email");
+    } catch (error) {
+        return sendErrorResponse(res, 500, error.message);
+    }
+}

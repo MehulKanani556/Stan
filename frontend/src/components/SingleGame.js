@@ -3,7 +3,7 @@ import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCa
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getGameById, getGameRating } from '../Redux/Slice/game.slice'
 import { GoDotFill } from "react-icons/go"
@@ -218,7 +218,7 @@ const SingleGame = () => {
   const sliderRef1 = useRef(null)
   const sliderRef2 = useRef(null)
   const videoRefs = useRef([])
-
+  const navigate = useNavigate();
   // State
   const [nav1, setNav1] = useState(null)
   const [nav2, setNav2] = useState(null)
@@ -227,6 +227,10 @@ const SingleGame = () => {
   const [currentOrderId, setCurrentOrderId] = useState(null)
   const [amountToPay, setAmountToPay] = useState(0)
   const [open, setOpen] = useState(false)
+  const { currentUser } = useSelector((state) => state.user);
+  const { user: authUser } = useSelector((state) => state.auth);
+
+  const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
 
   // Custom hooks
   const slidesToShow = useResponsiveSlides()
@@ -548,6 +552,7 @@ const SingleGame = () => {
               </div>
 
               {/* Action Buttons */}
+              {isLoggedIn ?
               <div className="space-y-4">
                 <div className='flex gap-4'>
                   {/* Wishlist Button */}
@@ -614,9 +619,37 @@ const SingleGame = () => {
                 </div>
 
                 {/* Purchase/Review Buttons */}
-                {isBuyed ? (
-                  <>
+                
+                 { isBuyed ? (
+                    <>
+                      <button
+                        className="w-full cursor-not-allowed 
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                      >
+                        <span className="text-white font-bold text-sm me-2">✓</span>
+                        Purchased
+                      </button>
+                      <button
+                        onClick={() => setOpen(true)}
+                        className="w-full cursor-not-allowed 
+                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+                    text-white shadow-lg shadow-fuchsia-500/30
+                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                      >
+                        Review
+                      </button>
+                    </>
+                  ) : (
                     <button
+                      onClick={handleCheckout}
                       className="w-full cursor-not-allowed 
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
@@ -625,37 +658,22 @@ const SingleGame = () => {
                     active:scale-95 focus-visible:outline-none 
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
-                      <span className="text-white font-bold text-sm me-2">✓</span>
-                      Purchased
+                      Buy Now
                     </button>
-                    <button
-                      onClick={() => setOpen(true)}
-                      className="w-full cursor-not-allowed 
-                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                    >
-                      Review
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={handleCheckout}
-                    className="w-full cursor-not-allowed 
-                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                  >
-                    Buy Now
-                  </button>
-                )}
-              </div>
+                  )  }
+              </div> :
+              <button
+              onClick={()=>navigate('/login')}
+              className="w-full cursor-not-allowed 
+                        font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                        bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
+            text-white shadow-lg shadow-fuchsia-500/30
+            hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+            active:scale-95 focus-visible:outline-none 
+            focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            >
+              login to Buy
+            </button>}
 
               {/* Payment Modal */}
               <Dialog
@@ -699,61 +717,61 @@ const SingleGame = () => {
                 </AccordionItem>
 
                 <AccordionItem title="Rating">
-                     <StarRating rating={ratings.averageRating} />
-                    
-                     {gameRating && (
-                       <div className="mt-4">
-                         {gameRating.map((element) => {
-                           let FullStar = Math.floor(element?.rating);
-                               let HasHalfStar = element?.rating % 1 >= 0.5;
-                               let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+                  <StarRating rating={ratings.averageRating} />
 
-                           return (
-                             <div className="mt-2" key={element?._id}>
-                               <div className="flex items-center">
-                                 <img
-                                   src={element?.user?.profilePic}
-                                   className="w-[50px] h-[50px] object-cover rounded-full"
-                                   alt=""
-                                 />
-                                 <div className="ms-3">
-                                   <div className="font-medium">
-                                     {decryptData(element?.user?.name)?.split(" ")[0]}
-                                   </div>
-                                   <div className="flex items-center">
-                                     {Array.from({ length: FullStar }).map((_, i) => (
-                                       <FaStar
-                                         key={`full-${i}`}
-                                         className="text-yellow-400 h-4 w-4 mx-0.5"
-                                       />
-                                     ))}
-                                     {HasHalfStar && (
-                                       <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />
-                                     )}
-                                     {Array.from({ length: EmptyStars }).map((_, i) => (
-                                       <FaRegStar
-                                         key={`empty-${i}`}
-                                         className="text-yellow-400 h-4 w-4 mx-0.5"
-                                       />
-                                     ))}
-                                     <span className="ms-2 text-white text-[14px]">
-                                       {element?.rating?.toFixed(1)}
-                                     </span>
-                                   </div>
-                                 </div>
-                               </div>
-                    
-                               <p className="mt-2 text-[13px]">{element?.review}</p>
-                               <p className="text-[13px] mt-1 flex">
-                                 <MdDateRange className="text-[16px] me-2" />{" "}
-                                 {formatDate(element?.createdAt)}
-                               </p>
-                               <div className="h-[1px] bg-gray-700 mt-3"></div>
-                             </div>
-                           );
-                         })}
-                       </div>
-                     )}
+                  {gameRating && (
+                    <div className="mt-4">
+                      {gameRating.map((element) => {
+                        let FullStar = Math.floor(element?.rating);
+                        let HasHalfStar = element?.rating % 1 >= 0.5;
+                        let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+
+                        return (
+                          <div className="mt-2" key={element?._id}>
+                            <div className="flex items-center">
+                              <img
+                                src={element?.user?.profilePic}
+                                className="w-[50px] h-[50px] object-cover rounded-full"
+                                alt=""
+                              />
+                              <div className="ms-3">
+                                <div className="font-medium">
+                                  {decryptData(element?.user?.name)?.split(" ")[0]}
+                                </div>
+                                <div className="flex items-center">
+                                  {Array.from({ length: FullStar }).map((_, i) => (
+                                    <FaStar
+                                      key={`full-${i}`}
+                                      className="text-yellow-400 h-4 w-4 mx-0.5"
+                                    />
+                                  ))}
+                                  {HasHalfStar && (
+                                    <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                  )}
+                                  {Array.from({ length: EmptyStars }).map((_, i) => (
+                                    <FaRegStar
+                                      key={`empty-${i}`}
+                                      className="text-yellow-400 h-4 w-4 mx-0.5"
+                                    />
+                                  ))}
+                                  <span className="ms-2 text-white text-[14px]">
+                                    {element?.rating?.toFixed(1)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <p className="mt-2 text-[13px]">{element?.review}</p>
+                            <p className="text-[13px] mt-1 flex">
+                              <MdDateRange className="text-[16px] me-2" />{" "}
+                              {formatDate(element?.createdAt)}
+                            </p>
+                            <div className="h-[1px] bg-gray-700 mt-3"></div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </AccordionItem>
 
                 <AccordionItem title="Purchase Info">

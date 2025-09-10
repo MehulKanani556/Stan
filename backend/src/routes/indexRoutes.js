@@ -5,7 +5,7 @@ import {
   handleMulterError,
 } from "../middlewares/imageupload.js";
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
-import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
+import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, sendDeleteOtp, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, generateNewToken, googleLogin, logoutUser, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
 import { getMessage, sendMessage, getAllMessageUsers, deleteChat, markMessagesAsRead } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
@@ -51,6 +51,7 @@ indexRoutes.put(
   convertJfifToWebp,
   editProfile
 );
+indexRoutes.delete("/sendDeleteOtp/:id", UserAuth, sendDeleteOtp);
 indexRoutes.delete("/deleteUser/:id", UserAuth, deleteUser);
 
 //login Routes
