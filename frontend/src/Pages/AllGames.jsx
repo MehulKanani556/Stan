@@ -641,11 +641,11 @@ export default function AllGames() {
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                     {/* Image Container with Enhanced Effects */}
-                    <div className="relative w-full h-36 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden all-games-image">
+                    <div className="relative w-full h-36 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden all-games-image rounded-2xl">
                         <img
                             src={imageUrl}
                             alt={game?.title}
-                            className="w-full h-full object-cover "
+                            className="w-full h-full object-cover rounded-2xl"
                         />
 
                         {/* Gradient Overlay */}

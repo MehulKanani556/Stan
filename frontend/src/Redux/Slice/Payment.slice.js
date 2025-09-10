@@ -126,6 +126,8 @@ export const verifyPayment = createAsyncThunk(
           userId,
           amount
         }));
+
+        await dispatch(allorders());
       }
 
       return response.data;

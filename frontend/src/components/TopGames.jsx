@@ -55,12 +55,12 @@ const SECTION_CONFIG = [
 const GameCardSkeleton = () => (
   <div className='block mb-6'>
     <div className="group relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
-      <div className="relative h-48 sm:h-52 overflow-hidden">
+      <div className="relative overflow-hidden aspect-[16/9]">
         <div className="w-full h-full bg-slate-700 animate-pulse">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
         </div>
       </div>
-      <div className="relative p-5">
+      <div className="relative p-4 sm:p-5">
         <div className="h-6 bg-slate-700 rounded mb-3 animate-pulse"></div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Image container */}
-        <div className="relative h-48 sm:h-52 overflow-hidden">
+        <div className="relative overflow-hidden aspect-[16/9]">
           <img
             src={item?.cover_image?.url || item?.image}
             alt={item?.title || item.name}
@@ -120,7 +120,7 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
         </div>
 
         {/* Content container */}
-        <div className="relative p-5">
+        <div className="relative p-4 sm:p-5">
           {/* Title */}
           <h3 className="text-white text-lg font-bold mb-3 line-clamp-2 group-hover:text-purple-300 transition-colors duration-300">
             {item?.title || item?.name}
@@ -293,7 +293,7 @@ function TopGames() {
   // }
 
   return (
-    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-16 md:pb-20 relative">
+    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto px-4 sm:px-6 md:px-8 pb-12 sm:pb-16 md:pb-20 relative">
       {/* Section Header */}
       <div className="text-center mb-12 sm:mb-16">
         <h2 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">

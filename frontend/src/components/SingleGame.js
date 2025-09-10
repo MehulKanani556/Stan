@@ -416,7 +416,7 @@ const SingleGame = () => {
         </div>
 
         <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
-          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5'>
+          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5 order-2 lg:order-1'>
             <div>
               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
                 {/* {console.log(single.video)} */}
@@ -532,7 +532,7 @@ const SingleGame = () => {
           </div>
 
           {/* right side copntent */}
-          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
+          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 order-1 lg:order-2">
             <div className="p-6 sticky top-24 bg-black/30 ">
               <div className="flex justify-center mb-6">
                 <img
@@ -636,7 +636,7 @@ const SingleGame = () => {
                       </button>
                       <button
                         onClick={() => setOpen(true)}
-                        className="w-full cursor-not-allowed 
+                        className="w-full cursor-pointer 
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
@@ -650,7 +650,7 @@ const SingleGame = () => {
                   ) : (
                     <button
                       onClick={handleCheckout}
-                      className="w-full cursor-not-allowed 
+                      className="w-full cursor-pointer 
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
@@ -664,7 +664,7 @@ const SingleGame = () => {
               </div> :
               <button
               onClick={()=>navigate('/login')}
-              className="w-full cursor-not-allowed 
+              className="w-full cursor-pointer
                         font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                         bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
             text-white shadow-lg shadow-fuchsia-500/30

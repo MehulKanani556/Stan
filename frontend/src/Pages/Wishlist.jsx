@@ -27,18 +27,18 @@ const Wishlist = () => {
 
     dispatch(addToCart({ gameId: ele.game._id, platform: "windows", qty: 1 }));
   }
-  const handleRemoveFromCart = (gameId) => {
-    dispatch(removeFromCart({ gameId: gameId._id, platform: "windows" }));
-  };
+  // const handleRemoveFromCart = (gameId) => {
+  //   dispatch(removeFromCart({ gameId: gameId._id, platform: "windows" }));
+  // };
 
-  const handleContinueShopping = () => {
-    // You can add navigation logic here if needed
-    navigate("/store")
-  };
+  // const handleContinueShopping = () => {
+  //   // You can add navigation logic here if needed
+  //   navigate("/store")
+  // };
 
   return (
     <div className="md:max-w-[85%] max-w-[95%] mx-auto text-white py-10">
-      <h1 className="text-4xl font-extrabold mb-8 tracking-tight">My Wishlist</h1>
+      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 md:mb-8 tracking-tight">My Wishlist</h1>
 
       <div className="grid lg:grid-cols-3 gap-10">
         {/* LEFT SIDE - Wishlist Games */}

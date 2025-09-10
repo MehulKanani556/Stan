@@ -116,26 +116,26 @@ const Cart = () => {
             platform: it.platform,
             price: Number(it.price || it?.game?.platforms?.[it.platform]?.price || 0),
         })) : []);
-        
+
         const originalAmount = items.reduce((sum, it) => sum + it.price, 0);
-        console.log('Applying fan coins:', fanCoinsToUse,useFanCoinsChecked);
+        console.log('Applying fan coins:', fanCoinsToUse, useFanCoinsChecked);
 
         try {
             // 1. Create order first with original amount and fan coin details
-            const orderResult = await dispatch(createOrder({ 
-                items, 
+            const orderResult = await dispatch(createOrder({
+                items,
                 amount: finalAmount, // Use final amount after fan coins
                 fanCoinsUsed: useFanCoinsChecked ? fanCoinsToUse : 0,
                 fanCoinDiscount: useFanCoinsChecked ? fanCoinsToUse : 0
             }));
-            
+
             if (!createOrder.fulfilled.match(orderResult)) {
                 alert("Failed to create order. Please try again.");
                 return;
             }
 
             const { order } = orderResult.payload;
-            
+
             // 2. If fan coins are selected, apply them after order creation
             let finalAmountToPay = originalAmount;
             let actualFanCoinsUsed = 0;
@@ -143,20 +143,20 @@ const Cart = () => {
             if (useFanCoinsChecked && fanCoinsToUse > 0 && authUser?._id) {
                 try {
                     console.log('Applying fan coins:', fanCoinsToUse);
-                    
+
                     const fanCoinResult = await dispatch(fanCoinsuse({
                         userId: authUser._id,
                         gamePrice: originalAmount,
                         fanCoinsToUse: fanCoinsToUse
                     }));
                     console.log(fanCoinResult);
-                    
+
 
                     if (fanCoinResult.type === 'user/fanCoinsuse/fulfilled') {
                         console.log('Fan coins applied successfully:', fanCoinResult.payload);
                         finalAmountToPay = fanCoinResult.payload.discountedPrice || finalAmount;
                         actualFanCoinsUsed = fanCoinsToUse;
-                        
+
                         // Update user data to reflect the new fan coin balance
                         dispatch(getUserById(userId));
                     } else {
@@ -196,19 +196,19 @@ const Cart = () => {
         setUseFanCoinsChecked(false);
         setFanCoinsToUse(0);
         setFinalAmount(0);
-        
+
         // Clear the cart after successful payment
         dispatch(clearCart());
-        
+
         // Navigate to success page or orders page
         // navigate('/orders'); // Uncomment if you have an orders page
-        
+
         // alert("Order placed successfully!");
     };
 
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
-            <h1 className="text-4xl font-extrabold mb-8">My Cart</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 md:mb-8 tracking-tight">My Cart</h1>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
@@ -324,23 +324,23 @@ const Cart = () => {
                                                 htmlFor="useFanCoins"
                                                 className={`text-white flex items-center ${(!authUser || !fanCoins || fanCoins <= 0) ? 'text-gray-500' : ''}`}
                                             >
-                                            <input
-                                                type="checkbox"
-                                                id="useFanCoins"
-                                                checked={useFanCoinsChecked}
-                                                onChange={(e) => handleFanCoinCheckboxChange(e.target.checked)}
-                                                className="mr-2 text-purple-600 focus:ring-purple-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                                            />
+                                                <input
+                                                    type="checkbox"
+                                                    id="useFanCoins"
+                                                    checked={useFanCoinsChecked}
+                                                    onChange={(e) => handleFanCoinCheckboxChange(e.target.checked)}
+                                                    className="mr-2 text-purple-600 focus:ring-purple-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                                />
                                                 Use Fan Coins
                                             </label>
-                                                <span className="ml-6  text-sm text-gray-400">
-                                                    {!authUser
-                                                        ? "(Login to use Fan Coins)"
-                                                        : (!fanCoins || fanCoins <= 0)
-                                                            ? "(No Fan Coins available)"
-                                                            : `(Available: ${fanCoins.toFixed(2)})`
-                                                    }
-                                                </span>
+                                            <span className="ml-6  text-sm text-gray-400">
+                                                {!authUser
+                                                    ? "(Login to use Fan Coins)"
+                                                    : (!fanCoins || fanCoins <= 0)
+                                                        ? "(No Fan Coins available)"
+                                                        : `(Available: ${fanCoins.toFixed(2)})`
+                                                }
+                                            </span>
                                         </div>
                                         {useFanCoinsChecked && (
                                             <div className="text-sm text-green-400">
@@ -433,8 +433,10 @@ const Cart = () => {
                 </div>
             </div>
 
+            {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
+
             <Dialog
-                open={!!(showPaymentForm && currentOrderId)}
+                open={!!(showPaymentForm && clientSecret && currentOrderId)}
                 onClose={() => setShowPaymentForm(false)}
                 className="relative z-50"
             >
@@ -448,8 +450,9 @@ const Cart = () => {
                             Complete Your Purchase
                         </DialogTitle>
 
-                        <Elements stripe={stripePromise}>
+                        <Elements stripe={stripePromise} options={{ clientSecret }}>
                             <PaymentForm
+                                clientSecret={clientSecret}
                                 orderId={currentOrderId}
                                 amount={amountToPay}
                                 onPaymentSuccess={handlePaymentSuccess}
