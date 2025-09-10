@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FaWindows } from "react-icons/fa";
 import { MdWorkspacePremium } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -17,23 +17,32 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import { fanCoinsuse, getUserById } from '../Redux/Slice/user.slice';
 
 const stripePromise = loadStripe("pk_test_51R8wko2LIh9VELYJ9wrmC0oOqOvNAIUY3LVUhay96NYQjyOa7oK7MfdKYlzErmsJ6Gnn6o2zgPBxy1DrBxvfFQ4500cYJMw3sB");
 
 const Cart = () => {
-
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart.cart);
     const loading = useSelector((state) => state.cart.loading);
+    const { currentUser: authUser } = useSelector((state) => state.user);
+    const fanCoins = authUser?.fanCoins || 0;
     const navigate = useNavigate();
     const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
     const [currentOrderId, setCurrentOrderId] = useState(null);
     const [amountToPay, setAmountToPay] = useState(0);
+    const userId = localStorage.getItem("userId");
+
+    // Fan coin state
+    const [useFanCoinsChecked, setUseFanCoinsChecked] = useState(false);
+    const [fanCoinsToUse, setFanCoinsToUse] = useState(0);
+    const [finalAmount, setFinalAmount] = useState(0);
 
     useEffect(() => {
         dispatch(fetchCart());
-    }, [])
+        dispatch(getUserById(userId))
+    }, [dispatch])
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
     const totalDiscount = cartItems.reduce(
@@ -41,6 +50,43 @@ const Cart = () => {
         0
     );
     const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
+
+    // Reset states when total price changes
+    useEffect(() => {
+        setUseFanCoinsChecked(false);
+        setFanCoinsToUse(0);
+        setFinalAmount(totalPrice);
+    }, [totalPrice]);
+
+    // Handle fan coin checkbox change
+    const handleFanCoinCheckboxChange = useCallback((checked) => {
+        // Check if user is authenticated before proceeding
+        if (!authUser || !authUser._id) {
+            console.error('User not authenticated');
+            alert('Please login to use Fan Coins');
+            return;
+        }
+
+        if (!fanCoins || fanCoins <= 0) {
+            console.error('No fan coins available');
+            alert('You have no Fan Coins available');
+            return;
+        }
+
+        setUseFanCoinsChecked(checked);
+
+        if (checked) {
+            // Calculate maximum applicable Fan Coins
+            const maxApplicableCoins = Math.min(fanCoins, totalPrice);
+            console.log(maxApplicableCoins, fanCoins, totalPrice);
+
+            setFanCoinsToUse(maxApplicableCoins);
+            setFinalAmount(Math.max(0, totalPrice - maxApplicableCoins));
+        } else {
+            setFanCoinsToUse(0);
+            setFinalAmount(totalPrice);
+        }
+    }, [authUser, fanCoins, totalPrice]);
 
     const handleRemove = (item) => {
         // alert(id)
@@ -52,7 +98,6 @@ const Cart = () => {
     const handleClearCart = () => {
         dispatch(clearCart());
     };
-
 
     const handleContinueShopping = () => {
         // You can add navigation logic here if needed
@@ -71,17 +116,75 @@ const Cart = () => {
             platform: it.platform,
             price: Number(it.price || it?.game?.platforms?.[it.platform]?.price || 0),
         })) : []);
-        const amount = items.reduce((sum, it) => sum + it.price, 0);
+        
+        const originalAmount = items.reduce((sum, it) => sum + it.price, 0);
+        console.log('Applying fan coins:', fanCoinsToUse,useFanCoinsChecked);
 
-        // 1. Create order (calls backend)
-        const resultAction = await dispatch(createOrder({ items, amount }));
-        if (createOrder.fulfilled.match(resultAction)) {
-            alert("{As")
-            const { order } = resultAction.payload;
-            // setClientSecret(newClientSecret);
+        try {
+            // 1. Create order first with original amount and fan coin details
+            const orderResult = await dispatch(createOrder({ 
+                items, 
+                amount: finalAmount, // Use final amount after fan coins
+                fanCoinsUsed: useFanCoinsChecked ? fanCoinsToUse : 0,
+                fanCoinDiscount: useFanCoinsChecked ? fanCoinsToUse : 0
+            }));
+            
+            if (!createOrder.fulfilled.match(orderResult)) {
+                alert("Failed to create order. Please try again.");
+                return;
+            }
+
+            const { order } = orderResult.payload;
+            
+            // 2. If fan coins are selected, apply them after order creation
+            let finalAmountToPay = originalAmount;
+            let actualFanCoinsUsed = 0;
+
+            if (useFanCoinsChecked && fanCoinsToUse > 0 && authUser?._id) {
+                try {
+                    console.log('Applying fan coins:', fanCoinsToUse);
+                    
+                    const fanCoinResult = await dispatch(fanCoinsuse({
+                        userId: authUser._id,
+                        gamePrice: originalAmount,
+                        fanCoinsToUse: fanCoinsToUse
+                    }));
+                    console.log(fanCoinResult);
+                    
+
+                    if (fanCoinResult.type === 'user/fanCoinsuse/fulfilled') {
+                        console.log('Fan coins applied successfully:', fanCoinResult.payload);
+                        finalAmountToPay = fanCoinResult.payload.discountedPrice || finalAmount;
+                        actualFanCoinsUsed = fanCoinsToUse;
+                        
+                        // Update user data to reflect the new fan coin balance
+                        dispatch(getUserById(userId));
+                    } else {
+                        console.error('Failed to apply Fan Coins', fanCoinResult);
+                        alert('Failed to apply Fan Coins. Proceeding with original amount.');
+                        // Reset fan coin states on failure
+                        setUseFanCoinsChecked(false);
+                        setFanCoinsToUse(0);
+                        setFinalAmount(originalAmount);
+                    }
+                } catch (error) {
+                    console.error('Failed to use fan coins:', error);
+                    alert('Failed to apply Fan Coins. Proceeding with original amount.');
+                    // Reset fan coin states on error
+                    setUseFanCoinsChecked(false);
+                    setFanCoinsToUse(0);
+                    setFinalAmount(originalAmount);
+                }
+            }
+
+            // 3. Proceed to payment with final amount
             setCurrentOrderId(order._id);
-            setAmountToPay(order.amount);
+            setAmountToPay(finalAmountToPay);
             setShowPaymentForm(true);
+
+        } catch (error) {
+            console.error('Checkout error:', error);
+            alert('Checkout failed. Please try again.');
         }
     };
 
@@ -90,6 +193,17 @@ const Cart = () => {
         setClientSecret("");
         setCurrentOrderId(null);
         setAmountToPay(0);
+        setUseFanCoinsChecked(false);
+        setFanCoinsToUse(0);
+        setFinalAmount(0);
+        
+        // Clear the cart after successful payment
+        dispatch(clearCart());
+        
+        // Navigate to success page or orders page
+        // navigate('/orders'); // Uncomment if you have an orders page
+        
+        // alert("Order placed successfully!");
     };
 
     return (
@@ -152,9 +266,6 @@ const Cart = () => {
                                         >
                                             <RiDeleteBin6Line />
                                         </button>
-                                        {/* <button className="text-[#7c63b3] transition text-xl">
-                                            <FaRegHeart />
-                                        </button> */}
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +274,7 @@ const Cart = () => {
                     ) : (
                         <div className="flex flex-col items-center justify-center text-center py-20 bg-black/15 rounded-2xl">
                             <p className="text-2xl font-semibold text-gray-300 mb-4">🛒 Your cart is empty</p>
-                            <p className="text-gray-500 mb-6">Looks like you haven’t added anything yet.</p>
+                            <p className="text-gray-500 mb-6">Looks like you haven't added anything yet.</p>
                             <button
                                 onClick={handleContinueShopping}
                                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
@@ -191,9 +302,9 @@ const Cart = () => {
 
                     {!loading && (
                         <div className=" flex flex-col gap-3 border-b border-gray-700 pb-4 text-base">
-                            <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300 w-[40%]">
+                            {/* <span className="text-xs bg-[#2c2c2c] px-2 py-1 rounded-md text-gray-300 w-[40%]">
                                 Rewards: $0.00
-                            </span>
+                            </span> */}
                             <div className="flex justify-between">
                                 <span>Price</span>
                                 <span>${totalPrice.toLocaleString()}</span>
@@ -203,20 +314,106 @@ const Cart = () => {
                                 <span>Taxes</span>
                                 <span>Calculated at Checkout</span>
                             </div>
+
+                            {/* Fan Coin Usage Section */}
+                            {authUser && (
+                                <div className="fan-coin-section p-4 rounded-xl border border-gray-700">
+                                    <div className="flex flex-col justify-between">
+                                        <div className="flex flex-col">
+                                            <label
+                                                htmlFor="useFanCoins"
+                                                className={`text-white flex items-center ${(!authUser || !fanCoins || fanCoins <= 0) ? 'text-gray-500' : ''}`}
+                                            >
+                                            <input
+                                                type="checkbox"
+                                                id="useFanCoins"
+                                                checked={useFanCoinsChecked}
+                                                onChange={(e) => handleFanCoinCheckboxChange(e.target.checked)}
+                                                className="mr-2 text-purple-600 focus:ring-purple-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                            />
+                                                Use Fan Coins
+                                            </label>
+                                                <span className="ml-6  text-sm text-gray-400">
+                                                    {!authUser
+                                                        ? "(Login to use Fan Coins)"
+                                                        : (!fanCoins || fanCoins <= 0)
+                                                            ? "(No Fan Coins available)"
+                                                            : `(Available: ${fanCoins.toFixed(2)})`
+                                                    }
+                                                </span>
+                                        </div>
+                                        {useFanCoinsChecked && (
+                                            <div className="text-sm text-green-400">
+                                                1 Fan Coin = $1 Discount
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {useFanCoinsChecked && (
+                                        <div className="relative mt-3">
+                                            <input
+                                                type="number"
+                                                value={fanCoinsToUse}
+                                                onChange={(e) => {
+                                                    const inputValue = parseFloat(e.target.value) || 0;
+                                                    const maxApplicableCoins = Math.min(fanCoins, totalPrice);
+
+                                                    // Validate input: cannot exceed available fan coins or game price
+                                                    const validatedCoins = Math.max(0, Math.min(inputValue, maxApplicableCoins));
+
+                                                    // Always update both states together
+                                                    setFanCoinsToUse(validatedCoins);
+                                                    setFinalAmount(Math.max(0, totalPrice - validatedCoins));
+                                                }}
+                                                onBlur={(e) => {
+                                                    // On blur, ensure the input field shows the validated value
+                                                    const inputValue = parseFloat(e.target.value) || 0;
+                                                    const maxApplicableCoins = Math.min(fanCoins, totalPrice);
+                                                    const validatedCoins = Math.max(0, Math.min(inputValue, maxApplicableCoins));
+
+                                                    // Force update the input value to match the validated state
+                                                    if (validatedCoins !== inputValue) {
+                                                        e.target.value = validatedCoins;
+                                                        setFanCoinsToUse(validatedCoins);
+                                                        setFinalAmount(Math.max(0, totalPrice - validatedCoins));
+                                                    }
+                                                }}
+                                                min="0"
+                                                max={Math.min(fanCoins, totalPrice)}
+                                                step="1"
+                                                className="w-full p-2 rounded-xl bg-gray-700/20 text-white border border-gray-600 focus:border-purple-400 focus:ring-purple-500"
+                                                placeholder={`Max: ${Math.min(fanCoins, totalPrice)}`}
+                                            />
+                                            <div className="text-xs text-gray-400 mt-1">
+                                                Available: {fanCoins} Fan Coins | Max Applicable: {Math.min(fanCoins, totalPrice)}
+                                                {fanCoinsToUse > 0 && (
+                                                    <span className="text-green-400 ml-2">
+                                                        Discount: ${fanCoinsToUse} | Final: ${finalAmount.toFixed(2)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     )}
 
                     {!loading && (
                         <div className="flex justify-between text-lg font-bold">
                             <span>Subtotal</span>
-                            <span>${subtotal.toLocaleString()}</span>
+                            <span>
+                                {useFanCoinsChecked && fanCoinsToUse > 0
+                                    ? `$${finalAmount.toFixed(2)} (${fanCoinsToUse} Fan Coins Applied)`
+                                    : `$${subtotal.toLocaleString()}`
+                                }
+                            </span>
                         </div>
                     )}
 
                     {!loading && (
                         <div className="gap-4">
                             <button onClick={handleCheckout} className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
-
                                 Proceed to Checkout
                             </button>
                             <button
@@ -236,8 +433,6 @@ const Cart = () => {
                 </div>
             </div>
 
-            {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
-
             <Dialog
                 open={!!(showPaymentForm && currentOrderId)}
                 onClose={() => setShowPaymentForm(false)}
@@ -255,11 +450,12 @@ const Cart = () => {
 
                         <Elements stripe={stripePromise}>
                             <PaymentForm
-                                //   clientSecret={clientSecret}
                                 orderId={currentOrderId}
                                 amount={amountToPay}
                                 onPaymentSuccess={handlePaymentSuccess}
                                 fromCartPage={true}
+                                fanCoinsToUse={fanCoinsToUse}
+                                fanCoinsApplied={useFanCoinsChecked}
                             />
                         </Elements>
 
@@ -272,8 +468,6 @@ const Cart = () => {
                     </DialogPanel>
                 </div>
             </Dialog>
-            {/* )} */}
-
         </div>
     );
 };

@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
     },
   ],
   amount: { type: Number, required: true },
+  originalAmount: { type: Number, required: true }, // Store original amount before fan coins
   currency: { type: String, default: "USD" },
   stripePaymentIntentId: { type: String },
   status: {
@@ -24,6 +25,8 @@ const orderSchema = new mongoose.Schema({
     enum: ["created", "paid", "failed"],
     default: "created",
   },
+  fanCoinsUsed: { type: Number, default: 0 }, // Track fan coins used
+  fanCoinDiscount: { type: Number, default: 0 }, // Track discount amount from fan coins
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -71,11 +71,13 @@ export const createpayment = createAsyncThunk(
 // Create order (calls backend to create Stripe Payment Intent and DB order)
 export const createOrder = createAsyncThunk(
   "payment/createOrder",
-  async ({ items, amount }, { rejectWithValue }) => {
+  async ({ items, amount ,fanCoinDiscount,fanCoinsUsed}, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/order/create", {
         items,
         amount,
+        fanCoinDiscount,
+        fanCoinsUsed
       });
       return response.data;
     } catch (err) {
@@ -104,11 +106,13 @@ export const createPaymentIntent = createAsyncThunk(
 // Verify payment (calls backend to confirm Stripe Payment Intent)
 export const verifyPayment = createAsyncThunk(
   "payment/verifyPayment",
-  async ({ paymentIntent, orderId }, { dispatch, rejectWithValue }) => {
+  async ({ paymentIntentId, orderId ,fanCoinDiscount,fanCoinsUsed}, { dispatch, rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/order/verify", {
-        paymentIntent,
+        paymentIntentId,
         orderId,
+        fanCoinDiscount,
+        fanCoinsUsed
       });
       // console.log(response.data);
 

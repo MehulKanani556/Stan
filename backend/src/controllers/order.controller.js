@@ -6,40 +6,31 @@ import Game from '../models/Games.model.js';
 import { clearCart } from "./cart.controller.js";
 import sendMail from "../helper/sendMail.js";
 import { decryptData } from "../middlewares/incrypt.js";
+import { log } from "console";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // 1. Create Order and DB Order
 export const createOrder = async (req, res) => {
   try {
-    const { items, amount } = req.body;
+    const { items, amount, fanCoinsUsed = 0, fanCoinDiscount = 0 } = req.body;
     const userId = req.user._id; // assuming you use auth middleware
 
-    // Create Stripe Payment Intent
-      console.log(req.user);
+    console.log(req.body);
     
-    // const paymentIntent = await stripe.paymentIntents.create({
-    //   amount: Math.round(amount * 100), // in cents
-    //   currency: "USD",
-    //   metadata: { orderId: "temp_order_id" }, // Placeholder, will be updated
-    //   receipt_email:decryptData( req.user.email), // Assuming user email is available
-    // });
+    // Save order in DB
+    const order = await Order.create({
+      user: userId,
+      items,
+      amount, // Final amount after fan coin discount
+      originalAmount: amount + fanCoinDiscount, // Original amount before discount
+      currency: "USD",
+      status: "created",
+      fanCoinsUsed, // Number of fan coins used
+      fanCoinDiscount, // Discount amount from fan coins
+    });
 
-    // if (paymentIntent && paymentIntent.id) {
-      // Save order in DB
-      const order = await Order.create({
-        user: userId,
-        items,
-        amount,
-        currency: "USD",
-        // stripePaymentIntentId: paymentIntent.id,
-        status: "created",
-      });
-
-      return res.json({ order, });
-    // } else {
-    //   return res.status(500).json({ error: "Failed to create Stripe Payment Intent" });
-    // }
+    return res.json({ order });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -51,9 +42,10 @@ export const verifyPayment = async (req, res) => {
     const {
       paymentIntentId,
       orderId,
+      fanCoinsUsed,
+      fanCoinDiscount 
     } = req.body;
 
-    // No signature verification needed on backend for Stripe client-side confirmation
     // Update order in DB
     let order;
     try {
@@ -62,6 +54,8 @@ export const verifyPayment = async (req, res) => {
         {
           stripePaymentIntentId: paymentIntentId,
           status: "paid",
+          fanCoinsUsed,
+          fanCoinDiscount
         },
         { new: true }
       );
