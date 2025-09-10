@@ -3,6 +3,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaArrowUp } 
 import { IoMailOutline, IoCallOutline, IoLocationOutline } from 'react-icons/io5';
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg";
 import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Footer = () => {
   const [showGoUp, setShowGoUp] = React.useState(false);
@@ -17,6 +18,9 @@ const Footer = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const { currentUser } = useSelector((state) => state.user);
+  const { user: authUser } = useSelector((state) => state.auth);
+  const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
 
   return (
     <>
@@ -71,7 +75,7 @@ const Footer = () => {
                 {["Home", "GGtalks", "Games", "Rewards", "Store"].map((link, i) => (
                   <li key={i}>
                     <Link
-                      to={link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#"}
+                      to={link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? isLoggedIn ? "/ggtalks" : "/login"  : link === "Store" ? "/store" : link === "Rewards" ? isLoggedIn ? "/rewards" : "/login"  : "#"}
                       className={` hover:text-[#ab99e1] transition-colors text-sm ${location.pathname === (link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#") ? "font-semibold text-[#ab99e1]" : "text-gray-300"}`}
                     >
                       {link}

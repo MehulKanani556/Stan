@@ -172,7 +172,7 @@ const GameCard = ({
             {/* Wishlist Button */}
 
             <button
-              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${isInWishlist
+              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${(isInWishlist && isLoggedIn)
                 ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
                 : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
                 }`}
@@ -185,7 +185,7 @@ const GameCard = ({
 
               }}
             >
-              {isInWishlist ? (
+              {(isInWishlist && isLoggedIn) ? (
                 <FaHeart size={16} className="text-white animate-pulse" />
               ) : (
                 <FaRegHeart size={16} className="text-slate-300 group-hover:text-red-400 transition-colors" />
@@ -237,7 +237,7 @@ const GameCard = ({
               navigate('/login')
             }}
             disabled={isInCart || isPurchased}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${isInCart
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${isInCart && isLoggedIn
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -449,7 +449,7 @@ export default function Home() {
         clearTimeout(handler); // Clear the timeout if dependencies change before the delay
       };
     }
-  }, [currentPage, activeTab, gamesPerPage, dispatch]);
+  }, [currentPage, activeTab, gamesPerPage, dispatch,isLoggedIn]);
 
 
 
