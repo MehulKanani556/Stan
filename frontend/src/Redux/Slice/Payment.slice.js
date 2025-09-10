@@ -59,8 +59,8 @@ export const createpayment = createAsyncThunk(
     } catch (error) {
       enqueueSnackbar(
         error.response?.data?.message ||
-          error.message ||
-          "payment not successful",
+        error.message ||
+        "payment not successful",
         { variant: "error" }
       );
       return handleErrors(error, dispatch, rejectWithValue);
@@ -86,6 +86,21 @@ export const createOrder = createAsyncThunk(
   }
 );
 
+export const createPaymentIntent = createAsyncThunk(
+  "payment/createPaymentIntent",
+  async ({ items, amount }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post("/payment/create-intent", {
+        items,
+        amount,
+      });
+      return response.data;
+    } catch (error) {
+      return handleErrors(error, dispatch, rejectWithValue);
+    }
+  }
+);
+
 // Verify payment (calls backend to confirm Stripe Payment Intent)
 export const verifyPayment = createAsyncThunk(
   "payment/verifyPayment",
@@ -95,17 +110,17 @@ export const verifyPayment = createAsyncThunk(
         paymentIntent,
         orderId,
       });
-console.log(response.data);
+      // console.log(response.data);
 
       // Add fan coins after successful payment
       if (response.data.success) {
         const userId = localStorage.getItem('userId');
-        const amount = 1000;
+        const amount = response?.data?.order?.amount;
 
         // Dispatch add fan coins action
-        await dispatch(addFanCoins({ 
-          userId, 
-          amount 
+        await dispatch(addFanCoins({
+          userId,
+          amount
         }));
       }
 
@@ -210,7 +225,7 @@ const paymentSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = action.payload.order;
-        state.clientSecret = action.payload.clientSecret;
+        // state.clientSecret = action.payload.clientSecret;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
@@ -253,7 +268,19 @@ const paymentSlice = createSlice({
       .addCase(retryOrderPayment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      .addCase(createPaymentIntent.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createPaymentIntent.fulfilled, (state, action) => {
+        state.loading = false;
+        state.clientSecret = action.payload.clientSecret;
+      })
+      .addCase(createPaymentIntent.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   },
 });
 

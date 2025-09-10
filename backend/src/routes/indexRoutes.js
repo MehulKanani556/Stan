@@ -16,13 +16,17 @@ import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateT
 import { addToCart, clearCart, getCart, removeFromCart, updateCartItem } from "../controllers/cart.controller.js";
 import { addToWishlist, checkWishlistStatus, getWishlist, removeFromWishlist } from "../controllers/wishlist.controller.js";
 import websiteInfoRoutes from "./websiteInfo.routes.js";
-import { createOrder, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
+import { createOrder, createPaymentIntent, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
 // import { createOrUpdateRating, deleteRating, getAllRatings, getGameRatings, getGameRatingStats, getUserGameRating, getUserRatings, markReviewHelpful, updateRating } from "../controllers/rating.controller.js";
 import { createOrUpdateRating,getAllRatingByGame,getAllRatings } from "../controllers/rating.controller.js";
 import { 
     addFanCoinsAfterPurchase, 
     useFanCoinsForPurchase, 
-    getFanCoinDetails 
+    getFanCoinDetails,
+    claimDailyLoginBonus,
+    rewardGameReview,
+    redeemFanCoinsForReward,
+    getReferralBonus
 } from '../controllers/fanCoinController.js';
 
 
@@ -190,6 +194,7 @@ indexRoutes.post("/order/retry-payment", UserAuth, retryOrderPayment);
 indexRoutes.get("/allorders", UserAuth, getUserOrders);
 indexRoutes.get("/getorders", getAllOrders);
 indexRoutes.get('/download/:token', downloadGame);
+indexRoutes.post("/payment/create-intent",UserAuth,createPaymentIntent);
 
 // Rating and Review Routes
 indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
@@ -207,6 +212,10 @@ indexRoutes.get("/gamerating/:gameId",getAllRatingByGame)
 indexRoutes.post('/fan-coins/add', addFanCoinsAfterPurchase);
 indexRoutes.post('/fan-coins/use', useFanCoinsForPurchase);
 indexRoutes.get('/fan-coins/:userId', getFanCoinDetails);
+indexRoutes.post('/fan-coins/daily-login', claimDailyLoginBonus);
+indexRoutes.post('/fan-coins/review-bonus', rewardGameReview);
+indexRoutes.post('/fan-coins/redeem', redeemFanCoinsForReward);
+indexRoutes.post('/fan-coins/referral-bonus', getReferralBonus);
 
 
 indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);

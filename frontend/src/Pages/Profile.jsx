@@ -884,7 +884,7 @@ export default function Profile() {
                                         </div>
                                     ) : (
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                            {orders.map((order, index) => (
+                                            {orders?.map((order, index) => (
                                                 <StylishDiv
                                                     key={order._id || index}
                                                     className="group rounded-3xl overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 border border-white/10 hover:border-white/20 active:scale-[0.98]"

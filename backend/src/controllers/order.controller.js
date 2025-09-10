@@ -18,28 +18,28 @@ export const createOrder = async (req, res) => {
     // Create Stripe Payment Intent
       console.log(req.user);
     
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // in cents
-      currency: "USD",
-      metadata: { orderId: "temp_order_id" }, // Placeholder, will be updated
-      receipt_email:decryptData( req.user.email), // Assuming user email is available
-    });
+    // const paymentIntent = await stripe.paymentIntents.create({
+    //   amount: Math.round(amount * 100), // in cents
+    //   currency: "USD",
+    //   metadata: { orderId: "temp_order_id" }, // Placeholder, will be updated
+    //   receipt_email:decryptData( req.user.email), // Assuming user email is available
+    // });
 
-    if (paymentIntent && paymentIntent.id) {
+    // if (paymentIntent && paymentIntent.id) {
       // Save order in DB
       const order = await Order.create({
         user: userId,
         items,
         amount,
         currency: "USD",
-        stripePaymentIntentId: paymentIntent.id,
+        // stripePaymentIntentId: paymentIntent.id,
         status: "created",
       });
 
-      return res.json({ order, clientSecret: paymentIntent.client_secret });
-    } else {
-      return res.status(500).json({ error: "Failed to create Stripe Payment Intent" });
-    }
+      return res.json({ order, });
+    // } else {
+    //   return res.status(500).json({ error: "Failed to create Stripe Payment Intent" });
+    // }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -256,4 +256,31 @@ export const downloadGame = async (req, res) => {
   // Redirect to the S3 (or other) download link
   return res.redirect(downloadLink);
 };
- 
+
+
+
+// Remove the duplicate Stripe import and require statement
+export const createPaymentIntent = async (req, res) => {
+  try {
+    const { items, amount } = req.body;
+
+    // Create Stripe Payment Intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency: 'usd',
+      metadata: { 
+        items: JSON.stringify(items),
+      },
+    });
+
+    res.status(200).json({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.error('Payment Intent Creation Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to create payment intent', 
+      details: error.message 
+    });
+  }
+};

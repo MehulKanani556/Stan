@@ -629,6 +629,7 @@ const userSlice = createSlice({
         state.user = action.payload.users; // Assuming the API returns the user data
         state.loading = false;
         state.error = null;
+
         state.message = "User retrieved successfully";
       })
       .addCase(getUser.rejected, (state, action) => {
@@ -891,7 +892,8 @@ const userSlice = createSlice({
       })
       .addCase(getUserById.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentUser = action.payload.result;
+        state.currentUser = action.payload.result;        
+        state.fanCoins = action.payload.result?.fanCoins;
         state.message = action.payload.message;
         state.error = null;
       })
