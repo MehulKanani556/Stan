@@ -59,8 +59,8 @@ export const createpayment = createAsyncThunk(
     } catch (error) {
       enqueueSnackbar(
         error.response?.data?.message ||
-          error.message ||
-          "payment not successful",
+        error.message ||
+        "payment not successful",
         { variant: "error" }
       );
       return handleErrors(error, dispatch, rejectWithValue);
@@ -95,7 +95,7 @@ export const verifyPayment = createAsyncThunk(
         paymentIntent,
         orderId,
       });
-console.log(response.data);
+      console.log(response.data);
 
       // Add fan coins after successful payment
       if (response.data.success) {
@@ -103,10 +103,12 @@ console.log(response.data);
         const amount = 1000;
 
         // Dispatch add fan coins action
-        await dispatch(addFanCoins({ 
-          userId, 
-          amount 
+        await dispatch(addFanCoins({
+          userId,
+          amount
         }));
+
+        await dispatch(allorders());
       }
 
       return response.data;

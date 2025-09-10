@@ -15,9 +15,10 @@ import HomesliderSkeleton from "../lazyLoader/HomesliderSkeleton";
 export default function StoreSlider() {
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(getAllGames());
-    }, [dispatch]);
+    // Remove duplicate API call - data is already loaded in Store component
+    // useEffect(() => {
+    //     dispatch(getAllGames());
+    // }, [dispatch]);
 
     const games = useSelector((state) => state.game.games) || [];
 

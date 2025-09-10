@@ -307,22 +307,22 @@ export default function Home() {
 
   // Custom hooks
   const isExploreLoaded = useImageLoader(ExploreGames);
-  const { 
-    handleMouseDown, 
-    handleMouseLeave, 
-    handleMouseUp, 
-    handleMouseMove 
+  const {
+    handleMouseDown,
+    handleMouseLeave,
+    handleMouseUp,
+    handleMouseMove
   } = useMouseDragScroll(categorySwiperRef);
-  
+
 
 
   const userId = useMemo(() =>
     authUser?._id || currentUser?._id || localStorage.getItem("userId"),
     [authUser, currentUser]
   );
-  
-  const filteredGames = useMemo(() => {    
-    if (!activeTab || !gameData) return gameData;    
+
+  const filteredGames = useMemo(() => {
+    if (!activeTab || !gameData) return gameData;
     return gameData.filter(game => game?.category?._id === activeTab);
   }, [gameData, activeTab]);
 
@@ -399,7 +399,7 @@ export default function Home() {
           category: activeTab
         }));
       }, 300); // Debounce the API call by 300ms
-  
+
       return () => {
         clearTimeout(handler); // Clear the timeout if dependencies change before the delay
       };
@@ -407,7 +407,7 @@ export default function Home() {
   }, [currentPage, activeTab, gamesPerPage, dispatch]);
 
 
- 
+
   // Hide scrollbars and navigation
   useEffect(() => {
     const style = document.createElement('style');

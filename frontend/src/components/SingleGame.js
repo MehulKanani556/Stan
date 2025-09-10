@@ -412,7 +412,7 @@ const SingleGame = () => {
         </div>
 
         <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
-          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5'>
+          <div className='3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5 order-2 lg:order-1'>
             <div>
               <Slider {...mainSettings} ref={setNav1} className="ds_single_slider">
                 {/* {console.log(single.video)} */}
@@ -528,7 +528,7 @@ const SingleGame = () => {
           </div>
 
           {/* right side copntent */}
-          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 ">
+          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 order-1 lg:order-2">
             <div className="p-6 sticky top-24 bg-black/30 ">
               <div className="flex justify-center mb-6">
                 <img
@@ -630,7 +630,7 @@ const SingleGame = () => {
                     </button>
                     <button
                       onClick={() => setOpen(true)}
-                      className="w-full cursor-not-allowed 
+                      className="w-full cursor-pointer 
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
@@ -644,7 +644,7 @@ const SingleGame = () => {
                 ) : (
                   <button
                     onClick={handleCheckout}
-                    className="w-full cursor-not-allowed 
+                    className="w-full cursor-pointer 
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
@@ -699,61 +699,61 @@ const SingleGame = () => {
                 </AccordionItem>
 
                 <AccordionItem title="Rating">
-                     <StarRating rating={ratings.averageRating} />
-                    
-                     {gameRating && (
-                       <div className="mt-4">
-                         {gameRating.map((element) => {
-                           let FullStar = Math.floor(element?.rating);
-                               let HasHalfStar = element?.rating % 1 >= 0.5;
-                               let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+                  <StarRating rating={ratings.averageRating} />
 
-                           return (
-                             <div className="mt-2" key={element?._id}>
-                               <div className="flex items-center">
-                                 <img
-                                   src={element?.user?.profilePic}
-                                   className="w-[50px] h-[50px] object-cover rounded-full"
-                                   alt=""
-                                 />
-                                 <div className="ms-3">
-                                   <div className="font-medium">
-                                     {decryptData(element?.user?.name)?.split(" ")[0]}
-                                   </div>
-                                   <div className="flex items-center">
-                                     {Array.from({ length: FullStar }).map((_, i) => (
-                                       <FaStar
-                                         key={`full-${i}`}
-                                         className="text-yellow-400 h-4 w-4 mx-0.5"
-                                       />
-                                     ))}
-                                     {HasHalfStar && (
-                                       <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />
-                                     )}
-                                     {Array.from({ length: EmptyStars }).map((_, i) => (
-                                       <FaRegStar
-                                         key={`empty-${i}`}
-                                         className="text-yellow-400 h-4 w-4 mx-0.5"
-                                       />
-                                     ))}
-                                     <span className="ms-2 text-white text-[14px]">
-                                       {element?.rating?.toFixed(1)}
-                                     </span>
-                                   </div>
-                                 </div>
-                               </div>
-                    
-                               <p className="mt-2 text-[13px]">{element?.review}</p>
-                               <p className="text-[13px] mt-1 flex">
-                                 <MdDateRange className="text-[16px] me-2" />{" "}
-                                 {formatDate(element?.createdAt)}
-                               </p>
-                               <div className="h-[1px] bg-gray-700 mt-3"></div>
-                             </div>
-                           );
-                         })}
-                       </div>
-                     )}
+                  {gameRating && (
+                    <div className="mt-4">
+                      {gameRating.map((element) => {
+                        let FullStar = Math.floor(element?.rating);
+                        let HasHalfStar = element?.rating % 1 >= 0.5;
+                        let EmptyStars = 5 - FullStar - (HasHalfStar ? 1 : 0);
+
+                        return (
+                          <div className="mt-2" key={element?._id}>
+                            <div className="flex items-center">
+                              <img
+                                src={element?.user?.profilePic}
+                                className="w-[50px] h-[50px] object-cover rounded-full"
+                                alt=""
+                              />
+                              <div className="ms-3">
+                                <div className="font-medium">
+                                  {decryptData(element?.user?.name)?.split(" ")[0]}
+                                </div>
+                                <div className="flex items-center">
+                                  {Array.from({ length: FullStar }).map((_, i) => (
+                                    <FaStar
+                                      key={`full-${i}`}
+                                      className="text-yellow-400 h-4 w-4 mx-0.5"
+                                    />
+                                  ))}
+                                  {HasHalfStar && (
+                                    <FaStarHalfAlt className="text-yellow-400 h-4 w-4 mx-0.5" />
+                                  )}
+                                  {Array.from({ length: EmptyStars }).map((_, i) => (
+                                    <FaRegStar
+                                      key={`empty-${i}`}
+                                      className="text-yellow-400 h-4 w-4 mx-0.5"
+                                    />
+                                  ))}
+                                  <span className="ms-2 text-white text-[14px]">
+                                    {element?.rating?.toFixed(1)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <p className="mt-2 text-[13px]">{element?.review}</p>
+                            <p className="text-[13px] mt-1 flex">
+                              <MdDateRange className="text-[16px] me-2" />{" "}
+                              {formatDate(element?.createdAt)}
+                            </p>
+                            <div className="h-[1px] bg-gray-700 mt-3"></div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </AccordionItem>
 
                 <AccordionItem title="Purchase Info">

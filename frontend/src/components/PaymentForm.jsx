@@ -106,12 +106,16 @@ const PaymentForm = ({
             alert(error.message || "An unexpected error occurred");
             // setIsLoading(false); // This line was removed from the new_code, so it's removed here.
         } else if (paymentIntent?.status === "succeeded") {
-            dispatch(verifyPayment({ paymentIntentId: paymentIntent.id, orderId }));
-            if (fromCartPage) {
-                dispatch(clearCart());
+            const resultAction = await dispatch(verifyPayment({ paymentIntentId: paymentIntent.id, orderId }));
+            if (verifyPayment.fulfilled.match(resultAction)) {
+                if (fromCartPage) {
+                    dispatch(clearCart());
+                }
+                alert("Payment Successful!");
+                onPaymentSuccess();
+            } else {
+                alert("Payment verification failed. Please contact support.");
             }
-            alert("Payment Successful!");
-            onPaymentSuccess();
             // setIsLoading(false); // This line was removed from the new_code, so it's removed here.
         }
     };

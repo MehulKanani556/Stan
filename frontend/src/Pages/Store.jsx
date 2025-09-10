@@ -15,6 +15,7 @@ import { getAllCategories } from '../Redux/Slice/category.slice';
 import { useNavigate } from 'react-router-dom';
 import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
+import { allorders } from '../Redux/Slice/Payment.slice';
 import LazyGameCard from '../lazyLoader/LazyGameCard';
 import StoreSlider from '../components/StoreSlider';
 
@@ -70,11 +71,17 @@ const useSwiperNavigation = () => {
   return { isBeginning, isEnd, swiperRef, swiperEvents };
 };
 
-// Custom hook for cart and wishlist operations
+// Custom hook for cart and wishlist operations - Optimized with caching
 const useGameActions = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cart);
   const wishlistStatus = useSelector((state) => state.wishlist.wishlistStatus);
+  const orders = useSelector((state) => state.payment.orders);
+
+  // Cache for cart and wishlist status to prevent unnecessary re-renders
+  const cartCache = useRef(new Map());
+  const wishlistCache = useRef(new Map());
+  const purchasedCache = useRef(new Map());
 
   const handleAddToCart = useCallback((game) => {
     dispatch(addToCart({ gameId: game._id, platform: "windows", qty: 1 }));
@@ -89,12 +96,46 @@ const useGameActions = () => {
   }, [dispatch]);
 
   const isInCart = useCallback((gameId) => {
-    return cartItems.some(item => item.game?._id === gameId);
+    if (cartCache.current.has(gameId)) {
+      return cartCache.current.get(gameId);
+    }
+    const result = cartItems.some(item => item.game?._id === gameId);
+    cartCache.current.set(gameId, result);
+    return result;
   }, [cartItems]);
 
   const isInWishlist = useCallback((gameId) => {
-    return wishlistStatus[gameId];
+    if (wishlistCache.current.has(gameId)) {
+      return wishlistCache.current.get(gameId);
+    }
+    const result = wishlistStatus[gameId];
+    wishlistCache.current.set(gameId, result);
+    return result;
   }, [wishlistStatus]);
+
+  const isPurchased = useCallback((gameId) => {
+    if (purchasedCache.current.has(gameId)) {
+      return purchasedCache.current.get(gameId);
+    }
+    const result = Array.isArray(orders) && orders.some(order =>
+      order?.status === 'paid' && Array.isArray(order?.items) && order.items.some(item => item?.game?._id === gameId)
+    );
+    purchasedCache.current.set(gameId, result);
+    return result;
+  }, [orders]);
+
+  // Clear cache when cart or wishlist changes
+  useEffect(() => {
+    cartCache.current.clear();
+  }, [cartItems]);
+
+  useEffect(() => {
+    wishlistCache.current.clear();
+  }, [wishlistStatus]);
+
+  useEffect(() => {
+    purchasedCache.current.clear();
+  }, [orders]);
 
   return {
     handleAddToCart,
@@ -102,13 +143,14 @@ const useGameActions = () => {
     handleRemoveFromWishlist,
     isInCart,
     isInWishlist,
-    wishlistStatus
+    wishlistStatus,
+    isPurchased
   };
 };
 
 // Game Card Component - Memoized for better performance
 const GameCard = ({ game, onNavigate, gameActions }) => {
-  const { handleAddToCart, handleAddWishlist, handleRemoveFromWishlist, isInCart, isInWishlist } = gameActions;
+  const { handleAddToCart, handleAddWishlist, handleRemoveFromWishlist, isInCart, isInWishlist, isPurchased } = gameActions;
 
   const isNewGame = useMemo(() => {
     if (!game?.createdAt) return false;
@@ -118,6 +160,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
     return createdDate >= oneMonthAgo && createdDate <= new Date();
   }, [game?.createdAt]);
 
+  const purchased = isPurchased(game?._id);
   const inCart = isInCart(game?._id);
   const inWishlist = isInWishlist(game?._id);
 
@@ -207,17 +250,19 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleAddToCart(game);
+              if (!inCart && !purchased) {
+                handleAddToCart(game);
+              }
             }}
-            disabled={inCart}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${inCart
+            disabled={inCart || purchased}
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart || purchased)
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
               <div>
-                {inCart ? (
+                {(inCart || purchased) ? (
                   <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
                     <span className="text-emerald-600 font-bold text-sm">✓</span>
                   </div>
@@ -226,12 +271,12 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                 )}
               </div>
               <span className="text-white font-bold text-sm tracking-wider uppercase">
-                {inCart ? "Added to Cart" : "Add to Cart"}
+                {purchased ? "Purchased" : inCart ? "Added to Cart" : "Add to Cart"}
               </span>
             </div>
 
             {/* Button Effects */}
-            {!inCart && (
+            {!(inCart || purchased) && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -311,7 +356,9 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
         >
           {Array.from({ length: 4 }, (_, i) => (
             <SwiperSlide key={i}>
-              <LazyGameCard />
+              <LazyGameCard suppressSkeleton={false} delay={100 * i}>
+                <div className="w-full h-80 bg-gray-800 rounded-lg animate-pulse"></div>
+              </LazyGameCard>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -336,13 +383,19 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
         {...SWIPER_CONFIG}
         {...swiperEvents}
       >
-        {games.map((game) => (
+        {games.map((game, index) => (
           <SwiperSlide key={game._id || game.id}>
-            <MemoizedGameCard
-              game={game}
-              onNavigate={onNavigate}
-              gameActions={gameActions}
-            />
+            <LazyGameCard
+              threshold={0.1}
+              delay={index * 50} // Staggered loading
+              suppressSkeleton={false}
+            >
+              <MemoizedGameCard
+                game={game}
+                onNavigate={onNavigate}
+                gameActions={gameActions}
+              />
+            </LazyGameCard>
           </SwiperSlide>
         ))}
       </Swiper>
@@ -362,35 +415,32 @@ const Store = () => {
   const gameActions = useGameActions();
   const featuredNavigation = useSwiperNavigation();
 
-  // Memoized filtered games
+  // Memoized filtered games - Optimized version
   const actionGames = useMemo(() => {
-    if (!Array.isArray(games)) return [];
+    if (!Array.isArray(games) || games.length === 0) return [];
 
-    console.log("All Games", games);
-    console.log("Total games", games.length);
-    console.log("Games array type:", typeof games, "Is array:", Array.isArray(games));
+    // Pre-compile regex for better performance
+    const actionRegex = /^action$/i;
 
     return games.filter((game) => {
-      // Check both categoryName and name fields from populated category
-      const categoryName = game?.category?.categoryName || game?.category?.name || "";
-      const byCategory = categoryName.toLowerCase() === "action";
+      // Early return if no category/tags
+      if (!game?.category && !game?.tags) return false;
 
-      // Also check if category is just a string (not populated)
-      const categoryString = typeof game?.category === 'string' ? game.category.toLowerCase() : "";
-      const byCategoryString = categoryString === "action";
-
-      const byTag = Array.isArray(game?.tags) && game.tags.some((tag) =>
-        String(tag).toLowerCase() === "action"
-      );
-
-      const isActionGame = byCategory || byCategoryString || byTag;
-
-      if (isActionGame) {
-        console.log("Found action game:", game.title, "Category:", game.category);
+      // Check category (both populated object and string)
+      if (game.category) {
+        const categoryName = game.category?.categoryName || game.category?.name || game.category;
+        if (typeof categoryName === 'string' && actionRegex.test(categoryName)) {
+          return true;
+        }
       }
 
-      return isActionGame;
-    });
+      // Check tags only if category didn't match
+      if (Array.isArray(game.tags)) {
+        return game.tags.some(tag => actionRegex.test(String(tag)));
+      }
+
+      return false;
+    }).slice(0, 8); // Limit to 8 games for better performance
   }, [games]);
 
   const featuredGames = useMemo(() => {
@@ -425,24 +475,35 @@ const Store = () => {
     return top.length ? top : (Array.isArray(games) ? games.slice(0, 8) : []);
   }, [games, parseSizeToMB]);
 
-  // Effects
+  // Effects - Optimized data loading with priority
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([
-        dispatch(getAllActiveGames()), // Fetch all active games without pagination
-        dispatch(getPopularGames()),
-        dispatch(getAllCategories()),
-        dispatch(getTopGames()),
-        dispatch(getTrendingGames({ page: 1, limit: 10, days: 30 })) // Get trending games from last 30 days
+      // Load critical data first (games for main display)
+      const criticalData = await Promise.all([
+        dispatch(getAllActiveGames({ page: 1, limit: 20 })), // Limit initial load
+        dispatch(getAllCategories())
       ]);
+
+      // Load secondary data after critical data is loaded
+      setTimeout(async () => {
+        await Promise.all([
+          dispatch(getPopularGames({ page: 1, limit: 8 })), // Reduced limit
+          dispatch(getTopGames({ page: 1, limit: 8 })), // Reduced limit
+          dispatch(getTrendingGames({ page: 1, limit: 8, days: 30 })) // Reduced limit
+        ]);
+      }, 100); // Small delay to prioritize critical data
     };
 
     loadData();
 
     const userId = localStorage.getItem("userId");
     if (userId) {
-      dispatch(fetchWishlist());
-      dispatch(fetchCart());
+      // Load user-specific data with lower priority
+      setTimeout(() => {
+        dispatch(fetchWishlist());
+        dispatch(fetchCart());
+        dispatch(allorders());
+      }, 200);
     }
   }, [dispatch]);
 
@@ -493,7 +554,7 @@ const Store = () => {
         <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
           <SwiperSection
             title="All Games"
-            games={Array.isArray(games) ? games : []}
+            games={Array.isArray(games) ? games.slice(0, 12) : []} // Limit initial display
             gameActions={gameActions}
             onNavigate={handleNavigate}
           />
@@ -516,17 +577,25 @@ const Store = () => {
             {loading ? (
               Array.from({ length: 4 }, (_, i) => (
                 <SwiperSlide key={i}>
-                  <LazyGameCard />
+                  <LazyGameCard suppressSkeleton={false} delay={i * 100}>
+                    <div className="w-full h-80 bg-gray-800 rounded-lg animate-pulse"></div>
+                  </LazyGameCard>
                 </SwiperSlide>
               ))
             ) : featuredMaxSizeGames.length > 0 ? (
-              featuredMaxSizeGames.map((game) => (
+              featuredMaxSizeGames.map((game, index) => (
                 <SwiperSlide key={game._id}>
-                  <MemoizedGameCard
-                    game={game}
-                    onNavigate={handleNavigate}
-                    gameActions={gameActions}
-                  />
+                  <LazyGameCard
+                    threshold={0.1}
+                    delay={index * 75}
+                    suppressSkeleton={false}
+                  >
+                    <MemoizedGameCard
+                      game={game}
+                      onNavigate={handleNavigate}
+                      gameActions={gameActions}
+                    />
+                  </LazyGameCard>
                 </SwiperSlide>
               ))
             ) : (

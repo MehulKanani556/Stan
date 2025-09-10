@@ -93,7 +93,7 @@ const Cart = () => {
 
     return (
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
-            <h1 className="text-4xl font-extrabold mb-8">My Cart</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 md:mb-8 tracking-tight">My Cart</h1>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
@@ -236,41 +236,41 @@ const Cart = () => {
             </div>
 
             {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
-              
-<Dialog
-    open={!!(showPaymentForm && clientSecret && currentOrderId)}
-    onClose={() => setShowPaymentForm(false)}
-    className="relative z-50"
->
-  {/* Background overlay */}
-  <DialogBackdrop className="fixed inset-0 bg-black/75" />
 
-  {/* Modal wrapper */}
-  <div className="fixed inset-0 flex items-center justify-center p-4">
-    <DialogPanel className="bg-gray-900 sm:p-8 p-4 rounded-lg shadow-lg w-full max-w-md">
-      <DialogTitle className="text-2xl font-bold mb-4 text-white">
-        Complete Your Purchase
-      </DialogTitle>
+            <Dialog
+                open={!!(showPaymentForm && clientSecret && currentOrderId)}
+                onClose={() => setShowPaymentForm(false)}
+                className="relative z-50"
+            >
+                {/* Background overlay */}
+                <DialogBackdrop className="fixed inset-0 bg-black/75" />
 
-      <Elements stripe={stripePromise} options={{ clientSecret }}>
-        <PaymentForm
-          clientSecret={clientSecret}
-          orderId={currentOrderId}
-          amount={amountToPay}
-          onPaymentSuccess={handlePaymentSuccess}
-          fromCartPage={true}
-        />
-      </Elements>
+                {/* Modal wrapper */}
+                <div className="fixed inset-0 flex items-center justify-center p-4">
+                    <DialogPanel className="bg-gray-900 sm:p-8 p-4 rounded-lg shadow-lg w-full max-w-md">
+                        <DialogTitle className="text-2xl font-bold mb-4 text-white">
+                            Complete Your Purchase
+                        </DialogTitle>
 
-      <button
-        onClick={() => setShowPaymentForm(false)}
-        className="mt-4 text-gray-400 hover:text-white"
-      >
-        Cancel
-      </button>
-    </DialogPanel>
-  </div>
-</Dialog>
+                        <Elements stripe={stripePromise} options={{ clientSecret }}>
+                            <PaymentForm
+                                clientSecret={clientSecret}
+                                orderId={currentOrderId}
+                                amount={amountToPay}
+                                onPaymentSuccess={handlePaymentSuccess}
+                                fromCartPage={true}
+                            />
+                        </Elements>
+
+                        <button
+                            onClick={() => setShowPaymentForm(false)}
+                            className="mt-4 text-gray-400 hover:text-white"
+                        >
+                            Cancel
+                        </button>
+                    </DialogPanel>
+                </div>
+            </Dialog>
             {/* )} */}
 
         </div>

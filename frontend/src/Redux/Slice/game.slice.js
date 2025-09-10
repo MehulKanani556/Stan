@@ -28,9 +28,22 @@ export const getAllGames = createAsyncThunk(
 );
 export const getAllActiveGames = createAsyncThunk(
   "game/getAllActiveGames",
-  async (_, { rejectWithValue }) => {
+  async (params = {}, { rejectWithValue, getState }) => {
     try {
-      const res = await axiosInstance.get("/getAllActiveGames");
+      const state = getState();
+      const now = Date.now();
+      const cacheTime = 5 * 60 * 1000; // 5 minutes cache
+      
+      // Check if we have recent data and don't need to refetch
+      if (state.game.lastFetchTimes.games > 0 && 
+          (now - state.game.lastFetchTimes.games) < cacheTime && 
+          state.game.games.length > 0) {
+        return state.game.games; // Return cached data
+      }
+
+      const res = await axiosInstance.get("/getAllActiveGames", {
+        params: { page: params.page || 1, limit: params.limit || 20 }
+      });
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -284,7 +297,15 @@ const gameSlice = createSlice({
     wishData: [],
     myToggle:true,
     reviewData:[],
-    singleGameReview:{}
+    singleGameReview:{},
+    // Cache timestamps to prevent unnecessary API calls
+    lastFetchTimes: {
+      games: 0,
+      popularGames: 0,
+      topGames: 0,
+      trendingGames: 0,
+      categories: 0
+    }
   },
   reducers: {
     clearGameError: (state) => {
@@ -329,6 +350,7 @@ const gameSlice = createSlice({
         console.log("getAllActiveGames fulfilled - payload:", action.payload);
         console.log("getAllActiveGames fulfilled - payload length:", action.payload?.length);
         state.games = action.payload;
+        state.lastFetchTimes.games = Date.now(); // Update cache timestamp
       })
       .addCase(getAllActiveGames.rejected, (state, action) => {
         state.loading = false;
