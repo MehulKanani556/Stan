@@ -174,12 +174,12 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
     const priceValue = getGamePrice(game);
 
     // Check if the game has been purchased
-    const isPurchased = useMemo(() => 
+    const isPurchased = useMemo(() =>
         orders.some(order =>
             order.items.some(item => item.game?._id === game?._id)
         ), [orders, game?._id]);
 
-    const isInCart = useMemo(() => 
+    const isInCart = useMemo(() =>
         cartItems.some(item => item.game?._id === game?._id),
         [cartItems, game?._id]);
 
@@ -222,7 +222,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
 
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
-                        
+
                         {/* Top Badge */}
                         <div className="absolute top-4 left-4">
                             <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
@@ -259,7 +259,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
 
                 {/* Content Section */}
                 <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
-                    
+
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 gap-4">
                         {/* Price */}
@@ -333,24 +333,24 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
 GameCard.displayName = 'GameCard';
 
 // Filter Header Component
-const FilterHeader = React.memo(({ 
-    searchQuery, 
-    setSearchQuery, 
-    selectedCategory, 
-    setSelectedCategory, 
-    sortBy, 
-    setSortBy, 
-    priceRange, 
-    setPriceRange, 
-    categories, 
-    onResetFilters 
+const FilterHeader = React.memo(({
+    searchQuery,
+    setSearchQuery,
+    selectedCategory,
+    setSelectedCategory,
+    sortBy,
+    setSortBy,
+    priceRange,
+    setPriceRange,
+    categories,
+    onResetFilters
 }) => {
     const hasActiveFilters = searchQuery || selectedCategory || sortBy || priceRange;
 
     return (
         <div className="backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/25 shadow-2xl">
             <div className="flex flex-col md:flex-row items-start lg:items-center justify-between gap-6">
-                
+
                 {/* Search Input */}
                 <div className="flex-1 max-w-md">
                     <label className="block text-sm font-medium text-gray-300 mb-2">Search Games</label>
@@ -368,7 +368,7 @@ const FilterHeader = React.memo(({
 
                 {/* Filters */}
                 <div className="flex  items-end gap-4">
-                    
+
                     {/* Category Filter */}
                     <div className="min-w-[150px]">
                         <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
@@ -389,7 +389,7 @@ const FilterHeader = React.memo(({
                     {/* Sort Filter */}
                     <div className="min-w-[150px]">
                         <label className="block text-sm font-medium text-gray-300 mb-2">Sort By</label>
-                        <select 
+                        <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
                             className="w-full px-4 py-3 bg-black/20 border border-white/25 rounded-xl text-white focus:outline-none outline-none focus:ring-1 focus:ring-white/25 transition-all duration-300"
@@ -427,7 +427,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
 
     const renderPageButtons = () => {
         const pages = [];
-        
+
         for (let i = 1; i <= totalPages; i++) {
             const isActive = currentPage === i;
             const isFirstPage = i === 1;
@@ -440,11 +440,10 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                     <button
                         key={i}
                         onClick={() => onPageChange(i)}
-                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${
-                            isActive
+                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
                                 ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
                                 : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
-                        }`}
+                            }`}
                     >
                         {i}
                     </button>
@@ -460,7 +459,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                 );
             }
         }
-        
+
         return pages;
     };
 
@@ -469,11 +468,10 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
             <div className="flex items-center gap-2 bg-gray-800/60 backdrop-blur-md rounded-xl p-2 sm:p-3 border border-gray-700/50 overflow-x-auto sm:overflow-x-visible max-w-full">
                 <div className="flex items-center gap-2">
                     <button
-                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${
-                            currentPage === 1
+                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === 1
                                 ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
                                 : "bg-slate-900/60 text-white border-slate-700 hover:bg-purple-600 hover:border-purple-500/80 hover:shadow-md"
-                        }`}
+                            }`}
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                         aria-label="Previous page"
@@ -486,11 +484,10 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                     </div>
 
                     <button
-                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${
-                            currentPage === totalPages
+                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
                                 ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
                                 : "bg-slate-900/60 text-white border-slate-700 hover:bg-purple-600 hover:border-purple-500/80 hover:shadow-md"
-                        }`}
+                            }`}
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                         aria-label="Next page"
@@ -517,7 +514,10 @@ export default function AllGames() {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { currentUser } = useSelector((state) => state.user);
+    const { user: authUser } = useSelector((state) => state.auth);
 
+    const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
     // Local state
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
@@ -599,7 +599,7 @@ export default function AllGames() {
             category: selectedCategory,
             search: debouncedSearchQuery
         };
-        
+
         dispatch(getAllGames(params));
     }, [dispatch, currentPage, selectedCategory, debouncedSearchQuery]);
 
@@ -621,7 +621,7 @@ export default function AllGames() {
     const hasGames = games && games.length > 0;
 
     // Game Card Component
-    const GameCard = ({ game, orders }) => {
+    const GameCard = ({ game, orders, isLoggedIn }) => {
         const imageUrl = game?.cover_image?.url || game1;
         const priceValue = getGamePrice(game);
 
@@ -666,9 +666,13 @@ export default function AllGames() {
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    isLoggedIn ?
                                     wishlistStatus[game?._id]
                                         ? handleRemoveFromWishlist(game._id)
-                                        : handleAddWishlist(game);
+                                        : handleAddWishlist(game)
+                                    :
+                                    navigate('/login')
+                                    
                                 }}
                             >
                                 {wishlistStatus[game?._id] ? (
@@ -718,7 +722,10 @@ export default function AllGames() {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                !isPurchased && handleAddToCart(game);
+                                isLoggedIn ?
+                                    !isPurchased && handleAddToCart(game)
+                                    :
+                                    navigate('/login')
                             }}
                             disabled={cartItems.some(item => item.game?._id === game?._id) || isPurchased}
                             className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${cartItems.some(item => item.game?._id === game?._id) || isPurchased
@@ -727,20 +734,25 @@ export default function AllGames() {
                                 }`}
                         >
                             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
-                                <div>
-                                    {cartItems.some(item => item.game?._id === game?._id) || isPurchased ? (
-                                        <div className="flex items-center justify-center w-6 h-6 rounded-full">
-                                            <span className="text-white font-bold text-sm">✓</span>
-                                        </div>
-                                    ) : (
-                                        <FaShoppingCart size={18} className="text-white" />
-                                    )}
-                                </div>
-                                <span className="text-white font-bold text-sm tracking-wider uppercase">
-                                    {cartItems.some(item => item.game?._id === game?._id)
-                                        ? "Added to Cart"
-                                        : (isPurchased ? "Purchased" : "Add to Cart")}
-                                </span>
+                                {isLoggedIn ? <>
+                                    <div>
+                                        {cartItems.some(item => item.game?._id === game?._id) || isPurchased ? (
+                                            <div className="flex items-center justify-center w-6 h-6 rounded-full">
+                                                <span className="text-white font-bold text-sm">✓</span>
+                                            </div>
+                                        ) : (
+                                            <FaShoppingCart size={18} className="text-white" />
+                                        )}
+                                    </div>
+                                    <span className="text-white font-bold text-sm tracking-wider uppercase">
+                                        {cartItems.some(item => item.game?._id === game?._id)
+                                            ? "Added to Cart"
+                                            : (isPurchased ? "Purchased" : "Add to Cart")}
+                                    </span>
+                                </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
+                                    Login to add
+                                </span>}
+
                             </div>
 
                             {/* Button Effects */}
@@ -800,7 +812,7 @@ export default function AllGames() {
                     <div className="grid  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 mb-12 all-games-grid">
                         {games.map((game, index) => (
                             <LazyGameCard key={game.id || index}>
-                                <GameCard game={game} orders={orders} />
+                                <GameCard game={game} orders={orders} isLoggedIn={isLoggedIn} />
                             </LazyGameCard>
                         ))}
                     </div>
@@ -832,8 +844,8 @@ export default function AllGames() {
                             </svg>
                         </div>
                         <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                            {selectedCategory || debouncedSearchQuery || sortBy || priceRange 
-                                ? 'No games found' 
+                            {selectedCategory || debouncedSearchQuery || sortBy || priceRange
+                                ? 'No games found'
                                 : 'No games available'
                             }
                         </h3>

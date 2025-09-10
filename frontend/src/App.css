@@ -818,3 +818,8 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
     height: 144px;
   }
 }
+
+img {
+  -webkit-transform: translateZ(0); /* Sometimes forces smoother rendering */
+  -webkit-backface-visibility: hidden; /* Helps with smoother transitions */
+}

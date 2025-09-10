@@ -80,7 +80,7 @@ function App() {
                   <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/allGames" element={<AllGames />} />
-                  <Route path="/demo" element={<HomeSlider />} />
+                  <Route path="/demo" element={<Demo />} />
                 </Routes>
               </BackgroundColor>
               {!chatwidegt && <ChatWidget />}

@@ -109,6 +109,7 @@ const useGameActions = () => {
 // Game Card Component - Memoized for better performance
 const GameCard = ({ game, onNavigate, gameActions }) => {
   const { handleAddToCart, handleAddWishlist, handleRemoveFromWishlist, isInCart, isInWishlist } = gameActions;
+  const navigate = useNavigate();
 
   const isNewGame = useMemo(() => {
     if (!game?.createdAt) return false;
@@ -120,6 +121,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
   const inCart = isInCart(game?._id);
   const inWishlist = isInWishlist(game?._id);
+  const { currentUser } = useSelector((state) => state.user);
+  const { user: authUser } = useSelector((state) => state.auth);
+
+  const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
 
   return (
     <div
@@ -160,7 +165,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                 }`}
               onClick={(e) => {
                 e.stopPropagation();
-                inWishlist ? handleRemoveFromWishlist(game._id) : handleAddWishlist(game);
+              isLoggedIn ?
+                inWishlist ? handleRemoveFromWishlist(game._id) : handleAddWishlist(game)
+              : navigate('/login')
+
               }}
             >
               {inWishlist ? (
@@ -207,7 +215,9 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleAddToCart(game);
+              isLoggedIn ?
+              handleAddToCart(game)
+              : navigate('/login')
             }}
             disabled={inCart}
             className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${inCart
@@ -216,18 +226,23 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
               }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
-              <div>
-                {inCart ? (
-                  <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
-                    <span className="text-emerald-600 font-bold text-sm">✓</span>
-                  </div>
-                ) : (
-                  <FaShoppingCart size={18} className="text-white" />
-                )}
-              </div>
-              <span className="text-white font-bold text-sm tracking-wider uppercase">
-                {inCart ? "Added to Cart" : "Add to Cart"}
-              </span>
+              {isLoggedIn ? <>
+                <div>
+                  {inCart ? (
+                    <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
+                      <span className="text-emerald-600 font-bold text-sm">✓</span>
+                    </div>
+                  ) : (
+                    <FaShoppingCart size={18} className="text-white" />
+                  )}
+                </div>
+                <span className="text-white font-bold text-sm tracking-wider uppercase">
+                  {inCart ? "Added to Cart" : "Add to Cart"}
+                </span>
+              </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
+                Login to add
+              </span>}
+
             </div>
 
             {/* Button Effects */}

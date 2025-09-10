@@ -46,10 +46,10 @@ export default function Header() {
     //     return stored ? JSON.parse(stored) : "";
     // });
     const name = useSelector((state) => state?.user?.name);
-    const myManage = useSelector((state)=> state?.game?.myToggle)
+    const myManage = useSelector((state) => state?.game?.myToggle)
 
-    
-         
+
+    const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
     const { items } = useSelector((state) => state.wishlist);
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -113,7 +113,7 @@ export default function Header() {
         }
         localStorage.removeItem("userName");
         navigate("/")
-        dispatch(handleMyToggle(false)) 
+        dispatch(handleMyToggle(false))
     };
 
 
@@ -167,54 +167,61 @@ export default function Header() {
 
                             <div className="flex items-center gap-5">
                                 <div className="hidden md:block relative" ref={dropdownRef}>
-                                    <div className='flex gap-2 items-center'>
-                                       <NavLink to="/wishlist" className="me-2 relative">
-                                          {({ isActive }) => (
-                                            <>
-                                              <div
-                                                className={`p-2 border-2 rounded-full transition-colors ${
-                                                  isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
-                                                }`}
-                                              >
-                                                <FaHeart
-                                                  className={`text-[18px] cursor-pointer transition-colors ${
-                                                    isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
-                                                  }`}
-                                                />
-                                              </div>
-                                        
-                                              {(items?.length > 0 && myManage) && (
-                                                <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                                                  {items?.length}
-                                                </span>
-                                              )}
-                                            </>
-                                          )}
-                                        </NavLink>
 
-                                        <NavLink to="/cart" className="me-2 relative">
-                                            {({ isActive }) => (
-                                              <>
-                                                <div
-                                                  className={`p-2 border-2 rounded-full transition-colors ${
-                                                    isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
-                                                  }`}
-                                                >
-                                                  <FaShoppingCart
-                                                    className={`text-[18px] cursor-pointer transition-colors ${
-                                                      isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
-                                                    }`}
-                                                  />
-                                                </div>
-                                          
-                                                {(cartItems?.length > 0 && myManage) && (
-                                                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                                                    {cartItems?.length}
-                                                  </span>
-                                                )}
-                                              </>
-                                            )}
-                                        </NavLink>
+                                    <div className='flex gap-2 items-center'>
+                                        {
+                                            isLoggedIn ?
+                                            <>
+                                        <NavLink to="/wishlist" className="me-2 relative">
+                                           {({ isActive }) => (
+                                             <>
+                                               <div
+                                                 className={`p-2 border-2 rounded-full transition-colors ${
+                                                   isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                 }`}
+                                               >
+                                                 <FaHeart
+                                                   className={`text-[18px] cursor-pointer transition-colors ${
+                                                     isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                   }`}
+                                                 />
+                                               </div>
+                                         
+                                               {(items?.length > 0 && myManage) && (
+                                                 <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                                                   {items?.length}
+                                                 </span>
+                                               )}
+                                             </>
+                                           )}
+                                         </NavLink>
+ 
+                                         <NavLink to="/cart" className="me-2 relative">
+                                             {({ isActive }) => (
+                                               <>
+                                                 <div
+                                                   className={`p-2 border-2 rounded-full transition-colors ${
+                                                     isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                   }`}
+                                                 >
+                                                   <FaShoppingCart
+                                                     className={`text-[18px] cursor-pointer transition-colors ${
+                                                       isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                     }`}
+                                                   />
+                                                 </div>
+                                           
+                                                 {(cartItems?.length > 0 && myManage) && (
+                                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                                     {cartItems?.length}
+                                                   </span>
+                                                 )}
+                                               </>
+                                             )}
+                                         </NavLink>
+                                         </> : null
+                                        }
+
 
                                         <div
                                             className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
@@ -292,51 +299,47 @@ export default function Header() {
 
                                 <div className='flex gap-2 items-center md:hidden'>
                                     <NavLink to="/wishlist" className="me-2 relative">
-                                          {({ isActive }) => (
+                                        {({ isActive }) => (
                                             <>
-                                              <div
-                                                className={`p-2 border-2 rounded-full transition-colors ${
-                                                  isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
-                                                }`}
-                                              >
-                                                <FaHeart
-                                                  className={`text-[18px] cursor-pointer transition-colors ${
-                                                    isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
-                                                  }`}
-                                                />
-                                              </div>
-                                        
-                                              {(items?.length > 0 && myManage) && (
-                                                <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-                                                  {items?.length}
-                                                </span>
-                                              )}
+                                                <div
+                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                        }`}
+                                                >
+                                                    <FaHeart
+                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                            }`}
+                                                    />
+                                                </div>
+
+                                                {(items?.length > 0 && myManage) && (
+                                                    <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                                                        {items?.length}
+                                                    </span>
+                                                )}
                                             </>
-                                          )}
+                                        )}
                                     </NavLink>
-                                     <NavLink to="/cart" className="me-2 relative">
-                                          {({ isActive }) => (
+                                    <NavLink to="/cart" className="me-2 relative">
+                                        {({ isActive }) => (
                                             <>
-                                              <div
-                                                className={`p-2 border-2 rounded-full transition-colors ${
-                                                  isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
-                                                }`}
-                                              >
-                                                <FaShoppingCart
-                                                  className={`text-[18px] cursor-pointer transition-colors ${
-                                                    isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
-                                                  }`}
-                                                />
-                                              </div>
-                                        
-                                              {(cartItems?.length > 0 && myManage) && (
-                                                <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center ">
-                                                  {cartItems?.length}
-                                                </span>
-                                              )}
+                                                <div
+                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                        }`}
+                                                >
+                                                    <FaShoppingCart
+                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                            }`}
+                                                    />
+                                                </div>
+
+                                                {(cartItems?.length > 0 && myManage) && (
+                                                    <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center ">
+                                                        {cartItems?.length}
+                                                    </span>
+                                                )}
                                             </>
-                                          )}
-                                      </NavLink>
+                                        )}
+                                    </NavLink>
                                 </div>
                                 <label
                                     htmlFor="my-drawer-3"
@@ -348,7 +351,7 @@ export default function Header() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="drawer-side md:hidden">
                         <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay" />
                         <div className="min-h-full w-80 p-4 relative text-white bg-gradient-to-b from-[#100f14]/95 via-[#16141c]/95 to-[#0e0d12]/95 backdrop-blur-xl border-l border-white/5 shadow-[0_10px_40px_-10px_rgba(171,153,225,0.35)]">
@@ -415,8 +418,8 @@ export default function Header() {
                                 <div className='w-full mt-4'>
 
                                     <div className='flex flex-wrap justify-between gap-y-3'>
-        
-                                        <NavLink to="/rewards" onClick={()=> setIsDrawerOpen(false)}  className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+
+                                        <NavLink to="/rewards" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <SlBadge className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Rewards Offers
                                         </NavLink>
 
@@ -424,7 +427,7 @@ export default function Header() {
                                             <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
                                         </NavLink> */}
 
-                                        <NavLink to="/GGTalks" onClick={()=> setIsDrawerOpen(false)}  className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/GGTalks" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
 
@@ -432,14 +435,14 @@ export default function Header() {
                                             <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
                                         </NavLink> */}
 
-                                        <NavLink to="/guides" onClick={()=> setIsDrawerOpen(false)}  className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/guides" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides
                                         </NavLink>
 
-                                        <NavLink to="/games" onClick={()=> setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/games" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <IoGameController className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Free Games
                                         </NavLink>
-{/* 
+                                        {/* 
                                         <NavLink to="/wishlist" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
                                             <FaHeart className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Wishlist
                                         </NavLink>
