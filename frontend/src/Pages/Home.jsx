@@ -136,7 +136,6 @@ const GameCard = ({
   const isPurchased = orders?.some(order =>
     order.items.some(item => item.game?._id === game?._id)
   )
-  console.log(isPurchased);
   return (
     <div
       onClick={() => onGameClick(game._id)}
@@ -484,10 +483,10 @@ export default function Home() {
 
   return (
     <>
-      <NotificationToast
+      {/* <NotificationToast
         show={showAddedToCart}
         message={`${addedGameTitle} added to cart!`}
-      />
+      /> */}
 
       <section className="relative">
         <HomeSlider />

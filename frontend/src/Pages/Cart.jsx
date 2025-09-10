@@ -125,8 +125,8 @@ const Cart = () => {
             const orderResult = await dispatch(createOrder({
                 items,
                 amount: finalAmount, // Use final amount after fan coins
-                fanCoinsUsed: useFanCoinsChecked ? fanCoinsToUse : 0,
-                fanCoinDiscount: useFanCoinsChecked ? fanCoinsToUse : 0
+                fanCoinsUsed:  fanCoinsToUse || 0,
+                fanCoinDiscount:  fanCoinsToUse|| 0
             }));
 
             if (!createOrder.fulfilled.match(orderResult)) {
@@ -436,7 +436,7 @@ const Cart = () => {
             {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
 
             <Dialog
-                open={!!(showPaymentForm && clientSecret && currentOrderId)}
+                open={!!(showPaymentForm  && currentOrderId)}
                 onClose={() => setShowPaymentForm(false)}
                 className="relative z-50"
             >
@@ -450,9 +450,8 @@ const Cart = () => {
                             Complete Your Purchase
                         </DialogTitle>
 
-                        <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <Elements stripe={stripePromise} >
                             <PaymentForm
-                                clientSecret={clientSecret}
                                 orderId={currentOrderId}
                                 amount={amountToPay}
                                 onPaymentSuccess={handlePaymentSuccess}

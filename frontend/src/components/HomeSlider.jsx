@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllGames } from "../Redux/Slice/game.slice";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -11,14 +9,10 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
 import { EffectFade, Pagination, Autoplay } from 'swiper/modules';
-import HomesliderSkeleton from '../lazyLoader/HomesliderSkeleton';
 import SliderSkeleton from "../lazyLoader/SliderSkeleeton";
 
 export default function HomeSlider() {
     const dispatch = useDispatch()
-
-
-
     const games = useSelector((state) => state.game.games)?.slice(5, 15) || [];
     const listRef = useRef(null);
     const carouselRef = useRef(null);
@@ -182,7 +176,6 @@ export default function HomeSlider() {
                                         </Link>
                                     </div>
                                 </div>
-
 
 
                                 <img

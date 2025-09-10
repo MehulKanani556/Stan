@@ -60,7 +60,36 @@ const PaymentForm = ({
         }
 
         try {
-            // Create or update payment intent with the final amount (after fan coins applied)
+            // If the amount is 0 (fully covered by fan coins), skip Stripe payment intent
+            if (amount === 0) {
+                console.log('Payment fully covered by Fan Coins, skipping Stripe payment');
+                
+                // Verify the "free" payment on your backend
+                const verificationResult = await dispatch(verifyPayment({
+                    paymentIntentId: 'free_with_fan_coins', // Special identifier for free payments
+                    orderId,
+                    fanCoinsUsed: fanCoinsToUse,
+                    fanCoinDiscount: fanCoinsToUse, // Discount is equal to fan coins used
+                }));
+
+                if (verifyPayment.fulfilled.match(verificationResult)) {
+                    alert("Order completed successfully with Fan Coins!");
+
+                    if (onPaymentSuccess && typeof onPaymentSuccess === 'function') {
+                        onPaymentSuccess({
+                            paymentIntentId: 'free_with_fan_coins',
+                            amount: 0,
+                            fanCoinsUsed: fanCoinsToUse
+                        });
+                    }
+                } else {
+                    console.error('Order verification failed:', verificationResult.payload);
+                    alert('Order processing failed. Please contact support.');
+                }
+                return;
+            }
+
+            // Create payment intent for non-zero amounts
             const intentResult = await dispatch(createPaymentIntent({
                 items: items || [],
                 amount: amount, // This amount already has fan coins deducted
@@ -98,36 +127,6 @@ const PaymentForm = ({
             }
 
             console.log('Processing payment with client secret:', currentClientSecret);
-
-            // If the amount is 0 (fully covered by fan coins), skip Stripe payment
-            if (amount === 0) {
-                console.log('Payment fully covered by Fan Coins, skipping Stripe payment');
-                
-                // Verify the "free" payment on your backend
-                const verificationResult = await dispatch(verifyPayment({
-                    paymentIntentId: currentClientSecret, // Special identifier for free payments
-                    orderId,
-                    fanCoinsUsed: fanCoinsToUse,
-                    fanCoinDiscount: fanCoinsToUse, // Discount is equal to fan coins used
-                    finalAmount: 0
-                }));
-
-                if (verifyPayment.fulfilled.match(verificationResult)) {
-                    alert("Order completed successfully with Fan Coins!");
-
-                    if (onPaymentSuccess && typeof onPaymentSuccess === 'function') {
-                        onPaymentSuccess({
-                            paymentIntentId: 'free_with_fan_coins',
-                            amount: 0,
-                            fanCoinsUsed: fanCoinsToUse
-                        });
-                    }
-                } else {
-                    console.error('Order verification failed:', verificationResult.payload);
-                    alert('Order processing failed. Please contact support.');
-                }
-                return;
-            }
 
             // Confirm the payment with Stripe (for non-zero amounts)
             const { error, paymentIntent } = await stripe.confirmCardPayment(currentClientSecret, {
@@ -176,7 +175,6 @@ const PaymentForm = ({
             alert('Payment processing failed. Please try again.');
         }
     };
-
     return (
         <form
             onSubmit={handleSubmit}

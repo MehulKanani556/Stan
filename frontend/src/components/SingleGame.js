@@ -111,7 +111,7 @@ const ThumbArrow = ({ direction, onClick }) => {
     <div
       onClick={onClick}
       className={`absolute ${positionClass} top-1/2 -translate-y-1/2 
-                 bg-gray-800 hover:bg-gray-600 text-white p-2 rounded-full 
+                bg-gray-800 hover:bg-gray-600 text-white p-2 rounded-full 
                  cursor-pointer transition z-10`}
     >
       <Icon size={18} />
@@ -330,6 +330,7 @@ const SingleGame = () => {
   }, [dispatch])
 
   const handleCheckout = useCallback(async () => {
+    alert("Asas")
     if (!single || !single._id) {
       console.error("Game data is not available for checkout.")
       return
