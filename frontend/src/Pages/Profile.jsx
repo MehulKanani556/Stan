@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
 import { getUserById, editUserProfile, logoutUser, clearUser } from '../Redux/Slice/user.slice';
-import { fetchProfile } from '../Redux/Slice/profile.slice';
+import { ChangePassSlice, fetchProfile } from '../Redux/Slice/profile.slice';
 import ProfileSkeleton from '../lazyLoader/ProfileSkeleton';
 import TransactionHistorySkeleton from '../lazyLoader/TransactionHistorySkeleton';
 import OrderListSkeleton from '../lazyLoader/OrderListSkeleton';
@@ -32,6 +32,7 @@ import { handleMyToggle } from '../Redux/Slice/game.slice';
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { RiLockPasswordLine } from "react-icons/ri";
 import {useFormik} from 'formik'
+import * as Yup from "yup";
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -295,6 +296,9 @@ export default function Profile() {
     const [showDeleteOtpModal, setShowDeleteOtpModal] = useState(false);
     const [deleteEmail, setDeleteEmail] = useState("");
     const [isSendingOtp, setIsSendingOtp] = useState(false);
+    const [deleteOtp, setDeleteOtp] = useState(false)
+    const [ otp, setOtp] = useState(["", "", "", ""]);
+    const inputsRef = useRef([]);
     // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
@@ -402,16 +406,20 @@ export default function Profile() {
     };
 
     const handleSendDeleteOtp = async () => {
-        if (!deleteEmail) return;
-        try {
-            setIsSendingOtp(true);
-            // TODO: call API to send OTP for account deletion
+        // if (!deleteEmail) return;
+        // try {
+        //     setIsSendingOtp(true);
+        //     // TODO: call API to send OTP for account deletion
+        //     setShowDeleteOtpModal(false);
+        //     setDeleteEmail("");
+        //     // After OTP flow, you could proceed with deletion
+        // } finally {
+        //     setIsSendingOtp(false);
+        // }
+
             setShowDeleteOtpModal(false);
-            setDeleteEmail("");
-            // After OTP flow, you could proceed with deletion
-        } finally {
-            setIsSendingOtp(false);
-        }
+            setDeleteOtp(true)
+
     };
 
     const handleChangePassword = async () => {
@@ -434,9 +442,62 @@ export default function Profile() {
         newPass:"",
         confirmPass:""
     }
+
+    const changePassSchema = Yup.object({
+        currentPass: Yup.string()
+          .required("Current password is required"),
+        newPass: Yup.string()
+          .min(6, "Password must be at least 6 characters")
+          .required("New password is required"),
+        confirmPass: Yup.string()
+          .oneOf([Yup.ref("newPass"), null], "Passwords must match")
+          .required("Confirm password is required"),
+      });
+
     const changePassFormik = useFormik({
-        initialValues:""
+        initialValues:changePassVal,
+        validationSchema:changePassSchema,
+        onSubmit:(values , action)=>{
+           dispatch(ChangePassSlice(values))
+           action.resetForm()
+           setActiveMenu("profile");
+        }
     }) 
+
+    const deleteOtpFormik = useFormik({
+
+    })
+
+    const handleChange = (index, e) => {
+        const { value } = e.target;
+    
+        if (/^\d?$/.test(value)) {
+            deleteOtpFormik.setFieldValue(`otp${index}`, value);
+    
+          if (value && index < 5) {
+            deleteOtpFormik.current[index + 1]?.focus();
+          }
+        }
+    };
+    
+      const handleKeyDown = (index, e) => {
+        if (e.key === "Backspace" && !deleteOtpFormik.values[`otp${index}`] && index > 0) {
+            inputsRef.current[index - 1]?.focus();
+        }
+    };
+
+    const verifyEmail = {
+        email:""
+    }  
+
+    const verifyEmailFormik = useFormik({
+        initialValues:verifyEmail,
+        validationSchema: Yup.object({
+            email: Yup.string()
+              .email("Enter a valid email address")
+              .required("Email is required"),
+        }),
+    })
 
     // handle  input change 
     const handleInputChange = (e) => {
@@ -1059,7 +1120,7 @@ export default function Profile() {
                                         </button>
                                     </Dialog.Title>
 
-                                    <form className="mt-5 space-y-4">
+                                    <form onSubmit={changePassFormik.handleSubmit} className="mt-5 space-y-4">
                                         {/* Current Password */}
                                         <div className="flex flex-col gap-2">
                                             <label className="text-sm text-gray-300">Current Password</label>
@@ -1125,17 +1186,11 @@ export default function Profile() {
                                         )}
 
                                         <div className="mt-4 flex justify-end gap-3">
-                                            <button
-                                                className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20"
-                                                onClick={closeChangePasswordModal}
-                                            >
+                                            <button type='button' className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20" onClick={closeChangePasswordModal}>
                                                 Cancel
                                             </button>
-                                            <button
-                                                className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white"
-                                                onClick={handleChangePassword}
-                                            >
-                                                Update Password
+                                            <button type='submit' className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white">
+                                                Change Password
                                             </button>
                                         </div>
                                     </form>
@@ -1459,7 +1514,7 @@ export default function Profile() {
                                             <IoClose className="w-5 h-5" />
                                         </button>
                                     </Dialog.Title>
-                                    <div className='mt-4 space-y-4'>
+                                    <form className='mt-4 space-y-4'>
                                         <input
                                             type='email'
                                             value={deleteEmail}
@@ -1469,9 +1524,49 @@ export default function Profile() {
                                         />
                                         <div className='flex gap-3 justify-between'>
                                             <button className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={closeDeleteAccountModal} disabled={isSendingOtp}>Cancel</button>
-                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed' onClick={handleSendDeleteOtp} disabled={!deleteEmail || isSendingOtp}>{isSendingOtp ? 'Sending...' : 'Send OTP'}</button>
+                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 ' onClick={handleSendDeleteOtp} >Send Otp</button>
                                         </div>
-                                    </div>
+                                    </form>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </Dialog>
+                </Transition>
+
+                <Transition appear show={deleteOtp} as={Fragment}>
+                    <Dialog as="div" className="relative z-50" onClose={()=> setDeleteOtp(false)}>
+                        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                        </Transition.Child>
+                        <div className="fixed inset-0 flex items-center justify-center p-4">
+                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100 translate-y-0" leaveTo="opacity-0 scale-95 translate-y-4">
+                                <Dialog.Panel className="w-full max-w-md rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl">
+                                    <Dialog.Title className="text-lg font-semibold flex items-center justify-between"> 
+                                        <span>Verify Otp</span>
+                                        <button onClick={closeDeleteAccountModal} className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors">
+                                            <IoClose className="w-5 h-5" />
+                                        </button>
+                                    </Dialog.Title>
+                                    <form className='mt-4 space-y-4'>
+                                        <div className="flex justify-between sm:px-9 sx:px-9 px-2 pt-3">
+                                          {otp.map((digit, index) => (
+                                            <input
+                                              key={index}
+                                              type="text"
+                                              value={digit}
+                                              maxLength="1"
+                                              ref={(el) => (inputsRef.current[index] = el)}
+                                              onChange={(e) => handleChange(e.target.value, index)}
+                                              onKeyDown={(e) => handleKeyDown(e, index)}
+                                              className="sm:w-[60px] sm:h-[60px] h-[50px] w-[50px] text-center p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500"
+                                            />
+                                          ))}
+                                        </div>
+                                        <div className='flex gap-3 justify-between pt-5'>
+                                            <button className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={()=> setDeleteOtp(false)} disabled={isSendingOtp}>Cancel</button>
+                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed' onClick={handleSendDeleteOtp}>Delete</button>
+                                        </div>
+                                    </form>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../Utils/axiosInstance";
+import { enqueueSnackbar } from "notistack";
 
 // Thunk to fetch profile by userId
 export const fetchProfile = createAsyncThunk(
@@ -10,6 +11,25 @@ export const fetchProfile = createAsyncThunk(
             return response.data; // { success, result, message }
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to load profile";
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+export const ChangePassSlice = createAsyncThunk(
+    "profile/ChangePassSlice",
+    async (values, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(`/changePassword` ,{
+                currentPassword:values?.currentPass,
+                newPassword:values?.newPass,
+                confirmPassword:values?.confirmPass
+            });
+            enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data; // { success, result, message }
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Failed to load profile";
+            enqueueSnackbar(error.response?.data?.message, { variant: "error" });
             return rejectWithValue(error.response?.data || { message: errorMessage });
         }
     }
@@ -46,6 +66,21 @@ const profileSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to load profile";
+                state.data = null;
+            })
+
+            .addCase(ChangePassSlice.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(ChangePassSlice.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message || null;
+                state.error = null;
+            })
+            .addCase(ChangePassSlice.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload?.message || "Failed to load profile";
                 state.data = null;
