@@ -442,7 +442,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                         onClick={() => onPageChange(i)}
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${
                             isActive
-                                ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
+                                ? "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
                                 : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
                         }`}
                     >
@@ -472,7 +472,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${
                             currentPage === 1
                                 ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-purple-600 hover:border-purple-500/80 hover:shadow-md"
+                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
                         }`}
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
@@ -489,7 +489,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${
                             currentPage === totalPages
                                 ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-purple-600 hover:border-purple-500/80 hover:shadow-md"
+                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
                         }`}
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
@@ -547,7 +547,6 @@ export default function AllGames() {
 
     const handlePageChange = useCallback((pageNumber) => {
         setCurrentPage(pageNumber);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
     const resetFilters = useCallback(() => {

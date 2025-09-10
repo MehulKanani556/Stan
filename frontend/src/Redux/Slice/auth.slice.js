@@ -51,6 +51,22 @@ export const login = createAsyncThunk(
   }
 );
 
+// Verify credentials only; DO NOT store tokens or mark authenticated
+export const preLogin = createAsyncThunk(
+  "auth/preLogin",
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/userLogin`, data, {
+        withCredentials: true,
+      });
+      // Return same structure but do not persist tokens here
+      return response.data.result;
+    } catch (error) {
+      return handleErrors(error, dispatch, rejectWithValue);
+    }
+  }
+);
+
 export const register = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
@@ -203,6 +219,13 @@ const authSlice = createSlice({
         state.loginLoadin = false;
         state.error = action.payload.message;
         state.message = action.payload?.message
+      })
+      // preLogin does not mutate auth state (no side effects)
+      .addCase(preLogin.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(preLogin.rejected, (state, action) => {
+        state.error = action.payload.message;
       })
       .addCase(register.fulfilled, (state, action) => {
         if (action.payload && action.payload.user) {

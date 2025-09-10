@@ -923,7 +923,7 @@ export default function Profile() {
                                                                             '❌ Failed'}
                                                                 </span>
                                                                 <div className="mt-1">
-                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.amount}</span>
+                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.amount.toFixed(2)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -949,7 +949,7 @@ export default function Profile() {
                                                                                 </div>
                                                                             </div>
                                                                             <div className="text-right">
-                                                                                <p className="text-white font-semibold text-xs sm:text-sm">${item.price}</p>
+                                                                                <p className="text-white font-semibold text-xs sm:text-sm">${item.price.toFixed(2)}</p>
                                                                                 {item.downloadToken && (
                                                                                     <p className="text-green-400 text-[10px] sm:text-xs">
                                                                                         {item.downloadTokenUsed ? 'Downloaded' : 'Available'}
@@ -1275,7 +1275,7 @@ export default function Profile() {
                                                                         '❌ Failed'}
                                                             </span>
                                                             <div className="mt-2">
-                                                                <span className="text-3xl font-bold text-white">${selectedOrder.amount}</span>
+                                                                <span className="text-3xl font-bold text-white">${selectedOrder.amount.toFixed(2)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1316,7 +1316,7 @@ export default function Profile() {
                                                                             </div>
                                                                         </div>
                                                                         <div className="text-right mt-2 mb-2">
-                                                                            <p className="font-bold text-white text-xl">${item.price}</p>
+                                                                            <p className="font-bold text-white text-xl">${item.price.toFixed(2)}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1331,7 +1331,7 @@ export default function Profile() {
                                                     <div className="space-y-3">
                                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                                                             <span className="text-gray-300">Subtotal:</span>
-                                                            <span className="text-white font-semibold">${selectedOrder.amount}</span>
+                                                            <span className="text-white font-semibold">${selectedOrder.amount.toFixed(2)}</span>
                                                         </div>
                                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                                                             <span className="text-gray-300">Currency:</span>
@@ -1353,7 +1353,7 @@ export default function Profile() {
                                                         <div className="pt-3 border-t-2 border-white/20">
                                                             <div className="flex justify-between items-center">
                                                                 <span className="text-white font-bold text-lg">Total:</span>
-                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount}</span>
+                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount.toFixed(2)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
