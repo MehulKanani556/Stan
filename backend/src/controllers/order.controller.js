@@ -6,40 +6,31 @@ import Game from '../models/Games.model.js';
 import { clearCart } from "./cart.controller.js";
 import sendMail from "../helper/sendMail.js";
 import { decryptData } from "../middlewares/incrypt.js";
+import { log } from "console";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // 1. Create Order and DB Order
 export const createOrder = async (req, res) => {
   try {
-    const { items, amount } = req.body;
+    const { items, amount, fanCoinsUsed = 0, fanCoinDiscount = 0 } = req.body;
     const userId = req.user._id; // assuming you use auth middleware
 
-    // Create Stripe Payment Intent
-      console.log(req.user);
+    console.log(req.body);
     
-    // const paymentIntent = await stripe.paymentIntents.create({
-    //   amount: Math.round(amount * 100), // in cents
-    //   currency: "USD",
-    //   metadata: { orderId: "temp_order_id" }, // Placeholder, will be updated
-    //   receipt_email:decryptData( req.user.email), // Assuming user email is available
-    // });
+    // Save order in DB
+    const order = await Order.create({
+      user: userId,
+      items,
+      amount, // Final amount after fan coin discount
+      originalAmount: amount + fanCoinDiscount, // Original amount before discount
+      currency: "USD",
+      status: "created",
+      fanCoinsUsed, // Number of fan coins used
+      fanCoinDiscount, // Discount amount from fan coins
+    });
 
-    // if (paymentIntent && paymentIntent.id) {
-      // Save order in DB
-      const order = await Order.create({
-        user: userId,
-        items,
-        amount,
-        currency: "USD",
-        // stripePaymentIntentId: paymentIntent.id,
-        status: "created",
-      });
-
-      return res.json({ order, });
-    // } else {
-    //   return res.status(500).json({ error: "Failed to create Stripe Payment Intent" });
-    // }
+    return res.json({ order });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -51,9 +42,96 @@ export const verifyPayment = async (req, res) => {
     const {
       paymentIntentId,
       orderId,
+      fanCoinsUsed,
+      fanCoinDiscount 
     } = req.body;
 
-    // No signature verification needed on backend for Stripe client-side confirmation
+    // Special handling for zero-amount (fully fan coin covered) payments
+    if (paymentIntentId === 'free_with_fan_coins') {
+      // Update order in DB
+      let order;
+      try {
+        order = await Order.findByIdAndUpdate(
+          orderId,
+          {
+            stripePaymentIntentId: 'free_with_fan_coins',
+            status: "paid",
+            fanCoinsUsed,
+            fanCoinDiscount
+          },
+          { new: true }
+        );
+        if (!order) {
+          return res.status(404).json({ error: "Order not found" });
+        }
+      } catch (err) {
+        return res.status(500).json({ error: "Failed to update order: " + err.message });
+      }
+
+      // Generate download tokens and send mail
+      let mailError = null;
+      if (order && order.items && order.items.length > 0) {
+        try {
+          // For each item, generate a token and update
+          for (let item of order.items) {
+            item.downloadToken = crypto.randomBytes(32).toString("hex");
+            item.downloadTokenUsed = false;
+          }
+          await order.save();
+        } catch (err) {
+          return res.status(500).json({ error: "Failed to generate download tokens: " + err.message });
+        }
+
+        try {
+          const user = await User.findById(order.user);
+          if (user && user.email) {
+            const decryptedEmail = decryptData(user.email);
+            const recipientEmail = decryptedEmail && decryptedEmail.includes("@") ? decryptedEmail : user.email;
+            const mailBody = `
+              Hi ${user.fullName || user.email},
+
+              Thank you for your purchase on Yoyo Games! 🎮
+
+              Below are your download links for the games you just bought. Each link is unique and can be used only once, so please download your games at your earliest convenience.
+
+              ${order.items
+                .map(
+                  (item, idx) =>
+                    `${idx + 1}. ${item.name} (${item.platform})
+                  Download Link: http://localhost:8000/api/download/${item.downloadToken}
+              `).join("\n")}
+
+              If you have any issues with your downloads or need support, feel free to reply to this email.
+
+              Happy gaming!
+              The Yoyo Games Team
+              `;
+
+            await sendMail(
+              recipientEmail,
+              "Your Game Download Links - Yoyo Games",
+              mailBody
+            );
+          }
+        } catch (err) {
+          // Don't block payment, but report mail error
+          mailError = "Payment successful, but failed to send email: " + err.message;
+          console.error(mailError);
+        }
+      }
+
+      if (mailError) {
+        return res.status(200).json({ 
+          success: true, 
+          order, 
+          warning: mailError 
+        });
+      } else {
+        return res.json({ success: true, order });
+      }
+    }
+
+    // Existing payment verification logic remains the same
     // Update order in DB
     let order;
     try {
@@ -62,6 +140,8 @@ export const verifyPayment = async (req, res) => {
         {
           stripePaymentIntentId: paymentIntentId,
           status: "paid",
+          fanCoinsUsed,
+          fanCoinDiscount
         },
         { new: true }
       );
@@ -262,7 +342,16 @@ export const downloadGame = async (req, res) => {
 // Remove the duplicate Stripe import and require statement
 export const createPaymentIntent = async (req, res) => {
   try {
-    const { items, amount } = req.body;
+    const { items, amount, orderId, metadata = {} } = req.body;
+
+    // If amount is 0, skip Stripe payment intent creation
+    if (amount === 0) {
+      return res.status(200).json({
+        clientSecret: 'free_with_fan_coins',
+        orderId,
+        metadata
+      });
+    }
 
     // Create Stripe Payment Intent
     const paymentIntent = await stripe.paymentIntents.create({
@@ -270,6 +359,8 @@ export const createPaymentIntent = async (req, res) => {
       currency: 'usd',
       metadata: { 
         items: JSON.stringify(items),
+        orderId,
+        ...metadata
       },
     });
 

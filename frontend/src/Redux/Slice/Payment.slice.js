@@ -71,11 +71,13 @@ export const createpayment = createAsyncThunk(
 // Create order (calls backend to create Stripe Payment Intent and DB order)
 export const createOrder = createAsyncThunk(
   "payment/createOrder",
-  async ({ items, amount }, { rejectWithValue }) => {
+  async ({ items, amount ,fanCoinDiscount,fanCoinsUsed}, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/order/create", {
         items,
         amount,
+        fanCoinDiscount,
+        fanCoinsUsed
       });
       return response.data;
     } catch (err) {
@@ -88,11 +90,22 @@ export const createOrder = createAsyncThunk(
 
 export const createPaymentIntent = createAsyncThunk(
   "payment/createPaymentIntent",
-  async ({ items, amount }, { dispatch, rejectWithValue }) => {
+  async ({ items, amount, orderId, metadata = {} }, { dispatch, rejectWithValue }) => {
+    // If amount is 0, return a special client secret
+    if (amount === 0) {
+      return { 
+        clientSecret: 'free_with_fan_coins', 
+        orderId,
+        metadata 
+      };
+    }
+
     try {
       const response = await axiosInstance.post("/payment/create-intent", {
         items,
         amount,
+        orderId,
+        metadata
       });
       return response.data;
     } catch (error) {
@@ -104,13 +117,39 @@ export const createPaymentIntent = createAsyncThunk(
 // Verify payment (calls backend to confirm Stripe Payment Intent)
 export const verifyPayment = createAsyncThunk(
   "payment/verifyPayment",
-  async ({ paymentIntent, orderId }, { dispatch, rejectWithValue }) => {
+  async ({ paymentIntentId, orderId, fanCoinDiscount, fanCoinsUsed }, { dispatch, rejectWithValue }) => {
     try {
+      // Special handling for zero-amount (fully fan coin covered) payments
+      if (paymentIntentId === 'free_with_fan_coins') {
+        const response = await axiosInstance.post("/order/verify", {
+          paymentIntentId: 'free_with_fan_coins',
+          orderId,
+          fanCoinDiscount,
+          fanCoinsUsed
+        });
+
+        // Add fan coins after successful payment
+        if (response.data.success) {
+          const userId = localStorage.getItem('userId');
+          const amount = response?.data?.order?.amount;
+
+          // Dispatch add fan coins action
+          await dispatch(addFanCoins({
+            userId,
+            amount
+          }));
+        }
+
+        return response.data;
+      }
+
+      // Existing payment verification logic
       const response = await axiosInstance.post("/order/verify", {
-        paymentIntent,
+        paymentIntentId,
         orderId,
+        fanCoinDiscount,
+        fanCoinsUsed
       });
-      // console.log(response.data);
 
       // Add fan coins after successful payment
       if (response.data.success) {
@@ -122,6 +161,8 @@ export const verifyPayment = createAsyncThunk(
           userId,
           amount
         }));
+
+        await dispatch(allorders());
       }
 
       return response.data;

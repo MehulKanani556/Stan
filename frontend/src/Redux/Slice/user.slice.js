@@ -519,8 +519,8 @@ export const addFanCoins = createAsyncThunk(
 );
 
 // Use fan coins for purchase
-export const useFanCoins = createAsyncThunk(
-  "user/useFanCoins",
+export const fanCoinsuse = createAsyncThunk(
+  "user/fanCoinsuse",
   async ({ userId, gamePrice, fanCoinsToUse }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post('/fan-coins/use', { 
@@ -936,15 +936,15 @@ const userSlice = createSlice({
     })
 
     // Use fan coins reducer
-    .addCase(useFanCoins.pending, (state) => {
+    .addCase(fanCoinsuse.pending, (state) => {
       state.fanCoinLoading = true;
       state.fanCoinError = null;
     })
-    .addCase(useFanCoins.fulfilled, (state, action) => {
+    .addCase(fanCoinsuse.fulfilled, (state, action) => {
       state.fanCoinLoading = false;
       state.fanCoins = action.payload.fanCoins;
     })
-    .addCase(useFanCoins.rejected, (state, action) => {
+    .addCase(fanCoinsuse.rejected, (state, action) => {
       state.fanCoinLoading = false;
       state.fanCoinError = action.payload;
     })
