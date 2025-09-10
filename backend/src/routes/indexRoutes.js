@@ -51,8 +51,8 @@ indexRoutes.put(
   convertJfifToWebp,
   editProfile
 );
-indexRoutes.delete("/sendDeleteOtp/:id", UserAuth, sendDeleteOtp);
-indexRoutes.delete("/deleteUser/:id", UserAuth, deleteUser);
+indexRoutes.post("/sendDeleteOtp/:id", UserAuth, sendDeleteOtp);
+indexRoutes.post("/deleteUser/:id", UserAuth, deleteUser);
 
 //login Routes
 indexRoutes.post("/userLogin", userLogin);
