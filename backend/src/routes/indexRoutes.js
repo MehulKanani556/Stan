@@ -7,9 +7,9 @@ import {
 import { isAdmin, isUser, UserAuth } from "../middlewares/auth.js";
 import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUserById, register, searchUsers, suggestedUsers } from "../controllers/userController.js";
 import { changePassword, forgotPassword, generateNewToken, googleLogin, logoutUser, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
-import { getMessage, sendMessage, getAllMessageUsers, deleteChat } from "../controllers/messageController.js";
+import { getMessage, sendMessage, getAllMessageUsers, deleteChat, markMessagesAsRead } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
-import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames, getTrendingGames } from "../controllers/game.controller.js";
+import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames, getTrendingGames ,HomeTopGames } from "../controllers/game.controller.js";
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
 import { chatWidGetController } from "../controllers/chatWidGet.controller.js";
 import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateTrailer } from "../controllers/HomeTrailerController.js";
@@ -19,6 +19,11 @@ import websiteInfoRoutes from "./websiteInfo.routes.js";
 import { createOrder, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
 // import { createOrUpdateRating, deleteRating, getAllRatings, getGameRatings, getGameRatingStats, getUserGameRating, getUserRatings, markReviewHelpful, updateRating } from "../controllers/rating.controller.js";
 import { createOrUpdateRating,getAllRatingByGame,getAllRatings } from "../controllers/rating.controller.js";
+import { 
+    addFanCoinsAfterPurchase, 
+    useFanCoinsForPurchase, 
+    getFanCoinDetails 
+} from '../controllers/fanCoinController.js';
 
 
 const indexRoutes = express.Router();
@@ -104,6 +109,7 @@ indexRoutes.get("/getPopularGames", getPopularGames);
 indexRoutes.get("/getTopGames", getTopGames);
 indexRoutes.get("/getTrendingGames", getTrendingGames);
 indexRoutes.get("/games-by-category", getTopGames);
+indexRoutes.get("/homeTopGame", HomeTopGames);
 indexRoutes.post(
   "/createGame",
   upload.fields([
@@ -196,4 +202,12 @@ indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
 // indexRoutes.get("/ratings/:gameId/stats", getGameRatingStats);
 indexRoutes.get("/admin/ratings",  getAllRatings);
 indexRoutes.get("/gamerating/:gameId",getAllRatingByGame)
+
+// Fan Coin Routes
+indexRoutes.post('/fan-coins/add', addFanCoinsAfterPurchase);
+indexRoutes.post('/fan-coins/use', useFanCoinsForPurchase);
+indexRoutes.get('/fan-coins/:userId', getFanCoinDetails);
+
+
+indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
 export default indexRoutes

@@ -19,7 +19,7 @@ import lazyCatImage from '../images/lazy-cat-1.png'
 import { FaUserLarge } from 'react-icons/fa6';
 import { GiTakeMyMoney } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom'
-import { IoLocation, IoClose, IoTrash, IoPencil } from "react-icons/io5";
+import { IoLocation, IoClose, IoTrash, IoPencil, IoEye, IoEyeOff } from "react-icons/io5";
 import { BsBoxSeam } from "react-icons/bs";
 import manageAddress from "../images/manage_addres-1.png"
 import StylishDiv from '../components/StylishDiv';
@@ -28,6 +28,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
 import { handleMyToggle } from '../Redux/Slice/game.slice';
+
+import { RiDeleteBin2Line } from "react-icons/ri";
+import { RiLockPasswordLine } from "react-icons/ri";
+import {useFormik} from 'formik'
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -276,6 +280,21 @@ export default function Profile() {
     const [amountToPay, setAmountToPay] = useState(0);
     const [isPaymentLoading, setIsPaymentLoading] = useState(false);
     const [transactionLoading, setTransactionLoading] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+    });
+    const [showPassword, setShowPassword] = useState({
+        current: false,
+        newPass: false,
+        confirm: false,
+    });
+    const [passwordError, setPasswordError] = useState("");
+    const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+    const [showDeleteOtpModal, setShowDeleteOtpModal] = useState(false);
+    const [deleteEmail, setDeleteEmail] = useState("");
+    const [isSendingOtp, setIsSendingOtp] = useState(false);
     // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
@@ -333,6 +352,91 @@ export default function Profile() {
     const handleEditToggle = () => {
         setIsEditing(!isEditing);
     };
+
+    const handlePasswordInput = (e) => {
+        const { name, value } = e.target;
+        setPasswordData((prev) => ({ ...prev, [name]: value }));
+        setPasswordError("");
+    };
+
+    const togglePasswordVisibility = (key) => {
+        setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const resetPasswordModal = () => {
+        setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+        setShowPassword({ current: false, newPass: false, confirm: false });
+        setPasswordError("");
+    };
+
+    const closeChangePasswordModal = () => {
+        resetPasswordModal();
+        setActiveMenu("profile");
+    };
+
+    const resetDeleteModal = () => {
+        setIsDeletingAccount(false);
+    };
+
+    const closeDeleteAccountModal = () => {
+        resetDeleteModal();
+        setShowDeleteOtpModal(false);
+    };
+
+    const handleDeleteAccountConfirm = async () => {
+        const ok = window.confirm("Are you sure you want to delete your account? This cannot be undone.");
+        if (!ok) return;
+        try {
+            setIsDeletingAccount(true);
+            // TODO: Replace with real delete-account API when available
+            await dispatch(logoutUser());
+            dispatch(clearUser());
+            localStorage.removeItem("userName");
+            navigate("/");
+            dispatch(handleMyToggle(false));
+        } catch (e) {
+            // noop: a snackbar can be added here if needed
+        } finally {
+            setIsDeletingAccount(false);
+        }
+    };
+
+    const handleSendDeleteOtp = async () => {
+        if (!deleteEmail) return;
+        try {
+            setIsSendingOtp(true);
+            // TODO: call API to send OTP for account deletion
+            setShowDeleteOtpModal(false);
+            setDeleteEmail("");
+            // After OTP flow, you could proceed with deletion
+        } finally {
+            setIsSendingOtp(false);
+        }
+    };
+
+    const handleChangePassword = async () => {
+        const { currentPassword, newPassword, confirmPassword } = passwordData;
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            setPasswordError("Please fill all fields.");
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPasswordError("New passwords do not match.");
+            return;
+        }
+        // TODO: Wire to backend when endpoint is available
+        closeChangePasswordModal();
+        // Optionally show a toast/snackbar
+    };
+
+    const changePassVal = {
+        currentPass:"",
+        newPass:"",
+        confirmPass:""
+    }
+    const changePassFormik = useFormik({
+        initialValues:""
+    }) 
 
     // handle  input change 
     const handleInputChange = (e) => {
@@ -529,6 +633,34 @@ export default function Profile() {
                                             <div className="flex items-center">
                                                 <BsBoxSeam className="h-5 w-5 me-3" />
                                                 <p>Orders</p>
+                                            </div>
+                                        </Tag>
+                                    );
+                                })()}
+                            </li>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "changePassword" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('changePassword') }}>
+                                {(() => {
+                                    const Tag = activeMenu === "changePassword" ? StyleDiv : "div";
+                                    const style = activeMenu === "changePassword" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    return (
+                                        <Tag className={style}>
+                                            <div className="flex items-center">
+                                                <RiLockPasswordLine className="h-5 w-5 me-3" />
+                                                <p>Change Password</p>
+                                            </div>
+                                        </Tag>
+                                    );
+                                })()}
+                            </li>
+                                <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "deleteAccount" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('deleteAccount') }}>
+                                {(() => {
+                                    const Tag = activeMenu === "deleteAccount" ? StyleDiv : "div";
+                                    const style = activeMenu === "deleteAccount" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    return (
+                                        <Tag className={style}>
+                                            <div className="flex items-center">
+                                                <RiDeleteBin2Line className="h-5 w-5 me-3" />
+                                                <p>Delete Account</p>
                                             </div>
                                         </Tag>
                                     );
@@ -894,6 +1026,125 @@ export default function Profile() {
                     </div>
                 )}
 
+                {/* Change Password Modal */}
+                <Transition appear show={activeMenu === "changePassword"} as={Fragment}>
+                    <Dialog as="div" className="relative z-50" onClose={closeChangePasswordModal}>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                        </Transition.Child>
+
+                        <div className="fixed inset-0 flex items-center justify-center p-4">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95 translate-y-4"
+                                enterTo="opacity-100 scale-100 translate-y-0"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100 translate-y-0"
+                                leaveTo="opacity-0 scale-95 translate-y-4"
+                            >
+                                <Dialog.Panel className="w-full max-w-md rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl">
+                                    <Dialog.Title className="text-lg font-semibold flex items-center justify-between">
+                                        <span>Change Password</span>
+                                        <button onClick={closeChangePasswordModal} className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors">
+                                            <IoClose className="w-5 h-5" />
+                                        </button>
+                                    </Dialog.Title>
+
+                                    <form className="mt-5 space-y-4">
+                                        {/* Current Password */}
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm text-gray-300">Current Password</label>
+                                            <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
+                                                <input
+                                                    type={showPassword.current ? "text" : "password"}
+                                                    name="currentPass"
+                                                    value={changePassFormik.values.currentPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
+                                                    placeholder="Enter current password"
+                                                    className="w-full bg-transparent outline-none text-white placeholder-gray-500"
+                                                />
+                                                <button type="button" onClick={() => togglePasswordVisibility("current")} className="text-gray-300 hover:text-white">
+                                                    {showPassword.current ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
+                                                </button>
+                                            </div>
+                                            {changePassFormik.touched.currentPass && changePassFormik.errors.currentPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.currentPass}</p>)}
+                                        </div>
+
+                                        {/* New Password */}
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm text-gray-300">New Password</label>
+                                            <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
+                                                <input
+                                                    type={showPassword.newPass ? "text" : "password"}
+                                                    name="newPass"
+                                                    value={changePassFormik.values.newPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
+                                                    placeholder="Enter new password"
+                                                    className="w-full bg-transparent outline-none text-white placeholder-gray-500"
+                                                />
+                                                <button type="button" onClick={() => togglePasswordVisibility("newPass")} className="text-gray-300 hover:text-white">
+                                                    {showPassword.newPass ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
+                                                </button>
+                                            </div>
+                                            {changePassFormik.touched.newPass && changePassFormik.errors.newPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.newPass}</p>)}
+                                        </div>
+
+                                        {/* Confirm Password */}
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm text-gray-300">Confirm New Password</label>
+                                            <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
+                                                <input
+                                                    type={showPassword.confirm ? "text" : "password"}
+                                                    name="confirmPass"
+                                                    value={changePassFormik.values.confirmPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
+                                                    placeholder="Re-enter new password"
+                                                    className="w-full bg-transparent outline-none text-white placeholder-gray-500"
+                                                />
+                                                <button type="button" onClick={() => togglePasswordVisibility("confirm")} className="text-gray-300 hover:text-white">
+                                                    {showPassword.confirm ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
+                                                </button>
+                                            </div>
+                                            {changePassFormik.touched.confirmPass && changePassFormik.errors.confirmPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.confirmPass}</p>)}
+                                        </div>
+
+                                        {passwordError && (
+                                            <div className="text-red-400 text-sm">{passwordError}</div>
+                                        )}
+
+                                        <div className="mt-4 flex justify-end gap-3">
+                                            <button
+                                                className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20"
+                                                onClick={closeChangePasswordModal}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white"
+                                                onClick={handleChangePassword}
+                                            >
+                                                Update Password
+                                            </button>
+                                        </div>
+                                    </form>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </Dialog>
+                </Transition>
+
                 {/* logout modal */}
                 <Transition appear show={activeMenu === "logout"} as={Fragment}>
                     <Dialog as="div" className="relative z-50" onClose={() => setActiveMenu("profile")}>
@@ -1157,6 +1408,70 @@ export default function Profile() {
                                             </div>
                                         </>
                                     )}
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </Dialog>
+                </Transition>
+
+                {/* Delete Account Section with action button */}
+                {activeMenu === "deleteAccount" && (
+                    <div className='px-4 py-6 w-full'>
+                        <section className='w-full border border-white/25 rounded-2xl sm:p-6 p-4 text-white flex flex-col'>
+                            <div className='flex items-center justify-between'>
+                                <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Delete Account</h1>
+                            </div>
+                            <div className='mt-4 rounded-2xl p-4 md:p-6 relative overflow-hidden'>
+                                <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-40 h-40 bg-fuchsia-600/20 rounded-full blur-3xl" />
+                                <h3 className='text-lg md:text-xl font-semibold mb-4'>When you delete your gaming account</h3>
+                                <ul className='space-y-3 text-gray-300 text-sm md:text-base list-disc list-inside'>
+                                    <li>Your shopping cart, wishlist, and order history will be permanently deleted.</li>
+                                    <li>You will no longer be able to re-download or update any previously purchased games.</li>
+                                    <li>All your saved payment methods will be removed.</li>
+                                    <li>You will no longer receive game deals, exclusive offers, or store updates.</li>
+                                    <li>Your customer profile, reviews, and preferences will not be recoverable.</li>
+                                </ul>
+                                <div className='mt-6'>
+                                    <button
+                                        onClick={() => setShowDeleteOtpModal(true)}
+                                        className='w-full md:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] font-semibold text-white shadow-lg'
+                                    >
+                                        Delete Account
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                )}
+
+                {/* Delete Account - OTP Modal (simple) */}
+                <Transition appear show={showDeleteOtpModal} as={Fragment}>
+                    <Dialog as="div" className="relative z-50" onClose={closeDeleteAccountModal}>
+                        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                        </Transition.Child>
+                        <div className="fixed inset-0 flex items-center justify-center p-4">
+                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100 translate-y-0" leaveTo="opacity-0 scale-95 translate-y-4">
+                                <Dialog.Panel className="w-full max-w-md rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl">
+                                    <Dialog.Title className="text-lg font-semibold flex items-center justify-between"> 
+                                        <span>Delete Account</span>
+                                        <button onClick={closeDeleteAccountModal} className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors">
+                                            <IoClose className="w-5 h-5" />
+                                        </button>
+                                    </Dialog.Title>
+                                    <div className='mt-4 space-y-4'>
+                                        <input
+                                            type='email'
+                                            value={deleteEmail}
+                                            onChange={(e) => setDeleteEmail(e.target.value)}
+                                            placeholder='Email'
+                                            className='w-full p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500'
+                                        />
+                                        <div className='flex gap-3 justify-between'>
+                                            <button className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={closeDeleteAccountModal} disabled={isSendingOtp}>Cancel</button>
+                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed' onClick={handleSendDeleteOtp} disabled={!deleteEmail || isSendingOtp}>{isSendingOtp ? 'Sending...' : 'Send OTP'}</button>
+                                        </div>
+                                    </div>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>

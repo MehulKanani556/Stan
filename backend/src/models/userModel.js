@@ -41,6 +41,29 @@ const userSchema = new mongoose.Schema(
             name: { type: String },
             addedAt: { type: Date, default: Date.now }
         }],
+        fanCoins: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        fanCoinTransactions: [{
+            type: {
+                type: String,
+                enum: ['EARN', 'SPEND', 'PURCHASE'],
+                required: true
+            },
+            amount: {
+                type: Number,
+                required: true
+            },
+            description: {
+                type: String
+            },
+            date: {
+                type: Date,
+                default: Date.now
+            }
+        }],
     },
     { timestamps: true }
 );

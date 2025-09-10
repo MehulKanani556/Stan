@@ -17,9 +17,7 @@ import SliderSkeleton from "../lazyLoader/SliderSkeleeton";
 export default function HomeSlider() {
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        dispatch(getAllGames());
-    }, [dispatch]);
+
 
     const games = useSelector((state) => state.game.games)?.slice(5, 15) || [];
     const listRef = useRef(null);
@@ -30,7 +28,11 @@ export default function HomeSlider() {
     const runNextAuto = useRef(null);
     const timeBarRef = useRef(null);
     // const games = useSelector((state) => state.game.games) || [];
-
+    useEffect(() => {
+        if( !games.length ){
+            dispatch(getAllGames());
+        }
+    }, [dispatch]);
     // Limit to 5 games for left slider
     const leftGames = games.slice(0, 5);
 
@@ -148,7 +150,6 @@ export default function HomeSlider() {
                 <div className="list hidden md:flex" ref={listRef}>
                     {games.map((slide, i) => {
                         const imageUrl = getImageUrl(slide);
-                        // console.log('img', i, imageUrl);
 
                         return (
                             <div

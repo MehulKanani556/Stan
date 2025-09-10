@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Conversation from "../models/conversationModel.js";
-// import Message from "../models/messageModel.js";
 import MessageStan from "../models/messageModel.js";
 import User from "../models/userModel.js";
 import { getReceiverSocketId } from "../socketManager/SocketManager.js";
@@ -23,7 +22,6 @@ export const sendMessage = async (req, res) => {
 
         let messageImageUrl;
         if (messageImage) {
-            // With S3 + multer-s3, the uploaded file URL is available at req.file.location
             messageImageUrl = messageImage.location;
         }
 
@@ -35,7 +33,6 @@ export const sendMessage = async (req, res) => {
             participants: { $all: [senderId, receiverId] },
         });
 
-        // Establish the conversation if not started yet.
         if (!conversation) {
             conversation = await Conversation.create({
                 participants: [senderId, receiverId],
@@ -52,18 +49,13 @@ export const sendMessage = async (req, res) => {
         if (newMessage) conversation.messages.push(newMessage._id);
         await Promise.all([conversation.save(), newMessage.save()]);
 
-        // Implement socket.io for real-time data transfer
         const receiverSocketId = getReceiverSocketId(receiverId);
 
         if (receiverSocketId) {
             global.io.to(receiverSocketId).emit("newMessage", newMessage);
 
-            // Fetch sender details to include in notification
-            const sender = await User.findById(senderId).select(
-                "name profilePic"
-            );
+            const sender = await User.findById(senderId).select("name profilePic");
 
-            // Construct notification object
             const notification = {
                 type: "message",
                 userId: senderId,
@@ -72,7 +64,6 @@ export const sendMessage = async (req, res) => {
                 conversationId: conversation._id,
             };
 
-            // Emit notification event
             global.io.to(receiverSocketId).emit("notification", notification);
         }
 
@@ -90,6 +81,7 @@ export const getMessage = async (req, res) => {
     try {
         const senderId = req.user?._id;
         const receiverId = req.params.id;
+        
         if (!senderId) {
             return res.status(401).json({ success: false, message: "Unauthorized" });
         }
@@ -98,8 +90,8 @@ export const getMessage = async (req, res) => {
         }
 
         const conversation = await Conversation.findOne({
-            participants: { $all: [senderId, receiverId] }, // ✅ Fix: Use an array instead of an object
-        }).populate("messages"); // ✅ Populates messages with actual message data
+            participants: { $all: [senderId, receiverId] },
+        }).populate("messages");
 
         if (!conversation) {
             return res.status(200).json({
@@ -110,47 +102,90 @@ export const getMessage = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            messages: conversation.messages, // ✅ Ensure messages are sent correctly
+            messages: conversation.messages,
         });
     } catch (error) {
         console.log("Error in getMessage:", error);
-        return res
-            .status(500)
-            .json({ success: false, error: "Internal Server Error" });
+        return res.status(500).json({ success: false, error: "Internal Server Error" });
     }
 };
+
+// New endpoint to mark messages as read
+export const markMessagesAsRead = async (req, res) => {
+    try {
+        const currentUserId = req.user?._id;
+        const { senderId } = req.body;
+
+        if (!currentUserId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        if (!senderId || !mongoose.Types.ObjectId.isValid(senderId)) {
+            return res.status(400).json({ success: false, message: "Invalid senderId" });
+        }
+
+        // Mark all unread messages from senderId to currentUserId as read
+        const result = await MessageStan.updateMany(
+            {
+                senderId: senderId,
+                receiverId: currentUserId,
+                isRead: false
+            },
+            {
+                $set: {
+                    isRead: true,
+                    readAt: new Date()
+                }
+            }
+        );
+
+        // Notify the sender via socket that their messages have been read
+        const senderSocketId = getReceiverSocketId(senderId);
+        if (senderSocketId) {
+            global.io.to(senderSocketId).emit("messagesRead", {
+                readBy: currentUserId,
+                messageCount: result.modifiedCount,
+                timestamp: new Date()
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Messages marked as read",
+            count: result.modifiedCount
+        });
+    } catch (error) {
+        console.log("Error marking messages as read:", error);
+        return res.status(500).json({ success: false, message: error?.message || "Internal Server Error" });
+    }
+};
+
 export const getAllMessageUsers = async (req, res) => {
     try {
+        const currentUserId = req.user._id;
 
         const pipeline = [
-            // Match messages where user is either sender or receiver
             {
                 $match: {
-                    $or: [{ senderId: req.user._id }, { receiverId: req.user._id }],
+                    $or: [{ senderId: currentUserId }, { receiverId: currentUserId }],
                 },
             },
-
-            // Project to get the other user in the conversation
             {
                 $project: {
                     user: {
                         $cond: {
-                            if: { $eq: ["$senderId", req.user._id] },
+                            if: { $eq: ["$senderId", currentUserId] },
                             then: "$receiverId",
                             else: "$senderId",
                         },
                     },
                 },
             },
-
-            // Group by user to remove duplicates
             {
                 $group: {
                     _id: "$user",
                 },
             },
-
-            // Lookup user details
             {
                 $lookup: {
                     from: "userstans",
@@ -159,23 +194,20 @@ export const getAllMessageUsers = async (req, res) => {
                     as: "userData",
                 },
             },
-
-            // Unwind user data
             {
                 $unwind: {
                     path: "$userData",
                     preserveNullAndEmptyArrays: true,
                 },
             },
-
-            // Project required user fields
             {
+               
                 $project: {
                     _id: 1,
                     name: { $ifNull: ["$userData.name", ""] },
                     email: { $ifNull: ["$userData.email", null] },
                     photo: { $ifNull: ["$userData.photo", null] },
-                    profilePhoto: { $ifNull: ["$userData.profilePhoto", null] },
+                    profilePhoto: { $ifNull: ["$userData.profilePic", null] },
                     createdAt: { $ifNull: ["$userData.createdAt", null] },
                     phone: { $ifNull: ["$userData.phone", null] },
                     dob: { $ifNull: ["$userData.dob", null] },
@@ -188,47 +220,12 @@ export const getAllMessageUsers = async (req, res) => {
                     deleteChatFor: { $ifNull: ["$userData.deleteChatFor", null] },
                 },
             },
-
-            // Union with current user's data
-            // {
-            //     $unionWith: {
-            //         coll: "userstans",
-            //         pipeline: [
-            //             {
-            //                 $match: {
-            //                     _id: req.user._id,
-            //                 },
-            //             },
-            //             {
-            //                 $project: {
-            //                     _id: 1,
-            //                     name: 1,
-            //                     email: 1,
-            //                     photo: 1,
-            //                     profilePhoto: 1,
-            //                     createdAt: 1,
-            //                     phone: 1,
-            //                     dob: 1,
-            //                     bio: 1,
-            //                     archiveUsers: 1,
-            //                     blockedUsers: 1,
-            //                     isUser: { $literal: true },
-            //                     deleteChatFor: 1,
-            //                 },
-            //             },
-            //         ],
-            //     },
-            // },
-
-
-
-            // Modified messages lookup for direct messages
             {
                 $lookup: {
                     from: "messagestans",
                     let: {
                         userId: "$_id",
-                        currentUserId: req.user._id,
+                        currentUserId: currentUserId,
                         isUser: "$isUser",
                     },
                     pipeline: [
@@ -250,7 +247,6 @@ export const getAllMessageUsers = async (req, res) => {
                                                     $and: [
                                                         { $eq: ["$senderId", "$$currentUserId"] },
                                                         { $eq: ["$receiverId", "$$userId"] },
-                                                        // { $ne: ["$isBlocked", true] },
                                                     ],
                                                 },
                                             ],
@@ -269,8 +265,33 @@ export const getAllMessageUsers = async (req, res) => {
                     as: "directMessages",
                 },
             },
-
-            // Final projection for users
+            // Add unread count lookup
+            {
+                $lookup: {
+                    from: "messagestans",
+                    let: {
+                        userId: "$_id",
+                        currentUserId: currentUserId,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$senderId", "$$userId"] },
+                                        { $eq: ["$receiverId", "$$currentUserId"] },
+                                        { $eq: ["$isRead", false] }
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $count: "unreadCount"
+                        }
+                    ],
+                    as: "unreadData",
+                },
+            },
             {
                 $project: {
                     _id: 1,
@@ -287,17 +308,21 @@ export const getAllMessageUsers = async (req, res) => {
                     isUser: 1,
                     directMessages: 1,
                     deleteChatFor: 1,
+                    unreadCount: {
+                        $ifNull: [
+                            { $arrayElemAt: ["$unreadData.unreadCount", 0] },
+                            0
+                        ]
+                    }
                 },
             },
         ];
 
         const results = await MessageStan.aggregate(pipeline);
-
-        // Process the results to include group messages
         const userResults = results.filter((item) => item.isUser);
 
         const currentUser = results.find(
-            (r) => r._id.toString() === req.user._id.toString()
+            (r) => r._id.toString() === currentUserId.toString()
         );
 
         const formattedUsers = userResults
@@ -308,17 +333,17 @@ export const getAllMessageUsers = async (req, res) => {
 
                 if (isInDeleteChatFor) {
                     const hasMessages = user?.directMessages && user?.directMessages.filter((u) => {
-                        const deletedForStrings = u.deletedFor.map((id) => id.toString());
-                        return !deletedForStrings.includes(currentUser._id.toString());
+                        const deletedForStrings = u.deletedFor?.map((id) => id.toString()) || [];
+                        return !deletedForStrings.includes(currentUserId.toString());
                     });
 
                     if (hasMessages && hasMessages?.length <= 0) {
-                        return false
+                        return false;
                     } else {
-                        return true
+                        return true;
                     }
                 } else {
-                    return true
+                    return true;
                 }
             })
             .map((user) => ({
@@ -335,6 +360,7 @@ export const getAllMessageUsers = async (req, res) => {
                 blockedUsers: user.blockedUsers,
                 isUser: true,
                 messages: user.directMessages || [],
+                unreadCount: user.unreadCount || 0
             }));
 
         return res.status(200).json({
@@ -351,38 +377,34 @@ export const getAllMessageUsers = async (req, res) => {
     }
 };
 
-
 export const deleteChat = async (req, res) => {
     try {
-      const { selectedId } = req.body;
-      const userId = req.user._id;
-  
-      // Find all messages between these users
-      let messages  = await MessageStan.find({
-          $or: [
-            { senderId: userId, receiverId: selectedId },
-            { senderId: selectedId, receiverId: userId },
-          ],
+        const { selectedId } = req.body;
+        const userId = req.user._id;
+
+        let messages = await MessageStan.find({
+            $or: [
+                { senderId: userId, receiverId: selectedId },
+                { senderId: selectedId, receiverId: userId },
+            ],
         });
-        console.log(messages,userId,selectedId);
-        
-      
-      // Add current user to deletedFor array for each message
-      await Promise.all(
-        messages.map(async (message) => {
-          await MessageStan.findByIdAndDelete(message._id);
-        })
-      );
-  
-      return res.status(200).json({
-        status: 200,
-        message: "Chat Delete successfully",
-      });
+        console.log(messages, userId, selectedId);
+
+        await Promise.all(
+            messages.map(async (message) => {
+                await MessageStan.findByIdAndDelete(message._id);
+            })
+        );
+
+        return res.status(200).json({
+            status: 200,
+            message: "Chat Delete successfully",
+        });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        status: 500,
-        message: error.message,
-      });
+        console.error(error);
+        return res.status(500).json({
+            status: 500,
+            message: error.message,
+        });
     }
-  };
+};

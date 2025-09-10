@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../Utils/axiosInstance";
 import { enqueueSnackbar } from "notistack";
 import { setClearCart } from "./cart.slice";
+import { addFanCoins } from '../Slice/user.slice';
 
 const initialStatepayment = {
   payment: [],
@@ -88,21 +89,29 @@ export const createOrder = createAsyncThunk(
 // Verify payment (calls backend to confirm Stripe Payment Intent)
 export const verifyPayment = createAsyncThunk(
   "payment/verifyPayment",
-  async (
-    { paymentIntentId, orderId },
-    { dispatch, rejectWithValue }
-  ) => {
+  async ({ paymentIntent, orderId }, { dispatch, rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/order/verify", {
-        paymentIntentId,
+        paymentIntent,
         orderId,
       });
-      dispatch(setClearCart());
+console.log(response.data);
+
+      // Add fan coins after successful payment
+      if (response.data.success) {
+        const userId = localStorage.getItem('userId');
+        const amount = 1000;
+
+        // Dispatch add fan coins action
+        await dispatch(addFanCoins({ 
+          userId, 
+          amount 
+        }));
+      }
+
       return response.data;
-    } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.error || "Payment verification failed"
-      );
+    } catch (error) {
+      return handleErrors(error, null, rejectWithValue);
     }
   }
 );

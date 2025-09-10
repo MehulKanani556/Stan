@@ -40,7 +40,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
         }
     },[dispatch,setShowUserList]);
 
-    // 🔑 Sort conversations by latest message timestamp
+    // Sort conversations by latest message timestamp and prioritize unread messages
     const sortedMessageUsers = useMemo(() => {
         return [...(allMessageUsers || [])].sort((a, b) => {
             const aIsTyping = typingUsers && typingUsers.includes(a._id);
@@ -49,6 +49,13 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
             // Prioritize typing users
             if (aIsTyping && !bIsTyping) return -1;
             if (!aIsTyping && bIsTyping) return 1;
+
+            // Then prioritize users with unread messages
+            const aUnreadCount = a.unreadCount || 0;
+            const bUnreadCount = b.unreadCount || 0;
+            
+            if (aUnreadCount > 0 && bUnreadCount === 0) return -1;
+            if (aUnreadCount === 0 && bUnreadCount > 0) return 1;
 
             // Then sort by latest message
             const aLast = a.messages?.[0]?.createdAt ? new Date(a.messages[0].createdAt) : new Date(0);
@@ -61,6 +68,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
     const isUserTyping = useCallback((userId) => {
         return typingUsers && typingUsers.includes(userId);
     },[typingUsers]);
+
     // Typing indicator component
     const TypingIndicator = React.memo(({ className = "" }) => (
         <div className={`flex items-center gap-2 ${className}`}>
@@ -72,6 +80,17 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
             <span className="text-green-400 font-medium text-sm">typing</span>
         </div>
     ));
+
+    // Unread count badge component
+    const UnreadBadge = React.memo(({ count }) => {
+        if (!count || count === 0) return null;
+        
+        return (
+            <div className="bg-blue-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 font-medium">
+                {count > 99 ? '99+' : count}
+            </div>
+        );
+    });
 
     return (
         <>
@@ -98,6 +117,7 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                     const userIsTyping = isUserTyping(user._id);
                                     const isOnline = onlineUsers.includes(user._id);
                                     const isSelected = selectedUser?._id === user._id;
+                                    const unreadCount = user.unreadCount || 0;
 
                                     return (
                                         <li
@@ -106,18 +126,20 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                 p-4 cursor-pointer hover:bg-gray-800/70 transition-all duration-200
                                                 ${isSelected ? 'bg-gray-800 border-r-4 border-blue-500' : ''}
                                                 ${userIsTyping ? 'bg-gray-800/30 ring-1 ring-green-400/20' : ''}
+                                                ${unreadCount > 0 && !isSelected ? 'bg-gray-800/40 border-l-2 border-blue-400' : ''}
                                             `}
                                             onClick={() => handleUserSelect(user)}
                                         >
                                             <div className="flex items-center gap-3">
                                                 {/* Profile photo or initial */}
                                                 <div className="flex-shrink-0 relative">
+                                                    {/* {console.log('user,user',user)} */}
                                                     {user.profilePhoto ? (
-                                                        <img
-                                                            src={user.profilePhoto}
-                                                            alt="profile"
-                                                            className="w-12 h-12 rounded-full object-cover"
-                                                        />
+                                                     <img
+                                                     src={user.profilePhoto}
+                                                     alt="profile"
+                                                     className="w-12 h-12 rounded-full object-cover"
+                                                 />
                                                     ) : (
                                                         <div className="w-12 h-12 rounded-full font-bold bg-gray-600 flex items-center justify-center text-gray-300 capitalize text-lg">
                                                             {user.name.charAt(0)}
@@ -132,23 +154,35 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                 {/* User info */}
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center justify-between mb-1">
-                                                        <h3 className="font-medium text-gray-100 truncate capitalize text-base">
+                                                        <h3 className={`font-medium truncate capitalize text-base ${
+                                                            unreadCount > 0 && !isSelected 
+                                                                ? 'text-white font-semibold' 
+                                                                : 'text-gray-100'
+                                                        }`}>
                                                             {user.name}
                                                         </h3>
-                                                        {/* Timestamp - hide when typing */}
-                                                        {!userIsTyping && user.messages && user.messages.length > 0 && (
-                                                            <span className="text-xs text-gray-400 ml-2 flex-shrink-0">
-                                                                {formatMessageTimestamp(user.messages[0].createdAt)}
-                                                            </span>
-                                                        )}
+                                                        <div className="flex  items-center gap-2 ml-2 flex-shrink-0">
+                                                            {/* Unread count badge */}
+                                                            {/* Timestamp - hide when typing or when showing unread count */}
+                                                            {!userIsTyping && user.messages && user.messages.length > 0 && (
+                                                                <span className="text-xs text-gray-400">
+                                                                    {formatMessageTimestamp(user.messages[0].createdAt)}
+                                                                </span>
+                                                            )}
+                                                           
+                                                        </div>
                                                     </div>
 
                                                     {/* Message preview or typing indicator */}
-                                                    <div className="flex items-center">
+                                                    <div className="flex items-center justify-between">
                                                         {userIsTyping ? (
                                                             <TypingIndicator />
                                                         ) : (
-                                                            <p className="text-sm text-gray-400 truncate pr-2">
+                                                            <p className={`text-sm truncate pr-2 ${
+                                                                unreadCount > 0 && !isSelected 
+                                                                    ? 'text-gray-200 font-medium' 
+                                                                    : 'text-gray-400'
+                                                            }`}>
                                                                 {user.messages && user.messages.length > 0
                                                                     ? user.messages[0]?.message.length > 35
                                                                         ? user.messages[0]?.message.slice(0, 35) + "..."
@@ -156,9 +190,12 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                                                     : "No messages yet"}
                                                             </p>
                                                         )}
+                                                    <UnreadBadge count={unreadCount} />
+
                                                     </div>
 
                                                     {/* Online status text */}
+
                                                     <div className="flex items-center gap-1 mt-1">
                                                         {isOnline && (
                                                             <span className="text-xs text-green-400"></span>
@@ -184,15 +221,15 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                         )
                     ) : (
                         <>
-                            {/* // All users view */}
+                            {/* All users view */}
                             <div className="p-3 pb-0">
                                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">All Users</h3>
                             </div>
                             <ul className="divide-y divide-gray-800">
                                 {allUsers
                                     .filter(user =>
-                                        user._id !== localStorage.getItem("userId") &&  // exclude self
-                                        !allMessageUsers.some(msgUser => msgUser._id === user._id) // exclude already messaged users
+                                        user._id !== localStorage.getItem("userId") &&
+                                        !allMessageUsers.some(msgUser => msgUser._id === user._id)
                                     )
                                     .map((user) => {
                                         const userIsTyping = isUserTyping(user._id);
@@ -253,10 +290,8 @@ export default function ChatUserList({ showUserList, setShowUserList }) {
                                     })}
                             </ul>
                         </>
-
                     )}
                 </div>
-
             </aside>
         </>
     )

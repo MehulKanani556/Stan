@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, use } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { getAllActiveGames, getHomeTopGame } from '../Redux/Slice/game.slice';
 import { getFreeGames } from '../Redux/Slice/freeGame.slice';
 import TopGamesSkeleton from '../lazyLoader/TopGamesSkeleton';
 
@@ -23,7 +24,7 @@ const SECTION_CONFIG = [
     )
   },
   {
-    title: "Top Free Games", 
+    title: "Top Free Games",
     dataKey: 'freeGame',
     link: '/games',
     icon: (
@@ -72,6 +73,8 @@ const GameCardSkeleton = () => (
   </div>
 );
 
+
+
 // Optimized GameCard Component
 const GameCard = React.memo(({ item, isLoading = false }) => {
   const handleImageError = useCallback((e) => {
@@ -84,9 +87,8 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
   }
 
   const isFree = !item?.platforms?.windows?.price;
-  const linkTo = isFree ? '/games' : `/single/${item?._id}`;
+  const linkTo = isFree ? `/games/${item.slug}` : `/single/${item?._id}`;
   const price = item?.platforms?.windows?.price;
-
   return (
     <Link to={linkTo} className='block mb-6'>
       <div className="group relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2 cursor-pointer">
@@ -121,17 +123,17 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
         <div className="relative p-5">
           {/* Title */}
           <h3 className="text-white text-lg font-bold mb-3 line-clamp-2 group-hover:text-purple-300 transition-colors duration-300">
-            {item?.title || item.name}
+            {item?.title || item?.name}
           </h3>
 
           {/* Price/Free badge */}
           <div className="flex items-center justify-between">
             {isFree ? (
               <div className="flex items-center gap-2">
-                <span className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-black px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                <span className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-black px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                   FREE
                 </span>
-                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                {/* <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />  */}
               </div>
             ) : (
               <div className="flex items-center gap-2">
@@ -181,11 +183,11 @@ const SectionHeader = React.memo(({ title, isRefreshing }) => (
       {title}
     </h3>
 
-    {isRefreshing && (
+    {/* {isRefreshing && (
       <div className="ml-auto">
         <div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
       </div>
-    )}
+    )} */}
   </div>
 ));
 
@@ -212,6 +214,7 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
     <div className="space-y-4 sm:space-y-0 md:grid md:grid-cols-2 md:gap-4 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
+        console.log('data',item),
           <GameCard key={item._id || item.id} item={item} />
         ))
       ) : isRefreshing ? (
@@ -241,66 +244,53 @@ GameSection.displayName = 'GameSection';
 function TopGames() {
   const dispatch = useDispatch();
   const [length, setLength] = useState(DEFAULT_ITEMS_COUNT);
-
-  // Redux selectors with shallow equality
-  const gameState = useSelector((state) => ({
-    games: state.game.games,
+  
+  const Homegames = useSelector(state => ({
+    ...state.game.homeTopGame,
     loading: state.game.topGamesInitialLoading
   }), shallowEqual);
-
-  const freeGameState = useSelector((state) => ({
-    games: state.freeGame.games,
-    loading: state.freeGame.topGamesInitialLoading
-  }), shallowEqual);
-
-  // Memoized new games calculation
-  const newGames = useMemo(() => {
-    if (!gameState.games?.length) return [];
-    return [...gameState.games]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 10);
-  }, [gameState.games]);
-
-  // Memoized data map
+  
+  // console.log('gamesss', Homegames);
+  
+  // Extract games and loading states once
+  
+  // Create gameData object directly
   const gameData = useMemo(() => ({
-    game: gameState.games || [],
-    freeGame: freeGameState.games || [],
-    newGames
-  }), [gameState.games, freeGameState.games, newGames]);
+    game: Homegames?.topSelling || [],
+    freeGame: Homegames?.freegames || [],
+    newGames: Homegames?.newGames || []
+  }), [Homegames]);
+  
+  // Compute loading and data availability
+  const isLoading = useMemo(() => {
+    return Homegames?.loading;
+  }, [Homegames?.loading]);
 
-  // Memoized loading states
-  const isLoading = useMemo(() => 
-    gameState.loading || freeGameState.loading,
-    [gameState.loading, freeGameState.loading]
-  );
-
-  const hasData = useMemo(() => 
-    gameData.game.length > 0 && gameData.freeGame.length > 0,
-    [gameData.game.length, gameData.freeGame.length]
-  );
-
-  // Calculate display length
+  // const hasData = gameData.length > 0;
+  
+  // Calculate display length when appropriate
   useEffect(() => {
-    if (isLoading || !hasData) return;
-
+    if (isLoading) return;
+    // console.log('gameData', gameData , isLoading)
     const minLength = Math.min(
-      gameData.game.length,
-      gameData.freeGame.length,
-      gameData.newGames.length
+      gameData.game?.length,
+      gameData.freeGame?.length,
+      gameData.newGames?.length
     );
-
+  
     setLength(minLength < MIN_REQUIRED_ITEMS ? minLength : DEFAULT_ITEMS_COUNT);
-  }, [gameData, isLoading, hasData]);
-
+  }, [isLoading, gameData]);
   // Fetch data on mount
   useEffect(() => {
-    dispatch(getFreeGames());
+    if(!isLoading){
+      dispatch(getHomeTopGame());
+    }
   }, [dispatch]);
 
   // Show skeleton while loading or no data
-  if (isLoading || !hasData) {
-    return <TopGamesSkeleton />;
-  }
+  // if (isLoading) {
+  //   return <TopGamesSkeleton />;
+  // }
 
   return (
     <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-16 md:pb-20 relative">
@@ -312,7 +302,7 @@ function TopGames() {
         <p className="text-gray-400 text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto">
           Discover the most popular and trending games across all platforms
         </p>
-        {isLoading && <LoadingIndicator />}
+        {/* {isLoading && <LoadingIndicator />} */}
       </div>
 
       {/* Games Grid */}
