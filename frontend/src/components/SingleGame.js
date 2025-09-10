@@ -246,17 +246,17 @@ const SingleGame = () => {
   // Computed values
   const ratings = useMemo(() => single?.reviews || [], [single?.reviews])
   const isInCart = useMemo(() =>
-    cartItems.some(item => item.game?._id === single?._id),
+    Array.isArray(cartItems) && cartItems.some(item => item?.game?._id === single?._id),
     [cartItems, single?._id]
   )
   const isInWishlist = useMemo(() =>
-    Boolean(wishlistStatus[single?._id]),
+    Boolean((wishlistStatus || {})[single?._id]),
     [wishlistStatus, single?._id]
   )
   const isBuyed = useMemo(() =>
     Array.isArray(orders) && orders.some(order =>
-      order.status === 'paid' &&
-      order?.items?.some(item => item.game._id === id)
+      order?.status === 'paid' &&
+      order?.items?.some(item => item?.game?._id === id)
     ),
     [orders, id]
   )
