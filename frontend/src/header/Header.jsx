@@ -151,11 +151,11 @@ export default function Header() {
                                             isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Games</NavLink>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <NavLink to="/rewards" className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Rewards</NavLink>
-                                    </li>
+                                    </li> */}
                                     <li>
                                         <NavLink to="/store" className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"

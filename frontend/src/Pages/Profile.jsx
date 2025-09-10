@@ -31,6 +31,7 @@ import { handleMyToggle } from '../Redux/Slice/game.slice';
 
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { RiLockPasswordLine } from "react-icons/ri";
+import {useFormik} from 'formik'
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -428,6 +429,15 @@ export default function Profile() {
         // Optionally show a toast/snackbar
     };
 
+    const changePassVal = {
+        currentPass:"",
+        newPass:"",
+        confirmPass:""
+    }
+    const changePassFormik = useFormik({
+        initialValues:""
+    }) 
+
     // handle  input change 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -680,7 +690,7 @@ export default function Profile() {
                 {activeMenu === "profile" && (
                     <div className={`px-4 py-6 w-full `}>
                         {/* Profile Header */}
-                        <div className=" rounded-2xl p-6 mb-6 border border-white/25">
+                        <div className=" rounded-2xl p-4 md:p-6 mb-6 border border-white/25">
                             <div className='flex justify-end'>
 
                                 {isEditing ? (
@@ -722,16 +732,16 @@ export default function Profile() {
                         </div>
 
                         {/* Profile Details */}
-                        <div className=" rounded-2xl p-6 mb-6 border border-white/25">
+                        <div className=" rounded-2xl p-4 md:p-6 mb-6 border border-white/25">
                             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                                 <FaUser className="text-[#ab99e1]" />
                                 Personal Information
                             </h3>
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
-                                    <FaUser className="text-[#ab99e1] w-5 h-5" />
+                                    <FaUser className="text-[#ab99e1] text-md flex-shrink-0" />
                                     <div className="flex-1">
-                                        <div className="text-sm text-gray-400 ">Name</div>
+                                        <div className="md:text-sm text-xs text-gray-400 ">Name</div>
                                         {isEditing ? (
                                             <input
                                                 type="text"
@@ -743,15 +753,15 @@ export default function Profile() {
                                                 maxLength={16}
                                             />
                                         ) : (
-                                            <div className="text-white">{decryptData(user?.name) || "User"}</div>
+                                            <div className="text-white md:text-sm text-xs">{decryptData(user?.name) || "User"}</div>
                                         )}
                                     </div>
                                 </div>
 
                                 <div className="flex items-center  gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
-                                    <MdEmail className="text-[#ab99e1] w-5 h-5" />
+                                    <MdEmail className="text-[#ab99e1] text-md flex-shrink-0" />
                                     <div className="flex-1 ">
-                                        <div className="text-sm text-gray-400">Email</div>
+                                        <div className="md:text-sm text-xs text-gray-400">Email</div>
                                         {/* {isEditing ? (
                                             <input
                                                 type="email"
@@ -764,7 +774,7 @@ export default function Profile() {
                                         ) : (
                                             <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
                                         )} */}
-                                        <div className="text-white ">{decryptData(user?.email) || "example@gmail.com"}</div>
+                                        <div className="text-white md:text-sm text-xs">{decryptData(user?.email) || "example@gmail.com"}</div>
                                     </div>
                                 </div>
                             </div>
@@ -1049,16 +1059,17 @@ export default function Profile() {
                                         </button>
                                     </Dialog.Title>
 
-                                    <div className="mt-5 space-y-4">
+                                    <form className="mt-5 space-y-4">
                                         {/* Current Password */}
                                         <div className="flex flex-col gap-2">
                                             <label className="text-sm text-gray-300">Current Password</label>
                                             <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                                 <input
                                                     type={showPassword.current ? "text" : "password"}
-                                                    name="currentPassword"
-                                                    value={passwordData.currentPassword}
-                                                    onChange={handlePasswordInput}
+                                                    name="currentPass"
+                                                    value={changePassFormik.values.currentPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
                                                     placeholder="Enter current password"
                                                     className="w-full bg-transparent outline-none text-white placeholder-gray-500"
                                                 />
@@ -1066,6 +1077,7 @@ export default function Profile() {
                                                     {showPassword.current ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
                                                 </button>
                                             </div>
+                                            {changePassFormik.touched.currentPass && changePassFormik.errors.currentPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.currentPass}</p>)}
                                         </div>
 
                                         {/* New Password */}
@@ -1074,9 +1086,10 @@ export default function Profile() {
                                             <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                                 <input
                                                     type={showPassword.newPass ? "text" : "password"}
-                                                    name="newPassword"
-                                                    value={passwordData.newPassword}
-                                                    onChange={handlePasswordInput}
+                                                    name="newPass"
+                                                    value={changePassFormik.values.newPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
                                                     placeholder="Enter new password"
                                                     className="w-full bg-transparent outline-none text-white placeholder-gray-500"
                                                 />
@@ -1084,7 +1097,7 @@ export default function Profile() {
                                                     {showPassword.newPass ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
                                                 </button>
                                             </div>
-                                            
+                                            {changePassFormik.touched.newPass && changePassFormik.errors.newPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.newPass}</p>)}
                                         </div>
 
                                         {/* Confirm Password */}
@@ -1093,9 +1106,10 @@ export default function Profile() {
                                             <div className="flex items-center gap-2 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
                                                 <input
                                                     type={showPassword.confirm ? "text" : "password"}
-                                                    name="confirmPassword"
-                                                    value={passwordData.confirmPassword}
-                                                    onChange={handlePasswordInput}
+                                                    name="confirmPass"
+                                                    value={changePassFormik.values.confirmPass}
+                                                    onChange={changePassFormik.handleChange}
+                                                    onBlur={changePassFormik.handleBlur}
                                                     placeholder="Re-enter new password"
                                                     className="w-full bg-transparent outline-none text-white placeholder-gray-500"
                                                 />
@@ -1103,6 +1117,7 @@ export default function Profile() {
                                                     {showPassword.confirm ? <IoEyeOff className="w-5 h-5" /> : <IoEye className="w-5 h-5" />}
                                                 </button>
                                             </div>
+                                            {changePassFormik.touched.confirmPass && changePassFormik.errors.confirmPass && (<p className="text-red-400 text-sm">{changePassFormik.errors.confirmPass}</p>)}
                                         </div>
 
                                         {passwordError && (
@@ -1123,7 +1138,7 @@ export default function Profile() {
                                                 Update Password
                                             </button>
                                         </div>
-                                    </div>
+                                    </form>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
