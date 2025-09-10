@@ -368,7 +368,7 @@ export const editUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const userId = req.user?._id;
-
+        const { otp } = req.body;
         if (!userId) {
             return sendBadRequestResponse(res, "User ID is required");
         }
