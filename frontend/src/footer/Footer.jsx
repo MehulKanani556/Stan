@@ -40,7 +40,7 @@ const Footer = () => {
             <div className="space-y-4 max-[425px]:col-span-2">
               <YOYO_LOGO className="svg-current-color h-12 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
               <p className="text-gray-300 text-sm leading-relaxed">
-                Your ultimate gaming destination. Discover, play, and connect with gamers worldwide.
+                A realm where ancient horrors dwell and forgotten heroes rise again. Unleash your legend in the shadows.
               </p>
               <div className="flex justify-center md:justify-start gap-3 sm:gap-4 md:gap-5 flex-wrap ">
                 {[
@@ -106,21 +106,25 @@ const Footer = () => {
               <div className="space-y-4 text-sm text-gray-300">
                 <div className="flex gap-3 items-center ">
                   <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
-                  <a href="https://maps.app.goo.gl/Rm9PcQeQUdoSXuKYA" target="_blank" rel="noopener noreferrer" className='hover:text-[#ab99e1]'>123 Gaming Street, Digital City, DC 12345</a>
+                  <a rel="noopener noreferrer" className=''>
+                    264 Weber St W, Kitchener, ON N2H 4A6, Canada
+                  </a>
                 </div>
                 <div className="flex gap-3 items-center ">
                   <IoCallOutline className="text-[#ab99e1]" />
-                  <a href="tel:+919876543210" target="_blank" rel="noopener noreferrer" className='hover:text-[#ab99e1]'>+91 9876543210</a>
+                  <a rel="noopener noreferrer" className=''>1800-9797-6361</a>
                 </div>
                 <div className="flex gap-3 items-center ">
                   <IoMailOutline className="text-[#ab99e1]" />
-                  <a href="mailto:support@YOYO.com" target="_blank" rel="noopener noreferrer" className='hover:text-[#ab99e1]'>support@YOYO.com</a> 
+                  <a rel="noopener noreferrer" className=''>info@yoyokhel.com</a>
                 </div>
               </div>
             </div>
           </div>
           <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
-            <p>© 2025 YOYO Gaming. All rights reserved.</p>
+            <p>
+              © 2025 YOYO Khel Pvt. Ltd. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

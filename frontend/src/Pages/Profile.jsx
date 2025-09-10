@@ -558,7 +558,7 @@ export default function Profile() {
                 {activeMenu === "profile" && (
                     <div className={`px-4 py-6 w-full `}>
                         {/* Profile Header */}
-                        <div className=" rounded-2xl p-6 mb-6 border border-white/25">
+                        <div className=" rounded-2xl p-4 md:p-6 mb-6 border border-white/25">
                             <div className='flex justify-end'>
 
                                 {isEditing ? (
@@ -600,16 +600,16 @@ export default function Profile() {
                         </div>
 
                         {/* Profile Details */}
-                        <div className=" rounded-2xl p-6 mb-6 border border-white/25">
+                        <div className=" rounded-2xl p-4 md:p-6 mb-6 border border-white/25">
                             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                                 <FaUser className="text-[#ab99e1]" />
                                 Personal Information
                             </h3>
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
-                                    <FaUser className="text-[#ab99e1] w-5 h-5" />
+                                    <FaUser className="text-[#ab99e1] text-md flex-shrink-0" />
                                     <div className="flex-1">
-                                        <div className="text-sm text-gray-400 ">Name</div>
+                                        <div className="md:text-sm text-xs text-gray-400 ">Name</div>
                                         {isEditing ? (
                                             <input
                                                 type="text"
@@ -621,15 +621,15 @@ export default function Profile() {
                                                 maxLength={16}
                                             />
                                         ) : (
-                                            <div className="text-white">{decryptData(user?.name) || "User"}</div>
+                                            <div className="text-white md:text-sm text-xs">{decryptData(user?.name) || "User"}</div>
                                         )}
                                     </div>
                                 </div>
 
                                 <div className="flex items-center  gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
-                                    <MdEmail className="text-[#ab99e1] w-5 h-5" />
+                                    <MdEmail className="text-[#ab99e1] text-md flex-shrink-0" />
                                     <div className="flex-1 ">
-                                        <div className="text-sm text-gray-400">Email</div>
+                                        <div className="md:text-sm text-xs text-gray-400">Email</div>
                                         {/* {isEditing ? (
                                             <input
                                                 type="email"
@@ -642,7 +642,7 @@ export default function Profile() {
                                         ) : (
                                             <div className="text-white">{decryptData(user?.email) || "example@gmail.com"}</div>
                                         )} */}
-                                        <div className="text-white ">{decryptData(user?.email) || "example@gmail.com"}</div>
+                                        <div className="text-white md:text-sm text-xs">{decryptData(user?.email) || "example@gmail.com"}</div>
                                     </div>
                                 </div>
                             </div>
