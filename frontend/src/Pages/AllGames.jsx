@@ -585,7 +585,9 @@ export default function AllGames() {
 
     // Effects
     useEffect(() => {
+        if (isLoggedIn) {
         dispatch(allorders());
+        }
     }, [dispatch]);
 
     useEffect(() => {

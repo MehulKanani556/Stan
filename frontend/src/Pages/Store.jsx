@@ -159,7 +159,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
             {/* Wishlist Button */}
             <button
-              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${inWishlist
+              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${(inWishlist && isLoggedIn)
                 ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
                 : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
                 }`}
@@ -220,7 +220,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
               : navigate('/login')
             }}
             disabled={inCart}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${inCart
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart && isLoggedIn)
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
