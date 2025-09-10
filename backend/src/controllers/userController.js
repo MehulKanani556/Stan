@@ -8,6 +8,8 @@ import { decryptData, encryptData } from "../middlewares/incrypt.js";
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
+import nodemailer from "nodemailer"
+
 dotenv.config();
 
 // Configure S3 client
@@ -565,11 +567,32 @@ export const followOrUnfollow = async (req, res) => {
         return ThrowError(res, 500, error.message)
     }
 };
+const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
+async function sendOtpEmail(email, otp) {
 
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.MY_GMAIL,
+            pass: process.env.MY_PASSWORD,
+        },
+        tls: { rejectUnauthorized: false },
+    });
+
+    const mailOptions = {
+        from: process.env.MY_GMAIL,
+        to: email,
+        subject: "delete account otp ",
+        text: `Your OTP for delete account  is: ${otp}. It is valid for 10 minutes.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+}
 export const sendDeleteOtp = async (req, res) => {
     try {
         const { email } = req.body
+        const emailHash = email ? encryptData(email) : undefined;
         if (email) {
             const otp = generateOTP()
             // Find user by email
@@ -577,7 +600,6 @@ export const sendDeleteOtp = async (req, res) => {
             if (!user) {
                 return sendErrorResponse(res, 404, "User not found");
             }
-
             // Send OTP to the original email (not encrypted)
             await sendOtpEmail(email, otp);
             // Set OTP and expiry (e.g., 5 minutes from now)

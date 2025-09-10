@@ -35,6 +35,45 @@ export const ChangePassSlice = createAsyncThunk(
     }
 );
 
+export const SendDeleteOtp = createAsyncThunk(
+    "profile/SendDeleteOtp",
+    async (values, { rejectWithValue }) => {
+        try {
+            const id = localStorage.getItem("userId")
+            const response = await axiosInstance.post(`/sendDeleteOtp/${id}` ,{
+                email:values?.email,
+            });
+            enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data; // { success, result, message }
+        } catch (error) {
+
+            const errorMessage = error.response?.data?.message || "Failed to load profile";
+            enqueueSnackbar(error.response?.data?.message, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+export const DeleteUser = createAsyncThunk(
+    "profile/DeleteUser",
+    async (allOtp, { rejectWithValue }) => {
+        try {
+            const id = localStorage.getItem("userId")
+            const response = await axiosInstance.post(`/deleteUser/${id}` ,{
+                otp:allOtp,
+            });
+            enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data; // { success, result, message }
+        } catch (error) {
+
+            const errorMessage = error.response?.data?.message || "Failed to load profile";
+            enqueueSnackbar(error.response?.data?.message, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+
 const initialState = {
     data: null,
     loading: false,
@@ -81,6 +120,36 @@ const profileSlice = createSlice({
                 state.error = null;
             })
             .addCase(ChangePassSlice.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to load profile";
+                state.data = null;
+            })
+
+            .addCase(SendDeleteOtp.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(SendDeleteOtp.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message || null;
+                state.error = null;
+            })
+            .addCase(SendDeleteOtp.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload?.message || "Failed to load profile";
+                state.data = null;
+            })
+
+            .addCase(DeleteUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(DeleteUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message || null;
+                state.error = null;
+            })
+            .addCase(DeleteUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload?.message || "Failed to load profile";
                 state.data = null;

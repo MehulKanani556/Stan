@@ -5,7 +5,7 @@ import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
 import { getUserById, editUserProfile, logoutUser, clearUser } from '../Redux/Slice/user.slice';
-import { ChangePassSlice, fetchProfile } from '../Redux/Slice/profile.slice';
+import { ChangePassSlice, DeleteUser, fetchProfile, SendDeleteOtp } from '../Redux/Slice/profile.slice';
 import ProfileSkeleton from '../lazyLoader/ProfileSkeleton';
 import TransactionHistorySkeleton from '../lazyLoader/TransactionHistorySkeleton';
 import OrderListSkeleton from '../lazyLoader/OrderListSkeleton';
@@ -299,6 +299,7 @@ export default function Profile() {
     const [deleteOtp, setDeleteOtp] = useState(false)
     const [ otp, setOtp] = useState(["", "", "", ""]);
     const inputsRef = useRef([]);
+    const [btnLoader, setBtnLoader] = useState(false)
     // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
@@ -417,8 +418,7 @@ export default function Profile() {
         //     setIsSendingOtp(false);
         // }
 
-            setShowDeleteOtpModal(false);
-            setDeleteOtp(true)
+           
 
     };
 
@@ -459,32 +459,64 @@ export default function Profile() {
         validationSchema:changePassSchema,
         onSubmit:(values , action)=>{
            dispatch(ChangePassSlice(values))
-           action.resetForm()
-           setActiveMenu("profile");
+             setShowDeleteOtpModal(false);
+             setDeleteOtp(true)
+             action.resetForm()
+             setActiveMenu("profile");
         }
     }) 
 
     const deleteOtpFormik = useFormik({
-
+        initialValues:{
+            otp0:"",
+            otp1:"",
+            otp2:"",
+            otp3:""
+        },
+        validationSchema: Yup.object({
+            otp0: Yup.string()
+              .matches(/^[0-9]$/, "Must be a digit")
+              .required("Required"),
+            otp1: Yup.string()
+              .matches(/^[0-9]$/, "Must be a digit")
+              .required("Required"),
+            otp2: Yup.string()
+              .matches(/^[0-9]$/, "Must be a digit")
+              .required("Required"),
+            otp3: Yup.string()
+              .matches(/^[0-9]$/, "Must be a digit")
+              .required("Required"),
+        }),
+        onSubmit:(values , action)=>{
+            let allOtp = values.otp0 + values.otp1 + values.otp2 + values.otp3
+            // console.log("HIHI", typeof(allOtp));
+            
+            dispatch(DeleteUser(allOtp))
+            setDeleteOtp(false)
+            setActiveMenu("profile");
+            dispatch(logoutUser());
+            dispatch(clearUser())
+            localStorage.removeItem("userName");
+            navigate("/")
+            dispatch(handleMyToggle(false)) 
+            action.resetForm()
+        }
     })
 
-    const handleChange = (index, e) => {
-        const { value } = e.target;
-    
-        if (/^\d?$/.test(value)) {
-            deleteOtpFormik.setFieldValue(`otp${index}`, value);
-    
-          if (value && index < 5) {
-            deleteOtpFormik.current[index + 1]?.focus();
+    const handleChange = (value, index) => {
+        if (/^[0-9]?$/.test(value)) {
+          deleteOtpFormik.setFieldValue(`otp${index}`, value);
+          if (value && index < 3) {
+            inputsRef.current[index + 1]?.focus();
           }
         }
-    };
+      };
     
-      const handleKeyDown = (index, e) => {
+      const handleKeyDown = (e, index) => {
         if (e.key === "Backspace" && !deleteOtpFormik.values[`otp${index}`] && index > 0) {
-            inputsRef.current[index - 1]?.focus();
+          inputsRef.current[index - 1]?.focus();
         }
-    };
+      };
 
     const verifyEmail = {
         email:""
@@ -497,7 +529,22 @@ export default function Profile() {
               .email("Enter a valid email address")
               .required("Email is required"),
         }),
+        onSubmit:(values , action)=>{
+            setBtnLoader(true)
+           dispatch(SendDeleteOtp(values))
+           .then((value)=>{
+              if(value?.meta?.requestStatus === "fulfilled"){
+                   setShowDeleteOtpModal(false);
+                   setDeleteOtp(true)
+                   setBtnLoader(false)
+                   action.resetForm()
+                }
+           })
+           
+        }
     })
+
+
 
     // handle  input change 
     const handleInputChange = (e) => {
@@ -1514,17 +1561,26 @@ export default function Profile() {
                                             <IoClose className="w-5 h-5" />
                                         </button>
                                     </Dialog.Title>
-                                    <form className='mt-4 space-y-4'>
+                                    <form onSubmit={verifyEmailFormik.handleSubmit} className='mt-4 space-y-4'>
                                         <input
                                             type='email'
-                                            value={deleteEmail}
-                                            onChange={(e) => setDeleteEmail(e.target.value)}
+                                            name='email'
+                                            value={verifyEmailFormik.values.email}
+                                            onChange={verifyEmailFormik.handleChange}
+                                            onBlur={verifyEmailFormik.handleBlur}
                                             placeholder='Email'
                                             className='w-full p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500'
                                         />
+                                        {verifyEmailFormik.touched.email && verifyEmailFormik.errors.email && (<p className="text-red-400 text-sm">{verifyEmailFormik.errors.email}</p>)}
                                         <div className='flex gap-3 justify-between'>
-                                            <button className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={closeDeleteAccountModal} disabled={isSendingOtp}>Cancel</button>
-                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 ' onClick={handleSendDeleteOtp} >Send Otp</button>
+                                            <button type='button' className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={closeDeleteAccountModal} disabled={isSendingOtp}>Cancel</button>
+                                            <button type="submit" disabled={btnLoader} className="px-4 py-2 flex items-center justify-center rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed">
+                                               {btnLoader ? (
+                                                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                               ) : (
+                                                 "Send Otp"
+                                               )}
+                                            </button>
                                         </div>
                                     </form>
                                 </Dialog.Panel>
@@ -1547,24 +1603,31 @@ export default function Profile() {
                                             <IoClose className="w-5 h-5" />
                                         </button>
                                     </Dialog.Title>
-                                    <form className='mt-4 space-y-4'>
-                                        <div className="flex justify-between sm:px-9 sx:px-9 px-2 pt-3">
-                                          {otp.map((digit, index) => (
-                                            <input
-                                              key={index}
-                                              type="text"
-                                              value={digit}
-                                              maxLength="1"
-                                              ref={(el) => (inputsRef.current[index] = el)}
-                                              onChange={(e) => handleChange(e.target.value, index)}
-                                              onKeyDown={(e) => handleKeyDown(e, index)}
-                                              className="sm:w-[60px] sm:h-[60px] h-[50px] w-[50px] text-center p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500"
-                                            />
-                                          ))}
-                                        </div>
+                                    <form onSubmit={deleteOtpFormik.handleSubmit} className='mt-4 space-y-4'>
+                                      <div className="flex justify-between sm:px-9 sx:px-9 px-2 pt-3">
+                                         {[0, 1, 2, 3].map((index) => (
+                                           <div key={index} className="flex flex-col items-center">
+                                             <input
+                                               type="text"
+                                               maxLength="1"
+                                               name={`otp${index}`}
+                                               value={deleteOtpFormik.values[`otp${index}`]}
+                                               onChange={(e) => handleChange(e.target.value, index)}
+                                               onKeyDown={(e) => handleKeyDown(e, index)}
+                                               ref={(el) => (inputsRef.current[index] = el)}
+                                               className="sm:w-[60px] sm:h-[60px] h-[50px] w-[50px] text-center p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500"
+                                             />
+                                             {deleteOtpFormik.touched[`otp${index}`] && deleteOtpFormik.errors[`otp${index}`] && (
+                                               <span className="text-red-400 text-sm mt-1">
+                                                 {deleteOtpFormik.errors[`otp${index}`]}
+                                               </span>
+                                             )}
+                                           </div>
+                                         ))}
+                                       </div>
                                         <div className='flex gap-3 justify-between pt-5'>
-                                            <button className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={()=> setDeleteOtp(false)} disabled={isSendingOtp}>Cancel</button>
-                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed' onClick={handleSendDeleteOtp}>Delete</button>
+                                            <button type='button' className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={()=> setDeleteOtp(false)} disabled={isSendingOtp}>Cancel</button>
+                                            <button type='submit' className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed'>Delete</button>
                                         </div>
                                     </form>
                                 </Dialog.Panel>
