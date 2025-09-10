@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaShieldAlt, FaLockOpen } from "react-icons/fa";
+import PuzzleCaptcha from "./PuzzleCaptcha";
 
 import loginBg from "../images/login-bg-video.mp4";
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
@@ -10,6 +11,7 @@ import {
   forgotPassword,
   googleLogin,
   login,
+  preLogin,
   register,
   resetPassword,
   verifyOtp,
@@ -314,12 +316,56 @@ const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isCaptchaSolved, setIsCaptchaSolved] = useState(false);
+  const [captchaError, setCaptchaError] = useState("");
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [loginVerified, setLoginVerified] = useState(false);
+  const [pendingUserName, setPendingUserName] = useState("");
+  const [pendingCreds, setPendingCreds] = useState(null);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const handleCaptchaSuccess = async () => {
+    setIsCaptchaSolved(true);
+    setCaptchaError("");
+    if (loginVerified) {
+      try {
+        if (!pendingCreds) return;
+        const res = await dispatch(login(pendingCreds));
+        if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
+          navigate("/");
+          dispatch(handleMyToggle(true));
+          if (pendingUserName) {
+            dispatch(setUser({ name: pendingUserName }));
+          }
+        } else {
+          setCaptchaError("Session expired. Please try again.");
+          setShowCaptcha(false);
+          setLoginVerified(false);
+        }
+      } catch (e) {
+        setCaptchaError("Login failed. Please try again.");
+        setShowCaptcha(false);
+        setLoginVerified(false);
+      }
+    }
+  };
+
+  const handleCaptchaFailure = () => {
+    setIsCaptchaSolved(false);
+    setCaptchaError("Please complete the captcha to continue");
+  };
+
+  const resetCaptcha = () => {
+    setIsCaptchaSolved(false);
+    setCaptchaError("");
+    setShowCaptcha(false);
+    setLoginVerified(false);
   };
 
   const formConfigs = {
@@ -332,21 +378,29 @@ const Login = () => {
       }),
       onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
         try {
-          const res = await dispatch(login(values));
+          // Step 1: Pre-verify credentials only (no tokens/session yet)
+          const res = await dispatch(preLogin(values));
           if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
-            console.log("Login successful:", res?.payload?.name);
-            navigate("/");
-            dispatch(handleMyToggle(true))
-            dispatch(setUser({ name: res?.payload?.name }));
-            resetForm();
+            // Show captcha now; do not navigate yet
+            setShowCaptcha(true);
+            setLoginVerified(true);
+            setIsCaptchaSolved(false);
+            setPendingUserName(res?.payload?.name || "");
+            setPendingCreds(values);
+            setStatus({ error: "Please complete the captcha verification" });
+            return;
           } else {
             setStatus({ error: "Invalid credentials" });
+            setIsCaptchaSolved(false);
+            setShowCaptcha(false);
+            setLoginVerified(false);
+            setPendingCreds(null);
           }
         } finally {
           setSubmitting(false);
         }
       },
-      render: () => (
+      render: (formik) => (
         <>
           <InputWithIcon
             id="login-email"
@@ -367,11 +421,46 @@ const Login = () => {
           />
           <p
             className="cursor-pointer text-sm text-blue-300 mt-2 text-right hover:text-blue-200 transition-colors"
-            onClick={() => setActiveForm("forgot")}
+            onClick={() => {
+              setActiveForm("forgot");
+              resetCaptcha();
+            }}
           >
             Forgot password?
           </p>
-          <button type="submit" className="group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
+          
+          {/* Show captcha only AFTER successful password verification */}
+          {showCaptcha && (
+            <div className="mt-4">
+              <PuzzleCaptcha
+                sliderBarTitle="Slide to verify"
+                cardTitle="Complete the puzzle to continue"
+                initialColor="#3B82F6"
+                successColor="#22C55E"
+                imageWidth={340}
+                imageHeight={170}
+                pieceWidth={56}
+                pieceHeight={56}
+                tolerance={12}
+                showResetBtn={true}
+                onSuccess={handleCaptchaSuccess}
+                onFailure={handleCaptchaFailure}
+              />
+              {captchaError && (
+                <div className="text-red-400 text-sm mt-2 text-center">
+                  {captchaError}
+                </div>
+              )}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            disabled={showCaptcha && !isCaptchaSolved}
+            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${
+              showCaptcha && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
             <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
               <span className="mr-2">Sign in</span>
@@ -384,7 +473,10 @@ const Login = () => {
             Don't have an account?{" "}
             <span
               className="cursor-pointer text-blue-300 hover:text-blue-200"
-              onClick={() => setActiveForm("signup")}
+              onClick={() => {
+                setActiveForm("signup");
+                resetCaptcha();
+              }}
             >
               Sign up
             </span>
@@ -456,7 +548,12 @@ const Login = () => {
             </label>
           </div>
           <ErrorMessage name="agreeToTerms" component="div" className="text-red-400 text-sm mt-1" />
-          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
+          <button 
+            type="submit" 
+            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${
+              ''
+            }`}
+          >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
             <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
               <span className="mr-2">Sign up</span>
@@ -465,7 +562,10 @@ const Login = () => {
               </svg>
             </span>
           </button>
-          <p className="cursor-pointer text-sm text-blue-300 mt-2 text-center hover:text-blue-200" onClick={() => setActiveForm("login")}>
+          <p className="cursor-pointer text-sm text-blue-300 mt-2 text-center hover:text-blue-200" onClick={() => {
+            setActiveForm("login");
+            resetCaptcha();
+          }}>
             Already have an account? Login
           </p>
         </>
@@ -512,7 +612,10 @@ const Login = () => {
               </svg>
             </span>
           </button>
-          <p className="cursor-pointer text-sm text-blue-300 mt-2 text-center hover:text-blue-200" onClick={() => setActiveForm("login")}>
+          <p className="cursor-pointer text-sm text-blue-300 mt-2 text-center hover:text-blue-200" onClick={() => {
+            setActiveForm("login");
+            resetCaptcha();
+          }}>
             Back to Login
           </p>
         </>
@@ -784,7 +887,7 @@ const Login = () => {
   return (
     <BackgroundBeamsWithCollision className="z-10 relative">
       <div className="relative p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-lg mx-auto z-20 shadow shadow-white/50">
-        <div className="absolute top-0 left-0 h-full w-full   backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl w-[90%] max-w-lg mx-auto z-0 shadow shadow-white/50"></div>
+        <div className="absolute top-0 left-0 h-full w-full backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-10 rounded-3xl max-w-lg mx-auto z-0 shadow shadow-white/50"></div>
         <div className="relative z-10">
           <div className="flex justify-center mb-4 sm:mb-6">
             <div className="w-12 h-12 sm:w-14 sm:h-14 p-2 bg-black border rounded-full">
@@ -801,11 +904,11 @@ const Login = () => {
             validationSchema={validationSchema}
             onSubmit={onSubmit}
           >
-            {({ status, isSubmitting }) => (
+            {(formik) => (
               <Form className="space-y-3 sm:space-y-4">
-                {render()}
-                {status?.error && (
-                  <div className="text-red-400 text-center mt-4 p-2 rounded-xl bg-red-800/80 shadow-lg">{status.error}</div>
+                {render(formik)}
+                {formik.status?.error && (
+                  <div className="text-red-400 text-center mt-4 p-2 rounded-xl bg-red-800/80 shadow-lg">{formik.status.error}</div>
                 )}
               </Form>
             )}

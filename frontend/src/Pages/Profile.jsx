@@ -984,7 +984,7 @@ export default function Profile() {
                                                                             '❌ Failed'}
                                                                 </span>
                                                                 <div className="mt-1">
-                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.originalAmount}</span>
+                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.amount.toFixed(2)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1010,7 +1010,7 @@ export default function Profile() {
                                                                                 </div>
                                                                             </div>
                                                                             <div className="text-right">
-                                                                                <p className="text-white font-semibold text-xs sm:text-sm">${item.price}</p>
+                                                                                <p className="text-white font-semibold text-xs sm:text-sm">${item.price.toFixed(2)}</p>
                                                                                 {item.downloadToken && (
                                                                                     <p className="text-green-400 text-[10px] sm:text-xs">
                                                                                         {item.downloadTokenUsed ? 'Downloaded' : 'Available'}
@@ -1330,7 +1330,7 @@ export default function Profile() {
                                                                         '❌ Failed'}
                                                             </span>
                                                             <div className="mt-2">
-                                                                <span className="text-3xl font-bold text-white">${selectedOrder.originalAmount.toFixed(2)}</span>
+                                                                <span className="text-3xl font-bold text-white">${selectedOrder.amount.toFixed(2)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1371,7 +1371,7 @@ export default function Profile() {
                                                                             </div>
                                                                         </div>
                                                                         <div className="text-right mt-2 mb-2">
-                                                                            <p className="font-bold text-white text-xl">${item.price}</p>
+                                                                            <p className="font-bold text-white text-xl">${item.price.toFixed(2)}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1387,7 +1387,7 @@ export default function Profile() {
                                                         {/* Display original amount as Subtotal */}
                                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                                                             <span className="text-gray-300">Subtotal:</span>
-                                                            <span className="text-white font-semibold">${selectedOrder.originalAmount?.toFixed(2) || '0.00'}</span>
+                                                            <span className="text-white font-semibold">${selectedOrder.amount.toFixed(2)}</span>
                                                         </div>
 
                                                         {/* Display Fan Coin Discount if available and greater than 0 */}
@@ -1419,7 +1419,7 @@ export default function Profile() {
                                                             <div className="flex justify-between items-center">
                                                                 {/* Display final amount as Total */}
                                                                 <span className="text-white font-bold text-lg">Total:</span>
-                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount?.toFixed(2) || '0.00'}</span>
+                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount.toFixed(2)}</span>
                                                             </div>
                                                         </div>
                                                         {console.log(selectedOrder)}
