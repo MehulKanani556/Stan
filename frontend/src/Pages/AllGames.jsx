@@ -367,7 +367,7 @@ const FilterHeader = React.memo(({
                 </div>
 
                 {/* Filters */}
-                <div className="flex  items-end gap-4">
+                <div className="flex  sx:flex-nowrap flex-wrap items-end gap-4">
 
                     {/* Category Filter */}
                     <div className="min-w-[150px]">
@@ -781,11 +781,11 @@ export default function AllGames() {
     };
 
     return (
-        <div className="mx-auto max-w-[95%] md:max-w-[85%] pb-10">
+        <div className="mx-auto max-w-[95%] md:max-w-[85%] md:pb-10">
             <style>{SELECT_STYLES}</style>
 
             {/* Header */}
-            <div className="text-center py-12 sm:py-16">
+            <div className="text-center py-12 ms:py-16 py-10">
                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
                     All Games
                 </h1>

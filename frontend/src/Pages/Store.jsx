@@ -315,7 +315,7 @@ const MemoizedGameCard = React.memo(GameCard);
 
 // Navigation Component
 const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning, isEnd }) => (
-  <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
+  <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between md:pt-0 sm:pt-5 pt-3">
     <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>
       {title}
     </p>
@@ -380,7 +380,7 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
   }
 
   return (
-    <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
+    <div className='md:py-4 lg:py-6'>
       <SwiperNavigation
         title={title}
         onAllGamesClick={handleAllGames}

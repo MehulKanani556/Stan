@@ -34,14 +34,20 @@ export default function ReviewHomeSlick() {
 
   useEffect(() => {
     const updateSlides = () => {
-      if (window.innerWidth >= 1280) setSlidesToShow(3);
-      else if (window.innerWidth >= 1024) setSlidesToShow(3);
-      else setSlidesToShow(1);
+      if (!revieData || revieData.length < 4) {
+        setSlidesToShow(1); // agar reviews 3 karta ochhi hoy to 1 card
+      } else {
+        if (window.innerWidth >= 1200) setSlidesToShow(3);
+        else if (window.innerWidth >= 1024) setSlidesToShow(1);
+        else setSlidesToShow(1);
+      }
     };
+  
     updateSlides();
     window.addEventListener("resize", updateSlides);
     return () => window.removeEventListener("resize", updateSlides);
-  }, []);
+  }, [revieData]);
+  
 
   const settings = {
     infinite: true,
@@ -53,39 +59,39 @@ export default function ReviewHomeSlick() {
     cssEase: "ease-in-out",
     arrows: false,
     dots: false,
-    slidesToShow, // controlled by state + useEffect
-    slidesToScroll: 1, 
-    responsive: [
-      {
-        breakpoint: 1536, // ≥1536px (2XL screens)
-        settings: { slidesToShow: 3 }
-      },
-      {
-        breakpoint: 1280, // ≥1280px (XL screens)
-        settings: { slidesToShow: 3 }
-      },
-      {
-        breakpoint: 1024, // ≥1024px (LG screens)
-        settings: { slidesToShow: 3 }
-      },
-      {
-        breakpoint: 768, // ≥768px (MD screens)
-        settings: { slidesToShow: 1 }
-      },
-      {
-        breakpoint: 640, // ≥640px (SM screens)
-        settings: { slidesToShow: 1 }
-      },
-      {
-        breakpoint: 480, // extra small phones
-        settings: { slidesToShow: 1 }
-      }
-    ]
+    slidesToShow, 
+    slidesToScroll: 1,
+    // responsive: [
+    //   {
+    //     breakpoint: 1536, // ≥1536px (2XL screens)
+    //     settings: { slidesToShow: 3 }
+    //   },
+    //   {
+    //     breakpoint: 1280, // ≥1280px (XL screens)
+    //     settings: { slidesToShow: 3 }
+    //   },
+    //   {
+    //     breakpoint: 1024, // ≥1024px (LG screens)
+    //     settings: { slidesToShow: 3 }
+    //   },
+    //   {
+    //     breakpoint: 768, // ≥768px (MD screens)
+    //     settings: { slidesToShow: 1 }
+    //   },
+    //   {
+    //     breakpoint: 640, // ≥640px (SM screens)
+    //     settings: { slidesToShow: 1 }
+    //   },
+    //   {
+    //     breakpoint: 480, // extra small phones
+    //     settings: { slidesToShow: 1 }
+    //   }
+    // ]
   };
 
   return (
-    <section className="relative ds_reviewHome_slide py-14 text-white bg-[#101012] overflow-hidden">
-      <h2 className="md:text-[36px] text-[28px] font-bold text-center mb-10">
+    <section className="relative ds_reviewHome_slide ms:py-14 py-8 text-white bg-[#101012] overflow-hidden">
+      <h2 className="md:text-[36px] text-[28px] font-bold text-center md:mb-10 mb-5">
         Player Reviews
       </h2>
 
@@ -93,9 +99,9 @@ export default function ReviewHomeSlick() {
         {loader && <ReviewCardSkeleton/>}
         {!loader && <Slider {...settings} className="ds_review_slider">
           {revieData?.map((r) => (
-            <div key={r?._id} className="px-2 sm:px-3">
+            <div key={r?._id} className={`px-2 sm:px-3 ${revieData.length < 4 ? '!flex justify-center' : 'xl:inline !flex justify-center'}`}>
               <motion.div
-                className="card-wrapper"
+                className={`card-wrapper ${revieData.length < 4 ? 'lg:!w-1/2 md:!w-2/3 ms:!w-4/5 w-full' : 'xl:!w-full lg:!w-1/2 md:!w-2/3 ms:!w-4/5 w-full'}`}
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}

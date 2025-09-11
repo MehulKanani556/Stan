@@ -73,7 +73,7 @@ const SupportPage = () => {
         flip={true}
       />
 
-      <section className="relative py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative py-6 sm:py-8 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 bg-purple-500/10 blur-3xl" />
 
         <div className="relative max-w-5xl mx-auto text-center text-white">
@@ -140,7 +140,7 @@ const SectionWrapper = ({ title, description, img, items, flip }) => {
 
 
   return (
-    <section className="py-12 sm:py-10 px-4 sm:px-6 lg:px-8">
+    <section className="py-6 md:py-10 px-4 sm:px-6 lg:px-8">
       <div className={`w-full max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center ${flip ? "md:grid-flow-dense" : ""}`}>
 
         {/* Content */}

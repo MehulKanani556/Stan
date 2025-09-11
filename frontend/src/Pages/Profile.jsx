@@ -687,7 +687,7 @@ export default function Profile() {
             {/* Profile Content */}
             <div className='flex flex-col md:flex-row items-stretch min-h-[500px]'>
                 {/* side menu section */}
-                <div className='h-full px-4 py-6'>
+                <div className='h-full px-4 md:py-6 py-4'>
                     <div className='xl:w-[300px] md:w-[200px] w-full'>
                         <ul className='p-3 capitalize'>
                             <li className={` mt-2 transition-all  duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('profile') }}>
@@ -796,7 +796,7 @@ export default function Profile() {
 
                 {/* profile */}
                 {activeMenu === "profile" && (
-                    <div className={`px-4 py-6 w-full `}>
+                    <div className={`px-4 md:py-6 pt-4 pb-0 w-full `}>
                         {/* Profile Header */}
                         <div className=" rounded-2xl p-4 md:p-6 mb-6 border border-white/25">
                             <div className='flex justify-end'>
@@ -894,7 +894,7 @@ export default function Profile() {
 
                 {/* transaction */}
                 {activeMenu === "Transaction" && (
-                    <div className='px-4 py-6 w-full'>
+                    <div className='px-4 md:py-6 pt-4 pb-0  w-full'>
                         {transactionLoading ? (
                             <TransactionHistorySkeleton />
                         ) : (
@@ -950,7 +950,7 @@ export default function Profile() {
 
                 {/* Orders */}
                 {activeMenu === "Orders" && (
-                    <div className='px-4 py-6 w-full'>
+                    <div className='px-4 md:py-6 pt-4 pb-0  w-full'>
                         <section className='w-full border border-white/25 rounded-2xl sm:p-6 p-1 text-white flex flex-col'>
                             <div className=''>
                                 {/* Header */}
@@ -1530,10 +1530,10 @@ export default function Profile() {
 
                 {/* Delete Account Section with action button */}
                 {activeMenu === "deleteAccount" && (
-                    <div className='px-4 py-6 w-full'>
+                    <div className='px-4 md:py-6 pt-4 pb-0 w-full'>
                         <section className='w-full border border-white/25 rounded-2xl sm:p-6 p-4 text-white flex flex-col'>
                             <div className='flex items-center justify-between'>
-                                <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Delete Account</h1>
+                                <h1 className='text-lg sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Delete Account</h1>
                             </div>
                             <div className='mt-4 rounded-2xl p-4 md:p-6 relative overflow-hidden'>
                                 <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-40 h-40 bg-fuchsia-600/20 rounded-full blur-3xl" />

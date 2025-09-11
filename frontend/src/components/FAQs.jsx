@@ -60,12 +60,12 @@ export default function FAQs() {
   };
 
   return (
-    <section className="w-full max-w-[95%] md:max-w-[85%] mx-auto py-6 md:py-10 lg:py-12">
+    <section className="w-full max-w-[95%] md:max-w-[85%] mx-auto pb-3 pt-6 md:py-10 lg:py-12">
       <h1 className="text-2xl md:text-3xl font-bold text-white text-center mb-8 underline underline-offset-4">
         Frequently Asked Questions
       </h1>
 
-      <div className="space-y-4 sm:pt-5"> {/* adds spacing between each accordion */}
+      <div className="space-y-4 md:pt-5 pt-3"> {/* adds spacing between each accordion */}
         {faqs.map((faq, index) => (
           <div
             key={index}

@@ -293,7 +293,7 @@ function TopGames() {
   // }
 
   return (
-    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto px-4 sm:px-6 md:px-8 pb-12 sm:pb-16 md:pb-20 relative">
+    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto px-4 sm:px-6 md:px-8 pb-12 md:pb-16 sm:pb-14 relative">
       {/* Section Header */}
       <div className="text-center mb-12 sm:mb-16">
         <h2 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">

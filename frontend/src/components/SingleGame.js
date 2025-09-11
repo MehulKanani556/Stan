@@ -575,7 +575,7 @@ const SingleGame = () => {
                     <button
                       onClick={() => handleAddWishlist(single)}
                       className="w-full flex items-center justify-center gap-2 
-                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
+                                font-bold py-3 sm:px-4 px-1 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110

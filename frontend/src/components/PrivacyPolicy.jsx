@@ -4,7 +4,7 @@ import { FaShieldAlt, FaDatabase, FaEye, FaLock, FaUser, FaCog } from 'react-ico
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen text-white">
-      <div className="mx-auto md:max-w-[85%] max-w-[95%] py-8 md:py-10">
+      <div className="mx-auto md:max-w-[85%] max-w-[95%] pt-8 pb-5 md:py-10">
 
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
