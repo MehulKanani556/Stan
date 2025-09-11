@@ -60,12 +60,15 @@ const StyledWrapper = styled.div`
     display: inline-block;
   }
 
+ 
   .loader {
     display: flex;
     margin: 0.25em 0;
     justify-content: center;
-    gap: 0.5em;
+    align-items: center;
   }
+ 
+ 
 
   .dash {
     animation: dashArray 2s ease-in-out infinite, dashOffset 2s linear infinite;
@@ -76,6 +79,29 @@ const StyledWrapper = styled.div`
   //     dashOffset 2s linear infinite;
   //   transform-origin: center;
   // }
+
+    /* Responsive sizing for different screen sizes */
+  @media (max-width: 768px) {
+    .loader svg {
+      width: 90px !important;
+      height: 90px !important;
+    }
+  }
+ 
+  @media (max-width: 480px) {
+    .loader svg {
+      width: 70px !important;
+      height: 70px !important;
+    }
+  }
+ 
+  @media (max-width: 320px) {
+    .loader svg {
+      width: 50px !important;
+      height: 50px !important;
+    }
+  }
+ 
 
   @keyframes dashArray {
     0% {
