@@ -1,63 +1,37 @@
 import React, { useEffect, useState } from 'react'
-import greenGem from "../images/green-gem.png";
-import { FaGem, FaInfoCircle, FaMoneyBillWave } from "react-icons/fa";
-import phonePe from "../images/phonepe.jpg"
-import Amazon from "../images/Amazon.png"
-import dominos from "../images/dominos.png"
-import flipkart from "../images/flipkart.png"
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
-import { MdOutlineContentCopy } from "react-icons/md";
-import 'swiper/css';
-import 'swiper/css/pagination';
-import StylishDiv from '../components/StylishDiv';
-import { BsCart4 } from "react-icons/bs";
-import { RiCoupon2Fill } from "react-icons/ri";
-import { IoRocketOutline } from "react-icons/io5";
-import { MdAddTask } from "react-icons/md";
-import { SiPhonepe } from "react-icons/si";
+import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
+import { MdOutlineOndemandVideo } from "react-icons/md";
 import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
 
 
-
-const swiperStyles = `
-  .swiper-pagination {
-    position: absolute !important;
-    bottom: 30px !important;
-    left: 0 !important;
-    right: 0 !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 6px !important;
-    z-index: 1000 !important;
+const gamerTheme = `
+  .page-bg {
+    background: radial-gradient(1200px 600px at 10% -10%, rgba(98,29,242,0.25), transparent 60%),
+                radial-gradient(900px 500px at 100% 10%, rgba(177,145,255,0.18), transparent 60%),
+                linear-gradient(180deg, #0c0b11 0%, #0f0d19 100%);
+    min-height: 100vh;
   }
-  .swiper-pagination-bullet {
-    width: 8px !important;
-    height: 8px !important;
-    background: #ffffff !important;
-    border-radius: 50% !important;
-    opacity: 0.6 !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    display: inline-block !important;
-    margin: 0 3px !important;
-    border: 1px solid transparent !important;
+  .hero-border {
+    border-image: linear-gradient(90deg, rgba(177,145,255,0.6), rgba(98,29,242,0.6)) 1;
   }
-  .swiper-pagination-bullet-active {
-    background: #aa98fe !important;
-    opacity: 1 !important;
-    transform: scale(1.2) !important;
-    border: 1px solid #ffffff !important;
-    box-shadow: 0 0 8px rgba(170, 152, 254, 0.6) !important;
+  .reward-glow {
+    box-shadow: 0 0 24px rgba(177,145,255,0.18), inset 0 0 12px rgba(177,145,255,0.08);
   }
-  .swiper {
-    position: relative !important;
+  .glass-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   }
-  .mySwiper {
-    position: relative !important;
-   padding-bottom: 80px !important;
-  }
+  .glass-card:hover { transform: translateY(-2px); border-color: rgba(177,145,255,0.35); box-shadow: 0 12px 40px rgba(98,29,242,0.18); }
+  .btn-primary { background: linear-gradient(90deg, #621df2 0%, #b191ff 100%); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.05); }
+  .btn-soft { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.12); }
+  .btn-soft:hover { background: rgba(255,255,255,0.12); }
+  .chip { background: linear-gradient(90deg, rgba(255,221,87,0.12), rgba(255,179,0,0.12)); border: 1px solid rgba(255,179,0,0.35); }
+  .redeem-progress::-webkit-progress-bar { background: rgba(255,255,255,0.08); border-radius: 9999px; }
+  .redeem-progress::-webkit-progress-value { background: linear-gradient(90deg,#ffd54a,#ffb300); border-radius: 9999px; }
+  .redeem-progress { width: 100%; height: 8px; border-radius: 9999px; overflow: hidden; }
 `;
 
 export default function Rewards() {
@@ -65,13 +39,12 @@ export default function Rewards() {
 
     useEffect(() => {
         const style = document.createElement('style');
-        style.textContent = swiperStyles;
+        style.textContent = gamerTheme;
         document.head.appendChild(style);
 
-        // Simulate loading time
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 1500);
+        }, 800);
 
         return () => {
             document.head.removeChild(style);
@@ -85,431 +58,390 @@ export default function Rewards() {
 
     return (
         <>
-            <section className='w-full'>
-                <RedeemAndWin />
+            <section className='w-full page-bg'>
+                <RewardsExperience />
             </section>
         </>
     )
 }
 
-const RedeemAndWin = () => {
+const RewardsExperience = () => {
+    const [balance, setBalance] = useState(600);
+    const [history, setHistory] = useState([]);
+    const [streakDay, setStreakDay] = useState(3);
+    const [totalEarned, setTotalEarned] = useState(0);
+    const [completedTasks, setCompletedTasks] = useState(new Set());
+    const [completedQuests, setCompletedQuests] = useState(new Set());
+    const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
-    const [copySuccess, setCopySuccess] = useState(false);
-    const [showPopup, setShowPopup] = useState(false);
 
+    useEffect(() => {
+        const last = localStorage.getItem('rewards:lastStreakClaim');
+        const today = new Date().toDateString();
+        if (last === today) setStreakClaimedToday(true);
+    }, []);
 
-    const copyToClipboard = async (text) => {
-        try {
-            await navigator.clipboard.writeText(text);
-            setCopySuccess(true);
-            setShowPopup(true);
-            setTimeout(() => {
-                setCopySuccess(false);
-                setShowPopup(false);
-            }, 2000);
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-        }
+    const baseTasks = [
+        { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-yellow-300" />, points: 500 },
+        { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 50 },
+        { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 500 },
+    ];
+
+    const iconCycle = [
+        <FaQuestionCircle className="text-yellow-300" />,
+        <MdOutlineOndemandVideo className="text-pink-300" />,
+        <FaUserFriends className="text-emerald-300" />,
+    ];
+
+    const moreTasks = Array.from({ length: 13 }).map((_, i) => ({
+        id: 100 + i,
+        title: `Bonus task #${i + 1}`,
+        icon: iconCycle[i % iconCycle.length],
+        points: [25, 40, 75, 100, 120][i % 5]
+    }));
+
+    const allTasks = [...baseTasks, ...moreTasks];
+    const tasksToShow = showAllTasks ? allTasks : baseTasks;
+
+    const weeklyQuests = [
+        { id: 'q1', title: 'Play any game for 15 minutes', progress: 10, goal: 15, reward: 30 },
+        { id: 'q2', title: 'Win 3 matches', progress: 1, goal: 3, reward: 60 },
+        { id: 'q3', title: 'Login 5 days this week', progress: streakDay, goal: 5, reward: 45 },
+    ];
+
+    const rewards = [
+        { id: 1, title: 'tbh welcome pack', img: '', price: 500, status: 'redeemed' },
+        { id: 2, title: 'Amazon.com $5 gift card', img: '', price: 600, status: 'unlocked' },
+        { id: 3, title: 'Sticker pack', img: '', price: 1500, status: 'locked' },
+        { id: 4, title: 'Disposable camera', img: '', price: 3500, status: 'locked' },
+        { id: 5, title: 'Gaming poster', img: '', price: 800, status: 'locked' },
+        { id: 6, title: 'Mystery loot', img: '', price: 1200, status: 'locked' },
+    ];
+
+    const leaderboard = [
+        { id: 'u1', name: 'ShadowFox', points: 4820 },
+        { id: 'u2', name: 'NovaBlade', points: 4330 },
+        { id: 'u3', name: 'PixelMage', points: 4105 },
+        { id: 'u4', name: 'RiftRunner', points: 3970 },
+    ];
+
+    const milestonesInit = [
+        { id: 'm1', title: 'Bronze Hunter', target: 500, bonus: 40, claimed: false },
+        { id: 'm2', title: 'Silver Slayer', target: 1500, bonus: 100, claimed: false },
+        { id: 'm3', title: 'Gold Champion', target: 3000, bonus: 220, claimed: false },
+        { id: 'm4', title: 'Diamond Legend', target: 6000, bonus: 500, claimed: false },
+    ];
+    const [milestones, setMilestones] = useState(milestonesInit);
+
+    const addHistory = (type, amount, label) => {
+        setHistory(prev => [{ id: Date.now(), type, amount, label, time: new Date().toLocaleString() }, ...prev].slice(0, 15));
     };
 
-    const coupons = [
-        { name: "Dominos", logo: dominos, bgGradient: "from-blue-400 to-blue-600" },
-        { name: "Flipkart", logo: flipkart, bgGradient: "from-yellow-400 to-yellow-500" },
-        { name: "Dominos", logo: dominos, bgGradient: "from-blue-400 to-blue-600" },
-        { name: "Flipkart", logo: flipkart, bgGradient: "from-yellow-400 to-yellow-500" },
-        { name: "Dominos", logo: dominos, bgGradient: "from-blue-400 to-blue-600" },
-        { name: "Flipkart", logo: flipkart, bgGradient: "from-yellow-400 to-yellow-500" },
-    ];
+    const earnPoints = (amount, label) => {
+        setBalance(prev => prev + amount);
+        setTotalEarned(prev => prev + amount);
+        addHistory('earn', amount, label);
+    };
 
-    const cards = [
-        { id: 1, price: 10, gems: 200 },
-        { id: 2, price: 20, gems: 400 },
-        { id: 3, price: 35, gems: 550 },
-        { id: 1, price: 10, gems: 200 },
-        { id: 2, price: 20, gems: 400 },
-        { id: 3, price: 35, gems: 550 },
-        { id: 1, price: 10, gems: 200 },
-        { id: 2, price: 20, gems: 400 },
-        { id: 3, price: 35, gems: 550 },
-    ];
+    const tryRedeem = (item) => {
+        if (item.status !== 'unlocked') return;
+        if (balance < item.price) return;
+        if (!window.confirm(`Redeem ${item.title} for ${item.price} points?`)) return;
+        setBalance(prev => prev - item.price);
+        addHistory('redeem', item.price, item.title);
+    };
 
-    const taskCards = [
-        {
-            id: 1,
-            title: "Cricket Pandit (Install)",
-            description: "Install Cricket Pandit app",
-            reward: 2,
-            icon: "C",
-            bgColor: "bg-purple-600"
-        },
-        {
-            id: 2,
-            title: "Bebetta (Install)",
-            description: "Install Bebetta app",
-            reward: 2,
-            icon: "C",
-            bgColor: "bg-blue-600"
-        },
-        {
-            id: 3,
-            title: "NAVI APP (UPI FIRST TRANSACTION)",
-            description: "Install, Register and Transact on Navi App",
-            reward: 15,
-            icon: "N",
-            bgColor: "bg-green-600"
-        },
-        {
-            id: 4,
-            title: "Paytm (First Transaction)",
-            description: "Complete your first UPI transaction",
-            reward: 5,
-            icon: "P",
-            bgColor: "bg-orange-600"
-        },
-        {
-            id: 5,
-            title: "Google Pay (Sign Up)",
-            description: "Create new Google Pay account",
-            reward: 3,
-            icon: "G",
-            bgColor: "bg-red-600"
-        },
-        {
-            id: 6,
-            title: "Amazon (First Order)",
-            description: "Place your first order on Amazon",
-            reward: 8,
-            icon: "A",
-            bgColor: "bg-indigo-600"
-        }
-    ];
+    const claimStreak = () => {
+        const today = new Date().toDateString();
+        if (streakClaimedToday) return;
+        const reward = 20;
+        earnPoints(reward, 'Daily Streak');
+        setStreakDay(d => Math.min(d + 1, 7));
+        setStreakClaimedToday(true);
+        localStorage.setItem('rewards:lastStreakClaim', today);
+    };
 
-    const displayedTasks = showAllTasks ? taskCards : taskCards.slice(0, 3);
+    const claimMilestone = (mid) => {
+        setMilestones(prev => prev.map(m => {
+            if (m.id === mid && !m.claimed && totalEarned >= m.target) {
+                earnPoints(m.bonus, `${m.title} Milestone`);
+                return { ...m, claimed: true };
+            }
+            return m;
+        }));
+    };
+
+    const completeTask = (task) => {
+        if (completedTasks.has(task.id)) return;
+        earnPoints(task.points, task.title);
+        setCompletedTasks(prev => new Set(prev).add(task.id));
+    };
+
+    const completeQuest = (q) => {
+        if (completedQuests.has(q.id)) return;
+        if (q.progress < q.goal) return; // require goal met
+        earnPoints(q.reward, q.title);
+        setCompletedQuests(prev => new Set(prev).add(q.id));
+    };
+
     return (
-        <section className='pb-10 '>
-            {showPopup && (
-                <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 animate-bounce">
-                    <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="font-medium">Invite code copied!</span>
+        <section className='pb-12'>
+            <div className='max-w-[95%] md:max-w-[85%] m-auto'>
+                {/* Hero */}
+                <div className='relative mt-10 md:mt-16 rounded-3xl border hero-border bg-white/5 overflow-hidden'>
+                    <div className='absolute inset-0 opacity-40' style={{background:"radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)"}}></div>
+                    <div className='relative z-10 px-6 md:px-10 py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6'>
+                        <div>
+                            <div className='inline-flex items-center gap-2 chip text-yellow-200 text-xs md:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
+                                <FaGem/> Level up your loot
+                            </div>
+                            <h1 className='text-white font-extrabold text-3xl md:text-5xl leading-tight tracking-tight'>Rewards Hub</h1>
+                            <p className='text-white/70 mt-2 md:mt-3 max-w-2xl'>Grind quests, stack streaks, and redeem epic goodies. All your progress and perks live here.</p>
+                        </div>
+                        <div className='flex items-center gap-6 w-full lg:w-auto'>
+                            <div className='glass-card rounded-2xl p-5 min-w-[180px] text-center'>
+                                <p className='text-white/70 text-xs'>Current Balance</p>
+                                <div className='text-yellow-300 font-extrabold text-3xl md:text-4xl mt-1 flex items-center justify-center gap-2'><FaGem/> {balance}</div>
+                            </div>
+                            <div className='glass-card rounded-2xl p-5 min-w-[180px] text-center'>
+                                <p className='text-white/70 text-xs'>Total Earned</p>
+                                <div className='text-yellow-300 font-extrabold text-3xl md:text-4xl mt-1'>{totalEarned}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            )}
-            <div className='max-w-[95%] md:max-w-[85%] m-auto '>
-                <div className="flex flex-col w-full items-center justify-center md:pt-20 pt-10">
-                    <img
-                        src={greenGem}
-                        className="md:w-[150px]  w-[100px] mb-10 opacity-100 hover:opacity-50 duration-500"
-                        alt="Gem"
-                    />
-                    <StylishDiv>
-                        <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3 md:gap-4">
-                                <img
-                                    src={greenGem}
-                                    className="w-10 h-10 md:w-14 md:h-14 drop-shadow-lg"
-                                    alt="Gem"
-                                />
-                                <div className="flex flex-col leading-tight">
-                                    <h2 className="text-white text-sm md:text-lg font-medium">
-                                        Total Gem Balance
-                                    </h2>
-                                    <h3 className="text-white text-xl md:text-3xl font-extrabold">
-                                        1000
-                                    </h3>
-                                </div>
-                            </div>
-                            <button className="bg-gradient-to-r from-[#621df2] to-[#b191ff] 
-                              z-10 text-white px-3 py-1 md:px-5 md:py-2 rounded-md md:rounded-lg text-xs md:text-base font-semibold shadow  transition">
-                                History
+
+                {/* Top grid */}
+                <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mt-10'>
+                    {/* My Points */}
+                    <div className='glass-card rounded-2xl p-6 md:p-7 reward-glow'>
+                        <h3 className='text-white font-semibold text-base md:text-lg mb-5'>My Points</h3>
+                        <div className='bg-[#171423] rounded-xl p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
+                            <FaGem className='text-yellow-300 text-4xl md:text-5xl mb-3' />
+                            <div className='text-yellow-300 font-extrabold text-4xl md:text-5xl'>{balance}</div>
+                            <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
+                            <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
+                            <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned}</p>
+                        </div>
+                    </div>
+
+                    {/* Earn more points */}
+                    <div className='glass-card rounded-2xl p-6 md:p-7 lg:col-span-2 reward-glow'>
+                        <div className='flex items-center justify-between mb-5'>
+                            <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
+                            <span className='text-white/50 text-xs'>Daily refresh</span>
+                        </div>
+                        <div className='space-y-4'>
+                            {tasksToShow.map(task => {
+                                const done = completedTasks.has(task.id);
+                                return (
+                                    <div key={task.id} className='flex items-center justify-between bg-white/5 rounded-xl p-4 border border-white/10'>
+                                        <div className='flex items-center gap-4'>
+                                            <div className='w-10 h-10 rounded-lg bg-black/40 flex items-center justify-center'>
+                                                {task.icon}
+                                            </div>
+                                            <div>
+                                                <p className='text-white font-medium'>{task.title}</p>
+                                                <div className='flex items-center gap-2 text-yellow-300 text-sm'>
+                                                    <FaGem /> <span>{task.points}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => completeTask(task)} disabled={done} className={`px-4 py-2 rounded-lg text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                            {done ? 'Completed' : 'Earn'}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                            <button onClick={() => setShowAllTasks(v => !v)} className='w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft'>
+                                {showAllTasks ? 'Show less' : `View ${allTasks.length - baseTasks.length} More`}
                             </button>
                         </div>
-                    </StylishDiv>
-                </div>
-
-                <div className="py-10 w-full">
-                    <h5 className="text-white font-bold text-lg md:text-2xl  mb-6 flex items-center gap-4">
-                        <SiPhonepe className='text-4xl' /> PhonePe E-Gift Vouchers
-                    </h5>
-
-                    <div className=" flex items-center justify-center pt-8 w-full relative  ">
-                        <Swiper
-                            spaceBetween={12}
-                            pagination={{ clickable: true }}
-                            modules={[Pagination]}
-                            className="mySwiper w-full px-4"
-                            breakpoints={{
-                                320: { slidesPerView: 2, spaceBetween: 10 },
-                                640: { slidesPerView: 2, spaceBetween: 12 },
-                                768: { slidesPerView: 3, spaceBetween: 15 },
-                                1024: { slidesPerView: 4, spaceBetween: 20 },
-                                1200: { slidesPerView: 5, spaceBetween: 20 },
-                            }}
-                        >
-                            {cards.map((card, index) => (
-                                <SwiperSlide key={index} className="flex justify-center">
-                                    <div className="bg-black/20  hover:bg-[#241c32]/30 transition-all duration-300 
-                           rounded-2xl flex flex-col items-center justify-between 
-                           p-5 sm:p-6 shadow-lg hover:shadow-2xl 
-                           w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
-                           max-h-[300px] sm:h-[320px] group relative overflow-hidden cursor-pointer">
-                                        <div className="absolute inset-0 bg-gradient-to-t from-purple-600/20 via-transparent to-transparent 
-                             opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                                        <div className="bg-white overflow-hidden rounded-xl shadow-md flex items-center justify-center w-full   ">
-                                            <img
-                                                src={phonePe}
-                                                alt="PhonePe"
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                        <p className="text-white text-xl sm:text-2xl font-bold mt-2">
-                                            ₹{card.price}
-                                        </p>
-                                        <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 
-                             rounded-lg px-4 py-1 flex items-center gap-2 mt-4 
-                             border border-green-400/40">
-                                            <FaGem className="text-green-400 animate-pulse" />
-                                            <span className="text-white font-semibold text-base sm:text-lg">
-                                                {card.gems}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
                     </div>
                 </div>
 
-
-                <div className="py-10 w-full">
-                    <h5 className="text-white font-bold text-lg md:text-2xl flex items-center gap-4  mb-6">
-                        <BsCart4 className='text-4xl' /> Amazon E-Gift Vouchers
-                    </h5>
-
-                    <div className=" flex items-center justify-center pt-8 w-full relative  ">
-                        <Swiper
-                            spaceBetween={12}
-                            pagination={{ clickable: true }}
-                            modules={[Pagination]}
-                            className="mySwiper w-full px-4"
-                            breakpoints={{
-                                320: { slidesPerView: 2, spaceBetween: 10 },
-                                640: { slidesPerView: 2, spaceBetween: 12 },
-                                768: { slidesPerView: 3, spaceBetween: 15 },
-                                1024: { slidesPerView: 4, spaceBetween: 20 },
-                                1200: { slidesPerView: 5, spaceBetween: 20 },
-                            }}
-                        >
-                            {cards.map((card, index) => (
-                                <SwiperSlide key={index} className="flex justify-center">
-                                    <div className="bg-black/20  hover:bg-[#241c32]/30 transition-all duration-300 
-                           rounded-2xl flex flex-col items-center justify-between 
-                           p-5 sm:p-6 shadow-lg hover:shadow-2xl 
-                           w-full max-w-[240px] sm:max-w-[260px] md:max-w-[280px] 
-                           max-h-[300px] sm:h-[320px] group relative overflow-hidden cursor-pointer">
-                                        <div className="absolute inset-0 bg-gradient-to-t from-orange-600/20 via-transparent to-transparent 
-                             opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                                        <div className="bg-white overflow-hidden rounded-xl shadow-md flex items-center justify-center w-full">
-                                            <img
-                                                src={Amazon}
-                                                alt="Amazon"
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                        <p className="text-white text-xl sm:text-2xl font-bold mt-2">
-                                            ₹{card.price}
-                                        </p>
-                                        <div className="bg-gradient-to-r from-green-500/20 to-green-700/20 
-                             rounded-lg px-4 py-1 flex items-center gap-2 mt-4 
-                             border border-green-400/40">
-                                            <FaGem className="text-green-400 animate-pulse" />
-                                            <span className="text-white font-semibold text-base sm:text-lg">
-                                                {card.gems}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    </div>
-                </div>
-
-                <div className="py-10 w-full">
-                    <h5 className="text-white font-bold text-lg md:text-2xl text-center mb-6 flex items-center gap-4">
-                        <RiCoupon2Fill className='text-4xl' /> Exciting Coupons
-                    </h5>
-
-                    <div className=" flex items-center justify-center pt-8 w-full relative">
-                        <Swiper
-                            spaceBetween={12}
-                            pagination={{ clickable: true }}
-                            modules={[Pagination]}
-                            className="mySwiper w-full px-4"
-                            breakpoints={{
-                                320: { slidesPerView: 1, spaceBetween: 10 },
-                                480: { slidesPerView: 1, spaceBetween: 12 },
-                                640: { slidesPerView: 2, spaceBetween: 14 },
-                                768: { slidesPerView: 2, spaceBetween: 16 },
-                                1024: { slidesPerView: 3, spaceBetween: 18 },
-                                1280: { slidesPerView: 4, spaceBetween: 20 },
-                            }}
-                        >
-                            {coupons.map((card, index) => (
-                                <SwiperSlide key={index} className="flex justify-center">
-                                    <div className={`bg-gradient-to-br ${card.bgGradient} hover:scale-[1.02] transition-all duration-300 
-                           rounded-2xl flex items-center gap-3 sm:gap-4 lg:gap-6 
-                           p-4 sm:p-5 lg:p-6 shadow-lg hover:shadow-2xl 
-                           w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] 
-                           group relative overflow-hidden cursor-pointer`}>
-                                        <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-transparent to-transparent 
-                             opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                                        <div className="flex flex-col items-center gap-2 min-w-[50px] sm:min-w-[60px] lg:min-w-[70px] relative z-10">
-                                            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white rounded-lg 
-                                            flex items-center justify-center p-1 shadow-md group-hover:shadow-lg transition-all duration-300">
-                                                <img
-                                                    src={card.logo}
-                                                    alt={card.name}
-                                                    className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 object-contain"
-                                                />
-                                            </div>
-                                            <span className="text-white text-xs sm:text-sm lg:text-base font-medium text-center">
-                                                {card.name}
-                                            </span>
-                                        </div>
-                                        <div className="flex-1 flex justify-center relative z-10">
-                                            <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 
-                                            bg-white rounded-xl flex items-center justify-center p-2 shadow-md group-hover:shadow-lg transition-all duration-300">
-                                                <img
-                                                    src={card.logo}
-                                                    alt={card.name}
-                                                    className="w-full h-full object-contain"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
-                    </div>
-                </div>
-
-                <div className="py-10 w-full">
-                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-8 flex items-center gap-4">
-                        <IoRocketOutline className='text-4xl' /> Earn With
-                    </h5>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        <div className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 rounded-2xl p-8 backdrop-blur-xl border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden">
-                            <div className="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500 animate-pulse"></div>
-                            <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-gradient-to-br from-green-400 to-blue-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
-                            <div className="relative z-10 flex flex-col">
-                                <h3 className="text-yellow-400 font-extrabold text-2xl mb-3 tracking-wide">
-                                    Refer & Get
-                                </h3>
-
-                                <div className="flex items-center gap-2 mb-6">
-                                    <span className="text-white text-4xl font-extrabold drop-shadow-md">₹45</span>
-                                    <span className="text-gray-300 text-sm lg:text-base flex items-center gap-1">
-                                        Per Install <FaInfoCircle className="w-5 h-5 text-gray-400" />
-                                    </span>
+                {/* Daily streak + Weekly quests */}
+                <div className='mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8'>
+                    <div className='glass-card rounded-2xl p-6 reward-glow'>
+                        <div className='flex items-center justify-between mb-4'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-yellow-300'/> Daily Streak</h3>
+                            <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
+                        </div>
+                        <div className='bg-white/5 rounded-xl p-5 border border-white/10'>
+                            <div className='flex items-center justify-between'>
+                                <div className='text-white/80 text-sm'>Keep your streak to earn bonus points</div>
+                                <div className='flex items-center gap-2 text-yellow-300 chip px-2 py-0.5 rounded-md'><FaGem/><span>+20</span></div>
+                            </div>
+                            <div className='mt-4'>
+                                <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
+                                    <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{width: `${(streakDay/7)*100}%`}}></div>
                                 </div>
-                                <div className="border border-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-3 py-2 flex-1 bg-black/30">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-300 text-sm lg:text-base">
-                                            Invite Code: <span className="text-white font-mono">CyjcfXGT</span>
-                                        </span>
-                                        <button
-                                            onClick={() => copyToClipboard("CyjcfXGT")}
-                                            className="p-2 hover:bg-purple-700/40 rounded-lg transition-colors"
-                                            title="Copy invite code"
-                                        >
-                                            <MdOutlineContentCopy className="w-5 h-5 text-gray-300 group-hover:text-yellow-400 transition-colors" />
+                            </div>
+                            <button onClick={claimStreak} disabled={streakClaimedToday} className={`mt-5 w-full py-2 rounded-xl text-sm font-semibold ${streakClaimedToday ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                {streakClaimedToday ? 'Claimed Today' : 'Claim Daily Bonus'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className='glass-card rounded-2xl p-6 lg:col-span-2 reward-glow'>
+                        <div className='flex items-center justify-between mb-4'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaRegClock className='text-pink-300'/> Weekly Quests</h3>
+                            <span className='text-white/50 text-xs'>Resets Monday</span>
+                        </div>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                            {weeklyQuests.map(q => {
+                                const progressPct = Math.min(100, (q.progress / q.goal) * 100);
+                                const canComplete = q.progress >= q.goal && !completedQuests.has(q.id);
+                                const done = completedQuests.has(q.id);
+                                return (
+                                    <div key={q.id} className='bg-white/5 rounded-xl p-4 border border-white/10'>
+                                        <p className='text-white font-medium'>{q.title}</p>
+                                        <div className='flex items-center justify-between mt-2'>
+                                            <span className='text-white/60 text-xs'>{q.progress}/{q.goal}</span>
+                                            <div className='flex items-center gap-1 text-yellow-300 text-sm'><FaGem/> {q.reward}</div>
+                                        </div>
+                                        <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
+                                            <div className='h-2 bg-gradient-to-r from-yellow-400 to-orange-400' style={{width: `${progressPct}%`}}></div>
+                                        </div>
+                                        <button onClick={() => completeQuest(q)} disabled={!canComplete} className={`mt-4 w-full py-2 rounded-lg text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-soft hover:opacity-100' : 'btn-soft cursor-not-allowed opacity-60'}`}>
+                                            {done ? 'Completed' : canComplete ? 'Claim Reward' : 'In Progress'}
                                         </button>
                                     </div>
-                                </div>
-                                <button className="mt-6 w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 px-6 rounded-xl   transition-all duration-500 transform hover:scale-105 hover:shadow-[#b191ff]/40 hover:shadow-lg">
-                                    REFER NOW
-                                </button>
-                            </div>
-                        </div>
-                        <div className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 rounded-2xl p-8 backdrop-blur-xl border border-blue-500/30 shadow-lg hover:shadow-blue-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden">
-                            <div className="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
-                            <div className="absolute -bottom-12 -left-12 w-28 h-28 bg-gradient-to-br from-green-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
-                            <div className="relative z-10 flex flex-col">
-                                <p className="text-gray-400 text-sm lg:text-base mb-2 italic">
-                                    Complete quests and redeem amazing coupons
-                                </p>
-                                <h3 className="text-yellow-400 font-extrabold text-2xl mb-6 tracking-wide">
-                                    Earn & Redeem
-                                </h3>
-                                <div className="bg-[#2a2a3e]/70 rounded-lg p-5 mb-6 border border-gray-600/40">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-md shadow-green-500/40">
-                                            <span className="text-white text-lg font-extrabold">₹</span>
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-300 text-sm lg:text-base">Referral Cash Balance</p>
-                                            <p className="text-white text-2xl font-bold">0</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button className="w-full bg-gradient-to-r to-[#621df2] from-[#b191ff] text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg  transition-all duration-500 transform hover:scale-105  hover:shadow-[#b191ff]/40">
-                                    Redeem
-                                </button>
-                            </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
 
-                <div className="py-14 w-full">
-                    <h5 className="text-white font-semibold text-xl md:text-2xl w-full mb-10 flex items-center gap-4">
-                        <MdAddTask className='text-4xl' /> Complete Tasks & Earn
-                    </h5>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {displayedTasks.map((task) => (
-                            <StylishDiv>
-                                <div className="relative z-10 flex flex-col">
-                                    <div className="flex items-start justify-between mb-5">
-                                        <div
-                                            className={`w-14 h-14 ${task.bgColor} rounded-xl flex items-center justify-center shadow-lg shadow-black/30`}
-                                        >
-                                            <span className="text-white font-bold text-xl">{task.icon}</span>
+                {/* Redeem */}
+                <div className='mt-12'>
+                    <div className='flex items-center justify-between mb-3'>
+                        <h3 className='text-white font-semibold text-base md:text-lg'>Redeem</h3>
+                        <span className='text-white/50 text-xs'>Choose your loot</span>
+                    </div>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+                        {rewards.map(item => (
+                            <div key={item.id} className='glass-card rounded-2xl p-4 md:p-5 reward-glow'>
+                                <div className='bg-white/10 h-36 md:h-40 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden'>
+                                    {item.status === 'locked' && (
+                                        <div className='absolute top-3 left-3 text-[10px] md:text-xs bg-black/60 text-white px-2 py-1 rounded-md flex items-center gap-1'>
+                                            <FaLock className='text-white/80' /> Locked
                                         </div>
-                                        <FaInfoCircle className="w-5 h-5 text-gray-400 hover:text-yellow-400 transition-colors cursor-pointer" />
-                                    </div>
-                                    <div className="mb-6">
-                                        <h4 className="text-white font-bold text-lg mb-2 tracking-wide">{task.title}</h4>
-                                        <p className="text-gray-400 text-sm leading-relaxed">{task.description}</p>
-                                    </div>
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className="text-gray-300">Earn upto</span>
-                                            <FaMoneyBillWave className="w-4 h-4 text-green-500" />
-                                            <span className="text-white font-semibold">{task.reward}</span>
+                                    )}
+                                    {item.status !== 'locked' && (
+                                        <div className='absolute top-3 left-3 text-[10px] md:text-xs bg-black/60 text-white px-2 py-1 rounded-md'>
+                                            Unlocked
                                         </div>
-                                        <button className="bg-gradient-to-r capitalize from-[#621df2] to-[#b191ff] 
-                              text-white px-5 py-2 rounded-xl font-medium shadow-md  transition-all duration-300 transform hover:scale-105">
-                                            claim
-                                        </button>
-                                    </div>
+                                    )}
+                                    {item.status === 'redeemed' && (
+                                        <div className='absolute top-3 right-3 text-[10px] md:text-xs bg-emerald-600/80 text-white px-2 py-1 rounded-md flex items-center gap-1'>
+                                            <FaCheckCircle /> Redeemed
+                                        </div>
+                                    )}
+                                    <FaPlay className='text-white/30 text-3xl' />
                                 </div>
-                            </StylishDiv>
+                                <div>
+                                    <p className='text-white text-sm md:text-base font-medium line-clamp-2'>{item.title}</p>
+                                    <div className='mt-3 flex items-center gap-2 text-yellow-300'>
+                                        <FaGem />
+                                        <span className='font-semibold'>{item.price}</span>
+                                    </div>
+                                    <div className='mt-3'>
+                                        <progress value={Math.min(balance, item.price)} max={item.price} className='redeem-progress'></progress>
+                                    </div>
+                                    <button
+                                        onClick={() => tryRedeem(item)}
+                                        disabled={item.status !== 'unlocked' || balance < item.price}
+                                        className={`mt-4 w-full py-2 rounded-xl text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && balance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                    >
+                                        {item.status === 'redeemed' ? 'Redeemed' : 'Redeem'}
+                                    </button>
+                                </div>
+                            </div>
                         ))}
                     </div>
+                </div>
 
-                    <div className="flex justify-center mt-12">
-                        <button
-                            onClick={() => setShowAllTasks(!showAllTasks)}
-                            className="px-6 py-2 rounded-xl text-sm font-semibold 	bg-white/10 backdrop-blur-md border border-white/20 	text-purple-300 hover:text-white 	hover:bg-purple-500/30 transition-all duration-300 	shadow-lg shadow-purple-900/40"
-                        >
-                            {showAllTasks ? "Show Less" : "View More"}
-                        </button>
+                {/* Leaderboard & Activity */}
+                <div className='mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8'>
+                    <div className='glass-card rounded-2xl p-6 reward-glow lg:col-span-2'>
+                        <div className='flex items-center justify-between mb-4'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-amber-300'/> Leaderboard</h3>
+                            <span className='text-white/50 text-xs'>Top this week</span>
+                        </div>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                            {leaderboard.map((u, idx) => (
+                                <div key={u.id} className='bg-white/5 rounded-xl p-4 border border-white/10 flex items-center justify-between'>
+                                    <div className='flex items-center gap-3'>
+                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold ${idx===0?'bg-amber-400 text-black': idx===1?'bg-slate-300 text-black': idx===2?'bg-amber-700 text-white':'bg-white/10 text-white'}`}>{idx+1}</div>
+                                        <div>
+                                            <p className='text-white font-medium'>{u.name}</p>
+                                            <span className='text-white/60 text-xs'>Top Player</span>
+                                        </div>
+                                    </div>
+                                    <div className='flex items-center gap-2 text-yellow-300'><FaGem/><span className='font-semibold'>{u.points}</span></div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className='glass-card rounded-2xl p-6 reward-glow'>
+                        <h3 className='text-white font-semibold text-base md:text-lg mb-4'>Recent Activity</h3>
+                        <div className='space-y-3 max-h-80 overflow-auto pr-1'>
+                            {history.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
+                            {history.map(it => (
+                                <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-3'>
+                                    <div>
+                                        <p className='text-white text-sm'>{it.label}</p>
+                                        <span className='text-white/50 text-xs'>{it.time}</span>
+                                    </div>
+                                    <div className={`${it.type==='earn'?'text-emerald-300':'text-rose-300'} font-semibold`}>{it.type==='earn'?'+':'-'}{it.amount}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
+                {/* Milestones & Badges */}
+                <div className='mt-12'>
+                    <div className='flex items-center justify-between mb-3'>
+                        <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-yellow-300'/> Milestones & Badges</h3>
+                        <span className='text-white/50 text-xs'>Lifetime progress</span>
+                    </div>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+                        {milestones.map(m => {
+                            const pct = Math.min(100, (totalEarned / m.target) * 100);
+                            const canClaim = !m.claimed && totalEarned >= m.target;
+                            return (
+                                <div key={m.id} className='glass-card rounded-2xl p-5 reward-glow'>
+                                    <div className='flex items-center gap-3 mb-2'>
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${canClaim?'bg-yellow-300 text-black': m.claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
+                                            <FaStar />
+                                        </div>
+                                        <div>
+                                            <p className='text-white font-semibold'>{m.title}</p>
+                                            <span className='text-white/60 text-xs'>Target: {m.target}</span>
+                                        </div>
+                                    </div>
+                                    <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
+                                        <div className='h-2 bg-gradient-to-r from-yellow-300 to-amber-500' style={{width: `${pct}%`}}></div>
+                                    </div>
+                                    <div className='flex items-center justify-between mt-3'>
+                                        <span className='text-white/70 text-xs'>Bonus</span>
+                                        <div className='flex items-center gap-1 text-yellow-300 text-sm'><FaGem/> {m.bonus}</div>
+                                    </div>
+                                    <button
+                                        onClick={() => claimMilestone(m.id)}
+                                        disabled={!canClaim}
+                                        className={`mt-4 w-full py-2 rounded-xl text-sm font-semibold ${canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                    >
+                                        {m.claimed ? 'Claimed' : canClaim ? 'Claim Bonus' : 'In Progress'}
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <p className='text-white/60 text-xs mt-3'>Total Earned so far: {totalEarned}</p>
+                </div>
             </div>
         </section>
     )
