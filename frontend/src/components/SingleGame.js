@@ -456,6 +456,9 @@ const SingleGame = () => {
     setUseFanCoinsChecked(false)
     setFanCoinsToUse(0)
     setFinalAmount(0)
+    if(isInCart){
+      dispatch(removeFromCart({gameId:id,platform:"windows"}))
+    }
   }, [])
 
   // Slider settings

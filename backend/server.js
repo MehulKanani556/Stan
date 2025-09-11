@@ -33,7 +33,12 @@ const app = express();
   app.use(cookieParser());
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow all origins to access the API.
+    // This function dynamically sets the Access-Control-Allow-Origin header
+    // to the requesting origin, which is compatible with `credentials: true`.
+    callback(null, true);
+  },
   credentials: true
 }));
 
