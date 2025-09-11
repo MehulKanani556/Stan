@@ -127,22 +127,51 @@ const StyledWrapper = styled.div`
     position: absolute;
   }
 
+  .inline-block {
+    display: inline-block;
+  }
+
+ 
   .loader {
     display: flex;
     justify-content: center;
-    gap: 0.5em;
-    flex-wrap: wrap;
+    align-items: center;
   }
-
-  .letter {
-    width: clamp(50px, 15vw, 100px);
-    height: auto;
-    display: inline-block;
-  }
+ 
+ 
 
   .dash {
     animation: dashArray 2s ease-in-out infinite, dashOffset 2s linear infinite;
   }
+
+  // .spin {
+  //   animation: spinDashArray 2s ease-in-out infinite, spin 8s ease-in-out infinite,
+  //     dashOffset 2s linear infinite;
+  //   transform-origin: center;
+  // }
+
+    /* Responsive sizing for different screen sizes */
+  @media (max-width: 768px) {
+    .loader svg {
+      width: 90px !important;
+      height: 90px !important;
+    }
+  }
+ 
+  @media (max-width: 480px) {
+    .loader svg {
+      width: 70px !important;
+      height: 70px !important;
+    }
+  }
+ 
+  @media (max-width: 320px) {
+    .loader svg {
+      width: 50px !important;
+      height: 50px !important;
+    }
+  }
+ 
 
   @keyframes dashArray {
     0% {

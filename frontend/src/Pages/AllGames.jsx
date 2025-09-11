@@ -349,10 +349,10 @@ const FilterHeader = React.memo(({
 
     return (
         <div className="backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/25 shadow-2xl">
-            <div className="flex flex-col md:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="flex flex-wrap items-start lg:items-center justify-between gap-6">
 
                 {/* Search Input */}
-                <div className="flex-1 max-w-md">
+                <div className="flex-1 max-w-md min-w-36">
                     <label className="block text-sm font-medium text-gray-300 mb-2">Search Games</label>
                     <div className="relative">
                         <IoMdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
@@ -367,7 +367,7 @@ const FilterHeader = React.memo(({
                 </div>
 
                 {/* Filters */}
-                <div className="flex  items-end gap-4">
+                <div className="flex  items-end gap-4 flex-wrap">
 
                     {/* Category Filter */}
                     <div className="min-w-[150px]">
@@ -403,7 +403,7 @@ const FilterHeader = React.memo(({
                     </div>
 
                     {/* Reset Button */}
-                    {hasActiveFilters && (
+                    {/* {hasActiveFilters && (
                         <div className="flex items-end">
                             <button
                                 onClick={onResetFilters}
@@ -412,7 +412,7 @@ const FilterHeader = React.memo(({
                                 Reset Filters
                             </button>
                         </div>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>
@@ -440,8 +440,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                     <button
                         key={i}
                         onClick={() => onPageChange(i)}
-                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${
-                            isActive
+                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
                                 ? "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
                                 : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
                             }`}
@@ -470,9 +469,9 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                 <div className="flex items-center gap-2">
                     <button
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === 1
-                                ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
-                        }`}
+                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
+                            }`}
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                         aria-label="Previous page"
@@ -486,9 +485,9 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
 
                     <button
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
-                                ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
-                        }`}
+                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
+                            }`}
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                         aria-label="Next page"
@@ -586,7 +585,7 @@ export default function AllGames() {
     // Effects
     useEffect(() => {
         if (isLoggedIn) {
-        dispatch(allorders());
+            dispatch(allorders());
         }
     }, [dispatch]);
 
@@ -669,12 +668,12 @@ export default function AllGames() {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     isLoggedIn ?
-                                    wishlistStatus[game?._id]
-                                        ? handleRemoveFromWishlist(game._id)
-                                        : handleAddWishlist(game)
-                                    :
-                                    navigate('/login')
-                                    
+                                        wishlistStatus[game?._id]
+                                            ? handleRemoveFromWishlist(game._id)
+                                            : handleAddWishlist(game)
+                                        :
+                                        navigate('/login')
+
                                 }}
                             >
                                 {wishlistStatus[game?._id] ? (

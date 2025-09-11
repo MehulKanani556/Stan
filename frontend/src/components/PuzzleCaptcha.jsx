@@ -19,20 +19,35 @@ const PuzzleCaptcha = ({
     const renderWidth = Math.min(imageWidth, maxCanvasWidth);
     const renderHeight = imageHeight;
 
-    const canvasRef = useRef(null);      // Background image with star hole
-    const pieceCanvasRef = useRef(null); // Draggable star-shaped puzzle piece
+    const canvasRef = useRef(null);      // Background image with puzzle hole
+    const pieceCanvasRef = useRef(null); // Draggable puzzle piece
     const wrapperRef = useRef(null);     // Responsive wrapper
     const [scale, setScale] = useState(1);
-    const [gapX, setGapX] = useState(0); // X-coordinate of the star gap
-    const [gapY, setGapY] = useState(0); // Y-coordinate of the star gap
+    const [gapX, setGapX] = useState(0); // X-coordinate of the puzzle gap
+    const [gapY, setGapY] = useState(0); // Y-coordinate of the puzzle gap
     const [sliderValue, setSliderValue] = useState(0);
     const [isSolved, setIsSolved] = useState(false);
     const [isFailed, setIsFailed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [currentShape, setCurrentShape] = useState('star'); // Current puzzle shape
 
-    // Load a random image and pick a star gap in the right half of the image.
+    // Available puzzle shapes
+    const puzzleShapes = ['star', 'jigsaw', 'triangle', 'circle', 'diamond', 'hexagon'];
+
+    // Get a random puzzle shape
+    const getRandomShape = () => {
+        const randomIndex = Math.floor(Math.random() * puzzleShapes.length);
+        return puzzleShapes[randomIndex];
+    };
+
+    // Load a random image and pick a puzzle gap in the right half of the image.
     const loadImage = () => {
         setIsLoading(true); // Begin loading
+        
+        // Select a random shape
+        const selectedShape = getRandomShape();
+        setCurrentShape(selectedShape);
+        
         const sources = [
             `https://picsum.photos/${renderWidth}/${renderHeight}?random=${Math.random()}`,
             `https://placekitten.com/${renderWidth}/${renderHeight}`,
@@ -53,7 +68,7 @@ const PuzzleCaptcha = ({
             newImg.onload = () => {
                 setIsLoading(false); // Done loading
 
-                // Position the star gap in the right half of the image so user must slide from left to right.
+                // Position the puzzle gap in the right half of the image so user must slide from left to right.
                 const minX = Math.floor(renderWidth / 2);
                 const maxX = renderWidth - pieceWidth - 10;
                 const x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
@@ -69,7 +84,7 @@ const PuzzleCaptcha = ({
                 setIsSolved(false);
 
                 drawBackground(newImg, x, y);
-                drawStarPiece(newImg, x, y);
+                drawPuzzlePiece(newImg, x, y);
             };
 
             newImg.onerror = () => {
@@ -80,7 +95,7 @@ const PuzzleCaptcha = ({
         tryNext();
     };
 
-    // Draw the background image and create a star-shaped hole (semi-transparent).
+    // Draw the background image and create a puzzle-shaped hole (semi-transparent).
     const drawBackground = (image, x, y) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -90,23 +105,23 @@ const PuzzleCaptcha = ({
         ctx.clearRect(0, 0, renderWidth, renderHeight);
         ctx.drawImage(image, 0, 0, renderWidth, renderHeight);
 
-        // Draw the star hole
+        // Draw the puzzle hole
         ctx.save();
         ctx.beginPath();
-        createStarPath(
+        createShapePath(
             ctx,
             x + pieceWidth / 2, // center X
             y + pieceHeight / 2, // center Y
-            5,                   // star points
-            pieceWidth * 0.45,   // outer radius
-            pieceWidth * 0.2     // inner radius
+            currentShape,
+            pieceWidth,
+            pieceHeight
         );
 
         // Fill the hole with semi-transparent overlay
         ctx.fillStyle = "rgba(0,0,0,0.4)";
         ctx.fill();
 
-        // Add a white outline around the star hole
+        // Add a white outline around the puzzle hole
         ctx.strokeStyle = "#fff";
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -114,9 +129,9 @@ const PuzzleCaptcha = ({
         ctx.restore();
     };
 
-    // Draw the star puzzle piece by clipping the piece canvas to a star path
+    // Draw the puzzle piece by clipping the piece canvas to the selected shape
     // and then drawing the corresponding cropped image region.
-    const drawStarPiece = (image, cropX, cropY) => {
+    const drawPuzzlePiece = (image, cropX, cropY) => {
         const canvas = pieceCanvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext("2d");
@@ -124,20 +139,20 @@ const PuzzleCaptcha = ({
 
         ctx.clearRect(0, 0, pieceWidth, pieceHeight);
 
-        // 1) Clip to star shape
+        // 1) Clip to the selected shape
         ctx.save();
         ctx.beginPath();
-        createStarPath(
+        createShapePath(
             ctx,
             pieceWidth / 2,
             pieceHeight / 2,
-            5, // number of spikes
-            pieceWidth * 0.45, // outer radius
-            pieceWidth * 0.2   // inner radius
+            currentShape,
+            pieceWidth,
+            pieceHeight
         );
         ctx.clip();
 
-        // 2) Draw the cropped portion of the image into the star
+        // 2) Draw the cropped portion of the image into the shape
         ctx.drawImage(
             image,
             cropX,
@@ -152,26 +167,45 @@ const PuzzleCaptcha = ({
         ctx.restore();
     };
 
+    // Creates different shape paths based on the shape type
+    const createShapePath = (ctx, cx, cy, shapeType, width, height) => {
+        const radius = Math.min(width, height) * 0.4;
+        
+        switch (shapeType) {
+            case 'star':
+                createStarPath(ctx, cx, cy, 5, radius, radius * 0.4);
+                break;
+            case 'jigsaw':
+                createJigsawPath(ctx, cx, cy, width, height);
+                break;
+            case 'triangle':
+                createTrianglePath(ctx, cx, cy, radius);
+                break;
+            case 'circle':
+                createCirclePath(ctx, cx, cy, radius);
+                break;
+            case 'diamond':
+                createDiamondPath(ctx, cx, cy, width, height);
+                break;
+            case 'hexagon':
+                createHexagonPath(ctx, cx, cy, radius);
+                break;
+            
+            default:
+                createCirclePath(ctx, cx, cy, radius);
+        }
+    };
+
     // Creates a star path with the given parameters.
-    // (cx, cy) is the center, spikes is how many points, outerRadius/innerRadius define star shape.
-    const createStarPath = (
-        ctx,
-        cx,
-        cy,
-        spikes,
-        outerRadius,
-        innerRadius
-    ) => {
+    const createStarPath = (ctx, cx, cy, spikes, outerRadius, innerRadius) => {
         let rotation = Math.PI / 2 * 3;
-        let x = cx;
-        let y = cy;
         const step = Math.PI / spikes;
 
         ctx.moveTo(cx, cy - outerRadius);
 
         for (let i = 0; i < spikes; i++) {
-            x = cx + Math.cos(rotation) * outerRadius;
-            y = cy + Math.sin(rotation) * outerRadius;
+            let x = cx + Math.cos(rotation) * outerRadius;
+            let y = cy + Math.sin(rotation) * outerRadius;
             ctx.lineTo(x, y);
             rotation += step;
 
@@ -181,9 +215,80 @@ const PuzzleCaptcha = ({
             rotation += step;
         }
 
-        ctx.lineTo(cx, cy - outerRadius);
         ctx.closePath();
     };
+
+    // Creates a jigsaw puzzle piece path
+    const createJigsawPath = (ctx, cx, cy, width, height) => {
+        const w = width * 0.8;
+        const h = height * 0.8;
+        const x = cx - w / 2;
+        const y = cy - h / 2;
+        const tabSize = w * 0.15;
+
+        ctx.moveTo(x, y + h * 0.3);
+        ctx.lineTo(x + w * 0.3, y + h * 0.3);
+        // Top tab
+        ctx.lineTo(x + w * 0.3, y + h * 0.2);
+        ctx.arc(x + w * 0.4, y + h * 0.2, tabSize, Math.PI, 0, false);
+        ctx.lineTo(x + w * 0.5, y + h * 0.2);
+        ctx.arc(x + w * 0.6, y + h * 0.2, tabSize, Math.PI, 0, false);
+        ctx.lineTo(x + w * 0.7, y + h * 0.2);
+        ctx.lineTo(x + w * 0.7, y + h * 0.3);
+        ctx.lineTo(x + w, y + h * 0.3);
+        ctx.lineTo(x + w, y + h * 0.7);
+        ctx.lineTo(x + w * 0.7, y + h * 0.7);
+        ctx.lineTo(x + w * 0.7, y + h * 0.8);
+        // Right tab
+        ctx.arc(x + w * 0.6, y + h * 0.8, tabSize, 0, Math.PI, false);
+        ctx.lineTo(x + w * 0.4, y + h * 0.8);
+        ctx.arc(x + w * 0.3, y + h * 0.8, tabSize, 0, Math.PI, false);
+        ctx.lineTo(x + w * 0.3, y + h * 0.7);
+        ctx.lineTo(x, y + h * 0.7);
+        ctx.lineTo(x, y + h * 0.3);
+        ctx.closePath();
+    };
+
+    // Creates a triangle path
+    const createTrianglePath = (ctx, cx, cy, radius) => {
+        ctx.moveTo(cx, cy - radius);
+        ctx.lineTo(cx + radius * 0.866, cy + radius * 0.5);
+        ctx.lineTo(cx - radius * 0.866, cy + radius * 0.5);
+        ctx.closePath();
+    };
+
+    // Creates a circle path
+    const createCirclePath = (ctx, cx, cy, radius) => {
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+    };
+
+    // Creates a diamond path
+    const createDiamondPath = (ctx, cx, cy, width, height) => {
+        const w = width * 0.4;
+        const h = height * 0.4;
+        ctx.moveTo(cx, cy - h);
+        ctx.lineTo(cx + w, cy);
+        ctx.lineTo(cx, cy + h);
+        ctx.lineTo(cx - w, cy);
+        ctx.closePath();
+    };
+
+    // Creates a hexagon path
+    const createHexagonPath = (ctx, cx, cy, radius) => {
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const x = cx + Math.cos(angle) * radius;
+            const y = cy + Math.sin(angle) * radius;
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.closePath();
+    };
+
+   
 
     // When the slider changes, update the piece's x position and check if it's near the gapX.
     // Instead of checking success in onChange, just store the slider value
@@ -207,7 +312,7 @@ const PuzzleCaptcha = ({
         }
     };
 
-    // Reset with a new random image
+    // Reset with a new random image and shape
     const handleReset = () => {
         setIsSolved(false)
         setIsFailed(false)
@@ -272,7 +377,7 @@ const PuzzleCaptcha = ({
                         </div>
                     )}
 
-                    {/* Background image with star hole */}
+                    {/* Background image with puzzle hole */}
                     <div className="w-full" style={{ position: "relative", height: renderHeight * scale, width: "100%" }}>
                         <div style={{ position: 'absolute', top: 0, left: 0, width: renderWidth, height: renderHeight, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
                             <canvas
@@ -338,7 +443,12 @@ const PuzzleCaptcha = ({
                             Captcha Failed. Please Let's try once more!
                         </p>
                     ) : (
-                        <div className="text-center mt-2 ">{sliderBarTitle}</div>
+                        <div className="text-center mt-2 flex items-center justify-center gap-2">
+                            <span>{sliderBarTitle}</span>
+                           
+
+                           
+                        </div>
                     )}
 
                     {/* Status message */}

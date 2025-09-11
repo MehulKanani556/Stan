@@ -232,12 +232,12 @@ const GameCard = ({
             onClick={(e) => {
               e.stopPropagation();
               isLoggedIn ?
-              onAddToCart(game)
-              :
-              navigate('/login')
+                onAddToCart(game)
+                :
+                navigate('/login')
             }}
             disabled={isInCart || isPurchased}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${isInCart && isLoggedIn
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isInCart || isPurchased) && isLoggedIn
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -261,24 +261,10 @@ const GameCard = ({
               </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
                 Login to add
               </span>}
-
-
-              {/* <div>
-                {isInCart ? (
-                  <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
-                    <span className="text-emerald-600 font-bold text-sm">✓</span>
-                  </div>
-                ) : (
-                  <FaShoppingCart size={18} className="text-white" />
-                )}
-              </div>
-              <span className="text-white font-bold text-sm tracking-wider uppercase">
-                {isInCart ? "Added to Cart" : "Add to Cart"}
-              </span> */}
             </div>
 
             {/* Button Effects */}
-            {!isInCart && (
+            {!isInCart && !isPurchased && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -449,7 +435,7 @@ export default function Home() {
         clearTimeout(handler); // Clear the timeout if dependencies change before the delay
       };
     }
-  }, [currentPage, activeTab, gamesPerPage, dispatch,isLoggedIn]);
+  }, [currentPage, activeTab, gamesPerPage, dispatch, isLoggedIn]);
 
 
 
@@ -528,25 +514,13 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => navigate('/allGames')}
-                  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 
-                    font-medium text-sm transition-all duration-200 ease-out
-                    border-[1px] border-[#933BE2]
-                    rounded-xl
-                    text-white
-                    hover:bg-[#933BE2] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                >
-                  All Games
-                </button>
+              <button onClick={() => navigate('/allGames')} class="px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md font-medium text-xs sm:text-sm transition-all duration-200 ease-out bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899] text-white shadow-lg shadow-fuchsia-500/30 hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">All Games</button>
                 <button
                   onClick={() => gameSwiperRef.current?.slidePrev()}
                   disabled={isBeginning}
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
                     ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+                    : ' bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]  hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110'
                     } text-white rotate-180`}
                 >
                   <FaArrowRight size={16} />
@@ -556,7 +530,7 @@ export default function Home() {
                   disabled={isEnd}
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
                     ? 'bg-gray-500 cursor-not-allowed opacity-50'
-                    : 'bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 hover:scale-110'
+                    : ' bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]  hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110'
                     } text-white`}
                 >
                   <FaArrowRight size={16} />

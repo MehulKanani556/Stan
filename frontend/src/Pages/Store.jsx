@@ -208,9 +208,9 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                 }`}
               onClick={(e) => {
                 e.stopPropagation();
-              isLoggedIn ?
-                inWishlist ? handleRemoveFromWishlist(game._id) : handleAddWishlist(game)
-              : navigate('/login')
+                isLoggedIn ?
+                  inWishlist ? handleRemoveFromWishlist(game._id) : handleAddWishlist(game)
+                  : navigate('/login')
 
               }}
             >
@@ -259,8 +259,8 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
             onClick={(e) => {
               e.stopPropagation();
               isLoggedIn ?
-              handleAddToCart(game)
-              : navigate('/login')
+                handleAddToCart(game)
+                : navigate('/login')
             }}
             disabled={inCart}
             className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart && isLoggedIn)

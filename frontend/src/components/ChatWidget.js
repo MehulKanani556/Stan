@@ -285,7 +285,7 @@ const ChatWidget = () => {
                   >
                     <div className="max-w-[80%] sm:max-w-[75%]">
                       <div
-                        className={`px-4 py-3 rounded-2xl shadow-lg whitespace-pre-wrap
+                        className={`px-4 py-3 rounded-2xl shadow-lg whitespace-pre-wrap break-words
                         ${m.role === "user"
                             ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
                             : "bg-white/10 backdrop-blur-md text-gray-200 border border-white/10 rounded-bl-none"
