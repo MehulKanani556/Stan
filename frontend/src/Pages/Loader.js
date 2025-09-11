@@ -28,8 +28,14 @@ const Loader = () => {
   
       {/* S */}
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" width={100} height={100} className="inline-block">
-        <path strokeLinejoin="round" strokeLinecap="round" strokeWidth={10} stroke="url(#b)" d="M70,20 C50,0 20,20 50,50 C80,80 50,100 30,80" className="dash" id="S1" pathLength={360} />
-      </svg>
+          <path strokeLinejoin="round" strokeLinecap="round" strokeWidth={10} stroke="url(#b)" d="M 75,35 
+          C 75,25 65,15 50,15
+          C 35,15 25,25 25,35
+          C 25,45 35,50 50,50
+          C 65,50 75,55 75,65
+          C 75,75 65,85 50,85
+          C 35,85 25,75 25,65" className="dash" id="S" pathLength={360} />
+        </svg>
   
       {/* T */}
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" width={100} height={100} className="inline-block">
