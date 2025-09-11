@@ -7,7 +7,7 @@ const calculateFanCoins = (amount, type = 'purchase') => {
     switch(type) {
         case 'purchase':
             // 1 fan coin for every $10 spent
-            return Math.floor(amount / 10);
+            return amount / 10;
         case 'dailyLogin':
             return 5; // Daily login bonus
         case 'review':

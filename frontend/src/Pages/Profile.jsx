@@ -43,9 +43,9 @@ const FANCoin = () => {
     const dispatch = useDispatch();
     const transactions = useSelector((state) => state.user.currentUser.fanCoinTransactions);
     console.log("transactionssssss", transactions);
-
+const userId = localStorage.getItem("userId")
     useEffect(() => {
-        dispatch(getFanCoinDetails());
+        dispatch(getFanCoinDetails(userId));
     }, [dispatch]);
 
 
@@ -67,24 +67,40 @@ const FANCoin = () => {
             {transactions.length > 0 ?
                 <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 3xl:items-start items-strech">
 
-                    {transactions.map((transaction) => (
-                        <StylishDiv key={transaction.id} className="group rounded-3xl overflow-hidden h-full ">
-                            {/* <div className=" opacity-80  h-full min-h-[180px]" /> */}
-                            <div className=" rounded-3xl min-h-[120px]  h-full">
-                                <div className='flex flex-col h-full'>
-                                    <div className="flex  justify-between mb-2  ">
-                                        <div className=''>
-                                            <h3 className="font-bold text-white text-base sm:text-lg">{transaction?.description}</h3>
-                                            <p className="text-gray-300 text-xs sm:text-sm mt-1">{formatDateTime(transaction?.date)}</p>
+                    {transactions
+                        .slice() // Create a shallow copy to avoid mutating the original array
+                        .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by date in descending order
+                        .map((transaction) => (
+                            <StylishDiv key={transaction.id} className="group rounded-3xl overflow-hidden h-full ">
+                                {/* <div className=" opacity-80  h-full min-h-[180px]" /> */}
+                                <div className=" rounded-3xl min-h-[120px]  h-full">
+                                    <div className='flex flex-col h-full'>
+                                        <div className="flex  justify-between mb-2  ">
+                                            <div className=''>
+                                                <h3 className="font-bold text-white text-base sm:text-lg">
+                                                    {(() => {
+                                                        const description = transaction?.description;
+                                                        if (description && description.startsWith("Earned from game purchase of $")) {
+                                                            const priceString = description.substring("Earned from game purchase of $".length);
+                                                            const price = parseFloat(priceString);
+                                                            if (!isNaN(price)) {
+                                                                const formattedPrice = price.toFixed(2);
+                                                                return `Earned from game purchase of $${formattedPrice}`;
+                                                            }
+                                                        }
+                                                        return description;
+                                                    })()}
+                                                </h3>
+                                                <p className="text-gray-300 text-xs sm:text-sm mt-1">{formatDateTime(transaction?.date)}</p>
+                                            </div>
+                                            <span className={`font-bold text-base sm:text-lg whitespace-nowrap ${transaction.type === 'EARN' ? 'text-green-400' : 'text-red-400'}`}>
+                                                {transaction?.amount.toFixed(2)}
+                                            </span>
                                         </div>
-                                        <span className={`font-bold text-base sm:text-lg whitespace-nowrap ${transaction.type === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
-                                            {transaction?.amount}
-                                        </span>
                                     </div>
                                 </div>
-                            </div>
-                        </StylishDiv>
-                    ))}
+                            </StylishDiv>
+                        ))}
                 </div>
                 :
                 <div className="flex flex-col items-center justify-center  relative">
