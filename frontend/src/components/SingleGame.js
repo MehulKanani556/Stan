@@ -1023,24 +1023,24 @@ const SingleGame = () => {
                     </div>
                     <div className="flex justify-between">
                       <h4 className="text-base text-gray-400">YOYO Rewards</h4>
-                      <p className="text-white text-base">Earn 20% Back</p>
+                      <p className="text-white text-base">Earn 10% Back</p>
                     </div>
                   </div>
                 </AccordionItem>
 
                 <AccordionItem title="More Details">
                   <div className="space-y-4">
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                       <p className="text-base text-gray-400">Refund Type</p>
                       <p className="text-white text-base">{single?.refund_type || '-'}</p>
-                    </div>
+                    </div> */}
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Developer</p>
-                      <p className="text-white text-base">{single?.developer || '-'}</p>
+                      <p className="text-white text-base">{single?.developer || 'Yoyo game'}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Publisher</p>
-                      <p className="text-white text-base">{single?.publisher || '-'}</p>
+                      <p className="text-white text-base">{single?.publisher || 'Yoyo game'}</p>
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Release Date</p>
@@ -1050,7 +1050,7 @@ const SingleGame = () => {
                     </div>
                     <div className="flex justify-between">
                       <p className="text-base text-gray-400">Total Download</p>
-                      <p className="text-white text-base">{single?.downloads || 0}</p>
+                      <p className="text-white text-base">{single?.totalDownloads || 0}</p>
                     </div>
                   </div>
                 </AccordionItem>

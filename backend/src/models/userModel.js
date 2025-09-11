@@ -13,8 +13,8 @@ const userSchema = new mongoose.Schema(
         bio: { type: String, maxlength: 160 },
         gender: { type: String, enum: ["male", "female"] },
 
-        followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-        followings: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        // followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        // followings: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
         joinedAt: { type: Date, default: Date.now },
 
