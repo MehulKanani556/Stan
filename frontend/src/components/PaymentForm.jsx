@@ -62,7 +62,7 @@ const PaymentForm = ({
         try {
             // If the amount is 0 (fully covered by fan coins), skip Stripe payment intent
             if (amount === 0) {
-                console.log('Payment fully covered by Fan Coins, skipping Stripe payment');
+                // console.log('Payment fully covered by Fan Coins, skipping Stripe payment');
                 
                 // Verify the "free" payment on your backend
                 const verificationResult = await dispatch(verifyPayment({
@@ -126,7 +126,7 @@ const PaymentForm = ({
                 return;
             }
 
-            console.log('Processing payment with client secret:', currentClientSecret);
+            // console.log('Processing payment with client secret:', currentClientSecret);
 
             // Confirm the payment with Stripe (for non-zero amounts)
             const { error, paymentIntent } = await stripe.confirmCardPayment(currentClientSecret, {
@@ -138,12 +138,13 @@ const PaymentForm = ({
                     },
                 },
             });
+            
 
             if (error) {
                 console.error('Payment error:', error);
                 alert(error.message || "An unexpected error occurred");
             } else if (paymentIntent?.status === "succeeded") {
-                console.log('Payment successful:', paymentIntent.id);
+                // console.log('Payment successful:', paymentIntent.id);
 
                 // Verify payment on your backend
                 const verificationResult = await dispatch(verifyPayment({

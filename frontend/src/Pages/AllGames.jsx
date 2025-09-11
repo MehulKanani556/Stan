@@ -174,11 +174,14 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
     const priceValue = getGamePrice(game);
 
     // Check if the game has been purchased
-    const isPurchased = useMemo(() =>
-        orders.some(order =>
-            order.items.some(item => item.game?._id === game?._id)
-        ), [orders, game?._id]);
-
+  const isPurchased= useMemo(() =>
+    Array.isArray(orders) && orders.some(order =>
+      order?.status === 'paid' &&
+      order?.items?.some(item => item?.game?._id === game?._id)
+    ),
+    [orders, game?._id]
+  )
+console.log(game?.name ,isPurchased);
     const isInCart = useMemo(() =>
         cartItems.some(item => item.game?._id === game?._id),
         [cartItems, game?._id]);
@@ -349,10 +352,10 @@ const FilterHeader = React.memo(({
 
     return (
         <div className="backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/25 shadow-2xl">
-            <div className="flex flex-col md:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="flex flex-wrap items-start lg:items-center justify-between gap-6">
 
                 {/* Search Input */}
-                <div className="flex-1 max-w-md">
+                <div className="flex-1 max-w-md min-w-36">
                     <label className="block text-sm font-medium text-gray-300 mb-2">Search Games</label>
                     <div className="relative">
                         <IoMdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
@@ -370,7 +373,7 @@ const FilterHeader = React.memo(({
                 <div className="flex  sx:flex-nowrap flex-wrap items-end gap-4">
 
                     {/* Category Filter */}
-                    <div className="min-w-[150px]">
+                    <div className="min-w-[150px] flex-1">
                         <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
                         <select
                             value={selectedCategory}
@@ -387,7 +390,7 @@ const FilterHeader = React.memo(({
                     </div>
 
                     {/* Sort Filter */}
-                    <div className="min-w-[150px]">
+                    <div className="min-w-[150px] flex-1">
                         <label className="block text-sm font-medium text-gray-300 mb-2">Sort By</label>
                         <select
                             value={sortBy}
@@ -403,7 +406,7 @@ const FilterHeader = React.memo(({
                     </div>
 
                     {/* Reset Button */}
-                    {hasActiveFilters && (
+                    {/* {hasActiveFilters && (
                         <div className="flex items-end">
                             <button
                                 onClick={onResetFilters}
@@ -412,7 +415,7 @@ const FilterHeader = React.memo(({
                                 Reset Filters
                             </button>
                         </div>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>
@@ -440,8 +443,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                     <button
                         key={i}
                         onClick={() => onPageChange(i)}
-                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${
-                            isActive
+                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
                                 ? "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
                                 : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
                             }`}
@@ -470,9 +472,9 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                 <div className="flex items-center gap-2">
                     <button
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === 1
-                                ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
-                        }`}
+                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
+                            }`}
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                         aria-label="Previous page"
@@ -486,9 +488,9 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
 
                     <button
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
-                                ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
-                        }`}
+                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
+                            }`}
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                         aria-label="Next page"
@@ -586,7 +588,7 @@ export default function AllGames() {
     // Effects
     useEffect(() => {
         if (isLoggedIn) {
-        dispatch(allorders());
+            dispatch(allorders());
         }
     }, [dispatch]);
 
@@ -628,9 +630,13 @@ export default function AllGames() {
         const priceValue = getGamePrice(game);
 
         // Check if the game has been purchased
-        const isPurchased = orders.some(order =>
-            order.items.some(item => item.game?._id === game?._id)
-        );
+        const isPurchased= useMemo(() =>
+            Array.isArray(orders) && orders.some(order =>
+              order?.status === 'paid' &&
+              order?.items?.some(item => item?.game?._id === game?._id)
+            ),
+            [orders, game?._id]
+          )
 
         return (
             <div
@@ -662,22 +668,22 @@ export default function AllGames() {
 
                             {/* Wishlist Button */}
                             <button
-                                className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${wishlistStatus[game?._id]
+                                className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${wishlistStatus[game?._id]   && isLoggedIn 
                                     ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
                                     : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     isLoggedIn ?
-                                    wishlistStatus[game?._id]
-                                        ? handleRemoveFromWishlist(game._id)
-                                        : handleAddWishlist(game)
-                                    :
-                                    navigate('/login')
-                                    
+                                        wishlistStatus[game?._id]
+                                            ? handleRemoveFromWishlist(game._id)
+                                            : handleAddWishlist(game)
+                                        :
+                                        navigate('/login')
+
                                 }}
                             >
-                                {wishlistStatus[game?._id] ? (
+                                {wishlistStatus[game?._id]  && isLoggedIn ? (
                                     <FaHeart size={16} className="text-white animate-pulse" />
                                 ) : (
                                     <FaRegHeart size={16} className="text-slate-300 group-hover:text-red-400 transition-colors" />
@@ -730,7 +736,7 @@ export default function AllGames() {
                                     navigate('/login')
                             }}
                             disabled={cartItems.some(item => item.game?._id === game?._id) || isPurchased}
-                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${cartItems.some(item => item.game?._id === game?._id) || isPurchased
+                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(cartItems.some(item => item.game?._id === game?._id) || isPurchased) && isLoggedIn
                                 ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
                                 : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
                                 }`}
@@ -748,7 +754,7 @@ export default function AllGames() {
                                     </div>
                                     <span className="text-white font-bold text-sm tracking-wider uppercase">
                                         {cartItems.some(item => item.game?._id === game?._id)
-                                            ? "Added to Cart"
+                                            ? (isPurchased ? "Purchased" : "Added to Cart")
                                             : (isPurchased ? "Purchased" : "Add to Cart")}
                                     </span>
                                 </> : <span className="text-white font-bold text-sm tracking-wider uppercase">

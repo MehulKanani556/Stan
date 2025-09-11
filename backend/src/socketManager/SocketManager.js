@@ -7,6 +7,9 @@ const socketUserMap = new Map();
 // Store typing timeouts to auto-clear typing status
 const typingTimeouts = new Map();
 
+// Store message queues for offline users
+const messageQueues = new Map();
+
 function initializeSocket(io) {
   io.on("connection", (socket) => {
     console.log("New socket connection:", socket.id);
@@ -32,6 +35,16 @@ function initializeSocket(io) {
         socket.join(userId);
         
         console.log(`User ${userId} joined with socket ${socket.id}`);
+        
+        // Send any queued messages for this user
+        const queuedMessages = messageQueues.get(userId);
+        if (queuedMessages && queuedMessages.length > 0) {
+          queuedMessages.forEach(message => {
+            socket.emit("newMessage", message);
+          });
+          messageQueues.delete(userId);
+          console.log(`Delivered ${queuedMessages.length} queued messages to ${userId}`);
+        }
         
         // Broadcast updated online users list
         io.emit("online-users", Array.from(userSocketMap.keys()));
@@ -81,19 +94,31 @@ function initializeSocket(io) {
           })
         };
 
-        // Send to receiver if they're online
+        // Send to receiver
         const receiverSocketId = userSocketMap.get(receiverId);
-        console.log(receiverSocketId);
         if (receiverSocketId) {
-          io.to(receiverSocketId).emit("newMessage", messageWithTime);
-          console.log(`Message sent to receiver ${receiverId}`);
+          // Check if receiver socket is still connected
+          const receiverSocket = io.sockets.sockets.get(receiverSocketId);
+          if (receiverSocket && receiverSocket.connected) {
+            io.to(receiverSocketId).emit("newMessage", messageWithTime);
+            console.log(`Message sent to receiver ${receiverId}`);
+          } else {
+            // Socket exists but disconnected, queue the message
+            queueMessageForOfflineUser(receiverId, messageWithTime);
+            console.log(`Receiver ${receiverId} socket disconnected, message queued`);
+          }
         } else {
-          console.log(`Receiver ${receiverId} is not online`);
+          // Receiver not online, queue the message
+          queueMessageForOfflineUser(receiverId, messageWithTime);
+          console.log(`Receiver ${receiverId} is not online, message queued`);
         }
 
         // Send confirmation back to sender
         socket.emit("messageSent", messageWithTime);
         console.log(`Message confirmation sent to sender ${senderId}`);
+
+        // Also emit to sender for immediate UI update
+        socket.emit("newMessage", messageWithTime);
 
         // Clear typing status for sender
         clearTypingStatus(senderId, io);
@@ -107,7 +132,7 @@ function initializeSocket(io) {
       }
     });
 
-    // Handle marking messages as read
+    // Handle marking messages as read with better error handling
     socket.on("markMessagesRead", async (data) => {
       try {
         const { senderId } = data;
@@ -115,6 +140,7 @@ function initializeSocket(io) {
         
         if (!receiverId) {
           console.log("Mark read event from unregistered socket");
+          socket.emit("markReadError", { error: "User not registered" });
           return;
         }
 
@@ -136,10 +162,14 @@ function initializeSocket(io) {
         // Notify the sender that their messages have been read
         const senderSocketId = userSocketMap.get(senderId);
         if (senderSocketId) {
-          io.to(senderSocketId).emit("messagesRead", {
-            readBy: receiverId,
-            timestamp: new Date()
-          });
+          const senderSocket = io.sockets.sockets.get(senderSocketId);
+          if (senderSocket && senderSocket.connected) {
+            io.to(senderSocketId).emit("messagesRead", {
+              readBy: receiverId,
+              timestamp: new Date(),
+              messageCount: result.modifiedCount
+            });
+          }
         }
 
         // Send confirmation back to the reader
@@ -157,7 +187,7 @@ function initializeSocket(io) {
       }
     });
 
-    // Handle typing indicator with auto-clear
+    // Handle typing indicator with better validation
     socket.on("typing", (data) => {
       const { receiverId } = data;
       const senderId = socketUserMap.get(socket.id);
@@ -169,8 +199,11 @@ function initializeSocket(io) {
 
       const receiverSocketId = userSocketMap.get(receiverId);
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit("typing", { senderId });
-        console.log(`Typing indicator sent from ${senderId} to ${receiverId}`);
+        const receiverSocket = io.sockets.sockets.get(receiverSocketId);
+        if (receiverSocket && receiverSocket.connected) {
+          io.to(receiverSocketId).emit("typing", { senderId });
+          console.log(`Typing indicator sent from ${senderId} to ${receiverId}`);
+        }
         
         // Clear existing timeout for this user
         const existingTimeout = typingTimeouts.get(senderId);
@@ -201,29 +234,85 @@ function initializeSocket(io) {
       
       const receiverSocketId = userSocketMap.get(receiverId);
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit("stop-typing", { senderId });
-        console.log(`Stop-typing indicator sent from ${senderId} to ${receiverId}`);
+        const receiverSocket = io.sockets.sockets.get(receiverSocketId);
+        if (receiverSocket && receiverSocket.connected) {
+          io.to(receiverSocketId).emit("stop-typing", { senderId });
+          console.log(`Stop-typing indicator sent from ${senderId} to ${receiverId}`);
+        }
       }
     });
 
-    // Handle disconnect
-    socket.on("disconnect", () => {
+    // Handle disconnect with cleanup
+    socket.on("disconnect", (reason) => {
+      console.log(`Socket ${socket.id} disconnected: ${reason}`);
+      
       const userId = socketUserMap.get(socket.id);
       if (userId) {
         // Clear typing status
         clearTypingStatus(userId, io);
         
-        // Remove mappings
-        userSocketMap.delete(userId);
-        socketUserMap.delete(socket.id);
-        
-        console.log(`User ${userId} disconnected`);
-        
-        // Broadcast updated online users list
-        io.emit("online-users", Array.from(userSocketMap.keys()));
+        // Don't immediately remove mappings - wait a bit for reconnection
+        setTimeout(() => {
+          // Check if user has reconnected with different socket
+          if (userSocketMap.get(userId) === socket.id) {
+            userSocketMap.delete(userId);
+            socketUserMap.delete(socket.id);
+            console.log(`User ${userId} mapping removed after disconnect timeout`);
+            
+            // Broadcast updated online users list
+            io.emit("online-users", Array.from(userSocketMap.keys()));
+          }
+        }, 5000); // 5 second grace period for reconnection
       }
     });
+
+    // Handle reconnection
+    socket.on("reconnect", () => {
+      console.log(`Socket ${socket.id} reconnected`);
+    });
+
+    // Add heartbeat mechanism
+    socket.on("ping", () => {
+      socket.emit("pong");
+    });
   });
+
+  // Cleanup disconnected sockets periodically
+  setInterval(() => {
+    const disconnectedSockets = [];
+    
+    for (const [socketId, userId] of socketUserMap.entries()) {
+      const socket = io.sockets.sockets.get(socketId);
+      if (!socket || !socket.connected) {
+        disconnectedSockets.push({ socketId, userId });
+      }
+    }
+    
+    disconnectedSockets.forEach(({ socketId, userId }) => {
+      userSocketMap.delete(userId);
+      socketUserMap.delete(socketId);
+      console.log(`Cleaned up disconnected socket ${socketId} for user ${userId}`);
+    });
+    
+    if (disconnectedSockets.length > 0) {
+      io.emit("online-users", Array.from(userSocketMap.keys()));
+    }
+  }, 30000); // Check every 30 seconds
+}
+
+// Helper function to queue messages for offline users
+function queueMessageForOfflineUser(userId, message) {
+  if (!messageQueues.has(userId)) {
+    messageQueues.set(userId, []);
+  }
+  
+  const queue = messageQueues.get(userId);
+  queue.push(message);
+  
+  // Limit queue size to prevent memory issues
+  if (queue.length > 50) {
+    queue.shift(); // Remove oldest message
+  }
 }
 
 // Helper function to clear typing status
@@ -248,7 +337,11 @@ export const getOnlineUsers = () => {
 };
 
 export const isUserOnline = (userId) => {
-  return userSocketMap.has(userId);
+  const socketId = userSocketMap.get(userId);
+  if (!socketId) return false;
+  
+  const socket = io.sockets.sockets.get(socketId);
+  return socket && socket.connected;
 };
 
 export default { initializeSocket };

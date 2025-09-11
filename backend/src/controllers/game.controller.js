@@ -433,20 +433,34 @@ export const getGameById = function (req, res) {
             if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
                 return ThrowError(res, 400, "Invalid game ID");
             }
+            
             // Atomically increment views and return the updated document
             let query = Game.findByIdAndUpdate(
                 req.params.id,
                 { $inc: { views: 1 } },
                 { new: true }
             );
+            
             if (mongoose.modelNames().includes("category")) {
                 query = query.populate("category");
             }
+            
             const game = await query.exec();
+            
             if (!game) return ThrowError(res, 404, "Game not found");
+            
+            // Count total downloads from Order model
+            const totalDownloads = await Order.countDocuments({
+                "items.game": req.params.id,
+                "status": "paid"
+            });
+            
             return res.status(200).json({
                 message: "game by id fetched successfully",
-                data: game,
+                data: {
+                    ...game.toObject(),
+                    totalDownloads
+                },
                 success: true
             });
         } catch (error) {

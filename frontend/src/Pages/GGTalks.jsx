@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useSocket } from "../context/SocketContext";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllMessageUsers, markMessagesAsRead } from "../Redux/Slice/user.slice";
@@ -13,13 +13,92 @@ export default function GGTalks() {
     const [newMessage, setNewMessage] = useState("");
     const [showUserList, setShowUserList] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState('connected');
+    const [pendingMessages, setPendingMessages] = useState([]);
+    
     const { socket } = useSocket();
     const dispatch = useDispatch();
     const typingTimeoutRef = useRef(null);
+    const heartbeatIntervalRef = useRef(null);
+    const reconnectTimeoutRef = useRef(null);
     const currentUserId = localStorage.getItem('userId');
 
     const { allMessageUsers } = useSelector((state) => state.user);
     const { selectedUser, messages, typingUsers } = useSelector((state) => state.manageState);
+
+    // Connection status monitoring
+    useEffect(() => {
+        if (socket) {
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                setConnectionStatus('connected');
+                
+                // Rejoin user room after reconnection
+                socket.emit('user-join', { userId: currentUserId });
+                
+                // Resend any pending messages
+                resendPendingMessages();
+            });
+
+            socket.on('disconnect', (reason) => {
+                console.log('Disconnected from server:', reason);
+                setConnectionStatus('disconnected');
+            });
+
+            socket.on('connect_error', (error) => {
+                console.error('Connection error:', error);
+                setConnectionStatus('error');
+            });
+
+            socket.on('reconnect', (attemptNumber) => {
+                console.log(`Reconnected after ${attemptNumber} attempts`);
+                setConnectionStatus('connected');
+            });
+
+            socket.on('reconnect_attempt', (attemptNumber) => {
+                console.log(`Reconnection attempt ${attemptNumber}`);
+                setConnectionStatus('reconnecting');
+            });
+
+            return () => {
+                socket.off('connect');
+                socket.off('disconnect');
+                socket.off('connect_error');
+                socket.off('reconnect');
+                socket.off('reconnect_attempt');
+            };
+        }
+    }, [socket, currentUserId]);
+
+    // Heartbeat mechanism
+    useEffect(() => {
+        if (socket && connectionStatus === 'connected') {
+            heartbeatIntervalRef.current = setInterval(() => {
+                socket.emit('ping');
+            }, 25000); // Send ping every 25 seconds
+
+            socket.on('pong', () => {
+                // Connection is healthy
+            });
+
+            return () => {
+                if (heartbeatIntervalRef.current) {
+                    clearInterval(heartbeatIntervalRef.current);
+                }
+                socket.off('pong');
+            };
+        }
+    }, [socket, connectionStatus]);
+
+    // Resend pending messages when connection is restored
+    const resendPendingMessages = useCallback(() => {
+        if (pendingMessages.length > 0 && socket && connectionStatus === 'connected') {
+            pendingMessages.forEach(msg => {
+                socket.emit("sendMessage", msg);
+            });
+            setPendingMessages([]);
+        }
+    }, [pendingMessages, socket, connectionStatus]);
 
     useEffect(() => {
         dispatch(getAllMessageUsers());
@@ -65,7 +144,7 @@ export default function GGTalks() {
 
     // Mark messages as read when user opens a chat
     useEffect(() => {
-        if (selectedUser && currentUserId) {
+        if (selectedUser && currentUserId && socket && connectionStatus === 'connected') {
             // Find the selected user's unread count
             const userWithUnread = allMessageUsers.find(user => user._id === selectedUser._id);
             
@@ -78,12 +157,10 @@ export default function GGTalks() {
                 dispatch(resetUnreadCount(selectedUser._id));
                 
                 // Emit socket event to notify the sender that messages have been read
-                if (socket) {
-                    socket.emit("markMessagesRead", { senderId: selectedUser._id });
-                }
+                socket.emit("markMessagesRead", { senderId: selectedUser._id });
             }
         }
-    }, [selectedUser, allMessageUsers, dispatch, socket, currentUserId]);
+    }, [selectedUser, allMessageUsers, dispatch, socket, currentUserId, connectionStatus]);
 
     // Check if selected user is typing
     useEffect(() => {
@@ -94,7 +171,7 @@ export default function GGTalks() {
         }
     }, [selectedUser, typingUsers]);
 
-    // Socket.IO for real-time messages and typing
+    // Socket.IO for real-time messages and typing with better error handling
     useEffect(() => {
         if (socket) {
             // Handle new messages
@@ -110,7 +187,7 @@ export default function GGTalks() {
                     }));
 
                     // If message is from selected user, mark as read immediately
-                    if (message.senderId === selectedUser._id) {
+                    if (message.senderId === selectedUser._id && socket && connectionStatus === 'connected') {
                         setTimeout(() => {
                             socket.emit("markMessagesRead", { senderId: selectedUser._id });
                         }, 100);
@@ -124,9 +201,22 @@ export default function GGTalks() {
                 dispatch(removeTypingUser(message.senderId));
             });
 
+            // Handle message sent confirmation
+            socket.on("messageSent", (message) => {
+                console.log("Message sent successfully:", message.message);
+                // Remove from pending messages if it was there
+                setPendingMessages(prev => prev.filter(msg => msg.message !== message.message));
+            });
+
+            // Handle message errors
+            socket.on("messageError", (error) => {
+                console.error("Message error:", error);
+                // You could show a toast notification here
+            });
+
             // Handle messages read confirmation
             socket.on("messagesRead", (data) => {
-                console.log(`${data.messageCount} messages read by user ${data.readBy}`);
+                console.log(`Messages read by user ${data.readBy}`);
                 // You can add UI feedback here if needed
             });
 
@@ -137,38 +227,48 @@ export default function GGTalks() {
 
             return () => {
                 socket.off("newMessage");
+                socket.off("messageSent");
+                socket.off("messageError");
                 socket.off("messagesRead");
                 socket.off("markReadError");
             };
         }
-    }, [socket, selectedUser, dispatch, currentUserId]);
+    }, [socket, selectedUser, dispatch, currentUserId, connectionStatus]);
 
     const handleSendMessage = async () => {
-        if (newMessage.trim() && selectedUser && socket) {
+        if (newMessage.trim() && selectedUser) {
             const messageData = {
                 receiverId: selectedUser._id,
                 message: newMessage.trim(),
                 senderId: currentUserId,
+                timestamp: Date.now() // Add timestamp for deduplication
             };
 
-            socket.emit("sendMessage", messageData);
-            setNewMessage("");
-
-            // Stop typing indicator
-            socket.emit("stop-typing", { receiverId: selectedUser._id });
-
-            // Clear typing timeout
-            if (typingTimeoutRef.current) {
-                clearTimeout(typingTimeoutRef.current);
-                typingTimeoutRef.current = null;
+            if (socket && connectionStatus === 'connected') {
+                socket.emit("sendMessage", messageData);
+                
+                // Stop typing indicator
+                socket.emit("stop-typing", { receiverId: selectedUser._id });
+                
+                // Clear typing timeout
+                if (typingTimeoutRef.current) {
+                    clearTimeout(typingTimeoutRef.current);
+                    typingTimeoutRef.current = null;
+                }
+            } else {
+                // Store message for later sending when connection is restored
+                setPendingMessages(prev => [...prev, messageData]);
+                console.log("Connection unavailable, message queued for later sending");
             }
+
+            setNewMessage("");
         }
     };
 
     const handleTyping = (e) => {
         setNewMessage(e.target.value);
 
-        if (socket && selectedUser) {
+        if (socket && selectedUser && connectionStatus === 'connected') {
             if (e.target.value.length > 0) {
                 // Emit typing event
                 socket.emit("typing", { receiverId: selectedUser._id });
@@ -203,7 +303,7 @@ export default function GGTalks() {
 
     // Handle blur event to stop typing
     const handleInputBlur = () => {
-        if (socket && selectedUser) {
+        if (socket && selectedUser && connectionStatus === 'connected') {
             socket.emit("stop-typing", { receiverId: selectedUser._id });
         }
 
@@ -225,15 +325,43 @@ export default function GGTalks() {
         return () => {
             window.removeEventListener('resize', handleResize);
 
-            // Cleanup typing timeout on unmount
+            // Cleanup timeouts on unmount
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
+            }
+            if (heartbeatIntervalRef.current) {
+                clearInterval(heartbeatIntervalRef.current);
+            }
+            if (reconnectTimeoutRef.current) {
+                clearTimeout(reconnectTimeoutRef.current);
             }
         };
     }, []);
 
+    // Connection status indicator
+    const ConnectionStatusIndicator = () => {
+        if (connectionStatus === 'connected') return null;
+        
+        const statusConfig = {
+            disconnected: { color: 'bg-red-500', text: 'Disconnected' },
+            reconnecting: { color: 'bg-yellow-500', text: 'Reconnecting...' },
+            error: { color: 'bg-red-500', text: 'Connection Error' }
+        };
+        
+        const config = statusConfig[connectionStatus];
+        
+        return (
+            <div className={`fixed top-0 left-0 right-0 ${config.color} text-white text-center py-2 text-sm z-50`}>
+                {config.text}
+                {pendingMessages.length > 0 && ` • ${pendingMessages.length} message(s) pending`}
+            </div>
+        );
+    };
+
     return (
         <div className="flex bg-gray-950 relative overflow-hidden h-[calc(100vh-64px-56px)] md:h-[calc(100vh-72px)]">
+            <ConnectionStatusIndicator />
+            
             {/* User List Sidebar */}
             <ChatUserList
                 showUserList={showUserList}
@@ -282,16 +410,27 @@ export default function GGTalks() {
 
                             {/* Send button */}
                             <button
-                                className={`flex-shrink-0 p-3 rounded-full shadow-md text-xl transition-all duration-200 ${newMessage.trim()
-                                        ? 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg transform hover:scale-105'
+                                className={`flex-shrink-0 p-3 rounded-full shadow-md text-xl transition-all duration-200 ${
+                                    newMessage.trim()
+                                        ? connectionStatus === 'connected'
+                                            ? 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg transform hover:scale-105'
+                                            : 'bg-yellow-500 hover:bg-yellow-600 text-white'
                                         : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                    }`}
+                                }`}
                                 onClick={handleSendMessage}
                                 disabled={!newMessage.trim()}
+                                title={connectionStatus !== 'connected' ? 'Will send when connection is restored' : ''}
                             >
                                 <GrSend />
                             </button>
                         </div>
+                        
+                        {/* Show pending messages count */}
+                        {pendingMessages.length > 0 && (
+                            <div className="text-xs text-yellow-400 mt-2 text-center">
+                                {pendingMessages.length} message(s) will be sent when connection is restored
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

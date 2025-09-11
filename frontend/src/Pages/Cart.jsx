@@ -19,7 +19,7 @@ import PaymentForm from '../components/PaymentForm';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { fanCoinsuse, getUserById } from '../Redux/Slice/user.slice';
 
-const stripePromise = loadStripe("pk_test_51R8wko2LIh9VELYJ9wrmC0oOqOvNAIUY3LVUhay96NYQjyOa7oK7MfdKYlzErmsJ6Gnn6o2zgPBxy1DrBxvfFQ4500cYJMw3sB");
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const Cart = () => {
     const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const Cart = () => {
         if (checked) {
             // Calculate maximum applicable Fan Coins
             const maxApplicableCoins = Math.min(fanCoins, totalPrice);
-            console.log(maxApplicableCoins, fanCoins, totalPrice);
+            // console.log(maxApplicableCoins, fanCoins, totalPrice);
 
             setFanCoinsToUse(maxApplicableCoins);
             setFinalAmount(Math.max(0, totalPrice - maxApplicableCoins));
@@ -90,7 +90,7 @@ const Cart = () => {
 
     const handleRemove = (item) => {
         // alert(id)
-        console.log("aaa", item);
+        // console.log("aaa", item);
 
         dispatch(removeFromCart({ gameId: item.game._id, platform: "windows" }));
     };
@@ -118,15 +118,15 @@ const Cart = () => {
         })) : []);
 
         const originalAmount = items.reduce((sum, it) => sum + it.price, 0);
-        console.log('Applying fan coins:', fanCoinsToUse, useFanCoinsChecked);
+        // console.log('Applying fan coins:', fanCoinsToUse, useFanCoinsChecked);
 
         try {
             // 1. Create order first with original amount and fan coin details
             const orderResult = await dispatch(createOrder({
                 items,
                 amount: finalAmount, // Use final amount after fan coins
-                fanCoinsUsed:  fanCoinsToUse || 0,
-                fanCoinDiscount:  fanCoinsToUse|| 0
+                fanCoinsUsed: fanCoinsToUse || 0,
+                fanCoinDiscount: fanCoinsToUse || 0
             }));
 
             if (!createOrder.fulfilled.match(orderResult)) {
@@ -142,18 +142,18 @@ const Cart = () => {
 
             if (useFanCoinsChecked && fanCoinsToUse > 0 && authUser?._id) {
                 try {
-                    console.log('Applying fan coins:', fanCoinsToUse);
+                    // console.log('Applying fan coins:', fanCoinsToUse);
 
                     const fanCoinResult = await dispatch(fanCoinsuse({
                         userId: authUser._id,
                         gamePrice: originalAmount,
                         fanCoinsToUse: fanCoinsToUse
                     }));
-                    console.log(fanCoinResult);
+                    // console.log(fanCoinResult);
 
 
                     if (fanCoinResult.type === 'user/fanCoinsuse/fulfilled') {
-                        console.log('Fan coins applied successfully:', fanCoinResult.payload);
+                        // console.log('Fan coins applied successfully:', fanCoinResult.payload);
                         finalAmountToPay = fanCoinResult.payload.discountedPrice || finalAmount;
                         actualFanCoinsUsed = fanCoinsToUse;
 
@@ -210,7 +210,7 @@ const Cart = () => {
         <div className=" md:max-w-[85%] max-w-[95%] mx-auto text-white py-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 md:mb-8 tracking-tight">My Cart</h1>
 
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {loading ? (
                         <>
@@ -223,9 +223,9 @@ const Cart = () => {
                             <div
                                 key={item.game._id}
                                 onClick={() => navigate(`/single/${item.game._id}`)}
-                                className="bg-black/15 border border-white/10 p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-6"
+                                className="bg-black/15 border border-white/10 p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6"
                             >
-                                <div className="w-full lg:w-40 h-48 lg:h-40 shrink-0">
+                                <div className="w-full lg:w-40 h-36 sm:h-44 lg:h-40 shrink-0">
                                     <img
                                         src={item.game.cover_image.url}
                                         alt={item.game.title}
@@ -239,7 +239,7 @@ const Cart = () => {
                                             {item.game.category.categoryName}
                                         </span>
 
-                                        <h2 className="text-xl font-semibold mt-2">{item.game.title}</h2>
+                                        <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">{item.game.title}</h2>
 
                                         <span className="text-gray-400 flex items-center gap-2 text-sm">
                                             <FaWindows /> Playable on PC
@@ -247,25 +247,25 @@ const Cart = () => {
 
                                     </div>
 
-                                    <div className=" items-center mt-4">
-                                        <p className="text-xl font-bold text-white">
+                                    <div className="flex justify-between items-center mt-3">
+                                        <p className="text-lg sm:text-xl font-bold text-white">
                                             ${item.price.toLocaleString()}
                                         </p>
+                                        <div className="text-white text-xs px-3 py-1 rounded-full">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    handleRemove(item);
+                                                }}
+                                                className="text-red-400 hover:text-red-500 transition text-xl lg:mr-4"
+                                            >
+                                                <RiDeleteBin6Line />
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div className="flex flex-col justify-between items-start lg:items-end min-w-0 lg:min-w-[120px]">
 
-                                <div className="flex flex-col items-end justify-between min-w-[120px]">
-                                    <div className="text-white text-xs px-3 py-1 rounded-full">
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                handleRemove(item);
-                                            }}
-                                            className="text-red-400 hover:text-red-500 transition text-xl mr-4"
-                                        >
-                                            <RiDeleteBin6Line />
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -285,7 +285,7 @@ const Cart = () => {
                     )}
                 </div>
 
-                <div className="bg-black/15 border border-white/10 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg sticky top-20">
+                <div className="bg-black/15 border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col gap-5 sm:gap-6 h-fit shadow-lg lg:sticky lg:top-20">
                     <div className="flex justify-between items-center">
                         {loading ? (
                             <div className="w-full">
@@ -436,7 +436,7 @@ const Cart = () => {
             {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
 
             <Dialog
-                open={!!(showPaymentForm  && currentOrderId)}
+                open={!!(showPaymentForm && currentOrderId)}
                 onClose={() => setShowPaymentForm(false)}
                 className="relative z-50"
             >

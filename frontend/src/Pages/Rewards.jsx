@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
+import amazonImg from '../images/Amazon.png'
+import yoyoLogo from '../images/YOYO-LOGO.svg'
+import stickerImg from '../images/gens-logo1.png'
+import cameraImg from '../images/stan-user.jpg'
+import posterImg from '../images/game5.jpg'
+import mysteryImg from '../images/shadow.jpg'
 
 
 const gamerTheme = `
@@ -28,9 +34,9 @@ const gamerTheme = `
   .btn-primary:hover { filter: brightness(1.05); }
   .btn-soft { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.12); }
   .btn-soft:hover { background: rgba(255,255,255,0.12); }
-  .chip { background: linear-gradient(90deg, rgba(255,221,87,0.12), rgba(255,179,0,0.12)); border: 1px solid rgba(255,179,0,0.35); }
+  .chip { background: linear-gradient(90deg, rgba(177,145,255,0.12), rgba(98,29,242,0.12)); border: 1px solid rgba(177,145,255,0.35); }
   .redeem-progress::-webkit-progress-bar { background: rgba(255,255,255,0.08); border-radius: 9999px; }
-  .redeem-progress::-webkit-progress-value { background: linear-gradient(90deg,#ffd54a,#ffb300); border-radius: 9999px; }
+  .redeem-progress::-webkit-progress-value { background: linear-gradient(90deg, #b191ff, #621df2); border-radius: 9999px; }
   .redeem-progress { width: 100%; height: 8px; border-radius: 9999px; overflow: hidden; }
 `;
 
@@ -58,7 +64,7 @@ export default function Rewards() {
 
     return (
         <>
-            <section className='w-full page-bg'>
+            <section className='w-full'>
                 <RewardsExperience />
             </section>
         </>
@@ -74,6 +80,7 @@ const RewardsExperience = () => {
     const [completedQuests, setCompletedQuests] = useState(new Set());
     const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
+    const [completedDailyTasks, setCompletedDailyTasks] = useState(new Set());
 
     useEffect(() => {
         const last = localStorage.getItem('rewards:lastStreakClaim');
@@ -82,13 +89,19 @@ const RewardsExperience = () => {
     }, []);
 
     const baseTasks = [
-        { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-yellow-300" />, points: 500 },
-        { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 50 },
-        { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 500 },
+        { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-purple-300" />, points: 50 },
+        { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 5 },
+        { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 50 },
+    ];
+
+    const dailyTasks = [
+        { id: 'd1', title: 'Login to the app', points: 15, progress: 1, goal: 1 },
+        { id: 'd2', title: 'Play any game for 15 minutes', points: 15, progress: 10, goal: 15 },
+        { id: 'd3', title: 'Daily Streak Bonus', points: 15, progress: 1, goal: 1 },
     ];
 
     const iconCycle = [
-        <FaQuestionCircle className="text-yellow-300" />,
+        <FaQuestionCircle className="text-purple-300" />,
         <MdOutlineOndemandVideo className="text-pink-300" />,
         <FaUserFriends className="text-emerald-300" />,
     ];
@@ -104,18 +117,18 @@ const RewardsExperience = () => {
     const tasksToShow = showAllTasks ? allTasks : baseTasks;
 
     const weeklyQuests = [
-        { id: 'q1', title: 'Play any game for 15 minutes', progress: 10, goal: 15, reward: 30 },
-        { id: 'q2', title: 'Win 3 matches', progress: 1, goal: 3, reward: 60 },
-        { id: 'q3', title: 'Login 5 days this week', progress: streakDay, goal: 5, reward: 45 },
+        { id: 'q1', title: 'Play any game for 60 minutes', progress: 10, goal: 60, reward: 50 },
+        { id: 'q2', title: 'Complete 3 daily tasks for 5 days', progress: 2, goal: 5, reward: 45 },
+        { id: 'q3', title: 'Login 5 days this week', progress: streakDay, goal: 5, reward: 40 },
     ];
 
     const rewards = [
-        { id: 1, title: 'tbh welcome pack', img: '', price: 500, status: 'redeemed' },
-        { id: 2, title: 'Amazon.com $5 gift card', img: '', price: 600, status: 'unlocked' },
-        { id: 3, title: 'Sticker pack', img: '', price: 1500, status: 'locked' },
-        { id: 4, title: 'Disposable camera', img: '', price: 3500, status: 'locked' },
-        { id: 5, title: 'Gaming poster', img: '', price: 800, status: 'locked' },
-        { id: 6, title: 'Mystery loot', img: '', price: 1200, status: 'locked' },
+        { id: 1, title: 'tbh welcome pack', img: yoyoLogo, price: 500, status: 'redeemed' },
+        { id: 2, title: 'Amazon.com $5 gift card', img: amazonImg, price: 1500, status: 'unlocked' },
+        { id: 3, title: 'Sticker pack', img: stickerImg, price: 1500, status: 'locked' },
+        { id: 4, title: 'Disposable camera', img: cameraImg, price: 3500, status: 'locked' },
+        { id: 5, title: 'Gaming poster', img: posterImg, price: 800, status: 'locked' },
+        { id: 6, title: 'Mystery loot', img: mysteryImg, price: 1200, status: 'locked' },
     ];
 
     const leaderboard = [
@@ -161,6 +174,13 @@ const RewardsExperience = () => {
         localStorage.setItem('rewards:lastStreakClaim', today);
     };
 
+    const completeDailyTask = (task) => {
+        if (completedDailyTasks.has(task.id)) return;
+        if (task.progress < task.goal) return;
+        earnPoints(task.points, task.title);
+        setCompletedDailyTasks(prev => new Set(prev).add(task.id));
+    };
+
     const claimMilestone = (mid) => {
         setMilestones(prev => prev.map(m => {
             if (m.id === mid && !m.claimed && totalEarned >= m.target) {
@@ -185,40 +205,40 @@ const RewardsExperience = () => {
     };
 
     return (
-        <section className='pb-12'>
-            <div className='max-w-[95%] md:max-w-[85%] m-auto'>
+        <section className='pb-12 overflow-x-hidden'>
+            <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
                 {/* Hero */}
-                <div className='relative mt-10 md:mt-16 rounded-3xl border hero-border bg-white/5 overflow-hidden'>
-                    <div className='absolute inset-0 opacity-40' style={{background:"radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)"}}></div>
-                    <div className='relative z-10 px-6 md:px-10 py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6'>
-                        <div>
-                            <div className='inline-flex items-center gap-2 chip text-yellow-200 text-xs md:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
-                                <FaGem/> Level up your loot
+                <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
+                    <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
+                    <div className='relative z-10 px-4 sm:px-6 md:px-10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6'>
+                        <div className='w-full lg:w-auto'>
+                            <div className='inline-flex items-center gap-2 chip text-purple-200 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
+                                <FaGem /> Level up your loot
                             </div>
-                            <h1 className='text-white font-extrabold text-3xl md:text-5xl leading-tight tracking-tight'>Rewards Hub</h1>
-                            <p className='text-white/70 mt-2 md:mt-3 max-w-2xl'>Grind quests, stack streaks, and redeem epic goodies. All your progress and perks live here.</p>
+                            <h1 className='text-white font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight'>Rewards Hub</h1>
+                            <p className='text-white/70 mt-2 md:mt-3 max-w-2xl text-sm sm:text-base'>Grind quests, stack streaks, and redeem epic goodies. All your progress and perks live here.</p>
                         </div>
-                        <div className='flex items-center gap-6 w-full lg:w-auto'>
-                            <div className='glass-card rounded-2xl p-5 min-w-[180px] text-center'>
+                        <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto'>
+                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Current Balance</p>
-                                <div className='text-yellow-300 font-extrabold text-3xl md:text-4xl mt-1 flex items-center justify-center gap-2'><FaGem/> {balance}</div>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {balance}</div>
                             </div>
-                            <div className='glass-card rounded-2xl p-5 min-w-[180px] text-center'>
+                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Total Earned</p>
-                                <div className='text-yellow-300 font-extrabold text-3xl md:text-4xl mt-1'>{totalEarned}</div>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Top grid */}
-                <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mt-10'>
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-10 md:items-stretch'>
                     {/* My Points */}
-                    <div className='glass-card rounded-2xl p-6 md:p-7 reward-glow'>
-                        <h3 className='text-white font-semibold text-base md:text-lg mb-5'>My Points</h3>
-                        <div className='bg-[#171423] rounded-xl p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
-                            <FaGem className='text-yellow-300 text-4xl md:text-5xl mb-3' />
-                            <div className='text-yellow-300 font-extrabold text-4xl md:text-5xl'>{balance}</div>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
+                        <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
+                        <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
+                            <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
+                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{balance}</div>
                             <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
                             <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
                             <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned}</p>
@@ -226,28 +246,28 @@ const RewardsExperience = () => {
                     </div>
 
                     {/* Earn more points */}
-                    <div className='glass-card rounded-2xl p-6 md:p-7 lg:col-span-2 reward-glow'>
-                        <div className='flex items-center justify-between mb-5'>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
+                        <div className='flex items-center justify-between mb-4 sm:mb-5'>
                             <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
                             <span className='text-white/50 text-xs'>Daily refresh</span>
                         </div>
-                        <div className='space-y-4'>
+                        <div className='space-y-3 sm:space-y-4'>
                             {tasksToShow.map(task => {
                                 const done = completedTasks.has(task.id);
                                 return (
-                                    <div key={task.id} className='flex items-center justify-between bg-white/5 rounded-xl p-4 border border-white/10'>
-                                        <div className='flex items-center gap-4'>
-                                            <div className='w-10 h-10 rounded-lg bg-black/40 flex items-center justify-center'>
+                                    <div key={task.id} className='flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                        <div className='flex items-center gap-3 sm:gap-4'>
+                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center'>
                                                 {task.icon}
                                             </div>
-                                            <div>
-                                                <p className='text-white font-medium'>{task.title}</p>
-                                                <div className='flex items-center gap-2 text-yellow-300 text-sm'>
+                                            <div className='min-w-0 flex-1'>
+                                                <p className='text-white font-medium text-sm sm:text-base truncate'>{task.title}</p>
+                                                <div className='flex items-center gap-2 text-purple-300 text-xs sm:text-sm'>
                                                     <FaGem /> <span>{task.points}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <button onClick={() => completeTask(task)} disabled={done} className={`px-4 py-2 rounded-lg text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                        <button onClick={() => completeTask(task)} disabled={done} className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
                                             {done ? 'Completed' : 'Earn'}
                                         </button>
                                     </div>
@@ -261,49 +281,66 @@ const RewardsExperience = () => {
                 </div>
 
                 {/* Daily streak + Weekly quests */}
-                <div className='mt-10 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8'>
-                    <div className='glass-card rounded-2xl p-6 reward-glow'>
+                <div className='mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
                         <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-yellow-300'/> Daily Streak</h3>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-purple-300' /> Daily Tasks</h3>
                             <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
                         </div>
-                        <div className='bg-white/5 rounded-xl p-5 border border-white/10'>
-                            <div className='flex items-center justify-between'>
-                                <div className='text-white/80 text-sm'>Keep your streak to earn bonus points</div>
-                                <div className='flex items-center gap-2 text-yellow-300 chip px-2 py-0.5 rounded-md'><FaGem/><span>+20</span></div>
-                            </div>
-                            <div className='mt-4'>
-                                <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                    <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{width: `${(streakDay/7)*100}%`}}></div>
-                                </div>
-                            </div>
-                            <button onClick={claimStreak} disabled={streakClaimedToday} className={`mt-5 w-full py-2 rounded-xl text-sm font-semibold ${streakClaimedToday ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
-                                {streakClaimedToday ? 'Claimed Today' : 'Claim Daily Bonus'}
-                            </button>
+                        <div className='space-y-3'>
+                            {dailyTasks.map(task => {
+                                const progressPct = Math.min(100, (task.progress / task.goal) * 100);
+                                const canComplete = task.progress >= task.goal && !completedDailyTasks.has(task.id);
+                                const done = completedDailyTasks.has(task.id);
+                                return (
+                                    <div key={task.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                        <div className='flex items-center justify-between mb-2'>
+                                            <p className='text-white font-medium text-xs sm:text-sm'>{task.title}</p>
+                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'>
+                                                <FaGem /> {task.points}
+                                            </div>
+                                        </div>
+                                        <div className='flex items-center justify-between mb-2'>
+                                            <span className='text-white/60 text-xs'>{task.progress}/{task.goal}</span>
+                                            <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
+                                        </div>
+                                        <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
+                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
+                                        </div>
+                                        <button 
+                                            onClick={() => completeDailyTask(task)} 
+                                            disabled={!canComplete} 
+                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        >
+                                            {done ? 'Completed' : canComplete ? 'Claim' : 'In Progress'}
+                                        </button>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
-                    <div className='glass-card rounded-2xl p-6 lg:col-span-2 reward-glow'>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 lg:col-span-2 reward-glow'>
                         <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaRegClock className='text-pink-300'/> Weekly Quests</h3>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaRegClock className='text-pink-300' /> Weekly Quests</h3>
                             <span className='text-white/50 text-xs'>Resets Monday</span>
                         </div>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
                             {weeklyQuests.map(q => {
                                 const progressPct = Math.min(100, (q.progress / q.goal) * 100);
                                 const canComplete = q.progress >= q.goal && !completedQuests.has(q.id);
                                 const done = completedQuests.has(q.id);
                                 return (
-                                    <div key={q.id} className='bg-white/5 rounded-xl p-4 border border-white/10'>
-                                        <p className='text-white font-medium'>{q.title}</p>
+                                    <div key={q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                        <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>
                                         <div className='flex items-center justify-between mt-2'>
                                             <span className='text-white/60 text-xs'>{q.progress}/{q.goal}</span>
-                                            <div className='flex items-center gap-1 text-yellow-300 text-sm'><FaGem/> {q.reward}</div>
+                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
                                         </div>
                                         <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                            <div className='h-2 bg-gradient-to-r from-yellow-400 to-orange-400' style={{width: `${progressPct}%`}}></div>
+                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
                                         </div>
-                                        <button onClick={() => completeQuest(q)} disabled={!canComplete} className={`mt-4 w-full py-2 rounded-lg text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-soft hover:opacity-100' : 'btn-soft cursor-not-allowed opacity-60'}`}>
+                                        <button onClick={() => completeQuest(q)} disabled={!canComplete} className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-soft hover:opacity-100' : 'btn-soft cursor-not-allowed opacity-60'}`}>
                                             {done ? 'Completed' : canComplete ? 'Claim Reward' : 'In Progress'}
                                         </button>
                                     </div>
@@ -314,45 +351,49 @@ const RewardsExperience = () => {
                 </div>
 
                 {/* Redeem */}
-                <div className='mt-12'>
+                <div className='mt-8 sm:mt-12'>
                     <div className='flex items-center justify-between mb-3'>
                         <h3 className='text-white font-semibold text-base md:text-lg'>Redeem</h3>
                         <span className='text-white/50 text-xs'>Choose your loot</span>
                     </div>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
                         {rewards.map(item => (
-                            <div key={item.id} className='glass-card rounded-2xl p-4 md:p-5 reward-glow'>
-                                <div className='bg-white/10 h-36 md:h-40 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden'>
+                            <div key={item.id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
+                                <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
                                     {item.status === 'locked' && (
-                                        <div className='absolute top-3 left-3 text-[10px] md:text-xs bg-black/60 text-white px-2 py-1 rounded-md flex items-center gap-1'>
+                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10 flex items-center gap-1'>
                                             <FaLock className='text-white/80' /> Locked
                                         </div>
                                     )}
                                     {item.status !== 'locked' && (
-                                        <div className='absolute top-3 left-3 text-[10px] md:text-xs bg-black/60 text-white px-2 py-1 rounded-md'>
+                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10'>
                                             Unlocked
                                         </div>
                                     )}
                                     {item.status === 'redeemed' && (
-                                        <div className='absolute top-3 right-3 text-[10px] md:text-xs bg-emerald-600/80 text-white px-2 py-1 rounded-md flex items-center gap-1'>
+                                        <div className='absolute top-2 sm:top-3 right-2 sm:right-3 text-[10px] sm:text-xs bg-emerald-600/80 text-white px-2 py-1 rounded-md flex items-center gap-1 z-10'>
                                             <FaCheckCircle /> Redeemed
                                         </div>
                                     )}
-                                    <FaPlay className='text-white/30 text-3xl' />
+                                    {item.img ? (
+                                        <img src={item.img} alt={item.title} className='absolute inset-0 w-full h-full object-cover opacity-70' />
+                                    ) : (
+                                        <FaPlay className='text-white/30 text-2xl sm:text-3xl' />
+                                    )}
                                 </div>
                                 <div>
-                                    <p className='text-white text-sm md:text-base font-medium line-clamp-2'>{item.title}</p>
-                                    <div className='mt-3 flex items-center gap-2 text-yellow-300'>
+                                                                            <p className='text-white text-sm sm:text-base font-medium line-clamp-2 break-words'>{item.title}</p>
+                                    <div className='mt-2 sm:mt-3 flex items-center gap-2 text-purple-300'>
                                         <FaGem />
-                                        <span className='font-semibold'>{item.price}</span>
+                                        <span className='font-semibold text-sm sm:text-base'>{item.price}</span>
                                     </div>
-                                    <div className='mt-3'>
+                                    <div className='mt-2 sm:mt-3'>
                                         <progress value={Math.min(balance, item.price)} max={item.price} className='redeem-progress'></progress>
                                     </div>
                                     <button
                                         onClick={() => tryRedeem(item)}
                                         disabled={item.status !== 'unlocked' || balance < item.price}
-                                        className={`mt-4 w-full py-2 rounded-xl text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && balance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && balance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                     >
                                         {item.status === 'redeemed' ? 'Redeemed' : 'Redeem'}
                                     </button>
@@ -363,38 +404,38 @@ const RewardsExperience = () => {
                 </div>
 
                 {/* Leaderboard & Activity */}
-                <div className='mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8'>
-                    <div className='glass-card rounded-2xl p-6 reward-glow lg:col-span-2'>
+                <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow lg:col-span-2'>
                         <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-amber-300'/> Leaderboard</h3>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-purple-300' /> Leaderboard</h3>
                             <span className='text-white/50 text-xs'>Top this week</span>
                         </div>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
                             {leaderboard.map((u, idx) => (
-                                <div key={u.id} className='bg-white/5 rounded-xl p-4 border border-white/10 flex items-center justify-between'>
-                                    <div className='flex items-center gap-3'>
-                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold ${idx===0?'bg-amber-400 text-black': idx===1?'bg-slate-300 text-black': idx===2?'bg-amber-700 text-white':'bg-white/10 text-white'}`}>{idx+1}</div>
-                                        <div>
-                                            <p className='text-white font-medium'>{u.name}</p>
+                                <div key={u.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex items-center justify-between'>
+                                    <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+                                        <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>{idx + 1}</div>
+                                        <div className='min-w-0 flex-1'>
+                                            <p className='text-white font-medium text-sm sm:text-base truncate'>{u.name}</p>
                                             <span className='text-white/60 text-xs'>Top Player</span>
                                         </div>
                                     </div>
-                                    <div className='flex items-center gap-2 text-yellow-300'><FaGem/><span className='font-semibold'>{u.points}</span></div>
+                                    <div className='flex items-center gap-1 sm:gap-2 text-purple-300 text-xs sm:text-sm shrink-0'><FaGem /><span className='font-semibold'>{u.points}</span></div>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div className='glass-card rounded-2xl p-6 reward-glow'>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4'>Recent Activity</h3>
-                        <div className='space-y-3 max-h-80 overflow-auto pr-1'>
+                        <div className='space-y-2 sm:space-y-3 max-h-60 sm:max-h-80 overflow-auto pr-1'>
                             {history.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
                             {history.map(it => (
-                                <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-3'>
-                                    <div>
-                                        <p className='text-white text-sm'>{it.label}</p>
+                                <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>
+                                    <div className='min-w-0 flex-1'>
+                                        <p className='text-white text-xs sm:text-sm truncate'>{it.label}</p>
                                         <span className='text-white/50 text-xs'>{it.time}</span>
                                     </div>
-                                    <div className={`${it.type==='earn'?'text-emerald-300':'text-rose-300'} font-semibold`}>{it.type==='earn'?'+':'-'}{it.amount}</div>
+                                    <div className={`${it.type === 'earn' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'earn' ? '+' : '-'}{it.amount}</div>
                                 </div>
                             ))}
                         </div>
@@ -402,37 +443,37 @@ const RewardsExperience = () => {
                 </div>
 
                 {/* Milestones & Badges */}
-                <div className='mt-12'>
+                <div className='mt-8 sm:mt-12'>
                     <div className='flex items-center justify-between mb-3'>
-                        <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-yellow-300'/> Milestones & Badges</h3>
+                        <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-purple-300' /> Milestones & Badges</h3>
                         <span className='text-white/50 text-xs'>Lifetime progress</span>
                     </div>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
                         {milestones.map(m => {
                             const pct = Math.min(100, (totalEarned / m.target) * 100);
                             const canClaim = !m.claimed && totalEarned >= m.target;
                             return (
-                                <div key={m.id} className='glass-card rounded-2xl p-5 reward-glow'>
-                                    <div className='flex items-center gap-3 mb-2'>
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${canClaim?'bg-yellow-300 text-black': m.claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
-                                            <FaStar />
+                                <div key={m.id} className='glass-card rounded-2xl p-4 sm:p-5 reward-glow'>
+                                    <div className='flex items-center gap-2 sm:gap-3 mb-2'>
+                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${canClaim ? 'bg-purple-300 text-white' : m.claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
+                                            <FaStar className='text-xs sm:text-sm' />
                                         </div>
-                                        <div>
-                                            <p className='text-white font-semibold'>{m.title}</p>
+                                        <div className='min-w-0 flex-1'>
+                                            <p className='text-white font-semibold text-sm sm:text-base'>{m.title}</p>
                                             <span className='text-white/60 text-xs'>Target: {m.target}</span>
                                         </div>
                                     </div>
                                     <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                        <div className='h-2 bg-gradient-to-r from-yellow-300 to-amber-500' style={{width: `${pct}%`}}></div>
+                                        <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${pct}%` }}></div>
                                     </div>
-                                    <div className='flex items-center justify-between mt-3'>
+                                    <div className='flex items-center justify-between mt-2 sm:mt-3'>
                                         <span className='text-white/70 text-xs'>Bonus</span>
-                                        <div className='flex items-center gap-1 text-yellow-300 text-sm'><FaGem/> {m.bonus}</div>
+                                        <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {m.bonus}</div>
                                     </div>
                                     <button
                                         onClick={() => claimMilestone(m.id)}
                                         disabled={!canClaim}
-                                        className={`mt-4 w-full py-2 rounded-xl text-sm font-semibold ${canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                     >
                                         {m.claimed ? 'Claimed' : canClaim ? 'Claim Bonus' : 'In Progress'}
                                     </button>
