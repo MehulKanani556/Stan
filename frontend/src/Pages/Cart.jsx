@@ -19,7 +19,7 @@ import PaymentForm from '../components/PaymentForm';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { fanCoinsuse, getUserById } from '../Redux/Slice/user.slice';
 
-const stripePromise = loadStripe("pk_test_51R8wko2LIh9VELYJ9wrmC0oOqOvNAIUY3LVUhay96NYQjyOa7oK7MfdKYlzErmsJ6Gnn6o2zgPBxy1DrBxvfFQ4500cYJMw3sB");
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const Cart = () => {
     const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const Cart = () => {
         if (checked) {
             // Calculate maximum applicable Fan Coins
             const maxApplicableCoins = Math.min(fanCoins, totalPrice);
-            console.log(maxApplicableCoins, fanCoins, totalPrice);
+            // console.log(maxApplicableCoins, fanCoins, totalPrice);
 
             setFanCoinsToUse(maxApplicableCoins);
             setFinalAmount(Math.max(0, totalPrice - maxApplicableCoins));
@@ -90,7 +90,7 @@ const Cart = () => {
 
     const handleRemove = (item) => {
         // alert(id)
-        console.log("aaa", item);
+        // console.log("aaa", item);
 
         dispatch(removeFromCart({ gameId: item.game._id, platform: "windows" }));
     };
@@ -118,7 +118,7 @@ const Cart = () => {
         })) : []);
 
         const originalAmount = items.reduce((sum, it) => sum + it.price, 0);
-        console.log('Applying fan coins:', fanCoinsToUse, useFanCoinsChecked);
+        // console.log('Applying fan coins:', fanCoinsToUse, useFanCoinsChecked);
 
         try {
             // 1. Create order first with original amount and fan coin details
@@ -142,18 +142,18 @@ const Cart = () => {
 
             if (useFanCoinsChecked && fanCoinsToUse > 0 && authUser?._id) {
                 try {
-                    console.log('Applying fan coins:', fanCoinsToUse);
+                    // console.log('Applying fan coins:', fanCoinsToUse);
 
                     const fanCoinResult = await dispatch(fanCoinsuse({
                         userId: authUser._id,
                         gamePrice: originalAmount,
                         fanCoinsToUse: fanCoinsToUse
                     }));
-                    console.log(fanCoinResult);
+                    // console.log(fanCoinResult);
 
 
                     if (fanCoinResult.type === 'user/fanCoinsuse/fulfilled') {
-                        console.log('Fan coins applied successfully:', fanCoinResult.payload);
+                        // console.log('Fan coins applied successfully:', fanCoinResult.payload);
                         finalAmountToPay = fanCoinResult.payload.discountedPrice || finalAmount;
                         actualFanCoinsUsed = fanCoinsToUse;
 

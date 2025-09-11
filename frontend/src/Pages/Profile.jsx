@@ -1434,7 +1434,7 @@ export default function Profile() {
                                                         {/* Display original amount as Subtotal */}
                                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                                                             <span className="text-gray-300">Subtotal:</span>
-                                                            <span className="text-white font-semibold">${selectedOrder.amount.toFixed(2)}</span>
+                                                            <span className="text-white font-semibold">${selectedOrder.originalAmount.toFixed(2)}</span>
                                                         </div>
 
                                                         {/* Display Fan Coin Discount if available and greater than 0 */}
