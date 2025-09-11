@@ -214,7 +214,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
               }}
             >
-              {inWishlist ? (
+              {inWishlist && isLoggedIn ? (
                 <FaHeart size={16} className="text-white animate-pulse" />
               ) : (
                 <FaRegHeart size={16} className="text-slate-300 group-hover:text-red-400 transition-colors" />
@@ -263,7 +263,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
               : navigate('/login')
             }}
             disabled={inCart}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart && isLoggedIn)
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart || purchased)  && isLoggedIn 
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -280,7 +280,9 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                   )}
                 </div>
                 <span className="text-white font-bold text-sm tracking-wider uppercase">
-                  {inCart ? "Added to Cart" : "Add to Cart"}
+                  {inCart
+                    ? (purchased ? "Purchased" : "Added to Cart")
+                    : (purchased ? "Purchased" : "Add to Cart")}
                 </span>
               </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
                 Login to add
@@ -320,7 +322,14 @@ const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning,
       {title}
     </p>
     <div className="flex items-center gap-3">
-      <button onClick={onAllGamesClick} className={BUTTON_STYLES.primary}>
+      <button onClick={onAllGamesClick}  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
+                    font-medium text-sm transition-all duration-200 ease-out
+                    border-[1px] border-purple-400 
+                    rounded-md
+                    text-white
+                    hover:bg-purple-400  hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
         All Games
       </button>
       <button
@@ -398,17 +407,17 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
       >
         {games.map((game, index) => (
           <SwiperSlide key={game._id || game.id}>
-            <LazyGameCard
+            {/* <LazyGameCard
               threshold={0.1}
               delay={index * 50} // Staggered loading
               suppressSkeleton={false}
-            >
+            > */}
               <MemoizedGameCard
                 game={game}
                 onNavigate={onNavigate}
                 gameActions={gameActions}
               />
-            </LazyGameCard>
+            {/* </LazyGameCard> */}
           </SwiperSlide>
         ))}
       </Swiper>
@@ -598,17 +607,17 @@ const Store = () => {
             ) : featuredMaxSizeGames.length > 0 ? (
               featuredMaxSizeGames.map((game, index) => (
                 <SwiperSlide key={game._id}>
-                  <LazyGameCard
+                  {/* <LazyGameCard
                     threshold={0.1}
                     delay={index * 75}
                     suppressSkeleton={false}
-                  >
+                  > */}
                     <MemoizedGameCard
                       game={game}
                       onNavigate={handleNavigate}
                       gameActions={gameActions}
                     />
-                  </LazyGameCard>
+                  {/* </LazyGameCard> */}
                 </SwiperSlide>
               ))
             ) : (

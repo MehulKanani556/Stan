@@ -174,11 +174,14 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
     const priceValue = getGamePrice(game);
 
     // Check if the game has been purchased
-    const isPurchased = useMemo(() =>
-        orders.some(order =>
-            order.items.some(item => item.game?._id === game?._id)
-        ), [orders, game?._id]);
-
+  const isPurchased= useMemo(() =>
+    Array.isArray(orders) && orders.some(order =>
+      order?.status === 'paid' &&
+      order?.items?.some(item => item?.game?._id === game?._id)
+    ),
+    [orders, game?._id]
+  )
+console.log(game?.name ,isPurchased);
     const isInCart = useMemo(() =>
         cartItems.some(item => item.game?._id === game?._id),
         [cartItems, game?._id]);
@@ -367,10 +370,10 @@ const FilterHeader = React.memo(({
                 </div>
 
                 {/* Filters */}
-                <div className="flex  items-end gap-4">
+                <div className="flex flex-wrap  items-end gap-4">
 
                     {/* Category Filter */}
-                    <div className="min-w-[150px]">
+                    <div className="min-w-[150px] flex-1">
                         <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
                         <select
                             value={selectedCategory}
@@ -387,7 +390,7 @@ const FilterHeader = React.memo(({
                     </div>
 
                     {/* Sort Filter */}
-                    <div className="min-w-[150px]">
+                    <div className="min-w-[150px] flex-1">
                         <label className="block text-sm font-medium text-gray-300 mb-2">Sort By</label>
                         <select
                             value={sortBy}
@@ -628,9 +631,13 @@ export default function AllGames() {
         const priceValue = getGamePrice(game);
 
         // Check if the game has been purchased
-        const isPurchased = orders.some(order =>
-            order.items.some(item => item.game?._id === game?._id)
-        );
+        const isPurchased= useMemo(() =>
+            Array.isArray(orders) && orders.some(order =>
+              order?.status === 'paid' &&
+              order?.items?.some(item => item?.game?._id === game?._id)
+            ),
+            [orders, game?._id]
+          )
 
         return (
             <div
@@ -662,7 +669,7 @@ export default function AllGames() {
 
                             {/* Wishlist Button */}
                             <button
-                                className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${wishlistStatus[game?._id]
+                                className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${wishlistStatus[game?._id]   && isLoggedIn 
                                     ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
                                     : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
                                     }`}
@@ -677,7 +684,7 @@ export default function AllGames() {
                                     
                                 }}
                             >
-                                {wishlistStatus[game?._id] ? (
+                                {wishlistStatus[game?._id]  && isLoggedIn ? (
                                     <FaHeart size={16} className="text-white animate-pulse" />
                                 ) : (
                                     <FaRegHeart size={16} className="text-slate-300 group-hover:text-red-400 transition-colors" />
@@ -730,7 +737,7 @@ export default function AllGames() {
                                     navigate('/login')
                             }}
                             disabled={cartItems.some(item => item.game?._id === game?._id) || isPurchased}
-                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${cartItems.some(item => item.game?._id === game?._id) || isPurchased
+                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(cartItems.some(item => item.game?._id === game?._id) || isPurchased) && isLoggedIn
                                 ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
                                 : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
                                 }`}
@@ -748,7 +755,7 @@ export default function AllGames() {
                                     </div>
                                     <span className="text-white font-bold text-sm tracking-wider uppercase">
                                         {cartItems.some(item => item.game?._id === game?._id)
-                                            ? "Added to Cart"
+                                            ? (isPurchased ? "Purchased" : "Added to Cart")
                                             : (isPurchased ? "Purchased" : "Add to Cart")}
                                     </span>
                                 </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
