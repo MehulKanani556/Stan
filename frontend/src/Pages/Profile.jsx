@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
 import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
-import { getUserById, editUserProfile, logoutUser, clearUser } from '../Redux/Slice/user.slice';
-import { ChangePassSlice, DeleteUser, fetchProfile, SendDeleteOtp } from '../Redux/Slice/profile.slice';
+import { getUserById, editUserProfile, logoutUser, clearUser, getFanCoinDetails } from '../Redux/Slice/user.slice';
+import { ChangePassSlice, fetchProfile } from '../Redux/Slice/profile.slice';
 import ProfileSkeleton from '../lazyLoader/ProfileSkeleton';
 import TransactionHistorySkeleton from '../lazyLoader/TransactionHistorySkeleton';
 import OrderListSkeleton from '../lazyLoader/OrderListSkeleton';
@@ -31,7 +31,7 @@ import { handleMyToggle } from '../Redux/Slice/game.slice';
 
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { RiLockPasswordLine } from "react-icons/ri";
-import {useFormik} from 'formik'
+import { useFormik } from 'formik'
 import * as Yup from "yup";
 
 
@@ -40,55 +40,27 @@ const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2
 // FANCoin Component
 const FANCoin = () => {
     const [openId, setOpenId] = useState(null);
+    const dispatch = useDispatch();
+    const transactions = useSelector((state) => state.user.currentUser.fanCoinTransactions);
+    console.log("transactionssssss", transactions);
 
-    const transactions = [
-        {
-            id: 1,
-            title: "OnboardingReward",
-            time: "5:22 PM - 8 Aug",
-            amount: "+ 100",
-            type: "credit"
-        },
-        {
-            id: 2,
-            title: "Daily Login Bonus",
-            time: "9:15 AM - 8 Aug",
-            amount: "+ 25",
-            type: "credit"
-        },
-        {
-            id: 3,
-            title: "Task Completion",
-            time: "2:30 PM - 7 Aug",
-            amount: "+ 50",
-            type: "credit"
-        },
-        {
-            id: 4,
-            title: "Reward Redemption",
-            time: "11:45 AM - 6 Aug",
-            amount: "- 75",
-            type: "debit"
-        },
-        {
-            id: 5,
-            title: "Referral Bonus",
-            time: "4:20 PM - 5 Aug",
-            amount: "+ 200",
-            type: "credit"
-        },
-        {
-            id: 6,
-            title: "Game Reward",
-            time: "8:10 PM - 4 Aug",
-            amount: "+ 30",
-            type: "credit"
-        }
-    ];
+    useEffect(() => {
+        dispatch(getFanCoinDetails());
+    }, [dispatch]);
 
-    const toggleDetails = (id) => {
-        setOpenId(prev => (prev === id ? null : id));
+
+    const formatDateTime = (inputDate) => {
+        if (!inputDate) return "";
+        const dateObj = new Date(inputDate);
+        if (isNaN(dateObj.getTime())) return String(inputDate);
+
+        const day = String(dateObj.getDate()).padStart(2, "0");
+        const month = dateObj.toLocaleString("en-US", { month: "short" });
+        const hours = String(dateObj.getHours()).padStart(2, "0");
+        const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+        return `${day} ${month} - ${hours}:${minutes}`;
     };
+
 
     return (
         <div className="px-3 sm:px-4 py-4 sm:py-6">
@@ -102,49 +74,12 @@ const FANCoin = () => {
                                 <div className='flex flex-col h-full'>
                                     <div className="flex  justify-between mb-2  ">
                                         <div className=''>
-                                            <h3 className="font-bold text-white text-base sm:text-lg">{transaction.title}</h3>
-                                            <p className="text-gray-300 text-xs sm:text-sm mt-1">{transaction.time}</p>
+                                            <h3 className="font-bold text-white text-base sm:text-lg">{transaction?.description}</h3>
+                                            <p className="text-gray-300 text-xs sm:text-sm mt-1">{formatDateTime(transaction?.date)}</p>
                                         </div>
                                         <span className={`font-bold text-base sm:text-lg whitespace-nowrap ${transaction.type === 'credit' ? 'text-green-400' : 'text-red-400'}`}>
-                                            {transaction.amount}
+                                            {transaction?.amount}
                                         </span>
-                                    </div>
-                                    <div className="mt-auto pt-4 border-t border-white/10">
-                                        <div
-                                            className="flex items-center justify-between cursor-pointer"
-                                            onClick={() => toggleDetails(transaction.id)}
-                                        >
-                                            <div className="flex items-center">
-                                                <span className="text-white text-sm">Details</span>
-                                                <svg
-                                                    className={`w-4 h-4 text-white ml-1 transition-transform duration-300 ${openId === transaction.id ? 'rotate-180' : ''}`}
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        {openId === transaction.id && (
-                                            <div className="mt-3 space-y-2">
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-300">Before Fan Coins:</span>
-                                                    <span className="text-white">0</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-300">After Fan Coins:</span>
-                                                    <span className="text-white">50</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-300">Before Bonus Fan Coins:</span>
-                                                    <span className="text-white">0</span>
-                                                </div>
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-300">After Bonus Fan Coins:</span>
-                                                    <span className="text-white">50</span>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -251,16 +186,16 @@ const PlayStore = () => {
     )
 }
 
-const StyleDiv = ({children})=>{
+const StyleDiv = ({ children }) => {
     return (
         <div
 
-        className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl p-3  border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden ds_height_manage"
-    >
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
-        <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-gradient-to-br from-blue-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
-        {children}
-    </div>
+            className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl p-3  border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden ds_height_manage"
+        >
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+            <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-gradient-to-br from-blue-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+            {children}
+        </div>
     )
 }
 export default function Profile() {
@@ -297,9 +232,8 @@ export default function Profile() {
     const [deleteEmail, setDeleteEmail] = useState("");
     const [isSendingOtp, setIsSendingOtp] = useState(false);
     const [deleteOtp, setDeleteOtp] = useState(false)
-    const [ otp, setOtp] = useState(["", "", "", ""]);
+    const [otp, setOtp] = useState(["", "", "", ""]);
     const inputsRef = useRef([]);
-    const [btnLoader, setBtnLoader] = useState(false)
     // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
@@ -418,7 +352,8 @@ export default function Profile() {
         //     setIsSendingOtp(false);
         // }
 
-           
+        setShowDeleteOtpModal(false);
+        setDeleteOtp(true)
 
     };
 
@@ -438,113 +373,66 @@ export default function Profile() {
     };
 
     const changePassVal = {
-        currentPass:"",
-        newPass:"",
-        confirmPass:""
+        currentPass: "",
+        newPass: "",
+        confirmPass: ""
     }
 
     const changePassSchema = Yup.object({
         currentPass: Yup.string()
-          .required("Current password is required"),
+            .required("Current password is required"),
         newPass: Yup.string()
-          .min(6, "Password must be at least 6 characters")
-          .required("New password is required"),
+            .min(6, "Password must be at least 6 characters")
+            .required("New password is required"),
         confirmPass: Yup.string()
-          .oneOf([Yup.ref("newPass"), null], "Passwords must match")
-          .required("Confirm password is required"),
-      });
+            .oneOf([Yup.ref("newPass"), null], "Passwords must match")
+            .required("Confirm password is required"),
+    });
 
     const changePassFormik = useFormik({
-        initialValues:changePassVal,
-        validationSchema:changePassSchema,
-        onSubmit:(values , action)=>{
-           dispatch(ChangePassSlice(values))
-             setShowDeleteOtpModal(false);
-             setDeleteOtp(true)
-             action.resetForm()
-             setActiveMenu("profile");
+        initialValues: changePassVal,
+        validationSchema: changePassSchema,
+        onSubmit: (values, action) => {
+            dispatch(ChangePassSlice(values))
+            action.resetForm()
+            setActiveMenu("profile");
         }
-    }) 
+    })
 
     const deleteOtpFormik = useFormik({
-        initialValues:{
-            otp0:"",
-            otp1:"",
-            otp2:"",
-            otp3:""
-        },
-        validationSchema: Yup.object({
-            otp0: Yup.string()
-              .matches(/^[0-9]$/, "Must be a digit")
-              .required("Required"),
-            otp1: Yup.string()
-              .matches(/^[0-9]$/, "Must be a digit")
-              .required("Required"),
-            otp2: Yup.string()
-              .matches(/^[0-9]$/, "Must be a digit")
-              .required("Required"),
-            otp3: Yup.string()
-              .matches(/^[0-9]$/, "Must be a digit")
-              .required("Required"),
-        }),
-        onSubmit:(values , action)=>{
-            let allOtp = values.otp0 + values.otp1 + values.otp2 + values.otp3
-            // console.log("HIHI", typeof(allOtp));
-            
-            dispatch(DeleteUser(allOtp))
-            setDeleteOtp(false)
-            setActiveMenu("profile");
-            dispatch(logoutUser());
-            dispatch(clearUser())
-            localStorage.removeItem("userName");
-            navigate("/")
-            dispatch(handleMyToggle(false)) 
-            action.resetForm()
-        }
+
     })
 
-    const handleChange = (value, index) => {
-        if (/^[0-9]?$/.test(value)) {
-          deleteOtpFormik.setFieldValue(`otp${index}`, value);
-          if (value && index < 3) {
-            inputsRef.current[index + 1]?.focus();
-          }
+    const handleChange = (index, e) => {
+        const { value } = e.target;
+
+        if (/^\d?$/.test(value)) {
+            deleteOtpFormik.setFieldValue(`otp${index}`, value);
+
+            if (value && index < 5) {
+                deleteOtpFormik.current[index + 1]?.focus();
+            }
         }
-      };
-    
-      const handleKeyDown = (e, index) => {
+    };
+
+    const handleKeyDown = (index, e) => {
         if (e.key === "Backspace" && !deleteOtpFormik.values[`otp${index}`] && index > 0) {
-          inputsRef.current[index - 1]?.focus();
+            inputsRef.current[index - 1]?.focus();
         }
-      };
+    };
 
     const verifyEmail = {
-        email:""
-    }  
+        email: ""
+    }
 
     const verifyEmailFormik = useFormik({
-        initialValues:verifyEmail,
+        initialValues: verifyEmail,
         validationSchema: Yup.object({
             email: Yup.string()
-              .email("Enter a valid email address")
-              .required("Email is required"),
+                .email("Enter a valid email address")
+                .required("Email is required"),
         }),
-        onSubmit:(values , action)=>{
-            setBtnLoader(true)
-           dispatch(SendDeleteOtp(values))
-           .then((value)=>{
-              if(value?.meta?.requestStatus === "fulfilled"){
-                   setShowDeleteOtpModal(false);
-                   setDeleteOtp(true)
-                   setBtnLoader(false)
-                   action.resetForm()
-                }
-           })
-           
-        }
     })
-
-
 
     // handle  input change 
     const handleInputChange = (e) => {
@@ -591,7 +479,7 @@ export default function Profile() {
         dispatch(clearUser())
         localStorage.removeItem("userName");
         navigate("/")
-        dispatch(handleMyToggle(false)) 
+        dispatch(handleMyToggle(false))
 
     };
 
@@ -603,20 +491,20 @@ export default function Profile() {
 
     const handlePaymentClick = async (order) => {
         console.log('Payment clicked for order:', order._id);
-        
+
         try {
             // Close the order details modal
             setShowOrderDetails(false);
-            
+
             // Show loading state
             setIsPaymentLoading(true);
-            
+
             // Call the retry payment API to get a new client secret
             const resultAction = await dispatch(retryOrderPayment(order._id));
-            
+
             if (retryOrderPayment.fulfilled.match(resultAction)) {
                 const { clientSecret: newClientSecret, order: updatedOrder } = resultAction.payload;
-                
+
                 // Set the payment form state
                 setClientSecret(newClientSecret);
                 setCurrentOrderId(updatedOrder._id);
@@ -639,7 +527,7 @@ export default function Profile() {
         setClientSecret("");
         setCurrentOrderId(null);
         setAmountToPay(0);
-        
+
         // Refresh the orders list to show updated status
         if (activeMenu === 'Orders') {
             dispatch(allorders());
@@ -760,7 +648,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                                <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "deleteAccount" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('deleteAccount') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "deleteAccount" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('deleteAccount') }}>
                                 {(() => {
                                     const Tag = activeMenu === "deleteAccount" ? StyleDiv : "div";
                                     const style = activeMenu === "deleteAccount" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
@@ -898,52 +786,52 @@ export default function Profile() {
                         {transactionLoading ? (
                             <TransactionHistorySkeleton />
                         ) : (
-                        <section className='w-full  border border-white/25 rounded-2xl  sm:p-6 p-1 text-white flex flex-col'>
-                            <div className=''>
-                                {/* Header */}
-                                <div className='flex items-center justify-between px-2 sm:px-4 py-4  backdrop-blur-xl sticky top-0 z-20 border-b border-white/25'>
-                                    <div className='flex items-center gap-2 sm:gap-3'>
-                                        {/* <button
+                            <section className='w-full  border border-white/25 rounded-2xl  sm:p-6 p-1 text-white flex flex-col'>
+                                <div className=''>
+                                    {/* Header */}
+                                    <div className='flex items-center justify-between px-2 sm:px-4 py-4  backdrop-blur-xl sticky top-0 z-20 border-b border-white/25'>
+                                        <div className='flex items-center gap-2 sm:gap-3'>
+                                            {/* <button
                                              className='text-white rounded-full p-2 hover:bg-white/10 transition-colors'
                                              onClick={handleBackClick}
                                              aria-label='Go back'
                                          >
                                              <IoArrowBack className='w-5 h-5 sm:w-6 sm:h-6' />
                                          </button> */}
-                                        <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Transaction History</h1>
-                                    </div>
-                                    <div className='bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white px-3 py-1.5 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md'>
-                                        <div className='w-6 h-6 bg-white/20 rounded-full flex items-center justify-center'>
-                                            <span className='text-xs'>😊</span>
+                                            <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Transaction History</h1>
                                         </div>
-                                        <span className='font-semibold'>100</span>
+                                        <div className='bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white px-3 py-1.5 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md'>
+                                            <div className='w-6 h-6 bg-white/20 rounded-full flex items-center justify-center'>
+                                                <span className='text-xs'>😊</span>
+                                            </div>
+                                            <span className='font-semibold'>100</span>
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Tabs */}
-                                <div className='flex items-center justify-between text-center text-sm md:text-lg  backdrop-blur-xl sm:px-4 px-2'>
-                                    <div onClick={() => setIsActive("fanCoin")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "fanCoin" ? 'text-white' : 'text-gray-300'}`}>
-                                        FAN Coins
-                                        <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "fanCoin" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
+                                    {/* Tabs */}
+                                    <div className='flex items-center justify-between text-center text-sm md:text-lg  backdrop-blur-xl sm:px-4 px-2'>
+                                        <div onClick={() => setIsActive("fanCoin")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "fanCoin" ? 'text-white' : 'text-gray-300'}`}>
+                                            FAN Coins
+                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "fanCoin" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
+                                        </div>
+                                        <div onClick={() => setIsActive("UPI")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "UPI" ? 'text-white' : 'text-gray-300'}`}>
+                                            UPI/ Cards
+                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "UPI" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
+                                        </div>
+                                        <div onClick={() => setIsActive("playStore")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "playStore" ? 'text-white' : 'text-gray-300'}`}>
+                                            Play Store
+                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "playStore" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
+                                        </div>
                                     </div>
-                                    <div onClick={() => setIsActive("UPI")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "UPI" ? 'text-white' : 'text-gray-300'}`}>
-                                        UPI/ Cards
-                                        <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "UPI" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
-                                    </div>
-                                    <div onClick={() => setIsActive("playStore")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "playStore" ? 'text-white' : 'text-gray-300'}`}>
-                                        Play Store
-                                        <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "playStore" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
-                                    </div>
-                                </div>
 
-                                {/* Content */}
-                                <div className='flex-1 '>
-                                    {
-                                        isActive === "fanCoin" ? <FANCoin /> : isActive === "UPI" ? <UPICard /> : <PlayStore />
-                                    }
+                                    {/* Content */}
+                                    <div className='flex-1 '>
+                                        {
+                                            isActive === "fanCoin" ? <FANCoin /> : isActive === "UPI" ? <UPICard /> : <PlayStore />
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        </section>
+                            </section>
                         )}
                     </div>
                 )}
@@ -1031,7 +919,7 @@ export default function Profile() {
                                                                             '❌ Failed'}
                                                                 </span>
                                                                 <div className="mt-1">
-                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.amount.toFixed(2)}</span>
+                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.originalAmount}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1057,7 +945,7 @@ export default function Profile() {
                                                                                 </div>
                                                                             </div>
                                                                             <div className="text-right">
-                                                                                <p className="text-white font-semibold text-xs sm:text-sm">${item.price.toFixed(2)}</p>
+                                                                                <p className="text-white font-semibold text-xs sm:text-sm">${item.price}</p>
                                                                                 {item.downloadToken && (
                                                                                     <p className="text-green-400 text-[10px] sm:text-xs">
                                                                                         {item.downloadTokenUsed ? 'Downloaded' : 'Available'}
@@ -1109,7 +997,7 @@ export default function Profile() {
                                 </div>
                             </div>
                         </section>
-                       {showPaymentForm && clientSecret && currentOrderId && (
+                        {showPaymentForm && clientSecret && currentOrderId && (
                             <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
                                 <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-md">
                                     <h3 className="text-2xl font-bold mb-4 text-white">Complete Your Purchase</h3>
@@ -1130,7 +1018,7 @@ export default function Profile() {
                                     </button>
                                 </div>
                             </div>
-                        )} 
+                        )}
                     </div>
                 )}
 
@@ -1377,7 +1265,7 @@ export default function Profile() {
                                                                         '❌ Failed'}
                                                             </span>
                                                             <div className="mt-2">
-                                                                <span className="text-3xl font-bold text-white">${selectedOrder.amount.toFixed(2)}</span>
+                                                                <span className="text-3xl font-bold text-white">${selectedOrder.originalAmount.toFixed(2)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1418,7 +1306,7 @@ export default function Profile() {
                                                                             </div>
                                                                         </div>
                                                                         <div className="text-right mt-2 mb-2">
-                                                                            <p className="font-bold text-white text-xl">${item.price.toFixed(2)}</p>
+                                                                            <p className="font-bold text-white text-xl">${item.price}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1434,7 +1322,7 @@ export default function Profile() {
                                                         {/* Display original amount as Subtotal */}
                                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                                                             <span className="text-gray-300">Subtotal:</span>
-                                                            <span className="text-white font-semibold">${selectedOrder.originalAmount.toFixed(2)}</span>
+                                                            <span className="text-white font-semibold">${selectedOrder.originalAmount?.toFixed(2) || '0.00'}</span>
                                                         </div>
 
                                                         {/* Display Fan Coin Discount if available and greater than 0 */}
@@ -1466,7 +1354,7 @@ export default function Profile() {
                                                             <div className="flex justify-between items-center">
                                                                 {/* Display final amount as Total */}
                                                                 <span className="text-white font-bold text-lg">Total:</span>
-                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount.toFixed(2)}</span>
+                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount?.toFixed(2) || '0.00'}</span>
                                                             </div>
                                                         </div>
                                                         {console.log(selectedOrder)}
@@ -1567,32 +1455,23 @@ export default function Profile() {
                         <div className="fixed inset-0 flex items-center justify-center p-4">
                             <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100 translate-y-0" leaveTo="opacity-0 scale-95 translate-y-4">
                                 <Dialog.Panel className="w-full max-w-md rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl">
-                                    <Dialog.Title className="text-lg font-semibold flex items-center justify-between"> 
+                                    <Dialog.Title className="text-lg font-semibold flex items-center justify-between">
                                         <span>Delete Account</span>
                                         <button onClick={closeDeleteAccountModal} className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors">
                                             <IoClose className="w-5 h-5" />
                                         </button>
                                     </Dialog.Title>
-                                    <form onSubmit={verifyEmailFormik.handleSubmit} className='mt-4 space-y-4'>
+                                    <form className='mt-4 space-y-4'>
                                         <input
                                             type='email'
-                                            name='email'
-                                            value={verifyEmailFormik.values.email}
-                                            onChange={verifyEmailFormik.handleChange}
-                                            onBlur={verifyEmailFormik.handleBlur}
+                                            value={deleteEmail}
+                                            onChange={(e) => setDeleteEmail(e.target.value)}
                                             placeholder='Email'
                                             className='w-full p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500'
                                         />
-                                        {verifyEmailFormik.touched.email && verifyEmailFormik.errors.email && (<p className="text-red-400 text-sm">{verifyEmailFormik.errors.email}</p>)}
                                         <div className='flex gap-3 justify-between'>
-                                            <button type='button' className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={closeDeleteAccountModal} disabled={isSendingOtp}>Cancel</button>
-                                            <button type="submit" disabled={btnLoader} className="px-4 py-2 flex items-center justify-center rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed">
-                                               {btnLoader ? (
-                                                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                               ) : (
-                                                 "Send Otp"
-                                               )}
-                                            </button>
+                                            <button className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={closeDeleteAccountModal} disabled={isSendingOtp}>Cancel</button>
+                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 ' onClick={handleSendDeleteOtp} >Send Otp</button>
                                         </div>
                                     </form>
                                 </Dialog.Panel>
@@ -1602,44 +1481,37 @@ export default function Profile() {
                 </Transition>
 
                 <Transition appear show={deleteOtp} as={Fragment}>
-                    <Dialog as="div" className="relative z-50" onClose={()=> setDeleteOtp(false)}>
+                    <Dialog as="div" className="relative z-50" onClose={() => setDeleteOtp(false)}>
                         <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
                             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
                         </Transition.Child>
                         <div className="fixed inset-0 flex items-center justify-center p-4">
                             <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100 translate-y-0" leaveTo="opacity-0 scale-95 translate-y-4">
                                 <Dialog.Panel className="w-full max-w-md rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl">
-                                    <Dialog.Title className="text-lg font-semibold flex items-center justify-between"> 
+                                    <Dialog.Title className="text-lg font-semibold flex items-center justify-between">
                                         <span>Verify Otp</span>
                                         <button onClick={closeDeleteAccountModal} className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors">
                                             <IoClose className="w-5 h-5" />
                                         </button>
                                     </Dialog.Title>
-                                    <form onSubmit={deleteOtpFormik.handleSubmit} className='mt-4 space-y-4'>
-                                      <div className="flex justify-between sm:px-9 sx:px-9 px-2 pt-3">
-                                         {[0, 1, 2, 3].map((index) => (
-                                           <div key={index} className="flex flex-col items-center">
-                                             <input
-                                               type="text"
-                                               maxLength="1"
-                                               name={`otp${index}`}
-                                               value={deleteOtpFormik.values[`otp${index}`]}
-                                               onChange={(e) => handleChange(e.target.value, index)}
-                                               onKeyDown={(e) => handleKeyDown(e, index)}
-                                               ref={(el) => (inputsRef.current[index] = el)}
-                                               className="sm:w-[60px] sm:h-[60px] h-[50px] w-[50px] text-center p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500"
-                                             />
-                                             {deleteOtpFormik.touched[`otp${index}`] && deleteOtpFormik.errors[`otp${index}`] && (
-                                               <span className="text-red-400 text-sm mt-1">
-                                                 {deleteOtpFormik.errors[`otp${index}`]}
-                                               </span>
-                                             )}
-                                           </div>
-                                         ))}
-                                       </div>
+                                    <form className='mt-4 space-y-4'>
+                                        <div className="flex justify-between sm:px-9 sx:px-9 px-2 pt-3">
+                                            {otp.map((digit, index) => (
+                                                <input
+                                                    key={index}
+                                                    type="text"
+                                                    value={digit}
+                                                    maxLength="1"
+                                                    ref={(el) => (inputsRef.current[index] = el)}
+                                                    onChange={(e) => handleChange(e.target.value, index)}
+                                                    onKeyDown={(e) => handleKeyDown(e, index)}
+                                                    className="sm:w-[60px] sm:h-[60px] h-[50px] w-[50px] text-center p-3 bg-[#211f2a20] border border-white/25 rounded-lg outline-none text-white placeholder-gray-500"
+                                                />
+                                            ))}
+                                        </div>
                                         <div className='flex gap-3 justify-between pt-5'>
-                                            <button type='button' className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={()=> setDeleteOtp(false)} disabled={isSendingOtp}>Cancel</button>
-                                            <button type='submit' className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed'>Delete</button>
+                                            <button className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={() => setDeleteOtp(false)} disabled={isSendingOtp}>Cancel</button>
+                                            <button className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed' onClick={handleSendDeleteOtp}>Delete</button>
                                         </div>
                                     </form>
                                 </Dialog.Panel>
