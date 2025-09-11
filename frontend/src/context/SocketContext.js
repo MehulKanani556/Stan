@@ -12,6 +12,7 @@ import axiosInstance from "../Utils/axiosInstance";
 import { closeSnackbar, enqueueSnackbar } from "notistack";
 import { addMessage, setOnlineUsers, addTypingUser, removeTypingUser, clearTypingUsers } from "../Redux/Slice/manageState.slice"; // You'll need this action
 import { getAllMessageUsers } from "../Redux/Slice/user.slice"; // <--- Add this line
+import { BASE_URL } from "../Utils/baseUrl";
 
 export const SocketContext = createContext();
 export const useSocket = () => useContext(SocketContext);
@@ -39,7 +40,7 @@ export const SocketProvider = ({ children }) => {
   // Connect socket when component mounts
   useEffect(() => {
     // Connect socket immediately when user visits the site
-      socketRef.current = io("http://localhost:8000", {
+      socketRef.current = io(BASE_URL, {
       transports: ["websocket", "polling"],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
