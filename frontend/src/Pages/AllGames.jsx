@@ -349,10 +349,10 @@ const FilterHeader = React.memo(({
 
     return (
         <div className="backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/25 shadow-2xl">
-            <div className="flex flex-col md:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="flex flex-wrap items-start lg:items-center justify-between gap-6">
 
                 {/* Search Input */}
-                <div className="flex-1 max-w-md">
+                <div className="flex-1 max-w-md min-w-36">
                     <label className="block text-sm font-medium text-gray-300 mb-2">Search Games</label>
                     <div className="relative">
                         <IoMdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
@@ -367,7 +367,7 @@ const FilterHeader = React.memo(({
                 </div>
 
                 {/* Filters */}
-                <div className="flex  items-end gap-4">
+                <div className="flex  items-end gap-4 flex-wrap">
 
                     {/* Category Filter */}
                     <div className="min-w-[150px]">
