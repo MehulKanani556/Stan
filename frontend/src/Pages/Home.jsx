@@ -232,12 +232,12 @@ const GameCard = ({
             onClick={(e) => {
               e.stopPropagation();
               isLoggedIn ?
-              onAddToCart(game)
-              :
-              navigate('/login')
+                onAddToCart(game)
+                :
+                navigate('/login')
             }}
             disabled={isInCart || isPurchased}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${isInCart && isLoggedIn
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isInCart || isPurchased) && isLoggedIn
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -261,24 +261,10 @@ const GameCard = ({
               </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
                 Login to add
               </span>}
-
-
-              {/* <div>
-                {isInCart ? (
-                  <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
-                    <span className="text-emerald-600 font-bold text-sm">✓</span>
-                  </div>
-                ) : (
-                  <FaShoppingCart size={18} className="text-white" />
-                )}
-              </div>
-              <span className="text-white font-bold text-sm tracking-wider uppercase">
-                {isInCart ? "Added to Cart" : "Add to Cart"}
-              </span> */}
             </div>
 
             {/* Button Effects */}
-            {!isInCart && (
+            {!isInCart && !isPurchased && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -449,7 +435,7 @@ export default function Home() {
         clearTimeout(handler); // Clear the timeout if dependencies change before the delay
       };
     }
-  }, [currentPage, activeTab, gamesPerPage, dispatch,isLoggedIn]);
+  }, [currentPage, activeTab, gamesPerPage, dispatch, isLoggedIn]);
 
 
 

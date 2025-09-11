@@ -403,7 +403,7 @@ const FilterHeader = React.memo(({
                     </div>
 
                     {/* Reset Button */}
-                    {hasActiveFilters && (
+                    {/* {hasActiveFilters && (
                         <div className="flex items-end">
                             <button
                                 onClick={onResetFilters}
@@ -412,7 +412,7 @@ const FilterHeader = React.memo(({
                                 Reset Filters
                             </button>
                         </div>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>
@@ -440,8 +440,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                     <button
                         key={i}
                         onClick={() => onPageChange(i)}
-                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${
-                            isActive
+                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
                                 ? "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
                                 : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
                             }`}
@@ -470,9 +469,9 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                 <div className="flex items-center gap-2">
                     <button
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === 1
-                                ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
-                        }`}
+                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
+                            }`}
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                         aria-label="Previous page"
@@ -486,9 +485,9 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
 
                     <button
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
-                                ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
-                                : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
-                        }`}
+                            ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
+                            : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
+                            }`}
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                         aria-label="Next page"
@@ -586,7 +585,7 @@ export default function AllGames() {
     // Effects
     useEffect(() => {
         if (isLoggedIn) {
-        dispatch(allorders());
+            dispatch(allorders());
         }
     }, [dispatch]);
 
@@ -669,12 +668,12 @@ export default function AllGames() {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     isLoggedIn ?
-                                    wishlistStatus[game?._id]
-                                        ? handleRemoveFromWishlist(game._id)
-                                        : handleAddWishlist(game)
-                                    :
-                                    navigate('/login')
-                                    
+                                        wishlistStatus[game?._id]
+                                            ? handleRemoveFromWishlist(game._id)
+                                            : handleAddWishlist(game)
+                                        :
+                                        navigate('/login')
+
                                 }}
                             >
                                 {wishlistStatus[game?._id] ? (
