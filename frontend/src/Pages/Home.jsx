@@ -132,10 +132,15 @@ const GameCard = ({
   isLoggedIn
 }) => {
   const navigate = useNavigate();
-
-  const isPurchased = orders?.some(order =>
-    order.items.some(item => item.game?._id === game?._id)
+  const ordersList = Array.isArray(orders) ? orders : [];
+  const isPurchased= useMemo(() =>
+    Array.isArray(orders) && orders.some(order =>
+      order?.status === 'paid' &&
+      order?.items?.some(item => item?.game?._id === game?._id)
+    ),
+    [orders, game?._id]
   )
+ 
   return (
     <div
       onClick={() => onGameClick(game._id)}
@@ -237,7 +242,7 @@ const GameCard = ({
                 navigate('/login')
             }}
             disabled={isInCart || isPurchased}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isInCart || isPurchased) && isLoggedIn
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isInCart || isPurchased)  && isLoggedIn 
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -255,7 +260,7 @@ const GameCard = ({
                 </div>
                 <span className="text-white font-bold text-sm tracking-wider uppercase">
                   {isInCart
-                    ? "Added to Cart"
+                    ? (isPurchased ? "Purchased" : "Added to Cart")
                     : (isPurchased ? "Purchased" : "Add to Cart")}
                 </span>
               </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
@@ -315,7 +320,7 @@ export default function Home() {
   const [isEnd, setIsEnd] = useState(false);
   const [showAddedToCart, setShowAddedToCart] = useState(false);
   const [addedGameTitle, setAddedGameTitle] = useState("");
-  const orders = useSelector((state) => state.payment.orders);
+  const orders = useSelector((state) => state.payment.orders || null);
   // Add state for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const gamesPerPage = 10; // Adjust as needed
@@ -514,7 +519,19 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex gap-2">
-              <button onClick={() => navigate('/allGames')} class="px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-3.5 md:py-2.5 rounded-md font-medium text-xs sm:text-sm transition-all duration-200 ease-out bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899] text-white shadow-lg shadow-fuchsia-500/30 hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">All Games</button>
+                <button
+                  onClick={() => navigate('/allGames')}
+                  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
+                    font-medium text-sm transition-all duration-200 ease-out
+                    border-[1px] border-purple-400 
+                    rounded-md
+                    text-white
+                    hover:bg-purple-400  hover:scale-110
+                    active:scale-95 focus-visible:outline-none 
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                >
+                  All Games
+                </button>
                 <button
                   onClick={() => gameSwiperRef.current?.slidePrev()}
                   disabled={isBeginning}

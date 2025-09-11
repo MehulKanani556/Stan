@@ -683,7 +683,7 @@ const SingleGame = () => {
                     )}
 
                     {/* Cart Button */}
-                    {isInCart ? (
+                    {!isBuyed ? isInCart ? (
                       <button
                         disabled
                         className="w-full flex items-center justify-center gap-2 
@@ -711,7 +711,8 @@ const SingleGame = () => {
                         <FaShoppingCart size={16} />
                         <span className="text-xs">Add To Cart</span>
                       </button>
-                    )}
+                    ) : null}
+               
                   </div>
 
                   {/* Purchase/Review Buttons */}

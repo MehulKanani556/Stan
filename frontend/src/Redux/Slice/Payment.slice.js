@@ -10,7 +10,7 @@ const initialStatepayment = {
   message: "",
   loading: false,
   clientSecret: "",
-  orders: [],
+  orders: null,
   paymentStatus: null,
   error: null,
 };
