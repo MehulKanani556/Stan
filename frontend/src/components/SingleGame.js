@@ -650,7 +650,7 @@ const SingleGame = () => {
               {/* Action Buttons */}
               {isLoggedIn ?
                 <div className="space-y-4">
-                  <div className='flex gap-4'>
+                  <div className='flex sx:gap-4 gap-2'>
                     {/* Wishlist Button */}
                     {isInWishlist ? (
                       <button

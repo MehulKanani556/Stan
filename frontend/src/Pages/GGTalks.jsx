@@ -385,13 +385,14 @@ export default function GGTalks() {
 
                 {/* Message Input */}
                 {selectedUser && (
-                    <div className="p-3 sm:p-4 bg-gray-800 shadow-lg ">
+                    <div className="p-3 sm:p-4 bg-gray-800 shadow-lg md:relative md:bottom-0 fixed bottom-[56px] w-full">
                         <div className="flex items-end gap-2 sm:gap-3 max-w-[95%] mx-auto">
                             {/* Text input */}
                             <div className="flex-1 relative">
                                 <input
                                     placeholder={`Message ${selectedUser.name}...`}
-                                    className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-dark text-black"
+                                    className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-dark text-gray-900 dark:text-white 
+             bg-white dark:bg-gray-800"
                                     value={newMessage}
                                     onChange={handleTyping}
                                     onKeyPress={handleKeyPress}
