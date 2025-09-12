@@ -156,9 +156,10 @@ export const resetPassword = createAsyncThunk(
 
 export const googleLogin = createAsyncThunk(
   "auth/google-login",
-  async ({ uid, userName, fullName, email, photo }, { dispatch, rejectWithValue }) => {
+  async ({ uid, name, email, picture }, { dispatch, rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/google-login`, { uid, userName, fullName, email, photo }, { withCredentials: true });
+      
+      const response = await axios.post(`${BASE_URL}/google-login`, { uid, name, email, picture }, { withCredentials: true });
       localStorage.setItem("token", response.data.result.token);
       localStorage.setItem("userId", response.data.result.id);
       localStorage.setItem("refreshToken", response.data.result?.refreshToken);

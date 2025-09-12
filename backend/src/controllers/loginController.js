@@ -183,7 +183,12 @@ export const userLogin = async (req, res) => {
                     role: user.role || 'user',
                     isAdmin: user.role === 'admin',
                     lastLogin: user.lastLogin,
-                    token: accessToken
+                    token: accessToken,
+                    profilePic: user.profilePic,
+                    wishlist: user.wishlist || [],
+                    cart: user.cart || [],
+                    fanCoins: user.fanCoins || 0,
+                    fanCoinTransactions: user.fanCoinTransactions || []
                 }
             });
     } catch (error) {
@@ -200,7 +205,11 @@ export const googleLogin = async (req, res) => {
 
         let checkUser = await User.findOne({ email: email });
         if (!checkUser) {
-            checkUser = await User.create({ name, email, uid, picture, role: "user" });
+            checkUser = await User.create({ name, email, uid, profilePic: picture, role: "user" });
+        } else {
+            checkUser = await User.findByIdAndUpdate(checkUser._id, {
+                name, email, uid, profilePic: picture
+            });
         }
         const { accessToken, refreshToken } = await generateTokens(checkUser._id);
 
@@ -224,7 +233,12 @@ export const googleLogin = async (req, res) => {
                     role: checkUser.role || 'user',
                     isAdmin: checkUser.role === 'admin',
                     lastLogin: checkUser.lastLogin,
-                    token: accessToken
+                    profilePic: checkUser.profilePic,
+                    token: accessToken,
+                    wishlist: checkUser.wishlist || [],
+                    cart: checkUser.cart || [],
+                    fanCoins: checkUser.fanCoins || 0,
+                    fanCoinTransactions: checkUser.fanCoinTransactions || []
                 }
             });
 
