@@ -8,7 +8,7 @@ export const configureStore = () => {
     const persistConfig = {
         key: "root",
         storage,
-        whitelist: ['auth', 'cart'],
+        whitelist: ['auth', 'cart', 'reward'],
         // Add transforms to handle state clearing
         transforms: [],
         // Ensure state is properly cleared on logout
