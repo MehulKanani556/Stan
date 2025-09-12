@@ -411,9 +411,14 @@ export default function Profile() {
         initialValues: changePassVal,
         validationSchema: changePassSchema,
         onSubmit: (values, action) => {
-            dispatch(ChangePassSlice(values))
+            setBtnLoader(true)
+            dispatch(ChangePassSlice(values)).then((value)=>{
+              if(value?.meta?.requestStatus === "fulfilled"){
+                  setBtnLoader(false)
+                  setActiveMenu("profile");
+                }
+            })
             action.resetForm()
-            setActiveMenu("profile");
         }
     })
 
@@ -1198,8 +1203,12 @@ export default function Profile() {
                                             <button type='button' className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20" onClick={closeChangePasswordModal}>
                                                 Cancel
                                             </button>
-                                            <button type='submit' className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white">
-                                                Change Password
+                                            <button type='submit' disabled={btnLoader} className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white disabled:opacity-60 disabled:cursor-not-allowed">
+                                                {btnLoader ? (
+                                                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                ) : (
+                                                  "Change Password"
+                                                )}
                                             </button>
                                         </div>
                                     </form>
