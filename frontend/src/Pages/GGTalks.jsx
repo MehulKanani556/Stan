@@ -392,7 +392,7 @@ export default function GGTalks() {
                                 <input
                                     placeholder={`Message ${selectedUser.name}...`}
                                     className="w-full rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-32 min-h-[44px] text-sm sm:text-base transition-all duration-200 bg-dark text-gray-900 dark:text-white 
-             bg-white dark:bg-gray-800"
+              "
                                     value={newMessage}
                                     onChange={handleTyping}
                                     onKeyPress={handleKeyPress}
