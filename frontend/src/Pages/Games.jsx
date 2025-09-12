@@ -144,7 +144,7 @@ const Games = () => {
 
 			{/* Main Content */}
 			<div className="w-full max-w-[95%] md:max-w-[85%] mx-auto mt-11 pt-2 pb-5">
-				<div className="flex flex-col ms:flex-row lg:items-center ms:items-start items-center sm:justify-between gap-8 mb-12">
+				<div className="flex flex-col ms:flex-row lg:items-center ms:items-start items-center sm:justify-between ms:gap-8 gap-4 mb-12">
 					<div className="space-y-3">
 						<h2 className="xl:text-5xl lg:text-4xl md:text-3xl sm:text-2xl text-2xl font-bold text-white">
 							Featured Games
@@ -159,40 +159,40 @@ const Games = () => {
 									<button
 										onClick={goPrev}
 										disabled={isBeginning}
-										className={`group md:w-12 md:h-12 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+										className={`group md:w-12 md:h-12 ms:w-10 ms:h-10 h-8 w-8 rounded-xl flex items-center justify-center transition-all duration-300 ${
 											isBeginning
 												? 'bg-gray-700/50 text-gray-500 cursor-not-allowed opacity-50'
 												: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white hover:scale-110 shadow-lg hover:shadow-purple-500/25'
 										}`}
 									>
-										<FaChevronLeft className="w-5 h-5" />
+										<FaChevronLeft className="ms:w-5 ms:h-5 w-3 h-3" />
 									</button>
 									<button
 										onClick={goNext}
 										disabled={isEnd}
-										className={`group md:w-12 md:h-12 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+										className={`group md:w-12 md:h-12 ms:w-10 ms:h-10 h-8 w-8 rounded-xl flex items-center justify-center transition-all duration-300 ${
 											isEnd
 												? 'bg-gray-700/50 text-gray-500 cursor-not-allowed opacity-50'
 												: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white hover:scale-110 shadow-lg hover:shadow-purple-500/25'
 										}`}
 									>
-										<FaChevronRight className="w-5 h-5" />
+										<FaChevronRight className="ms:w-5 ms:h-5 w-3 h-3" />
 									</button>
 								</div>
 							)}
 							
 							<button
 								onClick={() => setShowAll(!showAll)}
-								className="group flex items-center gap-3 px-6 md:py-3 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-indigo-500/25"
+								className="group flex items-center gap-3 text-sm px-6 md:py-3 ms:py-2 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-indigo-500/25"
 							>
 								{showAll ? (
 									<>
-										<FaList className="w-4 h-4" />
+										<FaList className="ms:w-5 ms:h-5 w-3 h-3" />
 										Show Carousel
 									</>
 								) : (
 									<>
-										<FaTh className="w-4 h-4" />
+										<FaTh className="ms:w-5 ms:h-5 w-3 h-3" />
 										View All
 									</>
 								)}
@@ -202,7 +202,7 @@ const Games = () => {
 				</div>
 
 				{isInitialLoading && (
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+					<div className="grid grid-cols-2 ms:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 						{[...Array(8)].map((_, i) => (
 							<div key={i} className="animate-pulse">
 								<div className="bg-gray-700/50 rounded-2xl mb-4 w-full h-64 sm:h-72 md:h-64 lg:h-72 xl:h-64 2xl:h-80"></div>
@@ -229,7 +229,7 @@ const Games = () => {
 									onResize={syncEdges}
 									onBreakpoint={syncEdges}
 									breakpoints={{
-										320: { slidesPerView: 1, spaceBetween: 30 },
+										320: { slidesPerView: 2, spaceBetween: 0 },
 										640: { slidesPerView: 2, spaceBetween: 30 },
 										768: { slidesPerView: 2, spaceBetween: 28 },
 										1024: { slidesPerView: 3, spaceBetween: 32 },
@@ -248,7 +248,7 @@ const Games = () => {
 						)}
 
 						{showAll && (
-							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
+							<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ms:gap-8 gap-y-6 " >
 								{safeGames.map((game, index) => (
 									<GameCard key={game._id} game={game} index={index} />
 								))}
@@ -305,7 +305,7 @@ const GameCard = ({ game, index = 0 }) => {
 	return (
 		<Link 
 			to={`/games/${game.slug}`} 
-			className="group block h-full w-full ms:px-0 px-3"
+			className="group block h-full w-full ms:px-0 px-1 "
 			style={{ 
 				animationDelay: `${index * 0.1}s`,
 			}}
@@ -313,7 +313,7 @@ const GameCard = ({ game, index = 0 }) => {
 			<div className="relative bg-gradient-to-br from-gray-800/60 to-gray-900/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 hover:transform hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/10 group h-full flex flex-col">
 				
 				{/* Image Container with Fixed Dimensions Across All Breakpoints */}
-				<div className="relative bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden flex-shrink-0 w-full h-64 sm:h-72 md:h-64 lg:h-72 xl:h-64 2xl:h-80">
+				<div className="relative bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden flex-shrink-0 w-full sm:h-40 h-32 ms:h-72 md:h-64 lg:h-72 xl:h-64 2xl:h-80">
 					{/* Loading State */}
 					{!imageLoaded && !imageError && (
 						<div className="absolute inset-0 flex items-center justify-center bg-gray-700">
@@ -340,7 +340,7 @@ const GameCard = ({ game, index = 0 }) => {
 							onLoad={() => setImageLoaded(true)}
 							onError={() => setImageError(true)}
 							className={`
-								md:w-full  h-full object-cover transition-all duration-700 group-hover:scale-110
+								w-full  h-full object-cover transition-all duration-700 group-hover:scale-110
 								${imageLoaded ? 'opacity-100' : 'opacity-0'}
 							`}
 							style={{ objectFit: 'cover', objectPosition: 'center' }}
@@ -358,7 +358,7 @@ const GameCard = ({ game, index = 0 }) => {
 					</div>
 
 					{/* Free Badge */}
-					<div className="absolute top-4 right-4 px-3 py-1.5 sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-5 lg:py-2.5 xl:px-4 xl:py-2 2xl:px-5 2xl:py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold rounded-full shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-sm 2xl:text-base">
+					<div className="absolute ms:top-4 ms:right-4 top-0 right-1 px-3 py-1  sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-5 lg:py-2.5 xl:px-4 xl:py-2 2xl:px-5 2xl:py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold rounded-full shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-[10px] sm:text-sm md:text-xs lg:text-sm xl:text-sm 2xl:text-base">
 						FREE
 					</div>
 
@@ -366,8 +366,8 @@ const GameCard = ({ game, index = 0 }) => {
 				</div>
 
 				{/* Card Content */}
-				<div className="flex-grow flex flex-col p-4 sm:p-6 md:p-5 lg:p-7 xl:p-6 2xl:p-8">
-					<h3 className="font-bold text-white group-hover:text-purple-300 transition-colors duration-300 line-clamp-2 leading-tight mb-3 flex-grow text-lg sm:text-xl md:text-lg lg:text-2xl xl:text-xl ">
+				<div className="flex-grow ms:flex flex-col p-2 sm:p-6 md:p-5 lg:p-7 xl:p-6 2xl:p-8">
+					<h3 className="font-bold text-white group-hover:text-purple-300 transition-colors duration-300 line-clamp-2 leading-tight mb-3 flex-grow text-sm sm:text-xl md:text-lg lg:text-2xl xl:text-xl ">
 						{game.name}
 					</h3>
 					
