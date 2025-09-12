@@ -296,8 +296,8 @@ export default function Header() {
                                         </div>
                                     )}
                                 </div>
-
-                                <div className='flex gap-2 items-center md:hidden'>
+                                {isLoggedIn ?<div className='flex gap-2 items-center md:hidden'>
+                                    
                                     <NavLink to="/wishlist" className="me-2 relative">
                                         {({ isActive }) => (
                                             <>
@@ -340,7 +340,8 @@ export default function Header() {
                                             </>
                                         )}
                                     </NavLink>
-                                </div>
+                                </div> : null }
+                                
                                 <label
                                     htmlFor="my-drawer-3"
                                     aria-label="open sidebar"

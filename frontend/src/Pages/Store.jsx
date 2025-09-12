@@ -24,9 +24,9 @@ const SWIPER_CONFIG = {
   spaceBetween: 12,
   slidesPerView: 1.1,
   breakpoints: {
-    320: { slidesPerView: 1, spaceBetween: 8 },
-    425: { slidesPerView: 1.5, spaceBetween: 10 },
-    575: { slidesPerView: 1.8, spaceBetween: 10 },
+    320: { slidesPerView: 1.5, spaceBetween: 8 },
+    425: { slidesPerView: 2, spaceBetween: 10 },
+    575: { slidesPerView: 2, spaceBetween: 10 },
     640: { slidesPerView: 2, spaceBetween: 12 },
     768: { slidesPerView: 2.5, spaceBetween: 14 },
     1024: { slidesPerView: 3, spaceBetween: 14 },
@@ -180,7 +180,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
         {/* Image Container */}
-        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
+        <div className="relative w-full h-32 ms:h-48  md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
           <img
             src={game?.cover_image?.url || game1}
             alt={game?.title}
@@ -193,16 +193,16 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
             {/* NEW Badge */}
             {isNewGame && (
-              <div className="absolute top-4 left-4">
-                <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
-                  <span className="text-xs font-bold text-white tracking-wider">NEW</span>
+              <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
+                <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                  <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
                 </div>
               </div>
             )}
 
             {/* Wishlist Button */}
             <button
-              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${(inWishlist && isLoggedIn)
+              className={`absolute ms:top-4 ms:right-4 top-2 right-2 ms:p-2.5 p-2 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${(inWishlist && isLoggedIn)
                 ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
                 : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
                 }`}
@@ -211,20 +211,19 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                 isLoggedIn ?
                   inWishlist ? handleRemoveFromWishlist(game._id) : handleAddWishlist(game)
                   : navigate('/login')
-
               }}
             >
-              {inWishlist && isLoggedIn ? (
-                <FaHeart size={16} className="text-white animate-pulse" />
+                 {(isInWishlist && isLoggedIn) ? (
+                <FaHeart className="text-white animate-pulse ms:text-sm text-xs" />
               ) : (
-                <FaRegHeart size={16} className="text-slate-300 group-hover:text-red-400 transition-colors" />
+                <FaRegHeart  className="text-slate-300 group-hover:text-red-400 transition-colors ms:text-sm text-xs" />
               )}
             </button>
 
             {/* Game Title */}
             <div className="absolute bottom-4 left-4 right-4">
-              <div className="p-4">
-                <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl leading-tight">
+              <div className="ms:p-4 p-0">
+                <h3 className="text-white font-bold ms:text-sm text-xs  sm:text-base md:text-lg lg:text-xl leading-tight">
                   {game?.title}
                 </h3>
               </div>
@@ -233,24 +232,26 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
         </div>
 
         {/* Content Section */}
-        <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
+        <div className="ms:p-4 p-2  md:p-6 ms:space-y-4 space-y-2  bg-gradient-to-br from-slate-800/95 to-slate-900/95">
 
           {/* Game Info */}
-          <div className="bg-slate-700/50 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
-            <div className="flex flex-wrap items-center space-x-2 mb-2">
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-              <span className="text-sm text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-              <span className="text-lg font-black text-white">
-                ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
-              </span>
-              <span className="text-xs text-slate-400 font-medium">USD</span>
-            </div>
-            <div className="flex flex-wrap items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm text-green-400 font-semibold uppercase tracking-wider">Size</span>
-              <span className="text-lg font-black text-white">
-                {game?.platforms?.windows?.size || 'N/A'}
-              </span>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 sm:px-4 sm:py-3 py-2 md:px-6 md:py-3.5">
+              <div className="flex flex-wrap items-center space-x-2 mb-2">
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">Price</span>
+                <span className="ms:text-lg text-xs font-black text-white">
+                  ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                </span>
+                <span className="ms:text-xs text-[10px] text-slate-400 font-medium">USD</span>
+              </div>
+              <div className="flex flex-wrap items-center space-x-2 mb-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                <span className="ms:text-lg text-xs font-black text-white">
+                  {game?.platforms?.windows?.size || 'N/A'}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -263,7 +264,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                 : navigate('/login')
             }}
             disabled={inCart}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart || purchased)  && isLoggedIn 
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart || purchased) && isLoggedIn
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -272,19 +273,19 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
               {isLoggedIn ? <>
                 <div>
                   {inCart ? (
-                    <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
+                    <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w-4  bg-white rounded-full">
                       <span className="text-emerald-600 font-bold text-sm">✓</span>
                     </div>
                   ) : (
-                    <FaShoppingCart size={18} className="text-white" />
+                    <FaShoppingCart  className="text-white md:w-6 ms:h-6 h-4 w-4 " />
                   )}
                 </div>
-                <span className="text-white font-bold text-sm tracking-wider uppercase">
+                <span className="text-white font-bold text-sm tracking-wider uppercase ms:text-sm text-xs">
                   {inCart
                     ? (purchased ? "Purchased" : "Added to Cart")
                     : (purchased ? "Purchased" : "Add to Cart")}
                 </span>
-              </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
+              </> : <span className="text-white font-bold text-sm tracking-wider uppercase ms:text-sm text-xs">
                 Login to add
               </span>}
 
@@ -301,11 +302,11 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-2 left-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-          <div className="w-16 h-16 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
-        </div>
+        <div className="absolute top-1 left-1 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                        <div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
+                    </div>
         <div className="absolute bottom-2 right-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-          <div className="w-12 h-12 border-2 border-pink-400/30 rounded-full"></div>
+          <div className="ms:w-12 ms:h-12 h-8 w-8  border-2 border-pink-400/30 rounded-circle" />
         </div>
       </div>
     </div>
@@ -322,7 +323,7 @@ const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning,
       {title}
     </p>
     <div className="flex items-center gap-3">
-      <button onClick={onAllGamesClick}  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
+      <button onClick={onAllGamesClick} className="text-nowrap  px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
                     font-medium text-sm transition-all duration-200 ease-out
                     border-[1px] border-purple-400 
                     rounded-md
@@ -412,11 +413,11 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
               delay={index * 50} // Staggered loading
               suppressSkeleton={false}
             > */}
-              <MemoizedGameCard
-                game={game}
-                onNavigate={onNavigate}
-                gameActions={gameActions}
-              />
+            <MemoizedGameCard
+              game={game}
+              onNavigate={onNavigate}
+              gameActions={gameActions}
+            />
             {/* </LazyGameCard> */}
           </SwiperSlide>
         ))}
@@ -578,7 +579,7 @@ const Store = () => {
             title="All Games"
             games={Array.isArray(games) ? games.slice(0, 12) : []} // Limit initial display
             gameActions={gameActions}
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigate} 
           />
 
           <SwiperNavigation
@@ -612,11 +613,11 @@ const Store = () => {
                     delay={index * 75}
                     suppressSkeleton={false}
                   > */}
-                    <MemoizedGameCard
-                      game={game}
-                      onNavigate={handleNavigate}
-                      gameActions={gameActions}
-                    />
+                  <MemoizedGameCard
+                    game={game}
+                    onNavigate={handleNavigate}
+                    gameActions={gameActions}
+                  />
                   {/* </LazyGameCard> */}
                 </SwiperSlide>
               ))
@@ -630,7 +631,7 @@ const Store = () => {
       </div>
 
       {/* Game Sections */}
-      <div className="md:max-w-[85%] max-w-[95%] mx-auto space-y-4">
+      <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
 
         <SwiperSection
           title="Trending Games"

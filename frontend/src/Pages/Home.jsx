@@ -22,9 +22,9 @@ import { allorders } from '../Redux/Slice/Payment.slice';
 
 // Constants
 const SWIPER_BREAKPOINTS = {
-  320: { slidesPerView: 1, spaceBetween: 8 },
-  425: { slidesPerView: 1.5, spaceBetween: 10 },
-  575: { slidesPerView: 1.8, spaceBetween: 10 },
+  320: { slidesPerView: 1.5, spaceBetween: 8 },
+  425: { slidesPerView: 2, spaceBetween: 10 },
+  575: { slidesPerView: 2, spaceBetween: 10 },
   640: { slidesPerView: 2, spaceBetween: 12 },
   768: { slidesPerView: 2.5, spaceBetween: 14 },
   1024: { slidesPerView: 3, spaceBetween: 14 },
@@ -154,7 +154,7 @@ const GameCard = ({
 
         {/* Image Container */}
         {/* {console.log('games image',game?.cover_image?.url)} */}
-        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
+        <div className="relative w-full h-32 ms:h-48  md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
           <img
             src={game?.cover_image?.url}
             alt={game?.title}
@@ -167,17 +167,17 @@ const GameCard = ({
 
             {/* New Badge */}
             {isNewGame(game?.createdAt) && (
-              <div className="absolute top-4 left-4">
-                <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
-                  <span className="text-xs font-bold text-white tracking-wider">NEW</span>
-                </div>
+              <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
+              <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
               </div>
+            </div>
             )}
 
             {/* Wishlist Button */}
 
             <button
-              className={`absolute top-4 right-4 p-2.5 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${(isInWishlist && isLoggedIn)
+              className={`absolute ms:top-4 ms:right-4 top-2 right-2 ms:p-2.5 p-2 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${(isInWishlist && isLoggedIn)
                 ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
                 : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
                 }`}
@@ -191,16 +191,16 @@ const GameCard = ({
               }}
             >
               {(isInWishlist && isLoggedIn) ? (
-                <FaHeart size={16} className="text-white animate-pulse" />
+                <FaHeart className="text-white animate-pulse ms:text-sm text-xs" />
               ) : (
-                <FaRegHeart size={16} className="text-slate-300 group-hover:text-red-400 transition-colors" />
+                <FaRegHeart  className="text-slate-300 group-hover:text-red-400 transition-colors ms:text-sm text-xs" />
               )}
             </button>
 
             {/* Game Title */}
             <div className="absolute bottom-4 left-4 right-4">
-              <div className="p-4">
-                <h3 className="text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl leading-tight">
+              <div className="ms:p-4 p-0">
+                <h3 className="text-white font-bold ms:text-sm text-xs  sm:text-base md:text-lg lg:text-xl leading-tight">
                   {game?.title}
                 </h3>
               </div>
@@ -209,23 +209,23 @@ const GameCard = ({
         </div>
 
         {/* Content Section */}
-        <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
+        <div className="ms:p-4 p-2  md:p-6 ms:space-y-4 space-y-2 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 gap-4">
-            <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+            <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 sm:px-4 sm:py-3 py-2 md:px-6 md:py-3.5">
               <div className="flex flex-wrap items-center space-x-2 mb-2">
                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                <span className="text-sm text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-                <span className="text-lg font-black text-white">
+                <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">Price</span>
+                <span className="ms:text-lg text-xs font-black text-white">
                   ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
                 </span>
-                <span className="text-xs text-slate-400 font-medium">USD</span>
+                <span className="ms:text-xs text-[10px] text-slate-400 font-medium">USD</span>
               </div>
               <div className="flex flex-wrap items-center space-x-2 mb-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="text-sm text-green-400 font-semibold uppercase tracking-wider">Size</span>
-                <span className="text-lg font-black text-white">
+                <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                <span className="ms:text-lg text-xs font-black text-white">
                   {game?.platforms?.windows?.size || 'N/A'}
                 </span>
               </div>
@@ -251,19 +251,19 @@ const GameCard = ({
               {isLoggedIn ? <>
                 <div >
                   {isInCart || isPurchased ? (
-                    <div className="flex items-center justify-center w-6 h-6 rounded-full">
+                    <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w-4 rounded-full">
                       <span className="text-white font-bold text-sm">✓</span>
                     </div>
                   ) : (
-                    <FaShoppingCart size={18} className="text-white" />
+                    <FaShoppingCart  className="text-white  md:w-6 ms:h-6 h-4 w-4 " />
                   )}
                 </div>
-                <span className="text-white font-bold text-sm tracking-wider uppercase">
+                <span className="text-white font-bold  tracking-wider uppercase ms:text-sm text-xs" >
                   {isInCart
                     ? (isPurchased ? "Purchased" : "Added to Cart")
                     : (isPurchased ? "Purchased" : "Add to Cart")}
                 </span>
-              </> : <span className="text-white font-bold text-sm tracking-wider uppercase">
+              </> : <span className="text-white font-bold ms:text-sm text-xs tracking-wider uppercase">
                 Login to add
               </span>}
             </div>
@@ -279,11 +279,11 @@ const GameCard = ({
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-2 left-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-          <div className="w-16 h-16 border-2 border-blue-400/30 rounded-lg transform rotate-45" />
-        </div>
+        <div className="absolute top-1 left-1 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                        <div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
+                    </div>
         <div className="absolute bottom-2 right-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-          <div className="w-12 h-12 border-2 border-pink-400/30 rounded-circle" />
+          <div className="ms:w-12 ms:h-12 border-2 border-pink-400/30 rounded-circle" />
         </div>
       </div >
     </div>
