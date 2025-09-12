@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
@@ -8,6 +9,15 @@ import stickerImg from '../images/gens-logo1.png'
 import cameraImg from '../images/stan-user.jpg'
 import posterImg from '../images/game5.jpg'
 import mysteryImg from '../images/shadow.jpg'
+import {
+    getAllRewards,
+    getUserRewardBalance,
+    redeemReward,
+    getUserRedemptionHistory,
+    completeTask,
+    getAvailableTasks,
+    getRewardsLeaderboard
+} from '../Redux/Slice/reward.slice'
 
 
 const gamerTheme = `
@@ -72,15 +82,28 @@ export default function Rewards() {
 }
 
 const RewardsExperience = () => {
-    const [balance, setBalance] = useState(600);
-    const [history, setHistory] = useState([]);
+    const dispatch = useDispatch();
+    const rewards = useSelector((state) => state.reward.rewards);
+    const userBalance = useSelector((state) => state.reward.userBalance);
+    const recentTransactions = useSelector((state) => state.reward.recentTransactions) || [];
+    const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
+    const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
+    const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
+
+    console.log("Reward state:", { recentTransactions });
+
+
     const [streakDay, setStreakDay] = useState(3);
-    const [totalEarned, setTotalEarned] = useState(0);
     const [completedTasks, setCompletedTasks] = useState(new Set());
     const [completedQuests, setCompletedQuests] = useState(new Set());
     const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
     const [completedDailyTasks, setCompletedDailyTasks] = useState(new Set());
+
+    // Calculate total earned from recent transactions
+    const totalEarned = recentTransactions
+        .filter(transaction => transaction.type === 'earn')
+        .reduce((total, transaction) => total + (transaction.amount || 0), 0);
 
     useEffect(() => {
         const last = localStorage.getItem('rewards:lastStreakClaim');
@@ -88,7 +111,22 @@ const RewardsExperience = () => {
         if (last === today) setStreakClaimedToday(true);
     }, []);
 
-    const baseTasks = [
+    // Load initial data
+    useEffect(() => {
+        dispatch(getAllRewards({ page: 1, limit: 20 }));
+        dispatch(getUserRewardBalance());
+        dispatch(getUserRedemptionHistory({ page: 1, limit: 10 }));
+        dispatch(getAvailableTasks());
+        dispatch(getRewardsLeaderboard({ page: 1, limit: 10 }));
+    }, [dispatch]);
+
+    // Use API tasks or fallback to default tasks
+    const baseTasks = availableTasks.length > 0 ? availableTasks.slice(0, 3).map(task => ({
+        id: task.id || task._id,
+        title: task.title || task.name,
+        icon: <FaQuestionCircle className="text-purple-300" />, // Default icon
+        points: task.points || task.reward
+    })) : [
         { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-purple-300" />, points: 50 },
         { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 5 },
         { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 50 },
@@ -122,7 +160,14 @@ const RewardsExperience = () => {
         { id: 'q3', title: 'Login 5 days this week', progress: streakDay, goal: 5, reward: 40 },
     ];
 
-    const rewards = [
+    // Use API rewards or fallback to default rewards
+    const rewardsData = rewards.length > 0 ? rewards.map(reward => ({
+        id: reward._id,
+        title: reward.title,
+        img: reward.image || yoyoLogo,
+        price: reward.price,
+        status: reward.isRedeemed ? 'redeemed' : (userBalance >= reward.price ? 'unlocked' : 'locked')
+    })) : [
         { id: 1, title: 'tbh welcome pack', img: yoyoLogo, price: 500, status: 'redeemed' },
         { id: 2, title: 'Amazon.com $5 gift card', img: amazonImg, price: 1500, status: 'unlocked' },
         { id: 3, title: 'Sticker pack', img: stickerImg, price: 1500, status: 'locked' },
@@ -131,7 +176,12 @@ const RewardsExperience = () => {
         { id: 6, title: 'Mystery loot', img: mysteryImg, price: 1200, status: 'locked' },
     ];
 
-    const leaderboard = [
+    // Use API leaderboard or fallback to default leaderboard
+    const leaderboardData = leaderboard.length > 0 ? leaderboard.map(user => ({
+        id: user._id || user.id,
+        name: user.username || user.name,
+        points: user.points || user.balance
+    })) : [
         { id: 'u1', name: 'ShadowFox', points: 4820 },
         { id: 'u2', name: 'NovaBlade', points: 4330 },
         { id: 'u3', name: 'PixelMage', points: 4105 },
@@ -147,21 +197,20 @@ const RewardsExperience = () => {
     const [milestones, setMilestones] = useState(milestonesInit);
 
     const addHistory = (type, amount, label) => {
-        setHistory(prev => [{ id: Date.now(), type, amount, label, time: new Date().toLocaleString() }, ...prev].slice(0, 15));
+        // History is now managed by Redux state
+        // This function is kept for compatibility but data comes from recentTransactions
     };
 
     const earnPoints = (amount, label) => {
-        setBalance(prev => prev + amount);
-        setTotalEarned(prev => prev + amount);
-        addHistory('earn', amount, label);
+        // Points are now managed by Redux state
+        // This function is kept for compatibility but balance comes from userBalance
     };
 
     const tryRedeem = (item) => {
         if (item.status !== 'unlocked') return;
-        if (balance < item.price) return;
+        if (userBalance < item.price) return;
         if (!window.confirm(`Redeem ${item.title} for ${item.price} points?`)) return;
-        setBalance(prev => prev - item.price);
-        addHistory('redeem', item.price, item.title);
+        dispatch(redeemReward(item.id));
     };
 
     const claimStreak = () => {
@@ -191,9 +240,9 @@ const RewardsExperience = () => {
         }));
     };
 
-    const completeTask = (task) => {
+    const handleTaskComplete = (task) => {
         if (completedTasks.has(task.id)) return;
-        earnPoints(task.points, task.title);
+        dispatch(completeTask({ taskId: task.id, points: task.points, title: task.title }));
         setCompletedTasks(prev => new Set(prev).add(task.id));
     };
 
@@ -221,7 +270,7 @@ const RewardsExperience = () => {
                         <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto'>
                             <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Current Balance</p>
-                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {balance}</div>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {userBalance}</div>
                             </div>
                             <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Total Earned</p>
@@ -238,7 +287,7 @@ const RewardsExperience = () => {
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
                         <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
                             <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
-                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{balance}</div>
+                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance}</div>
                             <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
                             <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
                             <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned}</p>
@@ -267,7 +316,7 @@ const RewardsExperience = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <button onClick={() => completeTask(task)} disabled={done} className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                        <button onClick={() => handleTaskComplete(task)} disabled={done} className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
                                             {done ? 'Completed' : 'Earn'}
                                         </button>
                                     </div>
@@ -307,9 +356,9 @@ const RewardsExperience = () => {
                                         <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
                                             <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
                                         </div>
-                                        <button 
-                                            onClick={() => completeDailyTask(task)} 
-                                            disabled={!canComplete} 
+                                        <button
+                                            onClick={() => completeDailyTask(task)}
+                                            disabled={!canComplete}
                                             className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                         >
                                             {done ? 'Completed' : canComplete ? 'Claim' : 'In Progress'}
@@ -357,7 +406,7 @@ const RewardsExperience = () => {
                         <span className='text-white/50 text-xs'>Choose your loot</span>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
-                        {rewards.map(item => (
+                        {rewardsData.map(item => (
                             <div key={item.id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
                                 <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
                                     {item.status === 'locked' && (
@@ -382,18 +431,18 @@ const RewardsExperience = () => {
                                     )}
                                 </div>
                                 <div>
-                                                                            <p className='text-white text-sm sm:text-base font-medium line-clamp-2 break-words'>{item.title}</p>
+                                    <p className='text-white text-sm sm:text-base font-medium line-clamp-2 break-words'>{item.title}</p>
                                     <div className='mt-2 sm:mt-3 flex items-center gap-2 text-purple-300'>
                                         <FaGem />
                                         <span className='font-semibold text-sm sm:text-base'>{item.price}</span>
                                     </div>
                                     <div className='mt-2 sm:mt-3'>
-                                        <progress value={Math.min(balance, item.price)} max={item.price} className='redeem-progress'></progress>
+                                        <progress value={Math.min(userBalance, item.price)} max={item.price} className='redeem-progress'></progress>
                                     </div>
                                     <button
                                         onClick={() => tryRedeem(item)}
-                                        disabled={item.status !== 'unlocked' || balance < item.price}
-                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && balance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        disabled={item.status !== 'unlocked' || userBalance < item.price}
+                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && userBalance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                     >
                                         {item.status === 'redeemed' ? 'Redeemed' : 'Redeem'}
                                     </button>
@@ -411,7 +460,7 @@ const RewardsExperience = () => {
                             <span className='text-white/50 text-xs'>Top this week</span>
                         </div>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
-                            {leaderboard.map((u, idx) => (
+                            {leaderboardData.map((u, idx) => (
                                 <div key={u.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex items-center justify-between'>
                                     <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
                                         <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>{idx + 1}</div>
@@ -428,14 +477,14 @@ const RewardsExperience = () => {
                     <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4'>Recent Activity</h3>
                         <div className='space-y-2 sm:space-y-3 max-h-60 sm:max-h-80 overflow-auto pr-1'>
-                            {history.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
-                            {history.map(it => (
+                            {recentTransactions.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
+                            {recentTransactions.map(it => (
                                 <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>
                                     <div className='min-w-0 flex-1'>
-                                        <p className='text-white text-xs sm:text-sm truncate'>{it.label}</p>
+                                        <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
                                         <span className='text-white/50 text-xs'>{it.time}</span>
                                     </div>
-                                    <div className={`${it.type === 'earn' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'earn' ? '+' : '-'}{it.amount}</div>
+                                    <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount}</div>
                                 </div>
                             ))}
                         </div>

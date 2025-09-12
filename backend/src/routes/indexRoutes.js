@@ -28,6 +28,20 @@ import {
     redeemFanCoinsForReward,
     getReferralBonus
 } from '../controllers/fanCoinController.js';
+import {
+    createReward,
+    getAllRewards,
+    getRewardById,
+    updateReward,
+    deleteReward,
+    getUserRewardBalance,
+    redeemReward,
+    getUserRedemptionHistory,
+    completeTask,
+    getAvailableTasks,
+    getRewardsLeaderboard,
+    getRewardsStatistics
+} from '../controllers/rewards.controller.js';
 
 
 const indexRoutes = express.Router();
@@ -218,6 +232,26 @@ indexRoutes.post('/fan-coins/review-bonus', rewardGameReview);
 indexRoutes.post('/fan-coins/redeem', redeemFanCoinsForReward);
 indexRoutes.post('/fan-coins/referral-bonus', getReferralBonus);
 
+// Rewards Routes
+// Admin routes for reward management
+indexRoutes.post('/rewards', UserAuth, isAdmin, upload.single('image'), handleMulterError, convertJfifToWebp, createReward);
+indexRoutes.get('/rewards', getAllRewards);
+indexRoutes.get('/rewards/:id', getRewardById);
+indexRoutes.put('/rewards/:id', UserAuth, isAdmin, upload.single('image'), handleMulterError, convertJfifToWebp, updateReward);
+indexRoutes.delete('/rewards/:id', UserAuth, isAdmin, deleteReward);
+
+// User routes for rewards
+indexRoutes.get('/user/rewards/balance', UserAuth, getUserRewardBalance);
+indexRoutes.post('/user/rewards/:rewardId/redeem', UserAuth, redeemReward);
+indexRoutes.get('/user/rewards/history', UserAuth, getUserRedemptionHistory);
+
+// Task and quest routes
+indexRoutes.get('/rewards/tasks', getAvailableTasks);
+indexRoutes.post('/rewards/tasks/complete', UserAuth, completeTask);
+
+// Leaderboard and statistics
+indexRoutes.get('/rewards/leaderboard', getRewardsLeaderboard);
+indexRoutes.get('/admin/rewards/statistics', UserAuth, isAdmin, getRewardsStatistics);
 
 indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
 export default indexRoutes
