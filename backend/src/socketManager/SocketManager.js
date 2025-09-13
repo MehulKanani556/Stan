@@ -1,4 +1,6 @@
+
 import Message from "../models/messageModel.js";
+import UserGamePlay from "../models/UserGamePlay.model.js";
 
 // Store user-to-socket mappings
 const userSocketMap = new Map();
@@ -13,6 +15,60 @@ const messageQueues = new Map();
 function initializeSocket(io) {
   io.on("connection", (socket) => {
     console.log("New socket connection:", socket.id);
+
+    // Get total and today's play time for a user
+    socket.on('get-user-playtime', async (data) => {
+      try {
+        
+        const { userId } = data;
+        if (!userId) {
+          socket.emit('user-playtime', { error: 'No userId provided' });
+          return;
+        }
+        
+        const userPlay = await UserGamePlay.findOne({ user: userId });
+        let totalMinutes = 0;
+        let todayMinutes = 0;
+        if (userPlay && Array.isArray(userPlay.time)) {
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          for (const entry of userPlay.time) {
+            totalMinutes += entry.durationMinutes || 0;
+            if (entry.date) {
+              const entryDate = new Date(entry.date);
+              entryDate.setHours(0,0,0,0);
+              if (entryDate.getTime() === today.getTime()) {
+                todayMinutes += entry.durationMinutes || 0;
+              }
+            }
+          }
+        }
+        console.log("Received get-user-playtime request:", data,totalMinutes,todayMinutes);
+        socket.emit('user-playtime', {
+          totalMinutes,
+          todayMinutes
+        });
+      } catch (err) {
+        socket.emit('user-playtime', { error: 'Failed to fetch playtime' });
+      }
+    });
+    // Handle request for server time
+    socket.on('get-server-time', (data) => {
+      // console.log("Received get-server-time request:", data);
+      const { userId } = data;
+      if(userId) {
+        // Optionally, you could verify if userId is valid here
+        let getTime =  UserGamePlay.findOne({ user: userId });
+        // console.log("UserGamePlay entry:", getTime);
+      }
+      const now = new Date();
+      // Format as HH:mm:ss or as needed
+      // console.log("gam,e");
+
+      const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      socket.emit('server-time', { time: timeString });
+    });
+    // ...existing code...
 
     // Handle user joining (when they login or connect)
     socket.on("user-join", (data) => {
@@ -269,6 +325,82 @@ function initializeSocket(io) {
     // Handle reconnection
     socket.on("reconnect", () => {
       console.log(`Socket ${socket.id} reconnected`);
+    });
+
+    // Handle storing game play time
+    socket.on('store-game-playtime', async (data) => {
+      try {
+        const { userId, gameSlug, durationMinutes } = data;
+        console.log("Received store-game-playtime request:", data);
+        console.log("Current server time:", new Date().toISOString());
+        console.log("Current server date (local):", new Date().toLocaleDateString());
+        
+        if (!userId || !gameSlug || !durationMinutes) {
+          socket.emit('game-playtime-stored', { 
+            success: false, 
+            error: 'Missing required data: userId, gameSlug, or durationMinutes' 
+          });
+          return;
+        }
+
+        // Find existing user game play record
+        let userGamePlay = await UserGamePlay.findOne({ user: userId });
+        
+        if (!userGamePlay) {
+          // Create new record if doesn't exist
+          userGamePlay = new UserGamePlay({
+            user: userId,
+            time: []
+          });
+        }
+
+        // Add new time entry for today
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
+        console.log(today,now);
+        
+        
+        // Check if there's already an entry for today
+        const existingEntryIndex = userGamePlay.time.findIndex(entry => {
+          if (!entry.date) return false;
+          const entryDate = new Date(entry.date);
+          const entryDateOnly = new Date(entryDate.getFullYear(), entryDate.getMonth(), entryDate.getDate());
+          console.log(`Comparing entry date ${entryDateOnly.toISOString()} with today ${today.toISOString()}`);
+          return entryDateOnly.getTime() === today.getTime();
+        });
+
+        if (existingEntryIndex >= 0) {
+          // Update existing entry for today
+          userGamePlay.time[existingEntryIndex].durationMinutes += durationMinutes;
+          console.log(`Updated existing entry for today. New total: ${userGamePlay.time[existingEntryIndex].durationMinutes} minutes`);
+        } else {
+          // Add new entry for today
+          userGamePlay.time.push({
+            date: today,
+            durationMinutes: durationMinutes
+          });
+          console.log(`Added new entry for today: ${durationMinutes} minutes`);
+        }
+
+        // Save the updated record
+        await userGamePlay.save();
+        
+        console.log(`Stored ${durationMinutes} minutes of playtime for user ${userId} on game ${gameSlug}`);
+        
+        socket.emit('game-playtime-stored', { 
+          success: true, 
+          message: 'Game playtime stored successfully',
+          totalMinutes: userGamePlay.time.reduce((sum, entry) => sum + (entry.durationMinutes || 0), 0)
+        });
+        
+      } catch (error) {
+        console.error('Error storing game playtime:', error);
+        socket.emit('game-playtime-stored', { 
+          success: false, 
+          error: 'Failed to store game playtime',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+      }
     });
 
     // Add heartbeat mechanism
