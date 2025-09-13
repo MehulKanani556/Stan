@@ -48,6 +48,7 @@ export const getUser = createAsyncThunk(
   }
 );
 
+
 // export const updateUser = createAsyncThunk(
 //     'auth/updateUser',
 //     async ({ id, values }, { rejectWithValue }) => {
@@ -547,6 +548,19 @@ export const getFanCoinDetails = createAsyncThunk(
     }
   }
 );
+
+//  updateLoginTask 
+export const updateLoginTask = createAsyncThunk(
+  "auth/updateLoginTask",
+  async(_,{rejectWithValue})=>{
+    try {
+      const response = await axiosInstance.post(`/user/LogginHistory`);
+      return response.data; // Assuming the API returns the user data
+    } catch (error) {
+      return handleErrors(error, null, rejectWithValue);
+    }
+  }
+)
 
 const userSlice = createSlice({
   name: "user",

@@ -25,7 +25,9 @@ const userSchema = new mongoose.Schema(
         role: { type: String, enum: ["admin", "user"] },
         isAdmin: { type: Boolean, default: false },
         lastLogin: { type: Date, default: null },
-
+        continueLogin:{
+            type:Number,default : 0
+        },
         wishlist: [
             {
                 game: { type: mongoose.Schema.Types.ObjectId, ref: 'game', required: true },
