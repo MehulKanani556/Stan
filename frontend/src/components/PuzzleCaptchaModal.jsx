@@ -22,6 +22,69 @@ const PuzzleCaptchaModal = ({
     const maxCanvasWidth = 380;
     const renderWidth = Math.min(imageWidth, maxCanvasWidth);
     const renderHeight = imageHeight;
+    
+    // Responsive dimensions for all screen sizes
+    const [screenSize, setScreenSize] = useState('desktop');
+    
+    useEffect(() => {
+        const checkScreenSize = () => {
+            const width = window.innerWidth;
+            if (width < 480) {
+                setScreenSize('small-mobile');
+            } else if (width < 640) {
+                setScreenSize('mobile');
+            } else if (width < 768) {
+                setScreenSize('tablet');
+            } else if (width < 1024) {
+                setScreenSize('small-desktop');
+            } else {
+                setScreenSize('desktop');
+            }
+        };
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        return () => window.removeEventListener('resize', checkScreenSize);
+    }, []);
+    
+    // Dynamic dimensions based on screen size
+    const getResponsiveDimensions = () => {
+        const width = window.innerWidth;
+        switch (screenSize) {
+            case 'small-mobile':
+                return {
+                    width: Math.min(320, width - 20),
+                    height: Math.min(160, (width - 20) * 0.5),
+                    maxWidth: '320px'
+                };
+            case 'mobile':
+                return {
+                    width: Math.min(360, width - 30),
+                    height: Math.min(180, (width - 30) * 0.5),
+                    maxWidth: '360px'
+                };
+            case 'tablet':
+                return {
+                    width: Math.min(320, width - 40),
+                    height: Math.min(160, (width - 40) * 0.5),
+                    maxWidth: '320px'
+                };
+            case 'small-desktop':
+                return {
+                    width: Math.min(350, width - 50),
+                    height: Math.min(175, (width - 50) * 0.5),
+                    maxWidth: '350px'
+                };
+            default: // desktop
+                return {
+                    width: renderWidth,
+                    height: renderHeight,
+                    maxWidth: '400px'
+                };
+        }
+    };
+    
+    const { width: responsiveWidth, height: responsiveHeight, maxWidth } = getResponsiveDimensions();
+    const isMobile = screenSize === 'small-mobile' || screenSize === 'mobile';
 
     const canvasRef = useRef(null);      // Background image with puzzle hole
     const pieceCanvasRef = useRef(null); // Draggable puzzle piece
@@ -53,9 +116,9 @@ const PuzzleCaptchaModal = ({
         setCurrentShape(selectedShape);
         
         const sources = [
-            `https://picsum.photos/${renderWidth}/${renderHeight}?random=${Math.random()}`,
-            `https://placekitten.com/${renderWidth}/${renderHeight}`,
-            `https://dummyimage.com/${renderWidth}x${renderHeight}/ccc/000?text=Puzzle Captcha`
+            `https://picsum.photos/${responsiveWidth}/${responsiveHeight}?random=${Math.random()}`,
+            `https://placekitten.com/${responsiveWidth}/${responsiveHeight}`,
+            `https://dummyimage.com/${responsiveWidth}x${responsiveHeight}/ccc/000?text=Puzzle Captcha`
         ];
         let index = 0;
 
@@ -68,18 +131,18 @@ const PuzzleCaptchaModal = ({
             }
             const newImg = new Image();
             newImg.crossOrigin = "anonymous"; // enable cross-origin
-            newImg.src = `https://picsum.photos/${renderWidth}/${renderHeight}?random=${Math.random()}`;
+            newImg.src = `https://picsum.photos/${responsiveWidth}/${responsiveHeight}?random=${Math.random()}`;
             newImg.onload = () => {
                 setIsLoading(false); // Done loading
 
                 // Position the puzzle gap in the right half of the image so user must slide from left to right.
-                const minX = Math.floor(renderWidth / 2);
-                const maxX = renderWidth - pieceWidth - 10;
+                const minX = Math.floor(responsiveWidth / 2);
+                const maxX = responsiveWidth - pieceWidth - 10;
                 const x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
 
                 // Random y position (with small margins)
                 const minY = 10;
-                const maxY = renderHeight - pieceHeight - 10;
+                const maxY = responsiveHeight - pieceHeight - 10;
                 const y = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
 
                 setGapX(x);
@@ -106,8 +169,8 @@ const PuzzleCaptchaModal = ({
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        ctx.clearRect(0, 0, renderWidth, renderHeight);
-        ctx.drawImage(image, 0, 0, renderWidth, renderHeight);
+        ctx.clearRect(0, 0, responsiveWidth, responsiveHeight);
+        ctx.drawImage(image, 0, 0, responsiveWidth, responsiveHeight);
 
         // Draw the puzzle hole
         ctx.save();
@@ -227,8 +290,8 @@ const PuzzleCaptchaModal = ({
 
     // Creates a jigsaw puzzle piece path (simple version with one tab/blank per side)
     const createJigsawPath = (ctx, cx, cy, width, height) => {
-        const w = width * 0.9;
-        const h = height * 0.9;
+        const w = width * 0.7;
+        const h = height * 0.7;
         const x = cx - w / 2;
         const y = cy - h / 2;
         const tabSize = Math.min(w, h) * 0.15;
@@ -284,8 +347,8 @@ const PuzzleCaptchaModal = ({
 
     // Creates a classic jigsaw puzzle piece path (exactly like the image)
     const createClassicJigsawPath = (ctx, cx, cy, width, height) => {
-        const w = width * 0.9;
-        const h = height * 0.9;
+        const w = width * 0.7;
+        const h = height * 0.7;
         const x = cx - w / 2;
         const y = cy - h / 2;
         const tabSize = Math.min(w, h) * 0.15;
@@ -409,24 +472,26 @@ const PuzzleCaptchaModal = ({
 
     // Handle modal close
     const handleClose = () => {
-        if (isSolved) {
-            onClose();
-        }
+        onClose();
     };
 
     // Responsive scaling based on wrapper width
     useEffect(() => {
         const updateScale = () => {
             if (!wrapperRef.current) return;
-            const wrapperWidth = wrapperRef.current.offsetWidth || imageWidth;
-            const nextScale = Math.max(0.4, Math.min(1, wrapperWidth / imageWidth));
+            const wrapperWidth = wrapperRef.current.offsetWidth || responsiveWidth;
+            const targetWidth = responsiveWidth;
+            const minScale = screenSize === 'small-mobile' ? 0.6 : 
+                           screenSize === 'mobile' ? 0.7 : 
+                           screenSize === 'tablet' ? 0.8 : 0.4;
+            const nextScale = Math.max(minScale, Math.min(1, wrapperWidth / targetWidth));
             setScale(nextScale);
         };
         updateScale();
         window.addEventListener('resize', updateScale);
         return () => window.removeEventListener('resize', updateScale);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderWidth]);
+    }, [responsiveWidth, screenSize]);
 
     useEffect(() => {
         if (isOpen) {
@@ -453,7 +518,7 @@ const PuzzleCaptchaModal = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 md:p-3 lg:p-4"
                     onClick={(e) => e.target === e.currentTarget && handleClose()}
                 >
                     {/* Backdrop */}
@@ -465,23 +530,46 @@ const PuzzleCaptchaModal = ({
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.8, opacity: 0, y: 50 }}
                         transition={{ type: "spring", duration: 0.5 }}
-                        className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+                        className={`relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl w-full overflow-hidden ${
+                            screenSize === 'small-mobile' ? 'max-w-xs mx-1' :
+                            screenSize === 'mobile' ? 'max-w-sm mx-2' :
+                            screenSize === 'tablet' ? 'max-w-md mx-3' :
+                            screenSize === 'small-desktop' ? 'max-w-lg mx-4' :
+                            'max-w-xl mx-6'
+                        }`}
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between p-4 border-b border-white/20">
-                            <h3 className="text-lg font-semibold text-white">{cardTitle}</h3>
+                        <div className={`flex items-center justify-between border-b border-white/20 ${
+                            screenSize === 'small-mobile' ? 'p-2' :
+                            screenSize === 'mobile' ? 'p-3' :
+                            'p-4'
+                        }`}>
+                            <h3 className={`font-semibold text-white ${
+                                screenSize === 'small-mobile' ? 'text-sm' :
+                                screenSize === 'mobile' ? 'text-base' :
+                                'text-lg'
+                            }`}>{cardTitle}</h3>
                             <button
                                 onClick={handleClose}
                                 className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                                disabled={!isSolved}
                             >
                                 <FaTimes size={16} />
                             </button>
                         </div>
 
                         {/* Captcha Content */}
-                        <div className="p-4 justify-center flex">
-                            <div ref={wrapperRef} className="relative rounded-xl p-2 bg-white/10 border border-white/20 backdrop-blur-md w-full max-w-[400px]" style={{ width: "100%" }}>
+                        <div className={`justify-center flex ${
+                            screenSize === 'small-mobile' ? 'p-2' :
+                            screenSize === 'mobile' ? 'p-3' :
+                            'p-4'
+                        }`}>
+                            <div ref={wrapperRef} className={`relative rounded-xl bg-white/10 border border-white/20 backdrop-blur-md w-full ${
+                                screenSize === 'small-mobile' ? 'p-1 max-w-[320px]' :
+                                screenSize === 'mobile' ? 'p-1.5 max-w-[360px]' :
+                                screenSize === 'tablet' ? 'p-2 max-w-[320px]' :
+                                screenSize === 'small-desktop' ? 'p-2 max-w-[350px]' :
+                                'p-2 max-w-[400px]'
+                            }`} style={{ width: "100%" }}>
 
                                 {/* Add Dynamic Styling for slider arrow */}
                                 {!isLoading && (
@@ -518,13 +606,13 @@ const PuzzleCaptchaModal = ({
                                 )}
 
                                 {/* Background image with puzzle hole */}
-                                <div className="w-full" style={{ position: "relative", height: renderHeight * scale, width: "100%" }}>
-                                    <div style={{ position: 'absolute', top: 0, left: 0, width: renderWidth, height: renderHeight, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+                                <div className="w-full overflow-hidden" style={{ position: "relative", height: responsiveHeight * scale, width: "100%", maxWidth }}>
+                                    <div style={{ position: 'absolute', top: 0, left: 0, width: responsiveWidth, height: responsiveHeight, transform: `scale(${scale})`, transformOrigin: 'top left', maxWidth }}>
                                         <canvas
                                             ref={canvasRef}
-                                            width={renderWidth}
-                                            height={renderHeight}
-                                            style={{ position: "absolute", top: 0, left: 0, width: renderWidth, height: renderHeight }}
+                                            width={responsiveWidth}
+                                            height={responsiveHeight}
+                                            style={{ position: "absolute", top: 0, left: 0, width: responsiveWidth, height: responsiveHeight }}
                                         />
                                         {/* Draggable puzzle piece */}
                                         <div
@@ -541,9 +629,9 @@ const PuzzleCaptchaModal = ({
                                                 width={pieceWidth}
                                                 height={pieceHeight}
                                                 style={{
+                                                    overflow:"visible",
                                                     cursor: "pointer",
-                                                    border: "2px solid #fff",
-                                                    boxShadow: "0px 0px 5px rgba(0,0,0,0.5)",
+                                                    filter: "drop-shadow(0px 6px 12px rgba(0,0,0,0.4)) drop-shadow(0px 2px 4px rgba(0,0,0,0.2)) drop-shadow(0px 1px 2px rgba(0,0,0,0.1))",
                                                 }}
                                             />
                                         </div>
@@ -571,20 +659,37 @@ const PuzzleCaptchaModal = ({
                                         className={`captcha-range-input captcha-slider w-full h-[6px] bg-white/30 rounded outline-none appearance-none cursor-pointer transition duration-300 ease-in-out ${isSolved ? "[&::-webkit-slider-thumb]:bg-emerald-500" : ""}`}
                                     />
                                 </div>
+ 
 
                                 {/* If failed */}
                                 {isFailed ? (
-                                    <p className='text-danger mt-4 text-break text-red-500' style={{ width: "90%" }}>
+                                    <p className={`text-danger text-break text-red-500 ${
+                                        screenSize === 'small-mobile' ? 'mt-2 text-xs' :
+                                        screenSize === 'mobile' ? 'mt-3 text-sm' :
+                                        'mt-4 text-base'
+                                    }`} style={{ width: "90%" }}>
                                         Captcha Failed. Please Let's try once more!
                                     </p>
                                 ) : (
-                                    <div className="text-center mt-2 flex items-center justify-center gap-2">
-                                        <span className="text-white/80">{sliderBarTitle}</span>
+                                    <div className={`text-center flex items-center justify-center gap-2 ${
+                                        screenSize === 'small-mobile' ? 'mt-1' :
+                                        screenSize === 'mobile' ? 'mt-1.5' :
+                                        'mt-2'
+                                    }`}>
+                                        <span className={`text-white/80 ${
+                                            screenSize === 'small-mobile' ? 'text-xs' :
+                                            screenSize === 'mobile' ? 'text-sm' :
+                                            'text-base'
+                                        }`}>{sliderBarTitle}</span>
                                     </div>
                                 )}
 
                                 {/* Status message */}
-                                <div className="text-center mt-4">
+                                <div className={`text-center ${
+                                    screenSize === 'small-mobile' ? 'mt-2' :
+                                    screenSize === 'mobile' ? 'mt-3' :
+                                    'mt-4'
+                                }`}>
                                     {isSolved && (
                                         <span style={{ color: successColor, fontWeight: "bold" }} className="text-green-500">Captcha Verified!</span>
                                     )}
@@ -593,18 +698,26 @@ const PuzzleCaptchaModal = ({
                         </div>
 
                         {/* Footer */}
-                        <div className="p-4 border-t border-white/20">
+                        <div className={`border-t border-white/20 ${
+                            screenSize === 'small-mobile' ? 'p-2' :
+                            screenSize === 'mobile' ? 'p-3' :
+                            'p-4'
+                        }`}>
                             <div className="flex justify-end space-x-2">
                                 <button
                                     onClick={handleClose}
                                     disabled={!isSolved}
-                                    className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                                    className={`py-2 rounded-lg transition-all duration-300 ${
+                                        screenSize === 'small-mobile' ? 'px-2 text-xs' :
+                                        screenSize === 'mobile' ? 'px-3 text-sm' :
+                                        'px-4 text-base'
+                                    } ${
                                         isSolved 
                                             ? 'bg-green-500 hover:bg-green-600 text-white' 
                                             : 'bg-gray-500 text-gray-300 cursor-not-allowed'
                                     }`}
                                 >
-                                    {isSolved ? 'Continue' : 'Complete the puzzle first'}
+                                    {isSolved ? 'Continue' : (screenSize === 'small-mobile' ? 'Complete puzzle' : 'Complete puzzle first')}
                                 </button>
                             </div>
                         </div>
