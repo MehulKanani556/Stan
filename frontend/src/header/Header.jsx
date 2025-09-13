@@ -11,7 +11,7 @@ import { IoBagOutline, IoBag } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
 import stanUser from "../images/stan-user.jpg"
 import stanLogo from "../images/stan-logo.svg"
-import { clearUser, getUserById, logoutUser, setUser } from "../Redux/Slice/user.slice"
+import { clearUser, getUserById, logoutUser, setUser, updateLoginTask } from "../Redux/Slice/user.slice"
 import { MdRocketLaunch, MdSettings } from "react-icons/md";
 import { FaGift } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
@@ -45,6 +45,16 @@ export default function Header() {
     //     const stored = localStorage.getItem("userName");
     //     return stored ? JSON.parse(stored) : "";
     // });
+
+
+    // user looging task manage code ----------------------------------------------------------------
+    useEffect(()=>{
+if(isLoggedIn){
+    dispatch(updateLoginTask());
+}
+    },[])
+    // user looging task manage code over here ------------------------------------------------------ 
+
     const name = useSelector((state) => state?.user?.name);
     const myManage = useSelector((state) => state?.game?.myToggle)
 

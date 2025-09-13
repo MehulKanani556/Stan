@@ -40,8 +40,11 @@ import {
     completeTask,
     getAvailableTasks,
     getRewardsLeaderboard,
-    getRewardsStatistics
+    getRewardsStatistics,
+    updateLoginTask
 } from '../controllers/rewards.controller.js';
+import { loggingHistory } from "../controllers/LoggingHistroyController.js";
+// import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 
 
 const indexRoutes = express.Router();
@@ -244,11 +247,11 @@ indexRoutes.delete('/rewards/:id', UserAuth, isAdmin, deleteReward);
 indexRoutes.get('/user/rewards/balance', UserAuth, getUserRewardBalance);
 indexRoutes.post('/user/rewards/:rewardId/redeem', UserAuth, redeemReward);
 indexRoutes.get('/user/rewards/history', UserAuth, getUserRedemptionHistory);
-
+indexRoutes.post('/user/LogginHistory',UserAuth,loggingHistory);
 // Task and quest routes
 indexRoutes.get('/rewards/tasks', getAvailableTasks);
 indexRoutes.post('/rewards/tasks/complete', UserAuth, completeTask);
-
+indexRoutes.post('/updateLoginTask',UserAuth, updateLoginTask)
 // Leaderboard and statistics
 indexRoutes.get('/rewards/leaderboard', getRewardsLeaderboard);
 indexRoutes.get('/admin/rewards/statistics', UserAuth, isAdmin, getRewardsStatistics);
