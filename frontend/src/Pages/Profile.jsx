@@ -417,7 +417,11 @@ export default function Profile() {
                   setBtnLoader(false)
                   setActiveMenu("profile");
                 }
-            })
+            }).catch((error)=>{                
+                setBtnLoader(false)
+            }).finally(() => {
+                setBtnLoader(false);
+            });
             action.resetForm()
         }
     })
@@ -495,7 +499,11 @@ export default function Profile() {
                    setBtnLoader(false)
                    action.resetForm()
                 }
-           })
+           }).catch((error)=>{                
+               setBtnLoader(false)
+           }).finally(() => {
+            setBtnLoader(false);
+           });
            
         }
     })
