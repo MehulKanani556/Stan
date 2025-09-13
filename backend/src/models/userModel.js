@@ -8,10 +8,10 @@ const userSchema = new mongoose.Schema(
         username: { type: String },
         email: { type: String },
         contactNo: { type: String },
-        password: { type: String, required: true },
+        password: { type: String },
         profilePic: { type: String, default: null },
-        bio: { type: String, maxlength: 160 },
-        gender: { type: String, enum: ["male", "female"] },
+        // bio: { type: String, maxlength: 160 },
+        // gender: { type: String, enum: ["male", "female"] },
 
         // followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         // followings: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema(
                 type: Date,
                 default: Date.now
             }
-        }],
+        }]
     },
     { timestamps: true }
 );
@@ -82,9 +82,9 @@ userSchema.methods.getJWT = async function () {
         _id: user._id,
         role: user.role || 'user',
         isAdmin: user.role === 'admin'
-    }, process.env.JWT_SECRET,   
-    // { expiresIn: "60m" }
-);
+    }, process.env.JWT_SECRET,
+        // { expiresIn: "60m" }
+    );
     return token;
 };
 

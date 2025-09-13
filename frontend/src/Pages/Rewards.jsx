@@ -8,6 +8,15 @@ import stickerImg from '../images/gens-logo1.png'
 import cameraImg from '../images/stan-user.jpg'
 import posterImg from '../images/game5.jpg'
 import mysteryImg from '../images/shadow.jpg'
+import {
+    getAllRewards,
+    getUserRewardBalance,
+    redeemReward,
+    getUserRedemptionHistory,
+    completeTask,
+    getAvailableTasks,
+    getRewardsLeaderboard
+} from '../Redux/Slice/reward.slice'
 
 const gamerTheme = `
   .page-bg {
@@ -583,22 +592,29 @@ export default function Rewards() {
 }
 
 const RewardsExperience = () => {
-    const {
-        balance, setBalance,
-        history, setHistory,
-        streakDay, setStreakDay,
-        totalEarned, setTotalEarned,
-        completedTasks, setCompletedTasks,
-        completedQuests, setCompletedQuests,
-        completedDailyTasks, setCompletedDailyTasks,
-        rewards, setRewards,
-        milestones, setMilestones,
-        streakClaimedToday, setStreakClaimedToday
-    } = useRewardsState();
+    const dispatch = useDispatch();
+    const rewards = useSelector((state) => state.reward.rewards);
+    const userBalance = useSelector((state) => state.reward.userBalance);
+    const recentTransactions = useSelector((state) => state.reward.recentTransactions) || [];
+    const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
+    const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
+    const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
 
+    console.log("Reward state:", { recentTransactions });
+
+
+    const [streakDay, setStreakDay] = useState(3);
+    const [completedTasks, setCompletedTasks] = useState(new Set());
+    const [completedQuests, setCompletedQuests] = useState(new Set());
+    const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
+    const [completedDailyTasks, setCompletedDailyTasks] = useState(new Set());
 
-    // One-time migration: if welcome pack was pre-redeemed by default without real redemption, unlock it
+    // Calculate total earned from recent transactions
+    const totalEarned = recentTransactions
+        .filter(transaction => transaction.type === 'earn')
+        .reduce((total, transaction) => total + (transaction.amount || 0), 0);
+
     useEffect(() => {
         setRewards(prev => prev.map(r => {
             if (r.id === 1 && r.status === REWARD_STATUS.REDEEMED) {
@@ -614,6 +630,32 @@ const RewardsExperience = () => {
     const completedTasksSet = useMemo(() => new Set(completedTasks), [completedTasks]);
     const completedQuestsSet = useMemo(() => new Set(completedQuests), [completedQuests]);
     const completedDailyTasksSet = useMemo(() => new Set(completedDailyTasks), [completedDailyTasks]);
+    // Load initial data
+    useEffect(() => {
+        dispatch(getAllRewards({ page: 1, limit: 20 }));
+        dispatch(getUserRewardBalance());
+        dispatch(getUserRedemptionHistory({ page: 1, limit: 10 }));
+        dispatch(getAvailableTasks());
+        dispatch(getRewardsLeaderboard({ page: 1, limit: 10 }));
+    }, [dispatch]);
+
+    // Use API tasks or fallback to default tasks
+    const baseTasks = availableTasks.length > 0 ? availableTasks.slice(0, 3).map(task => ({
+        id: task.id || task._id,
+        title: task.title || task.name,
+        icon: <FaQuestionCircle className="text-purple-300" />, // Default icon
+        points: task.points || task.reward
+    })) : [
+        { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-purple-300" />, points: 50 },
+        { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 5 },
+        { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 50 },
+    ];
+
+    const dailyTasks = [
+        { id: 'd1', title: 'Login to the app', points: 15, progress: 1, goal: 1 },
+        { id: 'd2', title: 'Play any game for 15 minutes', points: 15, progress: 10, goal: 15 },
+        { id: 'd3', title: 'Daily Streak Bonus', points: 15, progress: 1, goal: 1 },
+    ];
 
     // Generate additional tasks
     const iconCycle = [
@@ -666,6 +708,50 @@ const RewardsExperience = () => {
             r.id === item.id ? { ...r, status: REWARD_STATUS.REDEEMED } : r
         ));
     }, [balance, setBalance, addHistory, setRewards]);
+    // Use API rewards or fallback to default rewards
+    const rewardsData = rewards.length > 0 ? rewards.map(reward => ({
+        id: reward._id,
+        title: reward.title,
+        img: reward.image || yoyoLogo,
+        price: reward.price,
+        status: reward.isRedeemed ? 'redeemed' : (userBalance >= reward.price ? 'unlocked' : 'locked')
+    })) : [
+        { id: 1, title: 'tbh welcome pack', img: yoyoLogo, price: 500, status: 'redeemed' },
+        { id: 2, title: 'Amazon.com $5 gift card', img: amazonImg, price: 1500, status: 'unlocked' },
+        { id: 3, title: 'Sticker pack', img: stickerImg, price: 1500, status: 'locked' },
+        { id: 4, title: 'Disposable camera', img: cameraImg, price: 3500, status: 'locked' },
+        { id: 5, title: 'Gaming poster', img: posterImg, price: 800, status: 'locked' },
+        { id: 6, title: 'Mystery loot', img: mysteryImg, price: 1200, status: 'locked' },
+    ];
+
+    // Use API leaderboard or fallback to default leaderboard
+    const leaderboardData = leaderboard.length > 0 ? leaderboard.map(user => ({
+        id: user._id || user.id,
+        name: user.username || user.name,
+        points: user.points || user.balance
+    })) : [
+        { id: 'u1', name: 'ShadowFox', points: 4820 },
+        { id: 'u2', name: 'NovaBlade', points: 4330 },
+        { id: 'u3', name: 'PixelMage', points: 4105 },
+        { id: 'u4', name: 'RiftRunner', points: 3970 },
+    ];
+
+    const milestonesInit = [
+        { id: 'm1', title: 'Bronze Hunter', target: 500, bonus: 40, claimed: false },
+        { id: 'm2', title: 'Silver Slayer', target: 1500, bonus: 100, claimed: false },
+        { id: 'm3', title: 'Gold Champion', target: 3000, bonus: 220, claimed: false },
+        { id: 'm4', title: 'Diamond Legend', target: 6000, bonus: 500, claimed: false },
+    ];
+    const [milestones, setMilestones] = useState(milestonesInit);
+
+   
+
+    // const tryRedeem = (item) => {
+    //     if (item.status !== 'unlocked') return;
+    //     if (userBalance < item.price) return;
+    //     if (!window.confirm(`Redeem ${item.title} for ${item.price} points?`)) return;
+    //     dispatch(redeemReward(item.id));
+    // };
 
     const completeDailyTask = useCallback((task) => {
         if (completedDailyTasksSet.has(task.id)) return;
@@ -684,11 +770,11 @@ const RewardsExperience = () => {
         }));
     }, [totalEarned, earnPoints, setMilestones]);
 
-    const completeTask = useCallback((task) => {
-        if (completedTasksSet.has(task.id)) return;
-        earnPoints(task.points, task.title);
-        setCompletedTasks(prev => [...prev, task.id]);
-    }, [completedTasksSet, earnPoints, setCompletedTasks]);
+    const handleTaskComplete = (task) => {
+        if (completedTasks.has(task.id)) return;
+        dispatch(completeTask({ taskId: task.id, points: task.points, title: task.title }));
+        setCompletedTasks(prev => new Set(prev).add(task.id));
+    };
 
     const completeQuest = useCallback((q) => {
         if (completedQuestsSet.has(q.id)) return;
@@ -710,8 +796,29 @@ const RewardsExperience = () => {
     return (
         <section className='pb-12 overflow-x-hidden'>
             <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
-                {/* Hero Section */}
-                <HeroSection balance={balance} totalEarned={totalEarned} />
+                {/* Hero */}
+                <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
+                    <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
+                    <div className='relative z-10 px-4 sm:px-6 md:px-10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6'>
+                        <div className='w-full lg:w-auto'>
+                            <div className='inline-flex items-center gap-2 chip text-purple-200 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
+                                <FaGem /> Level up your loot
+                            </div>
+                            <h1 className='text-white font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight'>Rewards Hub</h1>
+                            <p className='text-white/70 mt-2 md:mt-3 max-w-2xl text-sm sm:text-base'>Grind quests, stack streaks, and redeem epic goodies. All your progress and perks live here.</p>
+                        </div>
+                        <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto'>
+                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
+                                <p className='text-white/70 text-xs'>Current Balance</p>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {userBalance}</div>
+                            </div>
+                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
+                                <p className='text-white/70 text-xs'>Total Earned</p>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Top Grid - Points & Tasks */}
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-10 md:items-stretch'>
@@ -724,6 +831,51 @@ const RewardsExperience = () => {
                         onToggleShowAll={() => setShowAllTasks(v => !v)}
                         totalTasks={allTasks.length - TASKS_CONFIG.base.length}
                     />
+                    {/* My Points */}
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
+                        <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
+                        <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
+                            <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
+                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance}</div>
+                            <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
+                            <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
+                            <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned}</p>
+                        </div>
+                    </div>
+
+                    {/* Earn more points */}
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
+                        <div className='flex items-center justify-between mb-4 sm:mb-5'>
+                            <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
+                            <span className='text-white/50 text-xs'>Daily refresh</span>
+                        </div>
+                        <div className='space-y-3 sm:space-y-4'>
+                            {tasksToShow.map(task => {
+                                const done = completedTasks.has(task.id);
+                                return (
+                                    <div key={task.id} className='flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                        <div className='flex items-center gap-3 sm:gap-4'>
+                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center'>
+                                                {task.icon}
+                                            </div>
+                                            <div className='min-w-0 flex-1'>
+                                                <p className='text-white font-medium text-sm sm:text-base truncate'>{task.title}</p>
+                                                <div className='flex items-center gap-2 text-purple-300 text-xs sm:text-sm'>
+                                                    <FaGem /> <span>{task.points}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => handleTaskComplete(task)} disabled={done} className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                            {done ? 'Completed' : 'Earn'}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                            <button onClick={() => setShowAllTasks(v => !v)} className='w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft'>
+                                {showAllTasks ? 'Show less' : `View ${allTasks.length - baseTasks.length} More`}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Daily & Weekly Tasks */}
@@ -752,6 +904,164 @@ const RewardsExperience = () => {
                 <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
                     <LeaderboardSection leaderboard={LEADERBOARD_DATA} />
                     <ActivitySection history={history} />
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
+                        <div className='flex items-center justify-between mb-4'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-purple-300' /> Daily Tasks</h3>
+                            <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
+                        </div>
+                        <div className='space-y-3'>
+                            {dailyTasks.map(task => {
+                                const progressPct = Math.min(100, (task.progress / task.goal) * 100);
+                                const canComplete = task.progress >= task.goal && !completedDailyTasks.has(task.id);
+                                const done = completedDailyTasks.has(task.id);
+                                return (
+                                    <div key={task.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                        <div className='flex items-center justify-between mb-2'>
+                                            <p className='text-white font-medium text-xs sm:text-sm'>{task.title}</p>
+                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'>
+                                                <FaGem /> {task.points}
+                                            </div>
+                                        </div>
+                                        <div className='flex items-center justify-between mb-2'>
+                                            <span className='text-white/60 text-xs'>{task.progress}/{task.goal}</span>
+                                            <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
+                                        </div>
+                                        <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
+                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
+                                        </div>
+                                        <button
+                                            onClick={() => completeDailyTask(task)}
+                                            disabled={!canComplete}
+                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        >
+                                            {done ? 'Completed' : canComplete ? 'Claim' : 'In Progress'}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 lg:col-span-2 reward-glow'>
+                        <div className='flex items-center justify-between mb-4'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaRegClock className='text-pink-300' /> Weekly Quests</h3>
+                            <span className='text-white/50 text-xs'>Resets Monday</span>
+                        </div>
+                        <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
+                            {weeklyQuests.map(q => {
+                                const progressPct = Math.min(100, (q.progress / q.goal) * 100);
+                                const canComplete = q.progress >= q.goal && !completedQuests.has(q.id);
+                                const done = completedQuests.has(q.id);
+                                return (
+                                    <div key={q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                        <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>
+                                        <div className='flex items-center justify-between mt-2'>
+                                            <span className='text-white/60 text-xs'>{q.progress}/{q.goal}</span>
+                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
+                                        </div>
+                                        <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
+                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
+                                        </div>
+                                        <button onClick={() => completeQuest(q)} disabled={!canComplete} className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-soft hover:opacity-100' : 'btn-soft cursor-not-allowed opacity-60'}`}>
+                                            {done ? 'Completed' : canComplete ? 'Claim Reward' : 'In Progress'}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Redeem */}
+                <div className='mt-8 sm:mt-12'>
+                    <div className='flex items-center justify-between mb-3'>
+                        <h3 className='text-white font-semibold text-base md:text-lg'>Redeem</h3>
+                        <span className='text-white/50 text-xs'>Choose your loot</span>
+                    </div>
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
+                        {rewardsData.map(item => (
+                            <div key={item.id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
+                                <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
+                                    {item.status === 'locked' && (
+                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10 flex items-center gap-1'>
+                                            <FaLock className='text-white/80' /> Locked
+                                        </div>
+                                    )}
+                                    {item.status !== 'locked' && (
+                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10'>
+                                            Unlocked
+                                        </div>
+                                    )}
+                                    {item.status === 'redeemed' && (
+                                        <div className='absolute top-2 sm:top-3 right-2 sm:right-3 text-[10px] sm:text-xs bg-emerald-600/80 text-white px-2 py-1 rounded-md flex items-center gap-1 z-10'>
+                                            <FaCheckCircle /> Redeemed
+                                        </div>
+                                    )}
+                                    {item.img ? (
+                                        <img src={item.img} alt={item.title} className='absolute inset-0 w-full h-full object-cover opacity-70' />
+                                    ) : (
+                                        <FaPlay className='text-white/30 text-2xl sm:text-3xl' />
+                                    )}
+                                </div>
+                                <div>
+                                    <p className='text-white text-sm sm:text-base font-medium line-clamp-2 break-words'>{item.title}</p>
+                                    <div className='mt-2 sm:mt-3 flex items-center gap-2 text-purple-300'>
+                                        <FaGem />
+                                        <span className='font-semibold text-sm sm:text-base'>{item.price}</span>
+                                    </div>
+                                    <div className='mt-2 sm:mt-3'>
+                                        <progress value={Math.min(userBalance, item.price)} max={item.price} className='redeem-progress'></progress>
+                                    </div>
+                                    <button
+                                        onClick={() => tryRedeem(item)}
+                                        disabled={item.status !== 'unlocked' || userBalance < item.price}
+                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && userBalance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                    >
+                                        {item.status === 'redeemed' ? 'Redeemed' : 'Redeem'}
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Leaderboard & Activity */}
+                <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow lg:col-span-2'>
+                        <div className='flex items-center justify-between mb-4'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-purple-300' /> Leaderboard</h3>
+                            <span className='text-white/50 text-xs'>Top this week</span>
+                        </div>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
+                            {leaderboardData.map((u, idx) => (
+                                <div key={u.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex items-center justify-between'>
+                                    <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+                                        <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>{idx + 1}</div>
+                                        <div className='min-w-0 flex-1'>
+                                            <p className='text-white font-medium text-sm sm:text-base truncate'>{u.name}</p>
+                                            <span className='text-white/60 text-xs'>Top Player</span>
+                                        </div>
+                                    </div>
+                                    <div className='flex items-center gap-1 sm:gap-2 text-purple-300 text-xs sm:text-sm shrink-0'><FaGem /><span className='font-semibold'>{u.points}</span></div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
+                        <h3 className='text-white font-semibold text-base md:text-lg mb-4'>Recent Activity</h3>
+                        <div className='space-y-2 sm:space-y-3 max-h-60 sm:max-h-80 overflow-auto pr-1'>
+                            {recentTransactions.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
+                            {recentTransactions.map(it => (
+                                <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>
+                                    <div className='min-w-0 flex-1'>
+                                        <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
+                                        <span className='text-white/50 text-xs'>{it.time}</span>
+                                    </div>
+                                    <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Milestones Section */}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser, FaShieldAlt, FaLockOpen } from "react-icons/fa";
-import PuzzleCaptcha from "./PuzzleCaptcha";
+import PuzzleCaptchaModal from "./PuzzleCaptchaModal";
 
 import loginBg from "../images/login-bg-video.mp4";
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
@@ -318,7 +318,7 @@ const Login = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCaptchaSolved, setIsCaptchaSolved] = useState(false);
   const [captchaError, setCaptchaError] = useState("");
-  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [showCaptchaModal, setShowCaptchaModal] = useState(false);
   const [loginVerified, setLoginVerified] = useState(false);
   const [pendingUserName, setPendingUserName] = useState("");
   const [pendingCreds, setPendingCreds] = useState(null);
@@ -338,6 +338,7 @@ const Login = () => {
         if (!pendingCreds) return;
         const res = await dispatch(login(pendingCreds));
         if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
+          setShowCaptchaModal(false);
           navigate("/");
           dispatch(handleMyToggle(true));
           if (pendingUserName) {
@@ -345,12 +346,12 @@ const Login = () => {
           }
         } else {
           setCaptchaError("Session expired. Please try again.");
-          setShowCaptcha(false);
+          setShowCaptchaModal(false);
           setLoginVerified(false);
         }
       } catch (e) {
         setCaptchaError("Login failed. Please try again.");
-        setShowCaptcha(false);
+        setShowCaptchaModal(false);
         setLoginVerified(false);
       }
     }
@@ -364,7 +365,7 @@ const Login = () => {
   const resetCaptcha = () => {
     setIsCaptchaSolved(false);
     setCaptchaError("");
-    setShowCaptcha(false);
+    setShowCaptchaModal(false);
     setLoginVerified(false);
   };
 
@@ -381,8 +382,8 @@ const Login = () => {
           // Step 1: Pre-verify credentials only (no tokens/session yet)
           const res = await dispatch(preLogin(values));
           if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
-            // Show captcha now; do not navigate yet
-            setShowCaptcha(true);
+            // Show captcha modal now; do not navigate yet
+            setShowCaptchaModal(true);
             setLoginVerified(true);
             setIsCaptchaSolved(false);
             setPendingUserName(res?.payload?.name || "");
@@ -392,7 +393,7 @@ const Login = () => {
           } else {
             setStatus({ error: "Invalid credentials" });
             setIsCaptchaSolved(false);
-            setShowCaptcha(false);
+            setShowCaptchaModal(false);
             setLoginVerified(false);
             setPendingCreds(null);
           }
@@ -428,38 +429,10 @@ const Login = () => {
           >
             Forgot password?
           </p>
-          
-          {/* Show captcha only AFTER successful password verification */}
-          {showCaptcha && (
-            <div className="mt-4">
-              <PuzzleCaptcha
-                sliderBarTitle="Slide to verify"
-                cardTitle="Complete the puzzle to continue"
-                initialColor="#3B82F6"
-                successColor="#22C55E"
-                imageWidth={340}
-                imageHeight={170}
-                pieceWidth={56}
-                pieceHeight={56}
-                tolerance={12}
-                showResetBtn={true}
-                onSuccess={handleCaptchaSuccess}
-                onFailure={handleCaptchaFailure}
-              />
-              {captchaError && (
-                <div className="text-red-400 text-sm mt-2 text-center">
-                  {captchaError}
-                </div>
-              )}
-            </div>
-          )}
 
           <button 
             type="submit" 
-            disabled={showCaptcha && !isCaptchaSolved}
-            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${
-              showCaptcha && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className="group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105"
           >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
             <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
@@ -928,6 +901,31 @@ const Login = () => {
           }
         </div>
       </div>
+
+      {/* Puzzle Captcha Modal */}
+      <PuzzleCaptchaModal
+        isOpen={showCaptchaModal}
+        onClose={() => setShowCaptchaModal(false)}
+        onSuccess={handleCaptchaSuccess}
+        onFailure={handleCaptchaFailure}
+        sliderBarTitle="Slide to verify"
+        cardTitle="Complete the puzzle to continue"
+        initialColor="#3B82F6"
+        successColor="#22C55E"
+        imageWidth={400}
+        imageHeight={200}
+        pieceWidth={60}
+        pieceHeight={60}
+        tolerance={12}
+        showResetBtn={true}
+      />
+
+      {/* Captcha Error Display */}
+      {captchaError && (
+        <div className="fixed top-4 right-4 z-50 bg-red-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg">
+          {captchaError}
+        </div>
+      )}
 
     </BackgroundBeamsWithCollision>
   );

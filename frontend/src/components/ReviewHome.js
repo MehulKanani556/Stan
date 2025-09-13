@@ -38,7 +38,10 @@ export default function ReviewHomeSlick() {
         setSlidesToShow(1); // agar reviews 3 karta ochhi hoy to 1 card
       } else {
         if (window.innerWidth >= 1200) setSlidesToShow(3);
-        else if (window.innerWidth >= 1024) setSlidesToShow(1);
+        // else if (window.innerWidth < 1200 && window.innerWidth >= 1024) {
+        //   setCenterPadding("80px");
+        // } 
+        else if (window.innerWidth >= 1024) setSlidesToShow(3);
         else setSlidesToShow(1);
       }
     };
@@ -99,9 +102,9 @@ export default function ReviewHomeSlick() {
         {loader && <ReviewCardSkeleton/>}
         {!loader && <Slider {...settings} className="ds_review_slider">
           {revieData?.map((r) => (
-            <div key={r?._id} className={`px-2 sm:px-3 ${revieData.length < 4 ? '!flex justify-center' : 'xl:inline !flex justify-center'}`}>
+            <div key={r?._id} className={` xl:px-3 lg:px-0 px-2 ${revieData.length < 4 ? '!flex justify-center' : 'xl:inline !flex justify-center'}`}>
               <motion.div
-                className={`card-wrapper ${revieData.length < 4 ? 'lg:!w-1/2 md:!w-2/3 ms:!w-4/5 w-full' : 'xl:!w-full lg:!w-1/2 md:!w-2/3 ms:!w-4/5 w-full'}`}
+                className={`card-wrapper ${revieData.length < 4 ? 'lg:!w-1/2 md:!w-2/3 ms:!w-4/5 w-full' : 'lg:!w-full md:!w-2/3 ms:!w-4/5 w-full'}`}
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -149,7 +152,6 @@ export default function ReviewHomeSlick() {
           transform: scale(0.78);
           opacity: 0.5;
           transition: all 0.5s ease;
-          padding: 10px;
         }
         .ds_reviewHome_slide .slick-center {
           transform: scale(1);

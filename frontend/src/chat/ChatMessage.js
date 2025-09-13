@@ -123,7 +123,7 @@ export default function ChatMessage({ isTyping }) {
     const messageGroups = groupMessagesByDate(messages);
 
     return (
-        <div className="flex flex-col h-full bg-gray-950 text-gray-100">
+        <div className="flex flex-col md:h-full h-[calc(100vh-248px)] bg-gray-950 text-gray-100">
             {selectedUser ? (
                 <div
                     ref={messagesContainerRef}

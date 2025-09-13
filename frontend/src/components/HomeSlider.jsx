@@ -10,6 +10,7 @@ import "swiper/css/effect-fade";
 
 import { EffectFade, Pagination, Autoplay } from 'swiper/modules';
 import SliderSkeleton from "../lazyLoader/SliderSkeleeton";
+import HeroSliderSkeleton2 from "../lazyLoader/HeroSkeleton2";
 
 export default function HomeSlider() {
     const dispatch = useDispatch()
@@ -135,7 +136,14 @@ export default function HomeSlider() {
 
     // Don't render carousel until games are loaded
     if (!games || games.length === 0) {
-        return <div><SliderSkeleton /></div>;
+        return <div>
+                  <div className="md:block hidden">
+                     <SliderSkeleton/>
+                  </div>
+                  <div className="md:hidden block">
+                     <HeroSliderSkeleton2 />
+                 </div>
+            </div>;
     }
 
     return (
