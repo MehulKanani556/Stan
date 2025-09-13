@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
@@ -602,7 +603,11 @@ const RewardsExperience = () => {
 
     console.log("Reward state:", { recentTransactions });
 
-
+    // Add missing state variables
+    const [balance, setBalance] = useState(userBalance || 600);
+    const [totalEarned, setTotalEarned] = useState(0);
+    const [history, setHistory] = useState([]);
+    const [rewardsState, setRewards] = useState(rewards || []);
     const [streakDay, setStreakDay] = useState(3);
     const [completedTasks, setCompletedTasks] = useState(new Set());
     const [completedQuests, setCompletedQuests] = useState(new Set());
@@ -611,9 +616,24 @@ const RewardsExperience = () => {
     const [completedDailyTasks, setCompletedDailyTasks] = useState(new Set());
 
     // Calculate total earned from recent transactions
-    const totalEarned = recentTransactions
+    const calculatedTotalEarned = recentTransactions
         .filter(transaction => transaction.type === 'earn')
         .reduce((total, transaction) => total + (transaction.amount || 0), 0);
+
+    // Update balance when userBalance changes
+    useEffect(() => {
+        setBalance(userBalance || 600);
+    }, [userBalance]);
+
+    // Update total earned when recent transactions change
+    useEffect(() => {
+        setTotalEarned(calculatedTotalEarned);
+    }, [calculatedTotalEarned]);
+
+    // Update rewards when API rewards change
+    useEffect(() => {
+        setRewards(rewards || []);
+    }, [rewards]);
 
     useEffect(() => {
         setRewards(prev => prev.map(r => {
@@ -630,6 +650,7 @@ const RewardsExperience = () => {
     const completedTasksSet = useMemo(() => new Set(completedTasks), [completedTasks]);
     const completedQuestsSet = useMemo(() => new Set(completedQuests), [completedQuests]);
     const completedDailyTasksSet = useMemo(() => new Set(completedDailyTasks), [completedDailyTasks]);
+    
     // Load initial data
     useEffect(() => {
         dispatch(getAllRewards({ page: 1, limit: 20 }));
@@ -688,13 +709,13 @@ const RewardsExperience = () => {
             label, 
             time: new Date().toLocaleString() 
         }, ...prev].slice(0, 15));
-    }, [setHistory]);
+    }, []);
 
     const earnPoints = useCallback((amount, label) => {
         setBalance(prev => prev + amount);
         setTotalEarned(prev => prev + amount);
         addHistory('earn', amount, label);
-    }, [setBalance, setTotalEarned, addHistory]);
+    }, [addHistory]);
 
     const tryRedeem = useCallback((item) => {
         if (item.status !== REWARD_STATUS.UNLOCKED) return;
@@ -707,14 +728,15 @@ const RewardsExperience = () => {
         setRewards(prev => prev.map(r => 
             r.id === item.id ? { ...r, status: REWARD_STATUS.REDEEMED } : r
         ));
-    }, [balance, setBalance, addHistory, setRewards]);
+    }, [balance, addHistory]);
+    
     // Use API rewards or fallback to default rewards
-    const rewardsData = rewards.length > 0 ? rewards.map(reward => ({
-        id: reward._id,
+    const rewardsData = rewardsState.length > 0 ? rewardsState.map(reward => ({
+        id: reward._id || reward.id,
         title: reward.title,
         img: reward.image || yoyoLogo,
         price: reward.price,
-        status: reward.isRedeemed ? 'redeemed' : (userBalance >= reward.price ? 'unlocked' : 'locked')
+        status: reward.isRedeemed ? 'redeemed' : (balance >= reward.price ? 'unlocked' : 'locked')
     })) : [
         { id: 1, title: 'tbh welcome pack', img: yoyoLogo, price: 500, status: 'redeemed' },
         { id: 2, title: 'Amazon.com $5 gift card', img: amazonImg, price: 1500, status: 'unlocked' },
@@ -744,21 +766,12 @@ const RewardsExperience = () => {
     ];
     const [milestones, setMilestones] = useState(milestonesInit);
 
-   
-
-    // const tryRedeem = (item) => {
-    //     if (item.status !== 'unlocked') return;
-    //     if (userBalance < item.price) return;
-    //     if (!window.confirm(`Redeem ${item.title} for ${item.price} points?`)) return;
-    //     dispatch(redeemReward(item.id));
-    // };
-
     const completeDailyTask = useCallback((task) => {
         if (completedDailyTasksSet.has(task.id)) return;
         if (task.progress < task.goal) return;
         earnPoints(task.points, task.title);
         setCompletedDailyTasks(prev => [...prev, task.id]);
-    }, [completedDailyTasksSet, earnPoints, setCompletedDailyTasks]);
+    }, [completedDailyTasksSet, earnPoints]);
 
     const claimMilestone = useCallback((mid) => {
         setMilestones(prev => prev.map(m => {
@@ -768,7 +781,7 @@ const RewardsExperience = () => {
             }
             return m;
         }));
-    }, [totalEarned, earnPoints, setMilestones]);
+    }, [totalEarned, earnPoints]);
 
     const handleTaskComplete = (task) => {
         if (completedTasks.has(task.id)) return;
@@ -781,7 +794,7 @@ const RewardsExperience = () => {
         if (q.progress < q.goal) return;
         earnPoints(q.reward, q.title);
         setCompletedQuests(prev => [...prev, q.id]);
-    }, [completedQuestsSet, earnPoints, setCompletedQuests]);
+    }, [completedQuestsSet, earnPoints]);
 
     // Check and unlock rewards based on total earned
     useEffect(() => {
@@ -791,7 +804,7 @@ const RewardsExperience = () => {
             }
             return reward;
         }));
-    }, [totalEarned, setRewards]);
+    }, [totalEarned]);
 
     return (
         <section className='pb-12 overflow-x-hidden'>
@@ -808,11 +821,11 @@ const RewardsExperience = () => {
                             <p className='text-white/70 mt-2 md:mt-3 max-w-2xl text-sm sm:text-base'>Grind quests, stack streaks, and redeem epic goodies. All your progress and perks live here.</p>
                         </div>
                         <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto'>
-                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
+                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[110px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Current Balance</p>
-                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {userBalance}</div>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {balance}</div>
                             </div>
-                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
+                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[110px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Total Earned</p>
                                 <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned}</div>
                             </div>
@@ -825,57 +838,13 @@ const RewardsExperience = () => {
                     <PointsSection balance={balance} totalEarned={totalEarned} />
                     <TasksSection 
                         tasks={tasksToShow}
-                        onComplete={completeTask}
+                        onComplete={handleTaskComplete}
                         completedTasks={completedTasksSet}
                         showAll={showAllTasks}
                         onToggleShowAll={() => setShowAllTasks(v => !v)}
                         totalTasks={allTasks.length - TASKS_CONFIG.base.length}
                     />
-                    {/* My Points */}
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
-                        <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
-                        <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
-                            <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
-                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance}</div>
-                            <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
-                            <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
-                            <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned}</p>
-                        </div>
-                    </div>
-
-                    {/* Earn more points */}
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
-                        <div className='flex items-center justify-between mb-4 sm:mb-5'>
-                            <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
-                            <span className='text-white/50 text-xs'>Daily refresh</span>
-                        </div>
-                        <div className='space-y-3 sm:space-y-4'>
-                            {tasksToShow.map(task => {
-                                const done = completedTasks.has(task.id);
-                                return (
-                                    <div key={task.id} className='flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
-                                        <div className='flex items-center gap-3 sm:gap-4'>
-                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center'>
-                                                {task.icon}
-                                            </div>
-                                            <div className='min-w-0 flex-1'>
-                                                <p className='text-white font-medium text-sm sm:text-base truncate'>{task.title}</p>
-                                                <div className='flex items-center gap-2 text-purple-300 text-xs sm:text-sm'>
-                                                    <FaGem /> <span>{task.points}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button onClick={() => handleTaskComplete(task)} disabled={done} className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
-                                            {done ? 'Completed' : 'Earn'}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                            <button onClick={() => setShowAllTasks(v => !v)} className='w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft'>
-                                {showAllTasks ? 'Show less' : `View ${allTasks.length - baseTasks.length} More`}
-                            </button>
-                        </div>
-                    </div>
+                    
                 </div>
 
                 {/* Daily & Weekly Tasks */}
@@ -895,135 +864,10 @@ const RewardsExperience = () => {
 
                 {/* Rewards Section */}
                 <RewardsSection 
-                    rewards={rewards}
+                    rewards={rewardsData}
                     balance={balance}
                     onRedeem={tryRedeem}
                 />
-
-                {/* Leaderboard & Activity */}
-                <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
-                    <LeaderboardSection leaderboard={LEADERBOARD_DATA} />
-                    <ActivitySection history={history} />
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
-                        <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-purple-300' /> Daily Tasks</h3>
-                            <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
-                        </div>
-                        <div className='space-y-3'>
-                            {dailyTasks.map(task => {
-                                const progressPct = Math.min(100, (task.progress / task.goal) * 100);
-                                const canComplete = task.progress >= task.goal && !completedDailyTasks.has(task.id);
-                                const done = completedDailyTasks.has(task.id);
-                                return (
-                                    <div key={task.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
-                                        <div className='flex items-center justify-between mb-2'>
-                                            <p className='text-white font-medium text-xs sm:text-sm'>{task.title}</p>
-                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'>
-                                                <FaGem /> {task.points}
-                                            </div>
-                                        </div>
-                                        <div className='flex items-center justify-between mb-2'>
-                                            <span className='text-white/60 text-xs'>{task.progress}/{task.goal}</span>
-                                            <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
-                                        </div>
-                                        <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
-                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
-                                        </div>
-                                        <button
-                                            onClick={() => completeDailyTask(task)}
-                                            disabled={!canComplete}
-                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
-                                        >
-                                            {done ? 'Completed' : canComplete ? 'Claim' : 'In Progress'}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 lg:col-span-2 reward-glow'>
-                        <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaRegClock className='text-pink-300' /> Weekly Quests</h3>
-                            <span className='text-white/50 text-xs'>Resets Monday</span>
-                        </div>
-                        <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
-                            {weeklyQuests.map(q => {
-                                const progressPct = Math.min(100, (q.progress / q.goal) * 100);
-                                const canComplete = q.progress >= q.goal && !completedQuests.has(q.id);
-                                const done = completedQuests.has(q.id);
-                                return (
-                                    <div key={q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
-                                        <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>
-                                        <div className='flex items-center justify-between mt-2'>
-                                            <span className='text-white/60 text-xs'>{q.progress}/{q.goal}</span>
-                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
-                                        </div>
-                                        <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
-                                        </div>
-                                        <button onClick={() => completeQuest(q)} disabled={!canComplete} className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-soft hover:opacity-100' : 'btn-soft cursor-not-allowed opacity-60'}`}>
-                                            {done ? 'Completed' : canComplete ? 'Claim Reward' : 'In Progress'}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Redeem */}
-                <div className='mt-8 sm:mt-12'>
-                    <div className='flex items-center justify-between mb-3'>
-                        <h3 className='text-white font-semibold text-base md:text-lg'>Redeem</h3>
-                        <span className='text-white/50 text-xs'>Choose your loot</span>
-                    </div>
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
-                        {rewardsData.map(item => (
-                            <div key={item.id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
-                                <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
-                                    {item.status === 'locked' && (
-                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10 flex items-center gap-1'>
-                                            <FaLock className='text-white/80' /> Locked
-                                        </div>
-                                    )}
-                                    {item.status !== 'locked' && (
-                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10'>
-                                            Unlocked
-                                        </div>
-                                    )}
-                                    {item.status === 'redeemed' && (
-                                        <div className='absolute top-2 sm:top-3 right-2 sm:right-3 text-[10px] sm:text-xs bg-emerald-600/80 text-white px-2 py-1 rounded-md flex items-center gap-1 z-10'>
-                                            <FaCheckCircle /> Redeemed
-                                        </div>
-                                    )}
-                                    {item.img ? (
-                                        <img src={item.img} alt={item.title} className='absolute inset-0 w-full h-full object-cover opacity-70' />
-                                    ) : (
-                                        <FaPlay className='text-white/30 text-2xl sm:text-3xl' />
-                                    )}
-                                </div>
-                                <div>
-                                    <p className='text-white text-sm sm:text-base font-medium line-clamp-2 break-words'>{item.title}</p>
-                                    <div className='mt-2 sm:mt-3 flex items-center gap-2 text-purple-300'>
-                                        <FaGem />
-                                        <span className='font-semibold text-sm sm:text-base'>{item.price}</span>
-                                    </div>
-                                    <div className='mt-2 sm:mt-3'>
-                                        <progress value={Math.min(userBalance, item.price)} max={item.price} className='redeem-progress'></progress>
-                                    </div>
-                                    <button
-                                        onClick={() => tryRedeem(item)}
-                                        disabled={item.status !== 'unlocked' || userBalance < item.price}
-                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && userBalance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
-                                    >
-                                        {item.status === 'redeemed' ? 'Redeemed' : 'Redeem'}
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
                 {/* Leaderboard & Activity */}
                 <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>

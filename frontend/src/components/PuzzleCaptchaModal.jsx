@@ -568,7 +568,7 @@ const PuzzleCaptchaModal = ({
                                         onMouseUp={handleSliderRelease}
                                         onTouchEnd={handleSliderRelease}
                                         disabled={isLoading || isFailed || isSolved}
-                                        className={`captcha-slider w-full h-[6px] bg-white/30 rounded outline-none appearance-none cursor-pointer transition duration-300 ease-in-out ${isSolved ? "[&::-webkit-slider-thumb]:bg-emerald-500" : ""}`}
+                                        className={`captcha-range-input captcha-slider w-full h-[6px] bg-white/30 rounded outline-none appearance-none cursor-pointer transition duration-300 ease-in-out ${isSolved ? "[&::-webkit-slider-thumb]:bg-emerald-500" : ""}`}
                                     />
                                 </div>
 
