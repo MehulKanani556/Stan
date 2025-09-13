@@ -205,6 +205,42 @@ body {
 
 
 
+/* ******************range input************************** */
+
+/* Chrome, Safari, Edge */
+.captcha-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none ;
+  appearance: none ;
+  width: 20px ;
+  height: 20px ;
+  border-radius: 50% ;
+  background: #007bff;
+  cursor: pointer;
+  transform: rotate(-90deg); /* flips the "arrow" direction */
+}
+
+/* Firefox */
+.captcha-range-input::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  transform: rotate(-90deg);
+}
+
+/* IE/Edge Legacy */
+.captcha-range-input::-ms-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  transform: rotate(-90deg);
+}
+
+
+
 /* chat */
 /* Responsive Chat Application Styles */
 
