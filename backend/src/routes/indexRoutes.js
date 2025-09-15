@@ -1,5 +1,5 @@
 import express from "express";
-import {
+import { 
   upload,
   convertJfifToWebp,
   handleMulterError,
@@ -43,6 +43,8 @@ import {
     getRewardsStatistics,
     updateLoginTask
 } from '../controllers/rewards.controller.js';
+import { getTaskClaimState, claimTask } from '../controllers/userDailyTaskClaim.controller.js';
+
 import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 // import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 import { getUserGamePlayTime } from "../controllers/userGameplay.controller.js";
@@ -50,6 +52,9 @@ import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, get
 
 
 const indexRoutes = express.Router();
+// Task claim state routes (daily & weekly)
+indexRoutes.get('/user/task-claim', UserAuth, getTaskClaimState);
+indexRoutes.post('/user/task-claim', UserAuth, claimTask);
 
 //register Routes
 indexRoutes.post("/register", register);
