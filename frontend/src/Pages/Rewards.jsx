@@ -109,6 +109,8 @@ const RewardsExperience = () => {
     const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
     const [completedDailyTasks, setCompletedDailyTasks] = useState(new Set());
+    const [claimedDailyTasks, setClaimedDailyTasks] = useState(new Set());
+    const [loadingDailyClaim, setLoadingDailyClaim] = useState(false);
     const [referralPoints, setReferralPoints] = useState(0);
     const [referralHistory, setReferralHistory] = useState([]);
     const [isClaimingReferral, setIsClaimingReferral] = useState(false);
@@ -123,6 +125,31 @@ const RewardsExperience = () => {
         const last = localStorage.getItem('rewards:lastStreakClaim');
         const today = new Date().toDateString();
         if (last === today) setStreakClaimedToday(true);
+    }, []);
+
+    // Persisted completion state
+    const STORAGE_KEYS = useMemo(() => ({
+        daily: 'rewards:completedDailyTasks',
+        weekly: 'rewards:completedWeeklyTasks',
+        earn: 'rewards:completedEarnTasks',
+    }), []);
+
+
+    // Fetch claimed daily tasks from backend on mount
+    useEffect(() => {
+        const fetchClaimed = async () => {
+            setLoadingDailyClaim(true);
+            try {
+                const res = await axiosInstance.get('/user/daily-task-claim');
+                const claimed = res.data?.result?.claimedTasks || [];
+                setClaimedDailyTasks(new Set(claimed));
+            } catch (e) {
+                setClaimedDailyTasks(new Set());
+            } finally {
+                setLoadingDailyClaim(false);
+            }
+        };
+        fetchClaimed();
     }, []);
 
     // Load referral data
@@ -327,16 +354,26 @@ const RewardsExperience = () => {
         localStorage.setItem('rewards:lastStreakClaim', today);
     };
 
-    const completeDailyTask = (task) => {
+    const completeDailyTask = async (task) => {
         const isPlayTimeTask = /play any game for/i.test(task?.title || '');
         const goal = Number(task?.limit || task?.goal || 0);
         const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
         const key = task?._id || task?.id;
         if (!key) return;
-        if (completedDailyTasks.has(key)) return;
+        if (claimedDailyTasks.has(key)) return;
         if (!(progress >= goal && goal > 0)) return;
-        earnPoints(task?.reward, task?.title);
-        setCompletedDailyTasks(prev => new Set(prev).add(key));
+        setLoadingDailyClaim(true);
+        try {
+            // Mark as claimed in backend
+            await axiosInstance.post('/user/daily-task-claim', { taskId: key });
+            setClaimedDailyTasks(prev => new Set(prev).add(key));
+            dispatch(completeTask({ taskId: key, points: task?.reward, title: task?.title }));
+            enqueueSnackbar('Task claimed!', { variant: 'success' });
+        } catch (e) {
+            enqueueSnackbar('Failed to claim task', { variant: 'error' });
+        } finally {
+            setLoadingDailyClaim(false);
+        }
     };
 
     const claimMilestone = (mid) => {
@@ -363,8 +400,13 @@ const RewardsExperience = () => {
         if (!key) return;
         if (completedQuests.has(key)) return;
         if (!(progress >= goal && goal > 0)) return; // require goal met
-        earnPoints(q?.reward, q?.title);
-        setCompletedQuests(prev => new Set(prev).add(key));
+        dispatch(completeTask({ taskId: key, points: q?.reward, title: q?.title }));
+        setCompletedQuests(prev => {
+            const next = new Set(prev);
+            next.add(key);
+            try { localStorage.setItem(STORAGE_KEYS.weekly, JSON.stringify(Array.from(next))); } catch {}
+            return next;
+        });
     };
 
     const userId = useMemo(() => {
@@ -385,6 +427,7 @@ const RewardsExperience = () => {
             window.prompt('Copy your referral link:', referralLink);
         }
     };
+    
 
 
     // Handle claiming referral points
@@ -424,6 +467,22 @@ const RewardsExperience = () => {
             setIsClaimingReferral(false);
         }
     };
+
+    useEffect(() => {
+        // Get today's date as a string (e.g., '2025-09-17')
+        const today = new Date().toISOString().slice(0, 10);
+
+        // Get saved data from localStorage
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.daily) || '{}');
+        if (saved.date !== today) {
+            // If date is not today, reset completed tasks
+            setCompletedDailyTasks(new Set());
+            localStorage.setItem(STORAGE_KEYS.daily, JSON.stringify({ date: today, tasks: [] }));
+        } else {
+            // If date matches, load completed tasks
+            setCompletedDailyTasks(new Set(saved.tasks || []));
+        }
+    }, [STORAGE_KEYS]);
 
     return (
         <section className='pb-12 overflow-x-hidden'>
@@ -593,8 +652,8 @@ const RewardsExperience = () => {
                                 const goal = Number(task?.limit || task?.goal || 0);
                                 const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
                                 const progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                const canComplete = progress >= goal && !completedDailyTasks.has(task?._id || task?.id);
-                                const done = completedDailyTasks.has(task?._id || task?.id);
+                                const claimed = claimedDailyTasks.has(task?._id || task?.id);
+                                const canComplete = progress >= goal && !claimed;
                                 return (
                                     <div key={task._id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                         <div className='flex items-center justify-between mb-2'>
@@ -617,10 +676,10 @@ const RewardsExperience = () => {
                                         </div>
                                         <button
                                             onClick={() => completeDailyTask(task)}
-                                            disabled={!canComplete}
-                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${done ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                            disabled={!canComplete || loadingDailyClaim}
+                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${claimed ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                         >
-                                            {done ? 'Completed' : canComplete ? 'Claim' : 'In Progress'}
+                                            {claimed ? 'Claimed' : canComplete ? (loadingDailyClaim ? 'Claiming...' : 'Claim') : 'In Progress'}
                                         </button>
                                     </div>
                                 );
