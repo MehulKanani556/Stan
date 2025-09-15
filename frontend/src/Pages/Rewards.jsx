@@ -9,6 +9,7 @@ import stickerImg from '../images/gens-logo1.png'
 import cameraImg from '../images/stan-user.jpg'
 import posterImg from '../images/game5.jpg'
 import mysteryImg from '../images/shadow.jpg'
+import { enqueueSnackbar } from 'notistack';
 import {
     getAllRewards,
     getUserRewardBalance,
@@ -322,7 +323,7 @@ const RewardsExperience = () => {
     const handleCopyReferral = async () => {
         try {
             await navigator.clipboard.writeText(referralLink);
-            alert('Referral link copied!');
+            enqueueSnackbar('Referral link copied!', { variant: 'success' });
         } catch (e) {
             console.warn('Clipboard copy failed, showing prompt fallback');
             window.prompt('Copy your referral link:', referralLink);
