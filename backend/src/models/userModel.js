@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema(
         isAdmin: { type: Boolean, default: false },
         lastLogin: { type: Date, default: null },
 
+        // Referral
+        referralCode: { type: String, unique: true, index: true },
+        referralHistory: [
+            {
+                user: { type: mongoose.Schema.Types.ObjectId, ref: "UserStan" },
+                referredAt: { type: Date, default: Date.now }
+            }
+        ],
         wishlist: [
             {
                 game: { type: mongoose.Schema.Types.ObjectId, ref: 'game', required: true },
@@ -49,7 +57,7 @@ const userSchema = new mongoose.Schema(
         fanCoinTransactions: [{
             type: {
                 type: String,
-                enum: ['EARN', 'SPEND', 'PURCHASE'],
+                enum: ['EARN', 'SPEND', 'PURCHASE', 'REFERRAL'],
                 required: true
             },
             amount: {

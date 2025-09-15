@@ -20,7 +20,9 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../Redux/Slice/user.slice";
 import { motion, AnimatePresence } from "framer-motion";
 import { handleMyToggle } from "../Redux/Slice/game.slice";
-import {  useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import { VscReferences } from "react-icons/vsc";
+
 
 
 function cn(...args) {
@@ -28,12 +30,17 @@ function cn(...args) {
 }
 
 
-const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onToggleShowPassword, ...props }) => {
+const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onToggleShowPassword, optional, helpText, rightElement, ...props }) => {
   return (
     <div className="mb-4 sm:mb-6">
 
       <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-2">
         {label}
+        {optional ? (
+          <span className="ml-2 inline-flex items-center rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-semibold text-gray-200 border border-white/20 align-middle">
+            Optional
+          </span>
+        ) : null}
       </label>
 
       <div className="relative">
@@ -65,9 +72,18 @@ const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onTogg
             {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
           </button>
         )}
+
+        {!isPassword && rightElement ? (
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
+            {rightElement}
+          </div>
+        ) : null}
       </div>
 
       <ErrorMessage name={props.name} component="div" className="text-red-400 text-sm mt-1" />
+      {helpText ? (
+        <div className="text-gray-400 text-xs mt-1">{helpText}</div>
+      ) : null}
     </div>
   );
 };
@@ -322,6 +338,7 @@ const Login = () => {
   const [loginVerified, setLoginVerified] = useState(false);
   const [pendingUserName, setPendingUserName] = useState("");
   const [pendingCreds, setPendingCreds] = useState(null);
+  const [referralCode, setReferralCode] = useState("");
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -329,6 +346,17 @@ const Login = () => {
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
+
+  // Parse URL parameters to get referral code
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const refCode = searchParams.get('ref');
+    if (refCode) {
+      setReferralCode(refCode);
+      // Automatically switch to signup form if referral code is present
+      setActiveForm("signup");
+    }
+  }, []);
 
   const handleCaptchaSuccess = async () => {
     setIsCaptchaSolved(true);
@@ -367,6 +395,13 @@ const Login = () => {
     setShowCaptcha(false);
     setLoginVerified(false);
   };
+
+  // If the route is /register, show signup by default
+  useEffect(() => {
+    if (window?.location?.pathname?.toLowerCase() === '/register') {
+      setActiveForm('signup');
+    }
+  }, []);
 
   const formConfigs = {
     login: {
@@ -428,7 +463,7 @@ const Login = () => {
           >
             Forgot password?
           </p>
-          
+
           {/* Show captcha only AFTER successful password verification */}
           {showCaptcha && (
             <div className="mt-4">
@@ -454,12 +489,11 @@ const Login = () => {
             </div>
           )}
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={showCaptcha && !isCaptchaSolved}
-            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${
-              showCaptcha && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${showCaptcha && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
           >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
             <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
@@ -486,7 +520,7 @@ const Login = () => {
     },
     signup: {
       title: "Sign Up",
-      initialValues: { name: "", email: "", password: "", agreeToTerms: false },
+      initialValues: { name: "", email: "", password: "", Reffer: referralCode, agreeToTerms: false },
       validationSchema: Yup.object({
         name: Yup.string().required("Name is required"),
         email: Yup.string().email("Invalid email").required("Required"),
@@ -533,6 +567,25 @@ const Login = () => {
             showPassword={showPassword}
             onToggleShowPassword={togglePasswordVisibility}
           />
+          <InputWithIcon
+            id="refferal"
+            label="Refferal code"
+            type="text"
+            name="Reffer"
+            icon={<VscReferences size={20} />}
+            optional
+            readOnly={!!referralCode}
+            helpText={referralCode ? "Referral code applied automatically from your link!" : "Have a referral? Enter it to unlock bonus rewards."}
+            rightElement={
+              <span className={`px-2 py-1 text-[10px] rounded-lg border ${
+                referralCode 
+                  ? "bg-emerald-400/30 text-emerald-100 border-emerald-300/50" 
+                  : "bg-emerald-400/20 text-emerald-200 border-emerald-300/30"
+              }`}>
+                {referralCode ? "Applied" : "Apply"}
+              </span>
+            }
+          />
           <div className="flex items-start space-x-2 mt-4">
             <Field name="agreeToTerms" type="checkbox" className="w-4 h-4 text-green-600 bg-gray-100 rounded border-gray-300 focus:ring-green-500" />
             <label className="text-sm text-gray-300">
@@ -548,11 +601,10 @@ const Login = () => {
             </label>
           </div>
           <ErrorMessage name="agreeToTerms" component="div" className="text-red-400 text-sm mt-1" />
-          <button 
-            type="submit" 
-            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${
-              ''
-            }`}
+          <button
+            type="submit"
+            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${''
+              }`}
           >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
             <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
@@ -857,20 +909,20 @@ const Login = () => {
 
   // google login
   const googleLoginn = useGoogleLogin({
-    onSuccess: async (credentialResponse)=>{
+    onSuccess: async (credentialResponse) => {
       console.log(credentialResponse);
       try {
-        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
-          headers:{
-            Authorization:`Bearer ${credentialResponse.access_token}`
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: {
+            Authorization: `Bearer ${credentialResponse.access_token}`
           }
         });
         const data = await res.json();
         console.log(data);
-        const {name, email, sub, picture } = data;
-        dispatch(googleLogin({name, email, uid: sub, picture})).then((res)=>{
-          console.log("aa",res);
-          if(res.meta.requestStatus === 'fulfilled'){
+        const { name, email, sub, picture } = data;
+        dispatch(googleLogin({ name, email, uid: sub, picture })).then((res) => {
+          console.log("aa", res);
+          if (res.meta.requestStatus === 'fulfilled') {
             navigate('/');
           }
         });
@@ -878,7 +930,7 @@ const Login = () => {
         console.error('Google Login Fetch Error:', error);
       }
     },
-    onError: (error)=>{
+    onError: (error) => {
       console.error('Google Login Failed', error);
     },
     flow: 'implicit', // Use implicit flow to handle popup blocking
@@ -921,7 +973,7 @@ const Login = () => {
                 <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
                 <span>{title} with Google</span>
               </button>
-             
+
             </div>
             :
             ""

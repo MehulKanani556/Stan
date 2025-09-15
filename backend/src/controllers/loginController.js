@@ -188,7 +188,8 @@ export const userLogin = async (req, res) => {
                     wishlist: user.wishlist || [],
                     cart: user.cart || [],
                     fanCoins: user.fanCoins || 0,
-                    fanCoinTransactions: user.fanCoinTransactions || []
+                    fanCoinTransactions: user.fanCoinTransactions || [],
+                    referralCode: user.referralCode
                 }
             });
     } catch (error) {
@@ -205,7 +206,22 @@ export const googleLogin = async (req, res) => {
 
         let checkUser = await User.findOne({ email: email });
         if (!checkUser) {
-            checkUser = await User.create({ name, email, uid, profilePic: picture, role: "user" });
+            // Generate unique referral code for first-time Google signup
+            const generateReferralCode = async () => {
+                const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
+                const length = 8;
+                let code;
+                let exists = true;
+                while (exists) {
+                    code = Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+                    const found = await User.findOne({ referralCode: code });
+                    exists = !!found;
+                }
+                return code;
+            };
+            const referralCode = await generateReferralCode();
+
+            checkUser = await User.create({ name, email, uid, profilePic: picture, role: "user", referralCode });
         } else {
             checkUser = await User.findByIdAndUpdate(checkUser._id, {
                 name, email, uid, profilePic: picture
@@ -234,6 +250,7 @@ export const googleLogin = async (req, res) => {
                     isAdmin: checkUser.role === 'admin',
                     lastLogin: checkUser.lastLogin,
                     profilePic: checkUser.profilePic,
+                    referralCode: checkUser.referralCode,
                     token: accessToken,
                     wishlist: checkUser.wishlist || [],
                     cart: checkUser.cart || [],

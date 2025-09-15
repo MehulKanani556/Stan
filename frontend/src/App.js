@@ -6,7 +6,6 @@ import Header from "./header/Header";
 import Footer from "./footer/Footer";
 import Home from "./Pages/Home";
 import Login from "./components/Login";
-import Register from "./components/Register";
 import Store from "./Pages/Store";
 import Rewards from "./Pages/Rewards";
 import Transaction from "./components/Transaction";
@@ -59,7 +58,7 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/loader" element={<Loader />} />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
+                  <Route path="/register" element={<Login />} />
                   <Route path="/store" element={<Store />} />
                   <Route path="/rewards" element={<Rewards />} />
                   <Route path="/transaction" element={<Transaction />} />

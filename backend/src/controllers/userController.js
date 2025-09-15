@@ -82,14 +82,13 @@ const deleteFileFromS3 = async (fileUrl) => {
 
 export const register = async (req, res) => {
     try {
-        const { contactNo, email, password, name, role } = req.body;
+        const { contactNo, email, password, name, role, referralCode: incomingReferralCode } = req.body;
 
         // Only encrypt values that exist and are not undefined
         const contactNoHash = contactNo ? encryptData(contactNo) : undefined;
         const emailHash = email ? encryptData(email) : undefined;
         const nameHash = name ? encryptData(name) : undefined;
         const passwordHash = password ? encryptData(password) : undefined;
-
 
         // Check for contactNo uniqueness if provided (check against encrypted value) 
         if (contactNo) {
@@ -107,13 +106,58 @@ export const register = async (req, res) => {
             }
         }
 
-        const data = await User.insertOne({
+        // Find referrer if referral code is provided
+        let referrer = null;
+        if (incomingReferralCode) {
+            referrer = await User.findOne({ referralCode: incomingReferralCode });
+            if (!referrer) {
+                return sendBadRequestResponse(res, "Invalid referral code");
+            }
+        }
+
+        // Generate unique referral code for new user
+        const generateReferralCode = async () => {
+            const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            const length = 8;
+            let code;
+            let exists = true;
+            while (exists) {
+                code = Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+                const found = await User.findOne({ referralCode: code });
+                exists = !!found;
+            }
+            return code;
+        };
+
+        const newUserReferralCode = await generateReferralCode();
+
+        const data = await User.create({
             name: nameHash,
             email: emailHash,
             contactNo: contactNoHash,
             password: passwordHash,
             role: role || 'user',
+            referralCode: newUserReferralCode,
         });
+
+        // Award referral bonus if referrer exists
+        // if (referrer) {
+        //     const referralBonus = 50;
+        //     referrer.fanCoins = (referrer.fanCoins || 0) + referralBonus;
+        //     referrer.fanCoinTransactions.push({
+        //         type: 'EARN',
+        //         amount: referralBonus,
+        //         description: `Referral bonus for referring user: ${data._id}`,
+        //         date: new Date()
+        //     });
+        //     await referrer.save();
+        // }
+
+
+        if (referrer) {
+            referrer.referralHistory.push({ user: data._id, referredAt: new Date() });
+            await referrer.save();
+        }
 
         const { accessToken, refreshToken } = await generateTokens(data._id);
         if (!accessToken) {
@@ -139,7 +183,10 @@ export const register = async (req, res) => {
                     role: data.role || 'user',
                     isAdmin: data.role === 'admin',
                     lastLogin: data.lastLogin,
-                    token: accessToken
+                    referralCode: data.referralCode,
+                    token: accessToken,
+                    fanCoins: data.fanCoins || 0,
+                    fanCoinTransactions: data.fanCoinTransactions || []
                 }
             });
 
@@ -283,6 +330,12 @@ export const getUserById = async (req, res) => {
         // Prepare user response (exclude password)
         const userResponse = user.toObject();
         delete userResponse.password;
+
+        console.log("User data being returned:", {
+            id: userResponse._id,
+            referralCode: userResponse.referralCode,
+            name: userResponse.name
+        });
 
         return sendSuccessResponse(res, "User retrieved successfully", userResponse);
     } catch (error) {

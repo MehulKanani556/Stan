@@ -835,6 +835,36 @@ export default function Profile() {
                                         <div className="text-white md:text-sm text-xs">{decryptData(user?.email) || "example@gmail.com"}</div>
                                     </div>
                                 </div>
+
+                                <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
+                                    <div className="text-[#ab99e1] text-md flex-shrink-0">
+                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="md:text-sm text-xs text-gray-400">Referral Code</div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="text-white md:text-sm text-xs font-mono bg-[#ab99e1]/10 px-2 py-1 rounded border border-[#ab99e1]/20">
+                                                {user?.referralCode || "N/A"}
+                                            </div>
+                                            {user?.referralCode && (
+                                                <button
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(user.referralCode);
+                                                        // You can add a toast notification here
+                                                    }}
+                                                    className="text-[#ab99e1] hover:text-white transition-colors p-1"
+                                                    title="Copy referral code"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg>
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

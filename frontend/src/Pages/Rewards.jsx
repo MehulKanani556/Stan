@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
@@ -18,6 +18,7 @@ import {
     getAvailableTasks,
     getRewardsLeaderboard
 } from '../Redux/Slice/reward.slice'
+import axiosInstance from '../Utils/axiosInstance'
 
 
 const gamerTheme = `
@@ -84,6 +85,7 @@ export default function Rewards() {
 const RewardsExperience = () => {
     const dispatch = useDispatch();
     const rewards = useSelector((state) => state.reward.rewards);
+    const user = useSelector((state) => state.user.currentUser);
     const userBalance = useSelector((state) => state.reward.userBalance);
     const recentTransactions = useSelector((state) => state.reward.recentTransactions) || [];
     const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
@@ -99,6 +101,9 @@ const RewardsExperience = () => {
     const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
     const [completedDailyTasks, setCompletedDailyTasks] = useState(new Set());
+    const [referralPoints, setReferralPoints] = useState(0);
+    const [referralHistory, setReferralHistory] = useState([]);
+    const [isClaimingReferral, setIsClaimingReferral] = useState(false);
 
     // Calculate total earned from recent transactions
     const totalEarned = recentTransactions
@@ -111,6 +116,46 @@ const RewardsExperience = () => {
         if (last === today) setStreakClaimedToday(true);
     }, []);
 
+    // Load referral data
+    const loadReferralData = useCallback(async () => {
+        try {
+            if (!user?._id) {
+                console.log('No user ID available, skipping referral data load');
+                return;
+            }
+
+            console.log('Loading referral data for user:', user._id);
+            console.log('User referral history:', user.referralHistory);
+            console.log('User fan coin transactions:', user.fanCoinTransactions);
+
+            // Calculate total possible referral points
+            const totalReferrals = user.referralHistory ? user.referralHistory.length : 0;
+            const totalPossiblePoints = totalReferrals * 50;
+
+            // Calculate already claimed referral points
+            const claimedReferralPoints = user.fanCoinTransactions
+                ? user.fanCoinTransactions
+                    .filter(t => t.type === 'REFERRAL')
+                    .reduce((total, transaction) => total + (transaction.amount || 0), 0)
+                : 0;
+
+            // Calculate pending points
+            const pendingPoints = Math.max(0, totalPossiblePoints - claimedReferralPoints);
+
+            console.log('Referral calculation:', {
+                totalReferrals,
+                totalPossiblePoints,
+                claimedReferralPoints,
+                pendingPoints
+            });
+
+            setReferralPoints(pendingPoints);
+            setReferralHistory(user.referralHistory || []);
+        } catch (error) {
+            console.error('Error loading referral data:', error);
+        }
+    }, [user]);
+
     // Load initial data
     useEffect(() => {
         dispatch(getAllRewards({ page: 1, limit: 20 }));
@@ -119,6 +164,13 @@ const RewardsExperience = () => {
         dispatch(getAvailableTasks());
         dispatch(getRewardsLeaderboard({ page: 1, limit: 10 }));
     }, [dispatch]);
+
+    // Load referral data when user data is available
+    useEffect(() => {
+        if (user?._id) {
+            loadReferralData();
+        }
+    }, [loadReferralData]);
 
     // Use API tasks or fallback to default tasks
     const baseTasks = availableTasks.length > 0 ? availableTasks.slice(0, 3).map(task => ({
@@ -144,14 +196,14 @@ const RewardsExperience = () => {
         <FaUserFriends className="text-emerald-300" />,
     ];
 
-    const moreTasks = Array.from({ length: 13 }).map((_, i) => ({
-        id: 100 + i,
-        title: `Bonus task #${i + 1}`,
-        icon: iconCycle[i % iconCycle.length],
-        points: [25, 40, 75, 100, 120][i % 5]
-    }));
+    // const moreTasks = Array.from({ length: 13 }).map((_, i) => ({
+    //     id: 100 + i,
+    //     title: `Bonus task #${i + 1}`,
+    //     icon: iconCycle[i % iconCycle.length],
+    //     points: [25, 40, 75, 100, 120][i % 5]
+    // }));
 
-    const allTasks = [...baseTasks, ...moreTasks];
+    const allTasks = [...baseTasks];
     const tasksToShow = showAllTasks ? allTasks : baseTasks;
 
     const weeklyQuests = [
@@ -253,6 +305,64 @@ const RewardsExperience = () => {
         setCompletedQuests(prev => new Set(prev).add(q.id));
     };
 
+    const userId = useMemo(() => {
+        try { return localStorage.getItem('userId') || '' } catch { return '' }
+    }, []);
+    console.log("user", user);
+    const referralLink = useMemo(() => {
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        return `${origin}/register?ref=${user?.referralCode}`;
+    }, [userId]);
+
+    const handleCopyReferral = async () => {
+        try {
+            await navigator.clipboard.writeText(referralLink);
+            alert('Referral link copied!');
+        } catch (e) {
+            console.warn('Clipboard copy failed, showing prompt fallback');
+            window.prompt('Copy your referral link:', referralLink);
+        }
+    };
+
+
+    // Handle claiming referral points
+    const handleClaimReferralPoints = async () => {
+        console.log('Claim referral points clicked. Current referral points:', referralPoints);
+        console.log('Is claiming referral:', isClaimingReferral);
+        
+        if (referralPoints === 0 || isClaimingReferral) {
+            console.log('Cannot claim: referralPoints =', referralPoints, 'isClaimingReferral =', isClaimingReferral);
+            return;
+        }
+
+        setIsClaimingReferral(true);
+        try {
+            console.log('Calling backend API to claim referral bonus...');
+            // Call the backend API to claim referral bonus
+            const response = await axiosInstance.post('/fan-coins/referral-bonus');
+
+            console.log('Backend response:', response.data);
+
+            if (response.data.success) {
+                console.log('Successfully claimed referral points:', response.data.result?.bonusCoins);
+                // Update local state
+                setReferralPoints(0);
+                // Refresh user balance and referral data
+                dispatch(getUserRewardBalance());
+                loadReferralData();
+                alert(`Successfully claimed ${response.data.result?.bonusCoins || 0} referral points!`);
+            } else {
+                console.log('Backend returned error:', response.data.message);
+                alert(response.data.message || 'Failed to claim referral points');
+            }
+        } catch (error) {
+            console.error('Error claiming referral points:', error);
+            alert(error.response?.data?.message || 'Failed to claim referral points. Please try again.');
+        } finally {
+            setIsClaimingReferral(false);
+        }
+    };
+
     return (
         <section className='pb-12 overflow-x-hidden'>
             <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
@@ -325,6 +435,60 @@ const RewardsExperience = () => {
                             <button onClick={() => setShowAllTasks(v => !v)} className='w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft'>
                                 {showAllTasks ? 'Show less' : `View ${allTasks.length - baseTasks.length} More`}
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Refer a friend */}
+                <div className='mt-6 sm:mt-10 grid grid-cols-1'>
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
+                        <div className='flex items-center justify-between mb-3'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaUserFriends className='text-emerald-300' /> Invite friends, earn coins</h3>
+                            <span className='text-white/60 text-xs'>+50 on signup</span>
+                        </div>
+                        <p className='text-white/70 text-sm mb-3'>Share your link. When a friend registers, you earn referral coins.</p>
+                        <div className='flex flex-col sm:flex-row gap-2'>
+                            <input readOnly value={referralLink} className='flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm' />
+                            <button onClick={handleCopyReferral} className='btn-primary px-4 py-2 rounded-lg text-sm font-semibold'>Copy link</button>
+                        </div>
+
+                        <div className='flex items-center justify-between mb-3'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-yellow-300' /> Referral Points</h3>
+                            <span className='text-white/60 text-xs'>Claim your rewards</span>
+                        </div>
+                        <div className='bg-white/5 rounded-xl p-4 border border-white/10'>
+                            <div className='flex items-center justify-between mb-3'>
+                                <div>
+                                    <p className='text-white font-medium text-sm'>Pending Referral Points</p>
+                                    <p className='text-white/70 text-xs'>Earned from successful referrals</p>
+                                </div>
+                                <div className='text-right'>
+                                    <div className='text-yellow-300 font-extrabold text-2xl flex items-center gap-2'>
+                                        <FaGem /> {referralPoints}
+                                    </div>
+                                    <p className='text-white/60 text-xs'>Points available</p>
+                                </div>
+                            </div>
+                            <div className='flex items-center justify-between'>
+                                <div className='text-white/70 text-sm'>
+                                    {referralHistory.length} successful referral{referralHistory.length !== 1 ? 's' : ''}
+                                    {referralPoints > 0 && (
+                                        <span className='block text-yellow-300 text-xs mt-1'>
+                                            {referralPoints} points ready to claim
+                                        </span>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={handleClaimReferralPoints}
+                                    disabled={referralPoints === 0 || isClaimingReferral}
+                                    className={`px-4 py-2 rounded-lg text-sm font-semibold ${referralPoints === 0 || isClaimingReferral
+                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                        : 'btn-primary'
+                                        }`}
+                                >
+                                    {isClaimingReferral ? 'Claiming...' : referralPoints === 0 ? 'All Claimed' : 'Claim Points'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

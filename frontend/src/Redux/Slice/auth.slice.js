@@ -39,6 +39,7 @@ export const login = createAsyncThunk(
       localStorage.setItem("userId", response.data.result.id);
       localStorage.setItem("refreshToken", response.data.result?.refreshToken);
       localStorage.setItem("role", response.data.result?.role || "user");
+      localStorage.setItem("userReferralCode", response.data.result?.referralCode || "");
       enqueueSnackbar(response.data.message || "Login successful", { variant: "success" });
 
       return response.data.result;
@@ -71,7 +72,17 @@ export const register = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/register`, userData, {
+      // Get referral code from URL parameter
+      const searchParams = new URLSearchParams(window.location.search);
+      const referralCode = searchParams.get('ref');
+      
+      // Add referral code to userData if present
+      const registrationData = {
+        ...userData,
+        ...(referralCode && { referralCode })
+      };
+
+      const response = await axios.post(`${BASE_URL}/register`, registrationData, {
         withCredentials: true,
       });
       console.log("response", response.data);
@@ -79,7 +90,9 @@ export const register = createAsyncThunk(
       localStorage.setItem('userId', response.data.result.id);
       localStorage.setItem('refreshToken', response.data.result?.refreshToken)
       localStorage.setItem('role', response.data.result?.role || 'user');
+      localStorage.setItem('userReferralCode', response.data.result?.referralCode || '');
       enqueueSnackbar(response.data.message || "Register successful", { variant: "success" });
+
       return response.data;
     } catch (error) {
       enqueueSnackbar(error.response?.data?.message || "Registration failed", {
@@ -164,6 +177,7 @@ export const googleLogin = createAsyncThunk(
       localStorage.setItem("userId", response.data.result.id);
       localStorage.setItem("refreshToken", response.data.result?.refreshToken);
       localStorage.setItem("role", response.data.result?.role || "user");
+      localStorage.setItem("userReferralCode", response.data.result?.referralCode || "");
       enqueueSnackbar(response.data.message || "Login successful", { variant: "success" });
 
       return response.data.result;

@@ -230,7 +230,7 @@ indexRoutes.get('/fan-coins/:userId', getFanCoinDetails);
 indexRoutes.post('/fan-coins/daily-login', claimDailyLoginBonus);
 indexRoutes.post('/fan-coins/review-bonus', rewardGameReview);
 indexRoutes.post('/fan-coins/redeem', redeemFanCoinsForReward);
-indexRoutes.post('/fan-coins/referral-bonus', getReferralBonus);
+indexRoutes.post('/fan-coins/referral-bonus', UserAuth, getReferralBonus);
 
 // Rewards Routes
 // Admin routes for reward management

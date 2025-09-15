@@ -255,37 +255,52 @@ export const redeemFanCoinsForReward = async (req, res) => {
 
 export const getReferralBonus = async (req, res) => {
     try {
-        const { referrerId, referredUserId } = req.body;
-        const referrer = await User.findById(referrerId);
-        const referredUser = await User.findById(referredUserId);
+        const userId = req.user._id;
+        const user = await User.findById(userId);
 
-        if (!referrer || !referredUser) {
+        if (!user) {
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // Check if referral bonus already claimed
-        const hasClaimedReferralBonus = referrer.fanCoinTransactions.some(
-            t => t.type === 'REFERRAL' && t.description.includes(referredUserId)
-        );
+        // Calculate total pending referral points
+        const referralCount = user.referralHistory ? user.referralHistory.length : 0;
+        const totalPendingPoints = referralCount * 50; // 50 points per referral
 
-        if (hasClaimedReferralBonus) {
-            return sendErrorResponse(res, 400, "Referral bonus already claimed");
+        if (totalPendingPoints === 0) {
+            return sendErrorResponse(res, 400, "No referral points to claim");
         }
 
+        // Check if user has already claimed all referral points
+        const claimedReferralTransactions = user.fanCoinTransactions.filter(
+            t => t.type === 'REFERRAL'
+        );
+        
+        const totalClaimedPoints = claimedReferralTransactions.reduce(
+            (total, transaction) => total + transaction.amount, 0
+        );
+
+        if (totalClaimedPoints >= totalPendingPoints) {
+            return sendErrorResponse(res, 400, "All referral points already claimed");
+        }
+
+        // Calculate remaining points to claim
+        const remainingPoints = totalPendingPoints - totalClaimedPoints;
+
         // Add referral bonus
-        const bonusCoins = calculateFanCoins(0, 'referral');
-        referrer.fanCoins += bonusCoins;
-        referrer.fanCoinTransactions.push({
+        user.fanCoins = (user.fanCoins || 0) + remainingPoints;
+        user.fanCoinTransactions.push({
             type: 'REFERRAL',
-            amount: bonusCoins,
-            description: `Referral bonus from user: ${referredUserId}`
+            amount: remainingPoints,
+            description: `Referral bonus claimed for ${referralCount} successful referrals`,
+            date: new Date()
         });
 
-        await referrer.save();
+        await user.save();
 
-        return sendSuccessResponse(res, "Referral bonus claimed", {
-            fanCoins: referrer.fanCoins,
-            bonusCoins
+        return sendSuccessResponse(res, "Referral bonus claimed successfully", {
+            fanCoins: user.fanCoins,
+            bonusCoins: remainingPoints,
+            totalReferrals: referralCount
         });
     } catch (error) {
         console.error("Error claiming referral bonus:", error);

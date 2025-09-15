@@ -501,6 +501,8 @@ const rewardSlice = createSlice({
                 state.loading.completeTask = false;
                 state.message = action.payload.message;
                 state.userBalance = action.payload.result?.newBalance || state.userBalance;
+                console.log("action.payload.result?.newBalance", action.payload.result?.newBalance);
+                console.log("state.userBalance", state.userBalance);
                 state.error = null;
                 // Refresh user balance after successful task completion
                 if (action.payload.result?.newBalance !== undefined) {
