@@ -125,7 +125,7 @@ const Games = () => {
 						{!isInitialLoading && safeGames.length > 0 && (
 							<div className="flex items-center justify-center sx:space-x-12 space-x-5 text-gray-300">
 								<div className="text-center">
-									<div className="xl:text-4xl lg:text-3xl md:text-2xl sm:text-xl text-lg font-bold text-white mb-1">{safeGames.length}+</div>
+									<div className="xl:text-4xl lg:text-3xl md:text-2xl sm:text-xl text-lg font-bold text-white mb-1">{safeGames?.length - 3}+</div>
 									<div className="text-sm uppercase tracking-wide text-gray-400">Games Available</div>
 								</div>
 								<div className="w-px h-16 bg-gradient-to-b from-transparent via-gray-600 to-transparent"></div>

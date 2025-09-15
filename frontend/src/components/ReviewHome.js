@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getReviewData } from "../Redux/Slice/game.slice";
 import { decryptData } from "../Utils/encryption";
 import ReviewCardSkeleton from "./ReviewCardSkeleton";
+import user from '../images/user_img.png'
 
 
 
@@ -115,7 +116,7 @@ export default function ReviewHomeSlick() {
 
                   <div className="flex flex-col items-center">
                     <motion.img
-                      src={r?.user?.profilePic}
+                      src={r?.user?.profilePic || user}
                       // alt={r?.name}
                       className="w-[96px] h-[96px] rounded-full object-cover border-2 border-[#902F7E] shadow-[0_8px_24px_rgba(144,47,126,0.35)]"
                     />

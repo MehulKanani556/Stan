@@ -450,16 +450,27 @@ export default function Profile() {
         onSubmit:(values , action)=>{
             let allOtp = values.otp0 + values.otp1 + values.otp2 + values.otp3
             // console.log("HIHI", typeof(allOtp));
-            
-            dispatch(DeleteUser(allOtp))
-            setDeleteOtp(false)
-            setActiveMenu("profile");
-            dispatch(logoutUser());
-            dispatch(clearUser())
-            localStorage.removeItem("userName");
-            navigate("/")
-            dispatch(handleMyToggle(false)) 
+            setBtnLoader(true)
+            dispatch(DeleteUser(allOtp)).then((value)=>{
+              if(value?.meta?.requestStatus === "fulfilled"){
+                  setBtnLoader(false);
+                  setDeleteOtp(false)
+                  setActiveMenu("profile");
+                  dispatch(logoutUser());
+                  dispatch(clearUser())
+                  localStorage.removeItem("userName");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("userId");
+                  navigate("/")
+                  dispatch(handleMyToggle(false)) 
+              }
+            }).catch((error)=>{                
+                setBtnLoader(false)
+            }).finally(() => {
+                setBtnLoader(false);
+            });
             action.resetForm()
+           
         }
     })
 
@@ -1648,7 +1659,13 @@ export default function Profile() {
                                          </div>
                                           <div className='flex gap-3 justify-between pt-5'>
                                               <button type='button' className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={()=> setDeleteOtp(false)} disabled={isSendingOtp}>Cancel</button>
-                                              <button type='submit' className='px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed'>Delete</button>
+                                              <button type="submit" disabled={btnLoader} className="px-4 py-2 flex items-center justify-center rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed">
+                                                {btnLoader ? (
+                                                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                ) : (
+                                                  "Send Otp"
+                                                )}
+                                             </button>
                                           </div>
                                        </form>
                                 </Dialog.Panel>
