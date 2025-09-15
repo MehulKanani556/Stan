@@ -95,7 +95,7 @@ const RewardsExperience = () => {
     const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
     const allTasksState = useSelector((state)=>state.reward.allTasks)
 
-    console.log("Reward state:", { recentTransactions });
+    // console.log("Reward state:", allTasksState);
 
     console.log("HIHI" , allTasksState);
     
@@ -317,7 +317,7 @@ const RewardsExperience = () => {
     const userId = useMemo(() => {
         try { return localStorage.getItem('userId') || '' } catch { return '' }
     }, []);
-    console.log("user", user);
+    // console.log("user", user);
     const referralLink = useMemo(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
         return `${origin}/register?ref=${user?.referralCode}`;
@@ -389,11 +389,11 @@ const RewardsExperience = () => {
                         <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto'>
                             <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Current Balance</p>
-                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {userBalance}</div>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {userBalance.toFixed(2)}</div>
                             </div>
                             <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                 <p className='text-white/70 text-xs'>Total Earned</p>
-                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned}</div>
+                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
                             </div>
                         </div>
                     </div>
@@ -406,10 +406,10 @@ const RewardsExperience = () => {
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
                         <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
                             <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
-                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance}</div>
+                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance.toFixed(2)}</div>
                             <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
                             <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
-                            <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned}</p>
+                            <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned.toFixed(2)}</p>
                         </div>
                     </div>
 

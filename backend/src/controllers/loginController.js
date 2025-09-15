@@ -145,13 +145,39 @@ export const userLogin = async (req, res) => {
             return sendErrorResponse(res, 404, "User not found");
         }
 
-        // Validate password (don't encrypt input password for comparison)
-        const isPasswordValid = await user.validatePassword(password);
-        console.log(isPasswordValid)
-        if (!isPasswordValid) {
-            return sendUnauthorizedResponse(res, "Invalid password");
+        if (user?.lockUntil && user?.lockUntil > Date.now()) {
+
+            const waitMinutes = Math.ceil(
+                (user.lockUntil - Date.now()) / 60000
+            );
+            return sendErrorResponse(res,429, `Account locked due to multiple failed login attempts. Try again in ${waitMinutes} minute(s).`)
+
         }
 
+        // Validate password (don't encrypt input password for comparison)
+        const isPasswordValid = await user.validatePassword(password);
+        if (!isPasswordValid) {
+            user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+            if (user.failedLoginAttempts >= 3) {
+                user.lockUntil = Date.now() + 15 * 60 * 1000;//15 minutes
+                await user.save();
+                // return res.status(429).json({
+                //     status: 429,
+                //     message:
+                //         "Account locked due to multiple failed login attempts. Try again in 15 minutes.",
+                // });
+                return sendErrorResponse(res, 429, "Account locked due to multiple failed login attempts. Try again in 15 minutes.");
+            } else {
+                await user.save();
+                return sendUnauthorizedResponse(res, "Invalid password");
+            }
+        }
+
+        // if (!isPasswordValid) {
+        //     return sendUnauthorizedResponse(res, "Invalid password");
+        // }
+        user.failedLoginAttempts = 0;
+        user.lockUntil = null;
         // Always update lastLogin on successful login
         user.lastLogin = new Date();
         await user.save();

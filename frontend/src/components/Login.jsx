@@ -427,13 +427,17 @@ const Login = () => {
             return;
           } else {
             // Check the specific error message from the backend
+            console.log("error",res);
+            
             const errorMessage = res.payload?.message || res.error?.message || "Invalid credentials";
+            console.log(errorMessage);
+            
             
             // Display specific error based on the backend response
             if (errorMessage.toLowerCase().includes("invalid password")) {
               setStatus({ error: "Invalid password" });
             } else {
-              setStatus({ error: "Invalid credentials" });
+              setStatus({ error: errorMessage|| "Invalid credentialsaaaaaaa" });
             }
             
             setIsCaptchaSolved(false);

@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema(
         // followings: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
         joinedAt: { type: Date, default: Date.now },
-
+        failedLoginAttempts: {type: Number,default: 0},
+        lockUntil: {type: Date,default: null},
         otp: { type: String },
         otpExpiry: { type: Date },
 
@@ -34,8 +35,8 @@ const userSchema = new mongoose.Schema(
                 referredAt: { type: Date, default: Date.now }
             }
         ],
-        continueLogin:{
-            type:Number,default : 0
+        continueLogin: {
+            type: Number, default: 0
         },
         wishlist: [
             {
