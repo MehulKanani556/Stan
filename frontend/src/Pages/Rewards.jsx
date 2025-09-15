@@ -97,6 +97,9 @@ const RewardsExperience = () => {
 
     console.log("Reward state:", { recentTransactions });
 
+    console.log("HIHI" , allTasksState);
+    
+
 
     const [streakDay, setStreakDay] = useState(3);
     const [completedTasks, setCompletedTasks] = useState(new Set());
@@ -107,6 +110,7 @@ const RewardsExperience = () => {
     const [referralPoints, setReferralPoints] = useState(0);
     const [referralHistory, setReferralHistory] = useState([]);
     const [isClaimingReferral, setIsClaimingReferral] = useState(false);
+    const [showAll, setShowAll] = useState(false);
 
     // Calculate total earned from recent transactions
     const totalEarned = recentTransactions
@@ -267,7 +271,7 @@ const RewardsExperience = () => {
         if (item.status !== 'unlocked') return;
         if (userBalance < item.price) return;
         if (!window.confirm(`Redeem ${item.title} for ${item.price} points?`)) return;
-        dispatch(redeemReward(item.id));
+        dispatch(redeemReward(item._id));
     };
 
     const claimStreak = () => {
@@ -297,16 +301,16 @@ const RewardsExperience = () => {
         }));
     };
 
-    const handleTaskComplete = (task) => {
+    const handleTaskComplete = (task) => {        
         if (completedTasks.has(task.id)) return;
-        dispatch(completeTask({ taskId: task.id, points: task.points, title: task.title }));
+        dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
         setCompletedTasks(prev => new Set(prev).add(task.id));
     };
 
     const completeQuest = (q) => {
         if (completedQuests.has(q.id)) return;
         if (q.progress < q.goal) return; // require goal met
-        earnPoints(q.reward, q.title);
+        earnPoints(q?.reward, q?.title);
         setCompletedQuests(prev => new Set(prev).add(q.id));
     };
 
@@ -415,32 +419,57 @@ const RewardsExperience = () => {
                             <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
                             <span className='text-white/50 text-xs'>Daily refresh</span>
                         </div>
-                        <div className='space-y-3 sm:space-y-4'>
-                            {tasksToShow.map(task => {
-                                const done = completedTasks.has(task.id);
-                                return (
-                                    <div key={task.id} className='flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
-                                        <div className='flex items-center gap-3 sm:gap-4'>
-                                            <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center'>
-                                                {task.icon}
-                                            </div>
-                                            <div className='min-w-0 flex-1'>
-                                                <p className='text-white font-medium text-sm sm:text-base truncate'>{task.title}</p>
-                                                <div className='flex items-center gap-2 text-purple-300 text-xs sm:text-sm'>
-                                                    <FaGem /> <span>{task.points}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button onClick={() => handleTaskComplete(task)} disabled={done} className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
-                                            {done ? 'Completed' : 'Earn'}
-                                        </button>
+                        <div className="space-y-3 sm:space-y-4">
+                            {(showAll
+                              ? allTasksState?.earntask
+                              : allTasksState?.earntask?.slice(0, 2)
+                            )?.map((task) => {
+                              const done = completedTasks.has(task._id);
+                              return (
+                                <div
+                                  key={task._id}
+                                  className="flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10"
+                                >
+                                  <div className="flex items-center gap-3 sm:gap-4">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
+                                      {task?.icon}
                                     </div>
-                                );
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-white font-medium text-sm sm:text-base truncate">
+                                        {task?.title}
+                                      </p>
+                                      <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
+                                        <FaGem /> <span>{task?.reward}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() => handleTaskComplete(task)}
+                                    disabled={done}
+                                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${
+                                      done
+                                        ? "btn-soft cursor-not-allowed opacity-60"
+                                        : "btn-primary"
+                                    }`}
+                                  >
+                                    {done ? "Completed" : "Earn"}
+                                  </button>
+                                </div>
+                              );
                             })}
-                            <button onClick={() => setShowAllTasks(v => !v)} className='w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft'>
-                                {showAllTasks ? 'Show less' : `View ${allTasks.length - baseTasks.length} More`}
-                            </button>
-                        </div>
+                          
+                            {allTasksState?.earntask?.length > 2 && (
+                              <button
+                                onClick={() => setShowAll((v) => !v)}
+                                className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
+                              >
+                                {showAll
+                                  ? "Show less"
+                                  : `View ${allTasksState?.earntask?.length - 2} More`}
+                              </button>
+                            )}
+                       </div>
+
                     </div>
                 </div>
 
@@ -506,21 +535,21 @@ const RewardsExperience = () => {
                             <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
                         </div>
                         <div className='space-y-3'>
-                            {dailyTasks.map(task => {
+                            {allTasksState?.dailytask?.map(task => {
                                 const progressPct = Math.min(100, (task.progress / task.goal) * 100);
                                 const canComplete = task.progress >= task.goal && !completedDailyTasks.has(task.id);
                                 const done = completedDailyTasks.has(task.id);
                                 return (
-                                    <div key={task.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                    <div key={task._id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                         <div className='flex items-center justify-between mb-2'>
-                                            <p className='text-white font-medium text-xs sm:text-sm'>{task.title}</p>
+                                            <p className='text-white font-medium text-xs sm:text-sm'>{task?.title}</p>
                                             <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'>
-                                                <FaGem /> {task.points}
+                                                <FaGem /> {task?.reward}
                                             </div>
                                         </div>
                                         <div className='flex items-center justify-between mb-2'>
-                                            <span className='text-white/60 text-xs'>{task.progress}/{task.goal}</span>
-                                            <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
+                                            {/* <span className='text-white/60 text-xs'>{task.progress}/{task.goal}</span> */}
+                                            {/* <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span> */}
                                         </div>
                                         <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
                                             <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
@@ -544,7 +573,7 @@ const RewardsExperience = () => {
                             <span className='text-white/50 text-xs'>Resets Monday</span>
                         </div>
                         <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
-                            {weeklyQuests.map(q => {
+                            {allTasksState?.weeklytask?.map(q => {
                                 const progressPct = Math.min(100, (q.progress / q.goal) * 100);
                                 const canComplete = q.progress >= q.goal && !completedQuests.has(q.id);
                                 const done = completedQuests.has(q.id);
@@ -552,7 +581,7 @@ const RewardsExperience = () => {
                                     <div key={q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                         <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>
                                         <div className='flex items-center justify-between mt-2'>
-                                            <span className='text-white/60 text-xs'>{q.progress}/{q.goal}</span>
+                                            {/* <span className='text-white/60 text-xs'>{q.progress}/{q.goal}</span> */}
                                             <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
                                         </div>
                                         <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
@@ -575,8 +604,8 @@ const RewardsExperience = () => {
                         <span className='text-white/50 text-xs'>Choose your loot</span>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
-                        {rewardsData.map(item => (
-                            <div key={item.id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
+                        {allTasksState?.milestone?.map(item => (
+                            <div key={item?._id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
                                 <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
                                     {item.status === 'locked' && (
                                         <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10 flex items-center gap-1'>
