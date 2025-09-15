@@ -475,9 +475,9 @@ const Login = () => {
           </p>
 
           {/* Show captcha only AFTER successful password verification */}
-          {showCaptcha && (
+          {showCaptchaModal && (
             <div className="mt-4">
-              <PuzzleCaptcha
+              <PuzzleCaptchaModal
                 sliderBarTitle="Slide to verify"
                 cardTitle="Complete the puzzle to continue"
                 initialColor="#3B82F6"
@@ -501,8 +501,8 @@ const Login = () => {
 
           <button
             type="submit"
-            disabled={showCaptcha && !isCaptchaSolved}
-            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${showCaptcha && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
+            disabled={showCaptchaModal && !isCaptchaSolved}
+            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${showCaptchaModal && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
               }`}
           >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
