@@ -1,3 +1,5 @@
+// Get server time via socket, returns a promise
+
 import React, {
   createContext,
   useContext,
@@ -36,10 +38,39 @@ export const SocketProvider = ({ children }) => {
 
   const { userId, token } = getAuth();
 
+  const getServerTime = () => {
+    return new Promise((resolve, reject) => {
+      if (!socketRef.current || !socketRef.current.connected) {
+        reject(new Error("Socket not connected"));
+        return;
+      }
+      const handleServerTime = (data) => {
+        alert("Data from server:", data);
+        resolve(data?.time || null);
+        socketRef.current.off("user-playtime", handleServerTime);
+      };
+
+      socketRef.current.on("user-playtime", (data => {
+        console.log("Data from server:", data);
+
+
+        resolve(data?.time || null);
+        // socketRef.current.off("user-playtime");
+      }));
+      socketRef.current.emit("get-user-playtime",{userId});
+      // Optionally add a timeout
+      setTimeout(() => {
+        socketRef.current.off("user-playtime", handleServerTime);
+        reject(new Error("Timeout getting server time"));
+      }, 5000);
+    });
+  };
+
   // Connect socket when component mounts
+  // https://stanback.onrender.com
   useEffect(() => {
     // Connect socket immediately when user visits the site
-      socketRef.current = io("https://stanback.onrender.com", {
+    socketRef.current = io("http://localhost:8000", {
       transports: ["websocket", "polling"],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
@@ -52,6 +83,7 @@ export const SocketProvider = ({ children }) => {
     socketRef.current.on("connect", () => {
       console.log("Socket connected to server");
       setIsConnected(true);
+
 
       // If user is logged in, join their room
       if (userId) {
@@ -110,20 +142,20 @@ export const SocketProvider = ({ children }) => {
     socketRef.current.on("typing", ({ senderId }) => {
       console.log("User typing:", senderId);
       dispatch(addTypingUser(senderId));
-      
+
       // Clear existing timeout for this user
       const existingTimeout = typingTimeoutRefs.current.get(senderId);
       if (existingTimeout) {
         clearTimeout(existingTimeout);
       }
-      
+
       // Set new timeout to auto-clear typing status after 3 seconds
       const timeoutId = setTimeout(() => {
         console.log("Auto-clearing typing status for:", senderId);
         dispatch(removeTypingUser(senderId));
         typingTimeoutRefs.current.delete(senderId);
       }, 3000);
-      
+
       typingTimeoutRefs.current.set(senderId, timeoutId);
     });
 
@@ -131,7 +163,7 @@ export const SocketProvider = ({ children }) => {
     socketRef.current.on("stop-typing", ({ senderId }) => {
       console.log("User stopped typing:", senderId);
       dispatch(removeTypingUser(senderId));
-      
+
       // Clear timeout for this user
       const timeoutId = typingTimeoutRefs.current.get(senderId);
       if (timeoutId) {
@@ -190,6 +222,19 @@ export const SocketProvider = ({ children }) => {
     }
   };
 
+  // Store game play time in database
+  const storeGamePlayTime = (gameSlug, durationMinutes) => {
+    if (socketRef.current && socketRef.current.connected && userId) {
+      socketRef.current.emit("store-game-playtime", {
+        userId,
+        gameSlug,
+        durationMinutes
+      });
+    } else {
+      console.warn("Cannot store game play time: socket not connected or user not logged in");
+    }
+  };
+
   // Fetch devices from API
   const fetchDevices = async () => {
     try {
@@ -240,12 +285,22 @@ export const SocketProvider = ({ children }) => {
       fetchDevices();
     });
 
+    // Listen for game playtime storage confirmation
+    socketRef.current.on("game-playtime-stored", (data) => {
+      if (data.success) {
+        console.log("Game playtime stored successfully:", data.message);
+      } else {
+        console.error("Failed to store game playtime:", data.error);
+      }
+    });
+
     return () => {
       if (socketRef.current) {
         socketRef.current.off("devices-updated");
         socketRef.current.off("force-logout");
         socketRef.current.off("login-msg");
         socketRef.current.off("reconnect");
+        socketRef.current.off("game-playtime-stored");
       }
     };
   }, [socketRef.current, userId, token]);
@@ -262,6 +317,8 @@ export const SocketProvider = ({ children }) => {
         sendMessage, // Expose sendMessage function
         emitTyping,
         emitStopTyping,
+        getServerTime,
+        storeGamePlayTime, // Expose storeGamePlayTime function
       }}
     >
       {children}

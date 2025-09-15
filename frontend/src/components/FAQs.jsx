@@ -73,7 +73,7 @@ export default function FAQs() {
           >
             <button
               onClick={() => toggleAccordion(index)}
-              className="w-full flex justify-between items-center py-3 md:py-5 lg:py-6 px-2 sm:px-3 md:px-6 lg:px-8 text-left text-white font-semibold"
+              className="w-full flex justify-between items-center py-4 md:py-5 lg:py-6 px-2 sm:px-3 md:px-6 lg:px-8 text-left text-white font-semibold"
             >
               <span>{faq.question}</span>
               <span

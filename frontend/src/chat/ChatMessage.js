@@ -122,12 +122,37 @@ export default function ChatMessage({ isTyping }) {
 
     const messageGroups = groupMessagesByDate(messages);
 
+    useEffect(() => {
+        const setVh = () => {
+            const vh = window.visualViewport ? window.visualViewport.height * 0.01 : window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+
+        setVh();
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', setVh);
+        } else {
+            window.addEventListener('resize', setVh);
+        }
+
+        return () => {
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', setVh);
+            } else {
+                window.removeEventListener('resize', setVh);
+            }
+        };
+    }, []);
+
     return (
-        <div className="flex flex-col md:h-full h-[calc(100vh-248px)] bg-gray-950 text-gray-100">
+        <div className="flex flex-col md:h-full h-[calc(var(--vh,1vh)*100-248px)] bg-gray-950 text-gray-100">
+
             {selectedUser ? (
                 <div
                     ref={messagesContainerRef}
                     className="flex-1 overflow-y-auto px-3 py-4 space-y-4 bg-gray-950"
+                    style={{ minHeight: 0 }}
                 >
                     {messages?.length > 0 ? (
                         <>

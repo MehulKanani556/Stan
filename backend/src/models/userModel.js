@@ -34,6 +34,9 @@ const userSchema = new mongoose.Schema(
                 referredAt: { type: Date, default: Date.now }
             }
         ],
+        continueLogin:{
+            type:Number,default : 0
+        },
         wishlist: [
             {
                 game: { type: mongoose.Schema.Types.ObjectId, ref: 'game', required: true },

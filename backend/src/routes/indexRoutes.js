@@ -40,8 +40,13 @@ import {
     completeTask,
     getAvailableTasks,
     getRewardsLeaderboard,
-    getRewardsStatistics
+    getRewardsStatistics,
+    updateLoginTask
 } from '../controllers/rewards.controller.js';
+import { loggingHistory } from "../controllers/LoggingHistroyController.js";
+// import { loggingHistory } from "../controllers/LoggingHistroyController.js";
+import { getUserGamePlayTime } from "../controllers/userGameplay.controller.js";
+import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, getAllTask } from "../controllers/task.controller.js";
 
 
 const indexRoutes = express.Router();
@@ -240,18 +245,32 @@ indexRoutes.get('/rewards/:id', getRewardById);
 indexRoutes.put('/rewards/:id', UserAuth, isAdmin, upload.single('image'), handleMulterError, convertJfifToWebp, updateReward);
 indexRoutes.delete('/rewards/:id', UserAuth, isAdmin, deleteReward);
 
+indexRoutes.get('/getUserGamePlayTime', UserAuth,getUserGamePlayTime);
+
 // User routes for rewards
 indexRoutes.get('/user/rewards/balance', UserAuth, getUserRewardBalance);
 indexRoutes.post('/user/rewards/:rewardId/redeem', UserAuth, redeemReward);
 indexRoutes.get('/user/rewards/history', UserAuth, getUserRedemptionHistory);
-
+indexRoutes.post('/user/LogginHistory',UserAuth,loggingHistory);
 // Task and quest routes
 indexRoutes.get('/rewards/tasks', getAvailableTasks);
 indexRoutes.post('/rewards/tasks/complete', UserAuth, completeTask);
-
+indexRoutes.post('/updateLoginTask',UserAuth, updateLoginTask)
 // Leaderboard and statistics
 indexRoutes.get('/rewards/leaderboard', getRewardsLeaderboard);
 indexRoutes.get('/admin/rewards/statistics', UserAuth, isAdmin, getRewardsStatistics);
 
 indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
-export default indexRoutes
+
+
+// task 
+indexRoutes.post("/dailytask",UserAuth,isAdmin,createDailyTask);
+indexRoutes.post("/weeklytask",UserAuth,isAdmin,createWeeklyTask);
+indexRoutes.post("/earntask",UserAuth,isAdmin,createEarnTask);
+indexRoutes.post("/milestone",UserAuth,isAdmin,createMilestone);
+indexRoutes.get("/getAllTask",getAllTask);
+
+
+
+
+export default indexRoutes;

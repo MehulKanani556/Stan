@@ -516,3 +516,17 @@ export const getRewardsStatistics = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
+
+
+export const updateLoginTask = async (req,res)=>{
+    try {
+        const userId = req.user._id;
+        const userData =await  User.findById(userId);
+        console.log(userData)  
+        return sendSuccessResponse(res, "Statistics retrieved successfully", {
+            userData
+        });
+    } catch (error) {
+        return ThrowError(res, 500, error.message);
+    }
+}
