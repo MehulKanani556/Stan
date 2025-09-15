@@ -43,7 +43,7 @@ import {
     getRewardsStatistics,
     updateLoginTask
 } from '../controllers/rewards.controller.js';
-import { getDailyTaskClaimState, claimDailyTask } from '../controllers/userDailyTaskClaim.controller.js';
+import { getTaskClaimState, claimTask } from '../controllers/userDailyTaskClaim.controller.js';
 
 import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 // import { loggingHistory } from "../controllers/LoggingHistroyController.js";
@@ -52,9 +52,9 @@ import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, get
 
 
 const indexRoutes = express.Router();
-// Daily task claim state routes
-indexRoutes.get('/user/daily-task-claim', UserAuth, getDailyTaskClaimState);
-indexRoutes.post('/user/daily-task-claim', UserAuth, claimDailyTask);
+// Task claim state routes (daily & weekly)
+indexRoutes.get('/user/task-claim', UserAuth, getTaskClaimState);
+indexRoutes.post('/user/task-claim', UserAuth, claimTask);
 
 //register Routes
 indexRoutes.post("/register", register);

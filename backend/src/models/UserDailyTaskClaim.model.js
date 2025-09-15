@@ -1,11 +1,18 @@
 import mongoose from 'mongoose';
 
-const userDailyTaskClaimSchema = new mongoose.Schema({
+
+const userTaskClaimSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'UserStan', required: true },
-  date: { type: String, required: true }, // Format: YYYY-MM-DD
-  claimedTasks: [{ type: String }] // Array of task IDs claimed for the day
+  daily: {
+    date: { type: String }, // YYYY-MM-DD
+    claimedTasks: [{ type: String }]
+  },
+  weekly: {
+    week: { type: String }, // e.g. 2025-W38
+    claimedTasks: [{ type: String }]
+  }
 }, { timestamps: true });
 
-userDailyTaskClaimSchema.index({ user: 1, date: 1 }, { unique: true });
+userTaskClaimSchema.index({ user: 1 }, { unique: true });
 
-export default mongoose.model('UserDailyTaskClaim', userDailyTaskClaimSchema);
+export default mongoose.model('UserTaskClaim', userTaskClaimSchema);
