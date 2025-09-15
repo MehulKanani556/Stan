@@ -391,7 +391,16 @@ const Login = () => {
             setStatus({ error: "Please complete the captcha verification" });
             return;
           } else {
-            setStatus({ error: "Invalid credentials" });
+            // Check the specific error message from the backend
+            const errorMessage = res.payload?.message || res.error?.message || "Invalid credentials";
+            
+            // Display specific error based on the backend response
+            if (errorMessage.toLowerCase().includes("invalid password")) {
+              setStatus({ error: "Invalid password" });
+            } else {
+              setStatus({ error: "Invalid credentials" });
+            }
+            
             setIsCaptchaSolved(false);
             setShowCaptchaModal(false);
             setLoginVerified(false);

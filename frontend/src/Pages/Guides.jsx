@@ -94,7 +94,7 @@ const SupportPage = () => {
                 href="mailto:support@gamestore.com"
                 className="text-purple-400 group-hover:text-purple-300 font-medium hover:underline break-all"
               >
-                support@gamestore.com
+                info@yoyokhel.com
               </a>
             </div>
 
