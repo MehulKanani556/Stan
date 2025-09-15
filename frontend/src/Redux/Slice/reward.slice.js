@@ -72,6 +72,20 @@ export const getRewardById = createAsyncThunk(
         }
     }
 );
+// Get User Game Play Time
+export const getUserGamePlayTime = createAsyncThunk(
+    "reward/getUserGamePlayTime",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get(`/getUserGamePlayTime`);
+            console.log(response.data);            
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Failed to fetch reward";
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
 
 // Update reward
 export const updateReward = createAsyncThunk(
@@ -218,6 +232,19 @@ export const getAvailableTasks = createAsyncThunk(
         }
     }
 );
+// Get all tasks
+export const getAllTasks = createAsyncThunk(
+    "reward/getAllTasks",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/getAllTask');
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Failed to fetch tasks";
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
 
 // ==================== LEADERBOARD ====================
 
@@ -287,9 +314,14 @@ const initialState = {
 
     // Leaderboard
     leaderboard: [],
+    //all task
+    allTasks :[],
 
     // Statistics
     statistics: null,
+
+    // play time
+    userGamePlayTime:null,
 
     // Loading states
     loading: {
@@ -304,7 +336,9 @@ const initialState = {
         update: false,
         delete: false,
         redeem: false,
-        completeTask: false
+        completeTask: false,
+        userGamePlayTime:false,
+        allTasks:false
     },
 
     // Error states
@@ -400,6 +434,34 @@ const rewardSlice = createSlice({
             })
             .addCase(getRewardById.rejected, (state, action) => {
                 state.loading.currentReward = false;
+                state.error = action.payload?.message || "Failed to fetch reward";
+            })
+            // ==================== GET All Task ====================
+            .addCase(getAllTasks.pending, (state) => {
+                state.loading.allTasks = true;
+                state.error = null;
+            })
+            .addCase(getAllTasks.fulfilled, (state, action) => {
+                state.loading.allTasks = false;
+                state.allTasks = action.payload.result;
+                state.error = null;
+            })
+            .addCase(getAllTasks.rejected, (state, action) => {
+                state.loading.allTasks = false;
+                state.error = action.payload?.message || "Failed to fetch task";
+            })
+            // ==================== GET User Game Play Time ====================
+            .addCase(getUserGamePlayTime.pending, (state) => {
+                state.loading.userGamePlayTime = true;
+                state.error = null;
+            })
+            .addCase(getUserGamePlayTime.fulfilled, (state, action) => {
+                state.loading.userGamePlayTime = false;
+                state.userGamePlayTime = action.payload.result;
+                state.error = null;
+            })
+            .addCase(getUserGamePlayTime.rejected, (state, action) => {
+                state.loading.userGamePlayTime = false;
                 state.error = action.payload?.message || "Failed to fetch reward";
             })
 

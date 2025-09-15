@@ -46,6 +46,7 @@ import {
 import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 // import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 import { getUserGamePlayTime } from "../controllers/userGameplay.controller.js";
+import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, getAllTask } from "../controllers/task.controller.js";
 
 
 const indexRoutes = express.Router();
@@ -262,6 +263,14 @@ indexRoutes.get('/admin/rewards/statistics', UserAuth, isAdmin, getRewardsStatis
 indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
 
 
+// task 
+indexRoutes.post("/dailytask",UserAuth,isAdmin,createDailyTask);
+indexRoutes.post("/weeklytask",UserAuth,isAdmin,createWeeklyTask);
+indexRoutes.post("/earntask",UserAuth,isAdmin,createEarnTask);
+indexRoutes.post("/milestone",UserAuth,isAdmin,createMilestone);
+indexRoutes.get("/getAllTask",getAllTask);
 
 
-export default indexRoutes
+
+
+export default indexRoutes;

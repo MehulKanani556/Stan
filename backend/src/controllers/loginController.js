@@ -206,11 +206,7 @@ export const googleLogin = async (req, res) => {
         let checkUser = await User.findOne({ email: email });
         if (!checkUser) {
             checkUser = await User.create({ name, email, uid, profilePic: picture, role: "user" });
-        } else {
-            checkUser = await User.findByIdAndUpdate(checkUser._id, {
-                name, email, uid, profilePic: picture
-            });
-        }
+        } 
         const { accessToken, refreshToken } = await generateTokens(checkUser._id);
 
 

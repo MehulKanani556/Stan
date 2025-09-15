@@ -16,7 +16,9 @@ import {
     getUserRedemptionHistory,
     completeTask,
     getAvailableTasks,
-    getRewardsLeaderboard
+    getRewardsLeaderboard,
+    getUserGamePlayTime,
+    getAllTasks
 } from '../Redux/Slice/reward.slice'
 
 
@@ -89,6 +91,7 @@ const RewardsExperience = () => {
     const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
     const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
     const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
+    const allTasksState = useSelector((state)=>state.reward.allTasks)
 
     console.log("Reward state:", { recentTransactions });
 
@@ -117,6 +120,8 @@ const RewardsExperience = () => {
         dispatch(getUserRewardBalance());
         dispatch(getUserRedemptionHistory({ page: 1, limit: 10 }));
         dispatch(getAvailableTasks());
+        dispatch(getUserGamePlayTime());
+        dispatch(getAllTasks());
         dispatch(getRewardsLeaderboard({ page: 1, limit: 10 }));
     }, [dispatch]);
 
