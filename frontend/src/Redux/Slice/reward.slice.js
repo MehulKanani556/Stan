@@ -205,7 +205,7 @@ export const completeTask = createAsyncThunk(
             const taskType = taskTypeMap[title] || 'quiz';
 
             const response = await axiosInstance.post('/rewards/tasks/complete', {
-                taskType,
+                title,
                 taskId,
                 points
             });
@@ -457,7 +457,9 @@ const rewardSlice = createSlice({
             })
             .addCase(getUserGamePlayTime.fulfilled, (state, action) => {
                 state.loading.userGamePlayTime = false;
-                state.userGamePlayTime = action.payload.result;
+                console.log(action.payload);
+                
+                state.userGamePlayTime = action.payload;
                 state.error = null;
             })
             .addCase(getUserGamePlayTime.rejected, (state, action) => {

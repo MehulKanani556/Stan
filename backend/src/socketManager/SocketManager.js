@@ -356,8 +356,8 @@ function initializeSocket(io) {
 
         // Add new time entry for today
         const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
-        console.log(today,now);
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        // console.log(today,now);
         
         
         // Check if there's already an entry for today

@@ -94,11 +94,12 @@ const RewardsExperience = () => {
     const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
     const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
     const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
-    const allTasksState = useSelector((state)=>state.reward.allTasks)
+    const allTasksState = useSelector((state)=>state.reward.allTasks);
+    const userGamePlayTime = useSelector((state)=>state.reward.userGamePlayTime);
 
     // console.log("Reward state:", allTasksState);
 
-    console.log("HIHI" , allTasksState);
+    console.log("HIHI" , userGamePlayTime);
     
 
 
@@ -182,29 +183,70 @@ const RewardsExperience = () => {
         }
     }, [loadReferralData]);
 
+    // ---- Gameplay time helpers ----
+    const playedMinutesToday = useMemo(() => {
+        try {
+            const entries = userGamePlayTime?.time || [];
+            const now = new Date();
+            const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+            const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+            return entries
+                .filter(e => {
+                    const d = new Date(e?.date);
+                    return d >= start && d <= end;
+                })
+                .reduce((sum, e) => sum + (Number(e?.durationMinutes) || 0), 0);
+        } catch {
+            return 0;
+        }
+    }, [userGamePlayTime]);
+    const playedMinutesThisWeek = useMemo(() => {
+        try {
+            const entries = userGamePlayTime?.time || [];
+            const now = new Date();
+            // Set to Monday as start of week
+            const day = now.getDay(); // 0=Sun,1=Mon,...
+            const diffToMonday = (day + 6) % 7; // days since Monday
+            const start = new Date(now);
+            start.setHours(0, 0, 0, 0);
+            start.setDate(start.getDate() - diffToMonday);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            end.setHours(23, 59, 59, 999);
+            return entries
+                .filter(e => {
+                    const d = new Date(e?.date);
+                    return d >= start && d <= end;
+                })
+                .reduce((sum, e) => sum + (Number(e?.durationMinutes) || 0), 0);
+        } catch {
+            return 0;
+        }
+    }, [userGamePlayTime]);
+
     // Use API tasks or fallback to default tasks
-    const baseTasks = availableTasks.length > 0 ? availableTasks.slice(0, 3).map(task => ({
-        id: task.id || task._id,
-        title: task.title || task.name,
-        icon: <FaQuestionCircle className="text-purple-300" />, // Default icon
-        points: task.points || task.reward
-    })) : [
-        { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-purple-300" />, points: 50 },
-        { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 5 },
-        { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 50 },
-    ];
+    // const baseTasks = availableTasks.length > 0 ? availableTasks.slice(0, 3).map(task => ({
+    //     id: task.id || task._id,
+    //     title: task.title || task.name,
+    //     icon: <FaQuestionCircle className="text-purple-300" />, // Default icon
+    //     points: task.points || task.reward
+    // })) : [
+    //     { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-purple-300" />, points: 50 },
+    //     { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 5 },
+    //     { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 50 },
+    // ];
 
-    const dailyTasks = [
-        { id: 'd1', title: 'Login to the app', points: 15, progress: 1, goal: 1 },
-        { id: 'd2', title: 'Play any game for 15 minutes', points: 15, progress: 10, goal: 15 },
-        { id: 'd3', title: 'Daily Streak Bonus', points: 15, progress: 1, goal: 1 },
-    ];
+    // const dailyTasks = [
+    //     { id: 'd1', title: 'Login to the app', points: 15, progress: 1, goal: 1 },
+    //     { id: 'd2', title: 'Play any game for 15 minutes', points: 15, progress: 10, goal: 15 },
+    //     { id: 'd3', title: 'Daily Streak Bonus', points: 15, progress: 1, goal: 1 },
+    // ];
 
-    const iconCycle = [
-        <FaQuestionCircle className="text-purple-300" />,
-        <MdOutlineOndemandVideo className="text-pink-300" />,
-        <FaUserFriends className="text-emerald-300" />,
-    ];
+    // const iconCycle = [
+    //     <FaQuestionCircle className="text-purple-300" />,
+    //     <MdOutlineOndemandVideo className="text-pink-300" />,
+    //     <FaUserFriends className="text-emerald-300" />,
+    // ];
 
     // const moreTasks = Array.from({ length: 13 }).map((_, i) => ({
     //     id: 100 + i,
@@ -213,30 +255,30 @@ const RewardsExperience = () => {
     //     points: [25, 40, 75, 100, 120][i % 5]
     // }));
 
-    const allTasks = [...baseTasks];
-    const tasksToShow = showAllTasks ? allTasks : baseTasks;
+    // const allTasks = [...baseTasks];
+    // const tasksToShow = showAllTasks ? allTasks : baseTasks;
 
-    const weeklyQuests = [
-        { id: 'q1', title: 'Play any game for 60 minutes', progress: 10, goal: 60, reward: 50 },
-        { id: 'q2', title: 'Complete 3 daily tasks for 5 days', progress: 2, goal: 5, reward: 45 },
-        { id: 'q3', title: 'Login 5 days this week', progress: streakDay, goal: 5, reward: 40 },
-    ];
+    // const weeklyQuests = [
+    //     { id: 'q1', title: 'Play any game for 60 minutes', progress: 10, goal: 60, reward: 50 },
+    //     { id: 'q2', title: 'Complete 3 daily tasks for 5 days', progress: 2, goal: 5, reward: 45 },
+    //     { id: 'q3', title: 'Login 5 days this week', progress: streakDay, goal: 5, reward: 40 },
+    // ];
 
     // Use API rewards or fallback to default rewards
-    const rewardsData = rewards.length > 0 ? rewards.map(reward => ({
-        id: reward._id,
-        title: reward.title,
-        img: reward.image || yoyoLogo,
-        price: reward.price,
-        status: reward.isRedeemed ? 'redeemed' : (userBalance >= reward.price ? 'unlocked' : 'locked')
-    })) : [
-        { id: 1, title: 'tbh welcome pack', img: yoyoLogo, price: 500, status: 'redeemed' },
-        { id: 2, title: 'Amazon.com $5 gift card', img: amazonImg, price: 1500, status: 'unlocked' },
-        { id: 3, title: 'Sticker pack', img: stickerImg, price: 1500, status: 'locked' },
-        { id: 4, title: 'Disposable camera', img: cameraImg, price: 3500, status: 'locked' },
-        { id: 5, title: 'Gaming poster', img: posterImg, price: 800, status: 'locked' },
-        { id: 6, title: 'Mystery loot', img: mysteryImg, price: 1200, status: 'locked' },
-    ];
+    // const rewardsData = rewards.length > 0 ? rewards.map(reward => ({
+    //     id: reward._id,
+    //     title: reward.title,
+    //     img: reward.image || yoyoLogo,
+    //     price: reward.price,
+    //     status: reward.isRedeemed ? 'redeemed' : (userBalance >= reward.price ? 'unlocked' : 'locked')
+    // })) : [
+    //     { id: 1, title: 'tbh welcome pack', img: yoyoLogo, price: 500, status: 'redeemed' },
+    //     { id: 2, title: 'Amazon.com $5 gift card', img: amazonImg, price: 1500, status: 'unlocked' },
+    //     { id: 3, title: 'Sticker pack', img: stickerImg, price: 1500, status: 'locked' },
+    //     { id: 4, title: 'Disposable camera', img: cameraImg, price: 3500, status: 'locked' },
+    //     { id: 5, title: 'Gaming poster', img: posterImg, price: 800, status: 'locked' },
+    //     { id: 6, title: 'Mystery loot', img: mysteryImg, price: 1200, status: 'locked' },
+    // ];
 
     // Use API leaderboard or fallback to default leaderboard
     const leaderboardData = leaderboard.length > 0 ? leaderboard.map(user => ({
@@ -286,10 +328,15 @@ const RewardsExperience = () => {
     };
 
     const completeDailyTask = (task) => {
-        if (completedDailyTasks.has(task.id)) return;
-        if (task.progress < task.goal) return;
-        earnPoints(task.points, task.title);
-        setCompletedDailyTasks(prev => new Set(prev).add(task.id));
+        const isPlayTimeTask = /play any game for/i.test(task?.title || '');
+        const goal = Number(task?.limit || task?.goal || 0);
+        const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
+        const key = task?._id || task?.id;
+        if (!key) return;
+        if (completedDailyTasks.has(key)) return;
+        if (!(progress >= goal && goal > 0)) return;
+        earnPoints(task?.reward, task?.title);
+        setCompletedDailyTasks(prev => new Set(prev).add(key));
     };
 
     const claimMilestone = (mid) => {
@@ -309,10 +356,15 @@ const RewardsExperience = () => {
     };
 
     const completeQuest = (q) => {
-        if (completedQuests.has(q.id)) return;
-        if (q.progress < q.goal) return; // require goal met
+        const isPlayTimeTask = /play any game for/i.test(q?.title || '');
+        const goal = Number(q?.limit || q?.goal || 0);
+        const progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
+        const key = q?._id || q?.id;
+        if (!key) return;
+        if (completedQuests.has(key)) return;
+        if (!(progress >= goal && goal > 0)) return; // require goal met
         earnPoints(q?.reward, q?.title);
-        setCompletedQuests(prev => new Set(prev).add(q.id));
+        setCompletedQuests(prev => new Set(prev).add(key));
     };
 
     const userId = useMemo(() => {
@@ -537,9 +589,12 @@ const RewardsExperience = () => {
                         </div>
                         <div className='space-y-3'>
                             {allTasksState?.dailytask?.map(task => {
-                                const progressPct = Math.min(100, (task.progress / task.goal) * 100);
-                                const canComplete = task.progress >= task.goal && !completedDailyTasks.has(task.id);
-                                const done = completedDailyTasks.has(task.id);
+                                const isPlayTimeTask = /play any game for/i.test(task?.title || '');
+                                const goal = Number(task?.limit || task?.goal || 0);
+                                const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
+                                const progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                const canComplete = progress >= goal && !completedDailyTasks.has(task?._id || task?.id);
+                                const done = completedDailyTasks.has(task?._id || task?.id);
                                 return (
                                     <div key={task._id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                         <div className='flex items-center justify-between mb-2'>
@@ -549,8 +604,13 @@ const RewardsExperience = () => {
                                             </div>
                                         </div>
                                         <div className='flex items-center justify-between mb-2'>
-                                            {/* <span className='text-white/60 text-xs'>{task.progress}/{task.goal}</span> */}
-                                            {/* <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span> */}
+                                            {isPlayTimeTask && (
+                                                <span className='text-white/60 text-xs'>{progress}/{goal} min</span>
+                                            )}
+                                            {!isPlayTimeTask && goal > 0 && (
+                                                <span className='text-white/60 text-xs'>{progress}/{goal}</span>
+                                            )}
+                                            <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
                                         </div>
                                         <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
                                             <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
@@ -575,14 +635,22 @@ const RewardsExperience = () => {
                         </div>
                         <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
                             {allTasksState?.weeklytask?.map(q => {
-                                const progressPct = Math.min(100, (q.progress / q.goal) * 100);
-                                const canComplete = q.progress >= q.goal && !completedQuests.has(q.id);
-                                const done = completedQuests.has(q.id);
+                                const isPlayTimeTask = /play any game for/i.test(q?.title || '');
+                                const goal = Number(q?.limit || q?.goal || 0);
+                                const progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
+                                const progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                const canComplete = progress >= goal && !completedQuests.has(q?._id || q?.id);
+                                const done = completedQuests.has(q?._id || q?.id);
                                 return (
-                                    <div key={q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                    <div key={q._id || q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                         <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>
                                         <div className='flex items-center justify-between mt-2'>
-                                            {/* <span className='text-white/60 text-xs'>{q.progress}/{q.goal}</span> */}
+                                            {isPlayTimeTask && (
+                                                <span className='text-white/60 text-xs'>{progress}/{goal} min</span>
+                                            )}
+                                            {!isPlayTimeTask && goal > 0 && (
+                                                <span className='text-white/60 text-xs'>{progress}/{goal}</span>
+                                            )}
                                             <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
                                         </div>
                                         <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
