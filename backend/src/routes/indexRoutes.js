@@ -45,7 +45,7 @@ import {
 } from '../controllers/rewards.controller.js';
 import { getDailyTaskClaimState, claimDailyTask } from '../controllers/userDailyTaskClaim.controller.js';
 
-import { loggingHistory } from "../controllers/LoggingHistroyController.js";
+import { getUserLogging, loggingHistory } from "../controllers/LoggingHistroyController.js";
 // import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 import { getUserGamePlayTime } from "../controllers/userGameplay.controller.js";
 import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, getAllTask } from "../controllers/task.controller.js";
@@ -274,6 +274,7 @@ indexRoutes.post("/weeklytask",UserAuth,isAdmin,createWeeklyTask);
 indexRoutes.post("/earntask",UserAuth,isAdmin,createEarnTask);
 indexRoutes.post("/milestone",UserAuth,isAdmin,createMilestone);
 indexRoutes.get("/getAllTask",getAllTask);
+indexRoutes.get("/getuserLogging",UserAuth,getUserLogging);
 
 
 

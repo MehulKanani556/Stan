@@ -561,6 +561,18 @@ export const updateLoginTask = createAsyncThunk(
     }
   }
 )
+// Get fan coin details
+export const getuserLogging = createAsyncThunk(
+  "user/getFanCoinDetails",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/getuserLogging`);
+      return response.data;
+    } catch (error) {
+      return handleErrors(error, null, rejectWithValue);
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: "user",
@@ -569,7 +581,8 @@ const userSlice = createSlice({
     fanCoins: 0,
     fanCoinTransactions: [],
     fanCoinLoading: false,
-    fanCoinError: null
+    fanCoinError: null,
+    userLogging : null, 
   },
   reducers: {
     logout: (state, action) => {
@@ -963,19 +976,17 @@ const userSlice = createSlice({
       state.fanCoinError = action.payload;
     })
 
-    // Get fan coin details reducer
-    .addCase(getFanCoinDetails.pending, (state) => {
-      state.fanCoinLoading = true;
-      state.fanCoinError = null;
+   
+     // Get user logging history
+     .addCase(getFanCoinDetails.pending, (state) => {
+      state.loading = false;
     })
     .addCase(getFanCoinDetails.fulfilled, (state, action) => {
-      state.fanCoinLoading = false;
-      state.fanCoins = action.payload.fanCoins;
-      state.fanCoinTransactions = action.payload.transactions;
+      state.loading = true;
+      state.userLogging = action.payload.data;
     })
     .addCase(getFanCoinDetails.rejected, (state, action) => {
-      state.fanCoinLoading = false;
-      state.fanCoinError = action.payload;
+      state.loading = false;
     });
   }
 });
