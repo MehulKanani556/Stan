@@ -276,8 +276,7 @@ export default function PrivacyPolicy() {
               If you have any questions about this Privacy Policy or our data practices, please contact us:
             </p>
             <div className="bg-gray-700/50 rounded-lg p-4 text-xs md:text-sm">
-              <p><strong>Email:</strong> privacy@YOYO.com</p>
-              <p><strong>Data Protection Officer:</strong> dpo@YOYO.com</p>
+              <p><strong>Email:</strong> info@yoyokhel.com</p>             
               <p><strong>Support Hours:</strong> 24/7</p>
               <p><strong>Response Time:</strong> Within 24-48 hours</p>
             </div>

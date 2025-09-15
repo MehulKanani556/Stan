@@ -13,6 +13,7 @@ import { clearCart } from "../Redux/Slice/cart.slice";
 import { FaRegCreditCard } from "react-icons/fa";
 import { BsCalendar2Event } from "react-icons/bs";
 import { BiLockAlt } from "react-icons/bi";
+import { enqueueSnackbar } from "notistack";
 
 const CARD_STYLE = {
     style: {
@@ -55,7 +56,8 @@ const PaymentForm = ({
 
         if (!stripe || !elements) {
             console.error('Stripe not loaded');
-            alert('Payment system is not ready. Please try again.');
+            // alert('Payment system is not ready. Please try again.');
+            enqueueSnackbar("Payment system is not ready. Please try again.", { variant: "error" });
             return;
         }
 
@@ -73,7 +75,8 @@ const PaymentForm = ({
                 }));
 
                 if (verifyPayment.fulfilled.match(verificationResult)) {
-                    alert("Order completed successfully with Fan Coins!");
+                    // alert("Order completed successfully with Fan Coins!");
+                    enqueueSnackbar("Order completed successfully with Fan Coins!", { variant: "success" });
 
                     if (onPaymentSuccess && typeof onPaymentSuccess === 'function') {
                         onPaymentSuccess({
@@ -84,7 +87,8 @@ const PaymentForm = ({
                     }
                 } else {
                     console.error('Order verification failed:', verificationResult.payload);
-                    alert('Order processing failed. Please contact support.');
+                    // alert('Order processing failed. Please contact support.');
+                    enqueueSnackbar("Order processing failed. Please contact support.", { variant: "error" });
                 }
                 return;
             }
@@ -105,7 +109,8 @@ const PaymentForm = ({
             // Check if intent creation was successful
             if (!createPaymentIntent.fulfilled.match(intentResult)) {
                 console.error('Failed to create/update payment intent', intentResult.payload);
-                alert('Failed to initialize payment. Please try again.');
+                // alert('Failed to initialize payment. Please try again.');
+                enqueueSnackbar("Failed to initialize payment. Please try again.", { variant: "error" });
                 return;
             }
 
@@ -114,7 +119,8 @@ const PaymentForm = ({
 
             if (!currentClientSecret) {
                 console.error('No client secret available');
-                alert('Payment initialization failed. Please try again.');
+                // alert('Payment initialization failed. Please try again.');
+                enqueueSnackbar("Payment initialization failed. Please try again.", { variant: "error" });
                 return;
             }
 
@@ -142,7 +148,8 @@ const PaymentForm = ({
 
             if (error) {
                 console.error('Payment error:', error);
-                alert(error.message || "An unexpected error occurred");
+                // alert(error.message || "An unexpected error occurred");
+                enqueueSnackbar(error.message || "An unexpected error occurred", { variant: "error" });
             } else if (paymentIntent?.status === "succeeded") {
                 // console.log('Payment successful:', paymentIntent.id);
 
@@ -157,7 +164,8 @@ const PaymentForm = ({
 
                 // Handle verification result
                 if (verifyPayment.fulfilled.match(verificationResult)) {
-                    alert("Payment Successful!");
+                    // alert("");
+                    enqueueSnackbar("Payment Successful!", { variant: "success" });
 
                     if (onPaymentSuccess && typeof onPaymentSuccess === 'function') {
                         onPaymentSuccess({
@@ -168,12 +176,14 @@ const PaymentForm = ({
                     }
                 } else {
                     console.error('Payment verification failed:', verificationResult.payload);
-                    alert('Payment completed but verification failed. Please contact support.');
+                    // alert('Payment completed but verification failed. Please contact support.');
+                    enqueueSnackbar("Payment completed but verification failed. Please contact support.", { variant: "error" });
                 }
             }
         } catch (error) {
             console.error('Payment processing error:', error);
-            alert('Payment processing failed. Please try again.');
+            // alert('Payment processing failed. Please try again.');
+            enqueueSnackbar("Payment processing failed. Please try again.", { variant: "error" });
         }
     };
     return (

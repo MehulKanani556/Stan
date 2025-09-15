@@ -306,7 +306,7 @@ export default function TermsService() {
               If you have any questions about these Terms of Service, please contact us:
             </p>
             <div className="bg-gray-700/50 rounded-lg p-4 text-sm md:text-base">
-              <p><strong>Email:</strong> support@YOYO.com</p>
+              <p><strong>Email:</strong> info@yoyokhel.com</p>
               <p><strong>Support Hours:</strong> 24/7</p>
               <p><strong>Response Time:</strong> Within 24-48 hours</p>
             </div>
