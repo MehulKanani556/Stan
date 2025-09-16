@@ -49,6 +49,20 @@ import { getUserLogging, loggingHistory } from "../controllers/LoggingHistroyCon
 // import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 import { getUserGamePlayTime } from "../controllers/userGameplay.controller.js";
 import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, getAllTask } from "../controllers/task.controller.js";
+// import {
+//     createQuiz,
+//     getAllQuizzes,
+//     getQuizById,
+//     updateQuiz,
+//     deleteQuiz,
+//     startQuiz,
+//     answerQuestion,
+//     getCurrentSession,
+//     abandonQuiz,
+//     getUserQuizHistory,
+//     getQuizLeaderboard,
+//     getDefaultGamingQuiz
+// } from '../controllers/quiz.controller.js';
 
 
 const indexRoutes = express.Router();
@@ -276,7 +290,23 @@ indexRoutes.post("/milestone",UserAuth,isAdmin,createMilestone);
 indexRoutes.get("/getAllTask",getAllTask);
 indexRoutes.get("/getuserLogging",UserAuth,getUserLogging);
 
+// Quiz Routes
+// Admin routes for quiz management
+// indexRoutes.post('/quiz', UserAuth, isAdmin, createQuiz);
+// indexRoutes.get('/quiz', getAllQuizzes);
+// indexRoutes.get('/quiz/default-gaming', getDefaultGamingQuiz);
+// indexRoutes.get('/quiz/:id', getQuizById);
+// indexRoutes.put('/quiz/:id', UserAuth, isAdmin, updateQuiz);
+// indexRoutes.delete('/quiz/:id', UserAuth, isAdmin, deleteQuiz);
 
+// // Quiz game routes
+// indexRoutes.post('/quiz/:quizId/start', UserAuth, startQuiz);
+// indexRoutes.post('/quiz/session/:sessionId/answer', UserAuth, answerQuestion);
+// indexRoutes.get('/quiz/session/:sessionId', UserAuth, getCurrentSession);
+// indexRoutes.post('/quiz/session/:sessionId/abandon', UserAuth, abandonQuiz);
 
+// // User quiz history and leaderboard
+// indexRoutes.get('/user/quiz/history', UserAuth, getUserQuizHistory);
+// indexRoutes.get('/quiz/leaderboard', getQuizLeaderboard);
 
 export default indexRoutes;

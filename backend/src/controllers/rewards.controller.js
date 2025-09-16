@@ -408,7 +408,7 @@ export const getUserRedemptionHistory = async (req, res) => {
 // Complete a task and earn points
 export const completeTask = async (req, res) => {
     try {
-        const { taskType, taskId, points } = req.body;
+        const { taskType, taskId, points, completed } = req.body;
         const userId = req.user._id;
 
         const user = await User.findById(userId);
@@ -425,6 +425,20 @@ export const completeTask = async (req, res) => {
             'game_play': 15,
             'streak': 20
         };
+
+        // Enforce completion rules for quiz task
+        if (taskType === 'quiz') {
+            // Require explicit completed flag from client indicating all questions answered
+            if (!completed) {
+                return sendBadRequestResponse(res, 'Quiz must be completed to earn points');
+            }
+            const alreadyCompletedQuiz = (user.fanCoinTransactions || []).some(txn =>
+                txn.type === 'EARN' && typeof txn.description === 'string' && txn.description.toLowerCase().includes('task completed: quiz')
+            );
+            if (alreadyCompletedQuiz) {
+                return sendBadRequestResponse(res, 'Quiz already completed');
+            }
+        }
 
         // const points = taskRewards[taskType] || 0;
         if (points === 0) {

@@ -23,6 +23,7 @@ import {
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
 import { getuserLogging } from '../Redux/Slice/user.slice';
+import { useNavigate } from 'react-router-dom'
 
 
 const gamerTheme = `
@@ -88,6 +89,7 @@ export default function Rewards() {
 
 const RewardsExperience = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const rewards = useSelector((state) => state.reward.rewards);
     const user = useSelector((state) => state.user.currentUser);
     const userBalance = useSelector((state) => state.reward.userBalance);
@@ -454,7 +456,21 @@ const RewardsExperience = () => {
 
     const handleTaskComplete = (task) => {
         if (completedTasks.has(task.id)) return;
-        dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
+        if (task?.title === 'Take a quiz') {
+            if (!hasPlayedQuiz) {
+                navigate('/quizRewards');
+                return;
+            }
+            const score = Number(quizScore || 0);
+            if (!score) {
+                enqueueSnackbar('Finish the quiz to get a score to claim.', { variant: 'warning' });
+                return;
+            }
+            dispatch(completeTask({ taskId: 'quiz', points: score, title: task.title, completed: true }));
+            try { localStorage.removeItem('quiz:lastScore'); } catch {}
+        } else {
+            dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
+        }
         setCompletedTasks(prev => new Set(prev).add(task.id));
     };
 
@@ -478,6 +494,12 @@ const RewardsExperience = () => {
     const userId = useMemo(() => {
         try { return localStorage.getItem('userId') || '' } catch { return '' }
     }, []);
+    const hasPlayedQuiz = useMemo(() => {
+        try { return localStorage.getItem(`quizPlayed:${userId}`) === '1' } catch { return false }
+    }, [userId]);
+    const quizScore = useMemo(() => {
+        try { return Number(localStorage.getItem('quiz:lastScore') || 0) } catch { return 0 }
+    }, [hasPlayedQuiz]);
     // console.log("user", user);
     const referralLink = useMemo(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -599,6 +621,7 @@ const RewardsExperience = () => {
                                 <p className='text-white/70 text-xs'>Total Earned</p>
                                 <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -622,7 +645,7 @@ const RewardsExperience = () => {
                     <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
                         <div className='flex items-center justify-between mb-4 sm:mb-5'>
                             <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
-                            <span className='text-white/50 text-xs'>Daily refresh</span>
+                            <span className='text-white/50 text-xs'>1 Time Play</span>
                         </div>
                         <div className="space-y-3 sm:space-y-4">
                             {(showAll
@@ -648,16 +671,21 @@ const RewardsExperience = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <button
-                                            onClick={() => handleTaskComplete(task)}
-                                            disabled={done}
-                                            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done
-                                                ? "btn-soft cursor-not-allowed opacity-60"
-                                                : "btn-primary"
-                                                }`}
-                                        >
-                                            {done ? "Completed" : "Earn"}
-                                        </button>
+                                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                            <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={task?.title === 'Take a quiz' && hasPlayedQuiz} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${task?.title === 'Take a quiz' && hasPlayedQuiz ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                                {task?.title === 'Take a quiz' ? (hasPlayedQuiz ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : ''}
+                                            </button>
+                                            <button
+                                                onClick={() => handleTaskComplete(task)}
+                                                disabled={done}
+                                                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap w-full sm:w-auto ${done
+                                                    ? "btn-soft cursor-not-allowed opacity-60"
+                                                    : "btn-primary"
+                                                    }`}
+                                            >
+                                                {done ? "All Claimed" : (task?.title === 'Take a quiz' && quizScore > 0 ? `Claim ${quizScore}` : 'Claim Points')}
+                                            </button>
+                                        </div>
                                     </div>
                                 );
                             })}

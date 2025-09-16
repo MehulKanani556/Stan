@@ -29,6 +29,7 @@ import Wishlist from './Pages/Wishlist.jsx';
 import AllGames from './Pages/AllGames.jsx';
 import Loader from './Pages/Loader.js';
 import Demo from './Pages/demo.jsx';
+import QuizGame from './components/QuizGame.jsx';
 import BackgroundColor from './components/BackgroundColor';
 import HomeSlider from './components/HomeSlider.jsx';
 import LoaderWrapper from './components/LoaderWrapper.jsx';
@@ -80,6 +81,7 @@ function App() {
                   <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/allGames" element={<AllGames />} />
                   <Route path="/demo" element={<Demo />} />
+                  <Route path="/quizRewards" element={<QuizGame />} />
                 </Routes>
               </BackgroundColor>
               {!chatwidegt && <ChatWidget />}
