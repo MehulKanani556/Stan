@@ -126,7 +126,8 @@ const RewardsExperience = () => {
     const [taskClaimData, setTaskClaimData] = useState({
         daily: [],
         weekly: { week: '', claimedTasks: [] },
-        milestone: { claimedTasks: [] }
+        milestone: { claimedTasks: [] },
+        taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
     });
 
     // Calculate total earned from recent transactions
@@ -162,15 +163,17 @@ const RewardsExperience = () => {
                 
                 // Set the entire task claim data
                 setTaskClaimData({
-                    daily: res.data?.result?.daily || [],
-                    weekly: res.data?.result?.weekly || { week: '', claimedTasks: [] },
-                    milestone: res.data?.result?.milestone || { claimedTasks: [] }
+                    daily: res.data?.result?.claim?.daily || [],
+                    weekly: res.data?.result?.claim?.weekly || { week: '', claimedTasks: [] },
+                    milestone: res.data?.result?.claim?.milestone || { claimedTasks: [] },
+                    taskCompletion: res.data?.result?.taskCompletion || { completedDays: [], isWeeklyTaskEligible: false }
                 });
 
                 // Maintain backward compatibility with existing state
-                const daily = res.data?.result?.daily?.flatMap(d => d.claimedTasks || []);
-                const weekly = res.data?.result?.weekly?.claimedTasks || [];
-                const milestone = res.data?.result?.milestone?.claimedTasks || [];
+                const daily = res.data?.result?.claim?.daily?.flatMap(d => d.claimedTasks || []);
+                const weekly = res.data?.result?.claim?.weekly?.claimedTasks || [];
+                const milestone = res.data?.result?.claim?.milestone?.claimedTasks || [];
+
 
                 setClaimedDailyTasks(new Set(daily));
                 setClaimedWeeklyTasks(new Set(weekly));
@@ -180,7 +183,8 @@ const RewardsExperience = () => {
                 setTaskClaimData({
                     daily: [],
                     weekly: { week: '', claimedTasks: [] },
-                    milestone: { claimedTasks: [] }
+                    milestone: { claimedTasks: [] },
+                    taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
                 });
                 setClaimedDailyTasks(new Set());
                 setClaimedWeeklyTasks(new Set());
@@ -841,6 +845,24 @@ const RewardsExperience = () => {
                                     claimed = claimedWeeklyTasks.has(q?._id || q?.id);
                                     canComplete = progress >= goal && !claimed;
                                     console.log('progerss',   userLogging?.weeklyLogging)
+                                }
+                                if (is3DayTask) {
+                                    // Logic for tracking 3 daily tasks for 5 days
+                                    // goal = Number(q?.limit || q?.goal || 5);
+                                    goal = 1;
+                                    progress = taskClaimData?.taskCompletion?.completedDays?.filter(
+                                        day => day.taskCount >= 3
+                                    ).length || 0;
+                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                    claimed = claimedWeeklyTasks.has(q?._id || q?.id);
+                                    canComplete = progress >= goal && !claimed;
+                                    console.log('3 Daily Tasks Progress:', {
+                                        goal,
+                                        progress,
+                                        progressPct,
+                                        claimed,
+                                        canComplete
+                                    });
                                 }
 
                                 return (

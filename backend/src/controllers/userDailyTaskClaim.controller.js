@@ -17,6 +17,74 @@ const migrateDailyFormat = async (claim) => {
   }
 };
 
+// Helper function to get ISO week number
+function getISOWeek(date) {
+  const tmp = new Date(date.getTime());
+  tmp.setHours(0, 0, 0, 0);
+  tmp.setDate(tmp.getDate() + 4 - (tmp.getDay() || 7));
+  const yearStart = new Date(tmp.getFullYear(), 0, 1);
+  const weekNo = Math.ceil((((tmp - yearStart) / 86400000) + 1) / 7);
+  return weekNo;
+}
+
+// Helper function to check daily and weekly task completion
+const checkTaskCompletion = (claim) => {
+  // Ensure we're working with the document's raw data
+  const claimData = claim._doc || claim;
+  
+  if (!claimData || !claimData.daily || !Array.isArray(claimData.daily)) return { 
+    dailyTaskCompletionCount: 0, 
+    completedDays: [],
+    isWeeklyTaskEligible: false 
+  };
+  const now = new Date();
+  const year = now.getFullYear();
+  const week = getISOWeek(now);
+  const weekStr = `${year}-W${week}`;
+
+  // Track daily task completion for the current week
+  const completedDays = claimData.daily.reduce((acc, dayEntry) => {
+    // Ensure we're working with the raw day entry data
+    const dayData = dayEntry._doc || dayEntry;
+    
+    // Check if the day entry is from the current week
+    const entryDate = new Date(dayData.date);
+    const entryWeek = getISOWeek(entryDate);
+    const entryWeekStr = `${entryDate.getFullYear()}-W${entryWeek}`;
+    
+    // Ensure we're looking at the current week and the day has claimed tasks
+    // Each dayData is a unique entry for a date, so even if claimedTasks contains the same taskId,
+    // different dates are considered unique completions.
+    if (entryWeekStr === weekStr && dayData.claimedTasks && dayData.claimedTasks.length > 0) {
+      // Get unique task IDs for this day
+      const uniqueTaskIds = [...new Set(dayData.claimedTasks)];
+      // Log for debugging: show unique task IDs and the day entry
+
+      // Each day is unique by its date, so push it as a completed day if it has at least 1 claimed task
+      // (or keep the >=3 check if you want to require 3 unique tasks per day)
+      if (uniqueTaskIds.length >= 3) {
+        acc.push({
+          date: dayData.date,
+          taskCount: uniqueTaskIds.length
+        });
+      }
+    }
+    return acc;
+  }, []);
+
+  // Check if weekly task for completing 3 daily tasks 5 times is already claimed
+  const weeklyTaskCompleted = claimData.weekly && 
+    claimData.weekly.week === weekStr && 
+    claimData.weekly.claimedTasks &&
+    claimData.weekly.claimedTasks.some(taskId => taskId === 'daily_completion_5_days');
+
+  return {
+    dailyTaskCompletionCount: completedDays.length,
+    completedDays,
+    isWeeklyTaskEligible: completedDays.length >= 5 && !weeklyTaskCompleted
+  };
+};
+
 // Get task claim state for a user (daily and weekly)
 export const getTaskClaimState = async (req, res) => {
   try {
@@ -61,7 +129,13 @@ export const getTaskClaimState = async (req, res) => {
       }
     }
     
-    return sendSuccessResponse(res, 'Fetched claim state', claim);
+    // Check task completion
+    const taskCompletion = checkTaskCompletion(claim);
+    
+    return sendSuccessResponse(res, 'Fetched claim state', {
+      claim: claim._doc || claim,
+      taskCompletion
+    });
   } catch (error) {
     return sendErrorResponse(res, 500, error.message);
   }
@@ -124,6 +198,15 @@ export const claimTask = async (req, res) => {
           }
         }
       }
+      
+      // Special handling for weekly task tracking
+      if (taskId === 'daily_completion_5_days') {
+        // Check if user has completed 3 daily tasks for 5 days this week
+        const taskCompletion = checkTaskCompletion(claim);
+        if (!taskCompletion.isWeeklyTaskEligible) {
+          return sendErrorResponse(res, 400, 'Not eligible for this weekly task');
+        }
+      }
     }
     
     // Milestone (never reset)
@@ -143,16 +226,6 @@ export const claimTask = async (req, res) => {
     return sendErrorResponse(res, 500, error.message);
   }
 };
-
-// Helper to get ISO week number
-function getISOWeek(date) {
-  const tmp = new Date(date.getTime());
-  tmp.setHours(0, 0, 0, 0);
-  tmp.setDate(tmp.getDate() + 4 - (tmp.getDay() || 7));
-  const yearStart = new Date(tmp.getFullYear(), 0, 1);
-  const weekNo = Math.ceil((((tmp - yearStart) / 86400000) + 1) / 7);
-  return weekNo;
-}
 
 // Mark a daily task as claimed for a user (for today) - Legacy function
 export const claimDailyTask = async (req, res) => {
