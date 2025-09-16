@@ -22,6 +22,7 @@ import {
     getAllTasks
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
+import { useNavigate } from 'react-router-dom'
 
 
 const gamerTheme = `
@@ -87,6 +88,7 @@ export default function Rewards() {
 
 const RewardsExperience = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const rewards = useSelector((state) => state.reward.rewards);
     const user = useSelector((state) => state.user.currentUser);
     const userBalance = useSelector((state) => state.reward.userBalance);
@@ -94,13 +96,13 @@ const RewardsExperience = () => {
     const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
     const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
     const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
-    const allTasksState = useSelector((state)=>state.reward.allTasks);
-    const userGamePlayTime = useSelector((state)=>state.reward.userGamePlayTime);
+    const allTasksState = useSelector((state) => state.reward.allTasks);
+    const userGamePlayTime = useSelector((state) => state.reward.userGamePlayTime);
 
     // console.log("Reward state:", allTasksState);
 
-    console.log("HIHI" , userGamePlayTime);
-    
+    console.log("HIHI", userGamePlayTime);
+
 
 
     const [streakDay, setStreakDay] = useState(3);
@@ -410,9 +412,23 @@ const RewardsExperience = () => {
         }));
     };
 
-    const handleTaskComplete = (task) => {        
+    const handleTaskComplete = (task) => {
         if (completedTasks.has(task.id)) return;
-        dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
+        if (task?.title === 'Take a quiz') {
+            if (!hasPlayedQuiz) {
+                navigate('/quizRewards');
+                return;
+            }
+            const score = Number(quizScore || 0);
+            if (!score) {
+                enqueueSnackbar('Finish the quiz to get a score to claim.', { variant: 'warning' });
+                return;
+            }
+            dispatch(completeTask({ taskId: 'quiz', points: score, title: task.title, completed: true }));
+            try { localStorage.removeItem('quiz:lastScore'); } catch {}
+        } else {
+            dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
+        }
         setCompletedTasks(prev => new Set(prev).add(task.id));
     };
 
@@ -428,7 +444,7 @@ const RewardsExperience = () => {
         setCompletedQuests(prev => {
             const next = new Set(prev);
             next.add(key);
-            try { localStorage.setItem(STORAGE_KEYS.weekly, JSON.stringify(Array.from(next))); } catch {}
+            try { localStorage.setItem(STORAGE_KEYS.weekly, JSON.stringify(Array.from(next))); } catch { }
             return next;
         });
     };
@@ -436,6 +452,12 @@ const RewardsExperience = () => {
     const userId = useMemo(() => {
         try { return localStorage.getItem('userId') || '' } catch { return '' }
     }, []);
+    const hasPlayedQuiz = useMemo(() => {
+        try { return localStorage.getItem(`quizPlayed:${userId}`) === '1' } catch { return false }
+    }, [userId]);
+    const quizScore = useMemo(() => {
+        try { return Number(localStorage.getItem('quiz:lastScore') || 0) } catch { return 0 }
+    }, [hasPlayedQuiz]);
     // console.log("user", user);
     const referralLink = useMemo(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -451,14 +473,14 @@ const RewardsExperience = () => {
             window.prompt('Copy your referral link:', referralLink);
         }
     };
-    
+
 
 
     // Handle claiming referral points
     const handleClaimReferralPoints = async () => {
         console.log('Claim referral points clicked. Current referral points:', referralPoints);
         console.log('Is claiming referral:', isClaimingReferral);
-        
+
         if (referralPoints === 0 || isClaimingReferral) {
             console.log('Cannot claim: referralPoints =', referralPoints, 'isClaimingReferral =', isClaimingReferral);
             return;
@@ -531,6 +553,7 @@ const RewardsExperience = () => {
                                 <p className='text-white/70 text-xs'>Total Earned</p>
                                 <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -553,58 +576,62 @@ const RewardsExperience = () => {
                     <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
                         <div className='flex items-center justify-between mb-4 sm:mb-5'>
                             <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
-                            <span className='text-white/50 text-xs'>Daily refresh</span>
+                            <span className='text-white/50 text-xs'>1 Time Play</span>
                         </div>
                         <div className="space-y-3 sm:space-y-4">
                             {(showAll
-                              ? allTasksState?.earntask
-                              : allTasksState?.earntask?.slice(0, 2)
+                                ? allTasksState?.earntask
+                                : allTasksState?.earntask?.slice(0, 2)
                             )?.map((task) => {
-                              const done = completedTasks.has(task._id);
-                              return (
-                                <div
-                                  key={task._id}
-                                  className="flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10"
-                                >
-                                  <div className="flex items-center gap-3 sm:gap-4">
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
-                                      {task?.icon}
+                                const done = completedTasks.has(task._id);
+                                return (
+                                    <div
+                                        key={task._id}
+                                        className="flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10"
+                                    >
+                                        <div className="flex items-center gap-3 sm:gap-4">
+                                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
+                                                {task?.icon}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-white font-medium text-sm sm:text-base truncate">
+                                                    {task?.title}
+                                                </p>
+                                                <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
+                                                    <FaGem /> <span>{task?.reward}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                            <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={task?.title === 'Take a quiz' && hasPlayedQuiz} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${task?.title === 'Take a quiz' && hasPlayedQuiz ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                                {task?.title === 'Take a quiz' ? (hasPlayedQuiz ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : ''}
+                                            </button>
+                                            <button
+                                                onClick={() => handleTaskComplete(task)}
+                                                disabled={done}
+                                                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap w-full sm:w-auto ${done
+                                                    ? "btn-soft cursor-not-allowed opacity-60"
+                                                    : "btn-primary"
+                                                    }`}
+                                            >
+                                                {done ? "All Claimed" : (task?.title === 'Take a quiz' && quizScore > 0 ? `Claim ${quizScore}` : 'Claim Points')}
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="min-w-0 flex-1">
-                                      <p className="text-white font-medium text-sm sm:text-base truncate">
-                                        {task?.title}
-                                      </p>
-                                      <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
-                                        <FaGem /> <span>{task?.reward}</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <button
-                                    onClick={() => handleTaskComplete(task)}
-                                    disabled={done}
-                                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${
-                                      done
-                                        ? "btn-soft cursor-not-allowed opacity-60"
-                                        : "btn-primary"
-                                    }`}
-                                  >
-                                    {done ? "Completed" : "Earn"}
-                                  </button>
-                                </div>
-                              );
+                                );
                             })}
-                          
+
                             {allTasksState?.earntask?.length > 2 && (
-                              <button
-                                onClick={() => setShowAll((v) => !v)}
-                                className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
-                              >
-                                {showAll
-                                  ? "Show less"
-                                  : `View ${allTasksState?.earntask?.length - 2} More`}
-                              </button>
+                                <button
+                                    onClick={() => setShowAll((v) => !v)}
+                                    className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
+                                >
+                                    {showAll
+                                        ? "Show less"
+                                        : `View ${allTasksState?.earntask?.length - 2} More`}
+                                </button>
                             )}
-                       </div>
+                        </div>
 
                     </div>
                 </div>
