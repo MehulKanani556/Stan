@@ -591,11 +591,10 @@ const Login = () => {
             readOnly={!!referralCode}
             helpText={referralCode ? "Referral code applied automatically from your link!" : "Have a referral? Enter it to unlock bonus rewards."}
             rightElement={
-              <span className={`px-2 py-1 text-[10px] rounded-lg border ${
-                referralCode 
-                  ? "bg-emerald-400/30 text-emerald-100 border-emerald-300/50" 
+              <span className={`px-2 py-1 text-[10px] rounded-lg border ${referralCode
+                  ? "bg-emerald-400/30 text-emerald-100 border-emerald-300/50"
                   : "bg-emerald-400/20 text-emerald-200 border-emerald-300/30"
-              }`}>
+                }`}>
                 {referralCode ? "Applied" : "Apply"}
               </span>
             }

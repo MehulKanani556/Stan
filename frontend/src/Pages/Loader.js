@@ -5,63 +5,15 @@ const Loader = () => {
   return (
     <StyledWrapper>
       <div className="loader">
-        <svg height={0} width={0} viewBox="0 0 100 100" className="absolute">
+        {/* S */}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
           <defs>
-            <linearGradient
-              gradientUnits="userSpaceOnUse"
-              y2={2}
-              x2={0}
-              y1={62}
-              x1={0}
-              id="b"
-            >
+            <linearGradient gradientUnits="userSpaceOnUse" y2={2} x2={0} y1={62} x1={0} id="b">
               <stop stopColor="#8B5CF6" />
               <stop stopColor="#A855F7" offset="0.5" />
               <stop stopColor="#EC4899" offset="1" />
-            </linearGradient>
-            <linearGradient
-              gradientUnits="userSpaceOnUse"
-              y2={0}
-              x2={0}
-              y1={64}
-              x1={0}
-              id="c"
-            >
-              <stop stopColor="#8B5CF6" />
-              <stop stopColor="#A855F7" offset="0.5" />
-              <stop stopColor="#EC4899" offset="1" />
-              <animateTransform
-                repeatCount="indefinite"
-                keySplines=".42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1"
-                keyTimes="0;0.25;0.5;0.75;1"
-                dur="8s"
-                values="0 32 32;-270 32 32;-540 32 32;-810 32 32;-1080 32 32"
-                type="rotate"
-                attributeName="gradientTransform"
-              />
-            </linearGradient>
-            <linearGradient
-              gradientUnits="userSpaceOnUse"
-              y2={2}
-              x2={0}
-              y1={62}
-              x1={0}
-              id="d"
-            >
-              <stop stopColor="#EC4899" />
-              <stop stopColor="#A855F7" offset="0.5" />
-              <stop stopColor="#8B5CF6" offset="1" />
             </linearGradient>
           </defs>
-        </svg>
-
-        {/* S */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 100 100"
-          className="letter"
-        >
           <path
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -80,7 +32,23 @@ const Loader = () => {
         </svg>
 
         {/* T */}
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
+          <defs>
+            <linearGradient gradientUnits="userSpaceOnUse" y2={0} x2={0} y1={64} x1={0} id="c">
+              <stop stopColor="#8B5CF6" />
+              <stop stopColor="#A855F7" offset="0.5" />
+              <stop stopColor="#EC4899" offset="1" />
+              <animateTransform
+                repeatCount="indefinite"
+                keySplines=".42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1"
+                keyTimes="0;0.25;0.5;0.75;1"
+                dur="8s"
+                values="0 32 32;-270 32 32;-540 32 32;-810 32 32;-1080 32 32"
+                type="rotate"
+                attributeName="gradientTransform"
+              />
+            </linearGradient>
+          </defs>
           <path
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -93,7 +61,14 @@ const Loader = () => {
         </svg>
 
         {/* A */}
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
+          <defs>
+            <linearGradient gradientUnits="userSpaceOnUse" y2={2} x2={0} y1={62} x1={0} id="d">
+              <stop stopColor="#EC4899" />
+              <stop stopColor="#A855F7" offset="0.5" />
+              <stop stopColor="#8B5CF6" offset="1" />
+            </linearGradient>
+          </defs>
           <path
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -106,7 +81,23 @@ const Loader = () => {
         </svg>
 
         {/* N */}
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
+          <defs>
+            <linearGradient gradientUnits="userSpaceOnUse" y2={0} x2={0} y1={64} x1={0} id="c">
+              <stop stopColor="#8B5CF6" />
+              <stop stopColor="#A855F7" offset="0.5" />
+              <stop stopColor="#EC4899" offset="1" />
+              <animateTransform
+                repeatCount="indefinite"
+                keySplines=".42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1"
+                keyTimes="0;0.25;0.5;0.75;1"
+                dur="8s"
+                values="0 32 32;-270 32 32;-540 32 32;-810 32 32;-1080 32 32"
+                type="rotate"
+                attributeName="gradientTransform"
+              />
+            </linearGradient>
+          </defs>
           <path
             strokeLinejoin="round"
             strokeLinecap="round"

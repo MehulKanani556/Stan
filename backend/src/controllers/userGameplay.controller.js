@@ -6,7 +6,7 @@ export const getUserGamePlayTime = async(req, res) => {
     try {
         const {_id } = req.user;
         const userGamePlay = await UserGamePlay.findOne({ user: _id }).populate('user', 'name email profilePic');
-        console.log("User Game Play Data:", userGamePlay);
+        // console.log("User Game Play Data:", userGamePlay);
 
         if (!userGamePlay) {
             return res.status(404).json({ message: "No gameplay data found for user." });

@@ -33,6 +33,7 @@ import { RiDeleteBin2Line } from "react-icons/ri";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useFormik } from 'formik'
 import * as Yup from "yup";
+import { enqueueSnackbar } from "notistack";
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -876,6 +877,7 @@ export default function Profile() {
                                                 <button
                                                     onClick={() => {
                                                         navigator.clipboard.writeText(user.referralCode);
+                                                        enqueueSnackbar("Referral code copied to clipboard", { variant: "success" });
                                                         // You can add a toast notification here
                                                     }}
                                                     className="text-[#ab99e1] hover:text-white transition-colors p-1"
@@ -1047,7 +1049,7 @@ export default function Profile() {
                                                                             '❌ Failed'}
                                                                 </span>
                                                                 <div className="mt-1">
-                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.originalAmount}</span>
+                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.originalAmount.toFixed(2)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1556,7 +1558,7 @@ export default function Profile() {
                                 <h1 className='text-lg sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Delete Account</h1>
                             </div>
                             <div className='mt-4 rounded-2xl p-4 md:p-6 relative overflow-hidden'>
-                                <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-40 h-40 bg-fuchsia-600/20 rounded-full blur-3xl" />
+                                {/* <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-40 h-40 bg-fuchsia-600/20 rounded-full blur-3xl" /> */}
                                 <h3 className='text-lg md:text-xl font-semibold mb-4'>When you delete your gaming account</h3>
                                 <ul className='space-y-3 text-gray-300 text-sm md:text-base list-disc list-inside'>
                                     <li>Your shopping cart, wishlist, and order history will be permanently deleted.</li>
