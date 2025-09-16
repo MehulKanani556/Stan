@@ -81,7 +81,7 @@ const SupportPage = () => {
             Still Need Help?{" "}
             <span className="text-purple-400">We’ve Got You</span>
           </h2>
-          <p className="text-gray-300 max-w-2xl mx-auto mb-12 text-base sm:text-lg">
+          <p className="text-gray-300 max-w-2xl mx-auto sm:mb-12 mb-6 text-base sm:text-lg">
             Our team is here to get you back in the game quickly. Choose the option that works best for you:
           </p>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 
@@ -99,4 +99,4 @@ const Trailer = () => {
   );
 };
 
-export default Trailer;
+export default memo(Trailer);

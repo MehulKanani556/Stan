@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react'
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
@@ -23,6 +23,7 @@ import {
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
 import { getuserLogging } from '../Redux/Slice/user.slice';
+import ScratchGame from './ScratchGame';
 
 
 const gamerTheme = `
@@ -120,6 +121,11 @@ const RewardsExperience = () => {
     const [referralHistory, setReferralHistory] = useState([]);
     const [isClaimingReferral, setIsClaimingReferral] = useState(false);
     const [showAll, setShowAll] = useState(false);
+    const canvasRef = useRef(null);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [scratchPercentage, setScratchPercentage] = useState(0);
+    const [currentPrize, setCurrentPrize] = useState("");
+    const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
 
     // Calculate total earned from recent transactions
     const totalEarned = recentTransactions
@@ -518,6 +524,10 @@ const RewardsExperience = () => {
             d1.getMonth() === d2.getMonth() &&
             d1.getDate() === d2.getDate();
     }
+
+
+
+
     return (
         <section className='pb-12 overflow-x-hidden'>
             <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
@@ -935,6 +945,9 @@ const RewardsExperience = () => {
                     </div>
                     <p className='text-white/60 text-xs mt-3'>Total Earned so far: {totalEarned}</p>
                 </div>
+
+                {/* ***** Scratch Card ***** */}
+                <ScratchGame/>
             </div>
         </section>
     )

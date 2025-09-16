@@ -40,7 +40,7 @@ const Wishlist = () => {
     <div className="md:max-w-[85%] max-w-[95%] mx-auto text-white md:py-10 py-7">
       <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 md:mb-8 tracking-tight">My Wishlist</h1>
 
-      <div className="grid lg:grid-cols-3 gap-10">
+      <div className="grid lg:grid-cols-3 ms:gap-10 gap-5">
         {/* LEFT SIDE - Wishlist Games */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {loading ? (

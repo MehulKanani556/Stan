@@ -161,6 +161,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
     return createdDate >= oneMonthAgo && createdDate <= new Date();
   }, [game?.createdAt]);
 
+  useEffect(() => {
+    window.scroll({ top: 0, behavior: "smooth" });
+  }, []);
+
   const purchased = isPurchased(game?._id);
   const inCart = isInCart(game?._id);
   const inWishlist = isInWishlist(game?._id);
@@ -318,7 +322,7 @@ const MemoizedGameCard = React.memo(GameCard);
 
 // Navigation Component
 const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning, isEnd }) => (
-  <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between md:pt-0 sm:pt-5 pt-3">
+  <div className="k-trending-heading mb-0 sm:mb-5 md:mb-6 flex items-center justify-between md:pt-0 sm:pt-5 pt-3">
     <p className='font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white'>
       {title}
     </p>
@@ -631,7 +635,7 @@ const Store = () => {
       </div>
 
       {/* Game Sections */}
-      <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+      <div className="py-0 w-[85%] mx-auto">
 
         <SwiperSection
           title="Trending Games"

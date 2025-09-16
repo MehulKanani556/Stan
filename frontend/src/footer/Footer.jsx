@@ -125,10 +125,12 @@ const Footer = () => {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
-            <p>
-              © 2025 YOYO Khel Pvt. Ltd. All rights reserved.
-            </p>
+          <div className='md:pb-0 pb-4'>
+             <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
+               <p>
+                 © 2025 YOYO Khel Pvt. Ltd. All rights reserved.
+               </p>
+             </div>
           </div>
         </div>
       </footer>

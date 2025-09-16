@@ -372,6 +372,9 @@ export default function Home() {
     }
   }, []);
 
+  console.log("Kem Kem" , "Hello");
+  
+
   const handleGameClick = useCallback((gameId) => {
     navigate(`/single/${gameId}`);
   }, [navigate]);

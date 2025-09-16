@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllGames } from "../Redux/Slice/game.slice";
+import { getAllGames, getHomeSliderData } from "../Redux/Slice/game.slice";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -12,9 +12,11 @@ import { EffectFade, Pagination, Autoplay } from 'swiper/modules';
 import SliderSkeleton from "../lazyLoader/SliderSkeleeton";
 import HeroSliderSkeleton2 from "../lazyLoader/HeroSkeleton2";
 
-export default function HomeSlider() {
+ function HomeSlider() {
     const dispatch = useDispatch()
-    const games = useSelector((state) => state.game.games)?.slice(5, 15) || [];
+    const games = useSelector((state) => state.game.SliderData).slice(0,10) || [];
+    console.log("Suju" , games);
+
     const listRef = useRef(null);
     const carouselRef = useRef(null);
     const timeRunning = 3000;
@@ -25,17 +27,19 @@ export default function HomeSlider() {
     // const games = useSelector((state) => state.game.games) || [];
     useEffect(() => {
         if( !games.length ){
-            dispatch(getAllGames());
+            dispatch(getHomeSliderData());
         }
     }, [dispatch]);
     // Limit to 5 games for left slider
-    const leftGames = games.slice(0, 5);
+    const leftGames = games.slice(0,5);
 
     const [leftIndex, setLeftIndex] = useState(0);
     const [centerGame, setCenterGame] = useState(null);
 
     const leftItemRefs = useRef([]);
     const displayIntervalRef = useRef(null);
+
+    
 
    
     const getImageUrl = (slide) => {
@@ -150,7 +154,7 @@ export default function HomeSlider() {
         <div className="sp_slider">
             <div className="carousel w-full h-[500px]  md:h-[500px] lg:h-[500px] xl:h-[700px]" ref={carouselRef}>
                 <div className="list hidden md:flex" ref={listRef}>
-                    {games.map((slide, i) => {
+                    {games?.map((slide, i) => {
                         const imageUrl = getImageUrl(slide);
 
                         return (
@@ -255,3 +259,5 @@ export default function HomeSlider() {
         </div>
     );
 }
+
+export default memo(HomeSlider)
