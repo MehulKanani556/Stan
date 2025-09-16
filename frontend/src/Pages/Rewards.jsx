@@ -617,7 +617,7 @@ const RewardsExperience = () => {
 
     return (
         <section className='pb-12 overflow-x-hidden'>
-            <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
+            <div className='max-w-[95%] md:max-w-[85%] m-auto overflow-x-hidden'>
                 {/* Hero */}
                 <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
                     <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
@@ -1018,7 +1018,7 @@ const RewardsExperience = () => {
                                         <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
                                         <span className='text-white/50 text-xs'>{it.time}</span>
                                     </div>
-                                    <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount}</div>
+                                    <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount.toFixed(2)}</div>
                                 </div>
                             ))}
                         </div>

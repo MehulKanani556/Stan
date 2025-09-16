@@ -66,7 +66,7 @@ const Games = () => {
 	// Error state
 	if (error) {
 		return (
-			<div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center p-4">
+			<div className="min-h-screen flex items-center justify-center p-4">
 				<div className="text-center max-w-md bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border border-gray-700">
 					<div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
 						<FaGamepad className="w-10 h-10 text-red-400" />
@@ -85,7 +85,7 @@ const Games = () => {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
+		<div className="min-h-screen ">
 			{/* Hero Section */}
 			<div className="relative overflow-hidden bg-gradient-to-r from-purple-900/30 via-blue-900/20 to-pink-900/30">
 				<div className="absolute inset-0 opacity-30">
