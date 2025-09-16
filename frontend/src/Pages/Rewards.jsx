@@ -341,8 +341,25 @@ const RewardsExperience = () => {
 
     const completeDailyTask = async (task) => {
         const isPlayTimeTask = /play any game for/i.test(task?.title || '');
-        const goal = Number(task?.limit || task?.goal || 0);
-        const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
+        const isLoggingTask = /Login to the app/i.test(task?.title || '')
+        const isStreakTask = /Daily Streak Bonus/i.test(task?.title || '')
+        let goal = 0;
+        let progress=0;
+        if(isPlayTimeTask){
+            goal = Number(task?.limit || task?.goal || 0);
+            progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
+        }
+        if(isLoggingTask){
+            const today = new Date();
+            goal = Number(task?.limit || task?.goal || 0);
+            progress = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 1 : 0;
+        }
+        if(isStreakTask){
+            goal = Number(task?.limit || task?.goal || 0)
+            progress = 1;
+        }
+        // const goal = Number(task?.limit || task?.goal || 0);
+        // const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
         const key = task?._id || task?.id;
         
         // Check if task is already claimed for today
@@ -356,7 +373,7 @@ const RewardsExperience = () => {
         
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily' });
+            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily' , rewards : task?.reward });
             // Update local state to reflect the new claim
             setTaskClaimData(prevData => {
                 const updatedDaily = prevData.daily.map(d => 
@@ -364,7 +381,6 @@ const RewardsExperience = () => {
                     ? { ...d, claimedTasks: [...(d.claimedTasks || []), key] }
                     : d
                 );
-                
                 return {
                     ...prevData,
                     daily: updatedDaily
@@ -375,13 +391,24 @@ const RewardsExperience = () => {
             enqueueSnackbar('Failed to claim task', { variant: 'error' });
         } finally {
             setLoadingTaskClaim(false);
+        dispatch(getUserRewardBalance());
+
         }
     };
 
     const completeWeeklyTask = async (task) => {
         const isPlayTimeTask = /play any game for/i.test(task?.title || '');
-        const goal = Number(task?.limit || task?.goal || 0);
-        const progress = isPlayTimeTask ? playedMinutesThisWeek : Number(task?.progress || 0);
+        const isLoggingTask = /Login 4 days this week/i.test(task?.title || '')
+        let goal = 0;
+        let progress=0;
+        if(isPlayTimeTask){
+            goal = Number(task?.limit || task?.goal || 0);
+            progress = isPlayTimeTask ? playedMinutesThisWeek : Number(task?.progress || 0);
+        }
+        if(isLoggingTask){
+            goal = Number(task?.limit ||task?.goal || 0);
+            progress =  userLogging?.weeklyLogging ? Number(userLogging?.weeklyLogging || 0) : 0;
+        }
         const key = task?._id || task?.id;
         
         // Get current week in YYYY-Www format
@@ -399,7 +426,7 @@ const RewardsExperience = () => {
         
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly' });
+            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly',rewards : task?.reward });
             // Update local state to reflect the new claim
             setTaskClaimData(prevData => ({
                 ...prevData,
@@ -413,6 +440,8 @@ const RewardsExperience = () => {
             enqueueSnackbar('Failed to claim weekly quest', { variant: 'error' });
         } finally {
             setLoadingTaskClaim(false);
+        dispatch(getUserRewardBalance());
+
         }
     };
 
@@ -602,6 +631,7 @@ const RewardsExperience = () => {
                 {/* Top grid */}
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-10 md:items-stretch'>
                     {/* My Points */}
+                    { console.log('userBalance',userBalance)}
                     <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
                         <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>

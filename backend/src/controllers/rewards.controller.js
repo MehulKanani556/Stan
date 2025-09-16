@@ -207,7 +207,7 @@ export const getUserRewardBalance = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const user = await User.findById(userId).select('fanCoins');
+        const user = await User.findById(userId).select('rewards');
         if (!user) {
             return sendNotFoundResponse(res, "User not found");
         }
@@ -267,7 +267,7 @@ export const getUserRewardBalance = async (req, res) => {
         }).slice(0, 10);
 
         return sendSuccessResponse(res, "User balance retrieved successfully", {
-            balance: user.fanCoins || 0,
+            balance: user.rewards || 0,
             recentTransactions
         });
     } catch (error) {
@@ -298,7 +298,7 @@ export const redeemReward = async (req, res) => {
         }
 
         // Check if user has enough points
-        if (user.fanCoins < reward.price) {
+        if (user.rewards < reward.price) {
             return sendBadRequestResponse(res, "Insufficient points to redeem this reward");
         }
 
@@ -324,8 +324,8 @@ export const redeemReward = async (req, res) => {
         });
 
         // Update user's fan coins
-        user.fanCoins -= reward.price;
-        user.fanCoinTransactions.push({
+        user.rewards -= reward.price;
+        user.rewardsTransactions.push({
             type: 'SPEND',
             amount: reward.price,
             description: `Redeemed: ${reward.title}`,
@@ -353,7 +353,7 @@ export const redeemReward = async (req, res) => {
                 title: reward.title,
                 price: reward.price
             },
-            newBalance: user.fanCoins
+            newBalance: user.rewards
         });
     } catch (error) {
         return ThrowError(res, 500, error.message);
@@ -419,8 +419,8 @@ export const completeTask = async (req, res) => {
         }
 
         // Add points to user
-        user.fanCoins = (user.fanCoins || 0) + points;
-        user.fanCoinTransactions.push({
+        user.rewards = (user.rewards || 0) + points;
+        user.rewardsTransactions.push({
             type: 'EARN',
             amount: points,
             description: `Task completed: ${taskType}`,
@@ -431,7 +431,7 @@ export const completeTask = async (req, res) => {
 
         return sendSuccessResponse(res, "Task completed successfully", {
             pointsEarned: points,
-            newBalance: user.fanCoins
+            newBalance: user.rewards
         });
     } catch (error) {
         return ThrowError(res, 500, error.message);
@@ -488,18 +488,18 @@ export const getRewardsLeaderboard = async (req, res) => {
         const leaderboard = await User.aggregate([
             {
                 $match: {
-                    fanCoins: { $exists: true, $gt: 0 }
+                    rewards: { $exists: true, $gt: 0 }
                 }
             },
             {
                 $project: {
                     name: 1,
-                    fanCoins: 1,
+                    rewards: 1,
                     joinedAt: 1
                 }
             },
             {
-                $sort: { fanCoins: -1 }
+                $sort: { rewards: -1 }
             },
             {
                 $limit: 10
@@ -511,7 +511,7 @@ export const getRewardsLeaderboard = async (req, res) => {
             leaderboard: leaderboard.map((user, index) => ({
                 rank: index + 1,
                 name: user.name,
-                points: user.fanCoins,
+                points: user.rewards,
                 joinedAt: user.joinedAt
             }))
         });
@@ -567,11 +567,11 @@ export const getRewardsStatistics = async (req, res) => {
 };
 
 
-export const updateLoginTask = async (req,res)=>{
+export const updateLoginTask = async (req, res) => {
     try {
         const userId = req.user._id;
-        const userData =await  User.findById(userId);
-        console.log(userData)  
+        const userData = await User.findById(userId);
+        console.log(userData)
         return sendSuccessResponse(res, "Statistics retrieved successfully", {
             userData
         });

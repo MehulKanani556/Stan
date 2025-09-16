@@ -1,4 +1,5 @@
 import UserTaskClaim from '../models/UserDailyTaskClaim.model.js';
+import User from '../models/userModel.js';
 import { sendSuccessResponse, sendErrorResponse } from '../utils/ResponseUtils.js';
 
 
@@ -27,40 +28,40 @@ export const getTaskClaimState = async (req, res) => {
     const year = now.getFullYear();
     const week = getISOWeek(now);
     const weekStr = `${year}-W${week}`;
-    
+
     let claim = await UserTaskClaim.findOne({ user: userId });
     if (!claim) {
-      claim = { 
-        daily: [{ date: today, claimedTasks: [] }], 
-        weekly: { week: weekStr, claimedTasks: [] }, 
-        milestone: { claimedTasks: [] } 
+      claim = {
+        daily: [{ date: today, claimedTasks: [] }],
+        weekly: { week: weekStr, claimedTasks: [] },
+        milestone: { claimedTasks: [] }
       };
     } else {
       // Migrate old daily format to new format
       await migrateDailyFormat(claim);
-      
+
       // Initialize daily as array if it doesn't exist
       if (!Array.isArray(claim.daily)) {
         claim.daily = [];
       }
-      
+
       // Check if today's entry exists, if not create it
       const todayEntry = claim.daily.find(d => d.date === today);
       if (!todayEntry) {
         claim.daily.push({ date: today, claimedTasks: [] });
       }
-      
+
       // Handle weekly reset only if week changed
       if (!claim.weekly || claim.weekly.week !== weekStr) {
         claim.weekly = { week: weekStr, claimedTasks: [] };
       }
-      
+
       // Initialize milestone if it doesn't exist
       if (!claim.milestone) {
         claim.milestone = { claimedTasks: [] };
       }
     }
-    
+
     return sendSuccessResponse(res, 'Fetched claim state', claim);
   } catch (error) {
     return sendErrorResponse(res, 500, error.message);
@@ -71,32 +72,32 @@ export const getTaskClaimState = async (req, res) => {
 export const claimTask = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { taskId, type } = req.body; // type: 'daily' | 'weekly' | 'milestone'
-    
+    const { taskId, type,rewards } = req.body; // type: 'daily' | 'weekly' | 'milestone'
+
     if (!['daily', 'weekly', 'milestone'].includes(type)) {
       return sendErrorResponse(res, 400, 'Invalid type');
     }
-    
+
     const today = new Date().toISOString().slice(0, 10);
     const now = new Date();
     const year = now.getFullYear();
     const week = getISOWeek(now);
     const weekStr = `${year}-W${week}`;
-    
+
     let claim = await UserTaskClaim.findOne({ user: userId });
     if (!claim) {
       claim = new UserTaskClaim({ user: userId });
     }
-    
+
     // Daily (preserve all previous dates)
     if (type === 'daily') {
       // Migrate old format if needed
       await migrateDailyFormat(claim);
-      
+
       if (!Array.isArray(claim.daily)) {
         claim.daily = [];
       }
-      
+
       let dayEntry = claim.daily.find(d => d.date === today);
       if (!dayEntry) {
         // Create new entry for today
@@ -108,7 +109,7 @@ export const claimTask = async (req, res) => {
         }
       }
     }
-    
+
     // Weekly
     if (type === 'weekly') {
       if (!claim.weekly) {
@@ -125,7 +126,7 @@ export const claimTask = async (req, res) => {
         }
       }
     }
-    
+
     // Milestone (never reset)
     if (type === 'milestone') {
       if (!claim.milestone) {
@@ -136,8 +137,19 @@ export const claimTask = async (req, res) => {
         }
       }
     }
-    
+
     await claim.save();
+    // Add points to user
+    const user = await User.findById(userId);
+    user.rewards = (user.rewards || 0) + rewards;
+    user.rewardsTransactions.push({
+      type: 'EARN',
+      amount: rewards,
+      description: `Task completed: ${type}`,
+      date: new Date()
+    });
+
+    await user.save();
     return sendSuccessResponse(res, 'Task claimed', claim);
   } catch (error) {
     return sendErrorResponse(res, 500, error.message);
@@ -160,21 +172,21 @@ export const claimDailyTask = async (req, res) => {
     const userId = req.user._id;
     const { taskId } = req.body;
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-    
+
     let claim = await UserTaskClaim.findOne({ user: userId });
     if (!claim) {
-      claim = new UserTaskClaim({ 
-        user: userId, 
+      claim = new UserTaskClaim({
+        user: userId,
         daily: [{ date: today, claimedTasks: [taskId] }]
       });
     } else {
       // Migrate old format if needed
       await migrateDailyFormat(claim);
-      
+
       if (!Array.isArray(claim.daily)) {
         claim.daily = [];
       }
-      
+
       let dayEntry = claim.daily.find(d => d.date === today);
       if (!dayEntry) {
         claim.daily.push({ date: today, claimedTasks: [taskId] });
@@ -184,7 +196,7 @@ export const claimDailyTask = async (req, res) => {
         }
       }
     }
-    
+
     await claim.save();
     return sendSuccessResponse(res, 'Task claimed for today', claim);
   } catch (error) {
