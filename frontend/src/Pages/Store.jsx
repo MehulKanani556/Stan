@@ -574,7 +574,7 @@ const Store = () => {
 
       {/* Featured Games Section */}
       <div className="mx-auto flex flex-col items-center sm:max-w-full">
-        <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+        <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[95%] md:w-[85%] mx-auto">
           <SwiperSection
             title="All Games"
             games={Array.isArray(games) ? games.slice(0, 12) : []} // Limit initial display
@@ -631,7 +631,7 @@ const Store = () => {
       </div>
 
       {/* Game Sections */}
-      <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[85%] mx-auto">
+      <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[95%] md:w-[85%] mx-auto">
 
         <SwiperSection
           title="Trending Games"

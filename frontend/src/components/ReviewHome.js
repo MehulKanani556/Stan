@@ -94,7 +94,7 @@ export default function ReviewHomeSlick() {
   };
 
   return (
-    <section className="relative ds_reviewHome_slide ms:py-14 py-8 text-white bg-[#101012] overflow-hidden">
+    <section className="relative ds_reviewHome_slide ms:py-14 py-8 text-white  overflow-hidden">
       <h2 className="md:text-[36px] text-[28px] font-bold text-center md:mb-10 mb-5">
         Player Reviews
       </h2>
