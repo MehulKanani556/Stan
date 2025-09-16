@@ -6,7 +6,8 @@ import UserReward from '../models/UserRewards.model.js';
 import User from '../models/userModel.js';
 import cloudinaryHelper from '../helper/cloudinary.js';
 import fs from 'fs';
-
+import UserTaskClaim from '../models/UserDailyTaskClaim.model.js';
+import { DailyTask, WeeklyTask, Milestone } from '../models/Task.model.js';
 const { fileupload, deleteFile } = cloudinaryHelper;
 
 // ==================== REWARD MANAGEMENT (ADMIN) ====================
@@ -213,26 +214,34 @@ export const getUserRewardBalance = async (req, res) => {
         }
 
         // Get recent claimed tasks from UserTaskClaim
-        const UserTaskClaim = (await import('../models/UserDailyTaskClaim.model.js')).default;
-        const { DailyTask, WeeklyTask, Milestone } = await import('../models/Task.model.js');
+     
         const claim = await UserTaskClaim.findOne({ user: userId });
         let recentTransactions = [];
+        console.log(claim);
         if (claim) {
-            // Daily
-            if (claim.daily && Array.isArray(claim.daily.claimedTasks) && claim.daily.claimedTasks.length) {
-                const dailyTasks = await DailyTask.find({ _id: { $in: claim.daily.claimedTasks } });
-                for (const t of dailyTasks) {
-                    recentTransactions.push({
-                        type: 'DAILY',
-                        taskId: t._id,
-                        title: t.title,
-                        amount: t.reward,
-                        claimedAt: claim.daily.date
-                    });
+            // Handle daily claims (array of days)
+            if (Array.isArray(claim.daily) && claim.daily.length > 0) {
+                for (const dailyEntry of claim.daily) {
+                    if (Array.isArray(dailyEntry.claimedTasks) && dailyEntry.claimedTasks.length > 0) {
+                        const dailyTasks = await DailyTask.find({ _id: { $in: dailyEntry.claimedTasks } });
+                        for (const t of dailyTasks) {
+                            recentTransactions.push({
+                                type: 'DAILY',
+                                taskId: t._id,
+                                title: t.title,
+                                amount: t.reward,
+                                claimedAt: dailyEntry.date
+                            });
+                        }
+                    }
                 }
             }
-            // Weekly
-            if (claim.weekly && Array.isArray(claim.weekly.claimedTasks) && claim.weekly.claimedTasks.length) {
+            // Handle weekly claims (single object)
+            if (
+                claim.weekly &&
+                Array.isArray(claim.weekly.claimedTasks) &&
+                claim.weekly.claimedTasks.length > 0
+            ) {
                 const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
                 for (const t of weeklyTasks) {
                     recentTransactions.push({
@@ -244,8 +253,12 @@ export const getUserRewardBalance = async (req, res) => {
                     });
                 }
             }
-            // Milestone
-            if (claim.milestone && Array.isArray(claim.milestone.claimedTasks) && claim.milestone.claimedTasks.length) {
+            // Handle milestone claims (single object)
+            if (
+                claim.milestone &&
+                Array.isArray(claim.milestone.claimedTasks) &&
+                claim.milestone.claimedTasks.length > 0
+            ) {
                 const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
                 for (const t of milestoneTasks) {
                     recentTransactions.push({
