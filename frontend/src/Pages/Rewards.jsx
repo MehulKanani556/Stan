@@ -22,6 +22,7 @@ import {
     getAllTasks
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
+import { getuserLogging } from '../Redux/Slice/user.slice';
 
 
 const gamerTheme = `
@@ -94,14 +95,17 @@ const RewardsExperience = () => {
     const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
     const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
     const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
-    const allTasksState = useSelector((state)=>state.reward.allTasks);
-    const userGamePlayTime = useSelector((state)=>state.reward.userGamePlayTime);
-
+    const allTasksState = useSelector((state) => state.reward.allTasks);
+    const userGamePlayTime = useSelector((state) => state.reward.userGamePlayTime);
+    const userLogging = useSelector((state) => state.user.userLogging)
+    console.log('userLogging', userLogging)
     // console.log("Reward state:", allTasksState);
 
-    console.log("HIHI" , userGamePlayTime);
-    
+    console.log("HIHI", userGamePlayTime);
 
+    useEffect(() => {
+        dispatch(getuserLogging())
+    }, [])
 
     const [streakDay, setStreakDay] = useState(3);
     const [completedTasks, setCompletedTasks] = useState(new Set());
@@ -410,7 +414,7 @@ const RewardsExperience = () => {
         }));
     };
 
-    const handleTaskComplete = (task) => {        
+    const handleTaskComplete = (task) => {
         if (completedTasks.has(task.id)) return;
         dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
         setCompletedTasks(prev => new Set(prev).add(task.id));
@@ -428,7 +432,7 @@ const RewardsExperience = () => {
         setCompletedQuests(prev => {
             const next = new Set(prev);
             next.add(key);
-            try { localStorage.setItem(STORAGE_KEYS.weekly, JSON.stringify(Array.from(next))); } catch {}
+            try { localStorage.setItem(STORAGE_KEYS.weekly, JSON.stringify(Array.from(next))); } catch { }
             return next;
         });
     };
@@ -451,14 +455,14 @@ const RewardsExperience = () => {
             window.prompt('Copy your referral link:', referralLink);
         }
     };
-    
+
 
 
     // Handle claiming referral points
     const handleClaimReferralPoints = async () => {
         console.log('Claim referral points clicked. Current referral points:', referralPoints);
         console.log('Is claiming referral:', isClaimingReferral);
-        
+
         if (referralPoints === 0 || isClaimingReferral) {
             console.log('Cannot claim: referralPoints =', referralPoints, 'isClaimingReferral =', isClaimingReferral);
             return;
@@ -508,6 +512,12 @@ const RewardsExperience = () => {
         }
     }, [STORAGE_KEYS]);
 
+
+    function isSameDay(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate();
+    }
     return (
         <section className='pb-12 overflow-x-hidden'>
             <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
@@ -557,54 +567,53 @@ const RewardsExperience = () => {
                         </div>
                         <div className="space-y-3 sm:space-y-4">
                             {(showAll
-                              ? allTasksState?.earntask
-                              : allTasksState?.earntask?.slice(0, 2)
+                                ? allTasksState?.earntask
+                                : allTasksState?.earntask?.slice(0, 2)
                             )?.map((task) => {
-                              const done = completedTasks.has(task._id);
-                              return (
-                                <div
-                                  key={task._id}
-                                  className="flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10"
-                                >
-                                  <div className="flex items-center gap-3 sm:gap-4">
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
-                                      {task?.icon}
+                                const done = completedTasks.has(task._id);
+                                return (
+                                    <div
+                                        key={task._id}
+                                        className="flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10"
+                                    >
+                                        <div className="flex items-center gap-3 sm:gap-4">
+                                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
+                                                {task?.icon}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-white font-medium text-sm sm:text-base truncate">
+                                                    {task?.title}
+                                                </p>
+                                                <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
+                                                    <FaGem /> <span>{task?.reward}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handleTaskComplete(task)}
+                                            disabled={done}
+                                            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done
+                                                ? "btn-soft cursor-not-allowed opacity-60"
+                                                : "btn-primary"
+                                                }`}
+                                        >
+                                            {done ? "Completed" : "Earn"}
+                                        </button>
                                     </div>
-                                    <div className="min-w-0 flex-1">
-                                      <p className="text-white font-medium text-sm sm:text-base truncate">
-                                        {task?.title}
-                                      </p>
-                                      <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
-                                        <FaGem /> <span>{task?.reward}</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <button
-                                    onClick={() => handleTaskComplete(task)}
-                                    disabled={done}
-                                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${
-                                      done
-                                        ? "btn-soft cursor-not-allowed opacity-60"
-                                        : "btn-primary"
-                                    }`}
-                                  >
-                                    {done ? "Completed" : "Earn"}
-                                  </button>
-                                </div>
-                              );
+                                );
                             })}
-                          
+
                             {allTasksState?.earntask?.length > 2 && (
-                              <button
-                                onClick={() => setShowAll((v) => !v)}
-                                className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
-                              >
-                                {showAll
-                                  ? "Show less"
-                                  : `View ${allTasksState?.earntask?.length - 2} More`}
-                              </button>
+                                <button
+                                    onClick={() => setShowAll((v) => !v)}
+                                    className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
+                                >
+                                    {showAll
+                                        ? "Show less"
+                                        : `View ${allTasksState?.earntask?.length - 2} More`}
+                                </button>
                             )}
-                       </div>
+                        </div>
 
                     </div>
                 </div>
@@ -672,12 +681,39 @@ const RewardsExperience = () => {
                         </div>
                         <div className='space-y-3'>
                             {allTasksState?.dailytask?.map(task => {
+                                // Play any game for 90 minutes logic
                                 const isPlayTimeTask = /play any game for/i.test(task?.title || '');
-                                const goal = Number(task?.limit || task?.goal || 0);
-                                const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
-                                const progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                const claimed = claimedDailyTasks.has(task?._id || task?.id);
-                                const canComplete = progress >= goal && !claimed;
+                                const isLoggingTask = /Login to the app/i.test(task?.title || '')
+                                const isStreakTask = /Daily Streak Bonus/i.test(task?.title || '')
+                                let goal = 0;
+                                let progress = 0;
+                                let progressPct = 0;
+                                let claimed = false;
+                                let canComplete = false;
+                                if (isPlayTimeTask) {
+                                    goal = Number(task?.limit || task?.goal || 0);
+                                    progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
+                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                    claimed = claimedDailyTasks.has(task?._id || task?.id);
+                                    canComplete = progress >= goal && !claimed;
+                                }
+                                if (isLoggingTask) {
+                                    const today = new Date();
+                                    goal = Number(task?.limit || task?.goal || 0);
+                                    progress = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 1 : 0;
+                                    progressPct = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 100 : 0;
+                                    claimed = claimedDailyTasks.has(task?._id || task?.id);
+                                    canComplete = progress === 1 && !claimed;
+                                }
+                                if (isStreakTask) {
+                                    goal = Number(task?.limit || task?.goal || 0)
+                                    progress = 1;
+                                    progressPct = 100;
+                                    claimed = claimedDailyTasks.has(task?._id || task?.id);
+                                    canComplete = !claimed;
+                                }
+
+                                // Login to the app logic
                                 return (
                                     <div key={task._id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                         <div className='flex items-center justify-between mb-2'>
@@ -719,11 +755,29 @@ const RewardsExperience = () => {
                         <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
                             {allTasksState?.weeklytask?.map(q => {
                                 const isPlayTimeTask = /play any game for/i.test(q?.title || '');
-                                const goal = Number(q?.limit || q?.goal || 0);
-                                const progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
-                                const progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                const claimed = claimedWeeklyTasks.has(q?._id || q?.id);
-                                const canComplete = progress >= goal && !claimed;
+                                const isLoggingTask = /Login 4 days this week/i.test(q?.title || '')
+                                const is3DayTask = /Complete 3 daily tasks/i.test(q?.title || '')
+                                let goal = 0;
+                                let progress = 0;
+                                let progressPct = 0;
+                                let canComplete = false;
+                                let done = false;
+                                if (isPlayTimeTask) {
+                                    goal = Number(q?.limit || q?.goal || 0);
+                                    progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
+                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                    canComplete = progress >= goal && !completedQuests.has(q?._id || q?.id);
+                                    done = completedQuests.has(q?._id || q?.id);
+                                }
+                                if (isLoggingTask) {
+                                    goal = Number(q?.limit || q?.goal || 0);
+                                    progress =  userLogging?.weeklyLogging ? Number(userLogging?.weeklyLogging || 0) : 0;
+                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                    canComplete = progress >= goal && !completedQuests.has(q?._id || q?.id);
+                                    done = completedQuests.has(q?._id || q?.id);
+                                    console.log('progerss',   userLogging?.weeklyLogging)
+                                }
+
                                 return (
                                     <div key={q._id || q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                         <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>

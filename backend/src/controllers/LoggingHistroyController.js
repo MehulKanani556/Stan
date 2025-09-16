@@ -21,7 +21,7 @@ export const loggingHistory = async (req, res) => {
 
                 const getWeekStart = (date) => {
                     const day = date.getDay();
-                    const diff = day === 0 ? -6 : 1 - day; 
+                    const diff = day === 0 ? -6 : 1 - day;
                     const weekStart = new Date(date);
                     weekStart.setDate(date.getDate() + diff);
                     weekStart.setHours(0, 0, 0, 0);
@@ -49,3 +49,15 @@ export const loggingHistory = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+export const getUserLogging = async (req, res) => {
+    try {
+        const userId = req.user._id ;
+        const LoggingData = await LoggingHistory.findOne({ user: userId });
+        res.status(200).json({ message: "Logging history updated", data: LoggingData });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
