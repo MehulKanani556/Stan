@@ -33,6 +33,7 @@ import { RiDeleteBin2Line } from "react-icons/ri";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useFormik } from 'formik'
 import * as Yup from "yup";
+import { enqueueSnackbar } from "notistack";
 
 
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
@@ -84,7 +85,7 @@ const FANCoin = () => {
                                                             const priceString = description.substring("Earned from game purchase of $".length);
                                                             const price = parseFloat(priceString);
                                                             if (!isNaN(price)) {
-                                                                const formattedPrice = price.toFixed(2);
+                                                                const formattedPrice = price?.toFixed(2);
                                                                 return `Earned from game purchase of $${formattedPrice}`;
                                                             }
                                                         }
@@ -94,7 +95,7 @@ const FANCoin = () => {
                                                 <p className="text-gray-300 text-xs sm:text-sm mt-1">{formatDateTime(transaction?.date)}</p>
                                             </div>
                                             <span className={`font-bold text-base sm:text-lg whitespace-nowrap ${transaction.type === 'EARN' ? 'text-green-400' : 'text-red-400'}`}>
-                                                {transaction?.amount.toFixed(2)}
+                                                {transaction?.amount?.toFixed(2)}
                                             </span>
                                         </div>
                                     </div>
@@ -876,6 +877,7 @@ export default function Profile() {
                                                 <button
                                                     onClick={() => {
                                                         navigator.clipboard.writeText(user.referralCode);
+                                                        enqueueSnackbar("Referral code copied to clipboard", { variant: "success" });
                                                         // You can add a toast notification here
                                                     }}
                                                     className="text-[#ab99e1] hover:text-white transition-colors p-1"
@@ -932,7 +934,7 @@ export default function Profile() {
                                                     <path d="M414.5 140.1C291.5 183.3 192.7 278.2 144.3 398.7C140.1 395.6 136 392.4 132 388.9C103.3 355.6 86 312.3 86 265C86 160.1 171.1 75 276 75C323.4 75 366.7 92.3 399.9 121C405.2 127.1 410 133.5 414.5 140.1Z" fill="white" fill-opacity="0.145098" />
                                                 </svg>
                                             </div>
-                                            <span className='font-semibold'>{currentUser.fanCoins.toFixed(2)}</span>
+                                            <span className='font-semibold'>{currentUser?.fanCoins?.toFixed(2)}</span>
                                         </div>
                                     </div>
 
@@ -1047,7 +1049,7 @@ export default function Profile() {
                                                                             '❌ Failed'}
                                                                 </span>
                                                                 <div className="mt-1">
-                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.originalAmount}</span>
+                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.originalAmount.toFixed(2)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1397,7 +1399,7 @@ export default function Profile() {
                                                                         '❌ Failed'}
                                                             </span>
                                                             <div className="mt-2">
-                                                                <span className="text-3xl font-bold text-white">${selectedOrder.originalAmount.toFixed(2)}</span>
+                                                                <span className="text-3xl font-bold text-white">${selectedOrder?.originalAmount?.toFixed(2)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1454,14 +1456,14 @@ export default function Profile() {
                                                         {/* Display original amount as Subtotal */}
                                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
                                                             <span className="text-gray-300">Subtotal:</span>
-                                                            <span className="text-white font-semibold">${selectedOrder.originalAmount?.toFixed(2) || '0.00'}</span>
+                                                            <span className="text-white font-semibold">${selectedOrder?.originalAmount?.toFixed(2) || '0.00'}</span>
                                                         </div>
 
                                                         {/* Display Fan Coin Discount if available and greater than 0 */}
                                                         {selectedOrder.fanCoinDiscount > 0 && (
                                                             <div className="flex justify-between items-center py-2 border-b border-white/10">
                                                                 <span className="text-gray-300">Fan Coin Discount:</span>
-                                                                <span className="text-green-400 font-semibold">-${selectedOrder.fanCoinDiscount?.toFixed(2) || '0.00'}</span>
+                                                                <span className="text-green-400 font-semibold">-${selectedOrder?.fanCoinDiscount?.toFixed(2) || '0.00'}</span>
                                                             </div>
                                                         )}
 
@@ -1486,7 +1488,7 @@ export default function Profile() {
                                                             <div className="flex justify-between items-center">
                                                                 {/* Display final amount as Total */}
                                                                 <span className="text-white font-bold text-lg">Total:</span>
-                                                                <span className="text-white font-bold text-2xl">${selectedOrder.amount?.toFixed(2) || '0.00'}</span>
+                                                                <span className="text-white font-bold text-2xl">${selectedOrder?.amount?.toFixed(2) || '0.00'}</span>
                                                             </div>
                                                         </div>
                                                         {console.log(selectedOrder)}
@@ -1556,7 +1558,7 @@ export default function Profile() {
                                 <h1 className='text-lg sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Delete Account</h1>
                             </div>
                             <div className='mt-4 rounded-2xl p-4 md:p-6 relative overflow-hidden'>
-                                <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-40 h-40 bg-fuchsia-600/20 rounded-full blur-3xl" />
+                                {/* <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-40 h-40 bg-fuchsia-600/20 rounded-full blur-3xl" /> */}
                                 <h3 className='text-lg md:text-xl font-semibold mb-4'>When you delete your gaming account</h3>
                                 <ul className='space-y-3 text-gray-300 text-sm md:text-base list-disc list-inside'>
                                     <li>Your shopping cart, wishlist, and order history will be permanently deleted.</li>
@@ -1631,7 +1633,7 @@ export default function Profile() {
                                 <Dialog.Panel className="w-full max-w-md rounded-xl border border-white/25 backdrop-blur-xl p-6 text-white shadow-xl">
                                     <Dialog.Title className="text-lg font-semibold flex items-center justify-between">
                                         <span>Verify Otp</span>
-                                        <button onClick={closeDeleteAccountModal} className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors">
+                                        <button onClick={() => setDeleteOtp(false)} className="text-gray-300 hover:text-white p-2 hover:bg-white/10 rounded-full transition-colors">
                                             <IoClose className="w-5 h-5" />
                                         </button>
                                     </Dialog.Title>

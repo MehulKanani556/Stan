@@ -190,7 +190,7 @@ export const completeTask = createAsyncThunk(
     "reward/completeTask",
     async (taskData, { rejectWithValue }) => {
         try {
-            const { taskId, points, title } = taskData;
+            const { taskId, points, title, completed } = taskData;
 
             // Map task titles to task types for backend
             const taskTypeMap = {
@@ -207,7 +207,9 @@ export const completeTask = createAsyncThunk(
             const response = await axiosInstance.post('/rewards/tasks/complete', {
                 title,
                 taskId,
-                points
+                points,
+                taskType,
+                completed
             });
             enqueueSnackbar(response?.data?.message, { variant: "success" });
             return response.data;

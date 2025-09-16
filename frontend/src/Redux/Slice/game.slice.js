@@ -26,6 +26,28 @@ export const getAllGames = createAsyncThunk(
     }
   }
 );
+// GET ALL GAMES - Optimized version
+export const getHomeSliderData = createAsyncThunk(
+  "game/getHomeSliderData",
+  async ({ page = 1, limit = 20, sortBy = 'createdAt', order = 'desc', category, search } = {}, { rejectWithValue }) => {
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        sortBy,
+        order
+      });
+
+      if (category) params.append('category', category);
+      if (search) params.append('search', search);
+
+      const res = await axiosInstance.get(`/getAllGames?${params}`);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
 export const getAllActiveGames = createAsyncThunk(
   "game/getAllActiveGames",
   async (params = {}, { rejectWithValue, getState }) => {
@@ -277,6 +299,7 @@ const gameSlice = createSlice({
   name: "game",
   initialState: {
     games: [],
+    SliderData:[],
     homeTopGame:[],
     popularGames: [],
     topGames: [],
@@ -543,6 +566,19 @@ const gameSlice = createSlice({
       .addCase(getHomeTopGame.rejected, (state, action) => {
         state.loading = false;
         state.topGamesInitialLoading = false;
+        state.error = action.payload;
+      })
+       .addCase(getHomeSliderData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getHomeSliderData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.topGamesInitialLoading = false;
+        state.SliderData = action.payload.data;
+      })
+      .addCase(getHomeSliderData.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },

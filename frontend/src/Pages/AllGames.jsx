@@ -315,7 +315,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
                             }`}
                         aria-label={isInCart ? "Already in cart" : isPurchased ? "Already purchased" : "Add to cart"}
                     >
-                        <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                        <div className={`relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 ${isPurchased ? 'px-2' : 'px-3'}  py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5`}>
                             <div>
                                 {isInCart || isPurchased ? (
                                     <div className="flex items-center justify-center w-6 h-6 rounded-full">
@@ -554,6 +554,10 @@ export default function AllGames() {
     // Memoized values
     const totalPages = pagination?.totalPages || 1;
     const totalGames = pagination?.totalItems || 0;
+
+    useEffect(() => {
+        window.scroll({ top: 0,}); // you can remove behavior if you don't want smooth scroll
+      }, []);
 
     // Callback handlers
     const handleWishlistToggle = useCallback((game, isInWishlist) => {

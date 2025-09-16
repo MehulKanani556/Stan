@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import Slider from "react-slick";
 import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
@@ -13,7 +13,7 @@ import user from '../images/user_img.png'
 
 
 
-export default function ReviewHomeSlick() {
+ function ReviewHomeSlick() {
   const [slidesToShow, setSlidesToShow] = useState(3);
   const dispatch = useDispatch()
 
@@ -94,7 +94,7 @@ export default function ReviewHomeSlick() {
   };
 
   return (
-    <section className="relative ds_reviewHome_slide ms:py-14 py-8 text-white bg-[#101012] overflow-hidden">
+    <section className="relative ds_reviewHome_slide ms:py-14 py-8 text-white  overflow-hidden">
       <h2 className="md:text-[36px] text-[28px] font-bold text-center md:mb-10 mb-5">
         Player Reviews
       </h2>
@@ -191,3 +191,5 @@ export default function ReviewHomeSlick() {
     </section>
   );
 }
+
+export default memo(ReviewHomeSlick)

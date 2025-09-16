@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes, FaRedo } from "react-icons/fa";
+import { SlPuzzle } from "react-icons/sl";
 import "../App.css";
 
-const PuzzleCaptchaModal = ({ 
+const PuzzleCaptchaModal = ({
     isOpen,
     onClose,
     onSuccess,
@@ -22,10 +23,10 @@ const PuzzleCaptchaModal = ({
     const maxCanvasWidth = 380;
     const renderWidth = Math.min(imageWidth, maxCanvasWidth);
     const renderHeight = imageHeight;
-    
+
     // Responsive dimensions for all screen sizes
     const [screenSize, setScreenSize] = useState('desktop');
-    
+
     useEffect(() => {
         const checkScreenSize = () => {
             const width = window.innerWidth;
@@ -45,7 +46,7 @@ const PuzzleCaptchaModal = ({
         window.addEventListener('resize', checkScreenSize);
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
-    
+
     // Dynamic dimensions based on screen size
     const getResponsiveDimensions = () => {
         const width = window.innerWidth;
@@ -82,7 +83,7 @@ const PuzzleCaptchaModal = ({
                 };
         }
     };
-    
+
     const { width: responsiveWidth, height: responsiveHeight, maxWidth } = getResponsiveDimensions();
     const isMobile = screenSize === 'small-mobile' || screenSize === 'mobile';
 
@@ -100,7 +101,7 @@ const PuzzleCaptchaModal = ({
     const [currentShape, setCurrentShape] = useState('fa-puzzle'); // Current puzzle shape
 
     // Available puzzle shapes (prioritize jigsaw shapes)
-    const puzzleShapes = ['fa-puzzle', 'classic-jigsaw', 'jigsaw', 'classic-jigsaw', 'jigsaw', 'star', 'triangle', 'circle', 'diamond', 'hexagon'];
+    const puzzleShapes = ['fa-puzzle', 'sl-puzzle', 'classic-jigsaw', 'jigsaw', 'classic-jigsaw', 'jigsaw', 'star', 'triangle', 'circle', 'diamond', 'hexagon'];
 
     // Get a random puzzle shape
     const getRandomShape = () => {
@@ -111,11 +112,11 @@ const PuzzleCaptchaModal = ({
     // Load a random image and pick a puzzle gap in the right half of the image.
     const loadImage = () => {
         setIsLoading(true); // Begin loading
-        
+
         // Select a random shape
         const selectedShape = getRandomShape();
         setCurrentShape(selectedShape);
-        
+
         const sources = [
             `https://picsum.photos/${responsiveWidth}/${responsiveHeight}?random=${Math.random()}`,
             `https://placekitten.com/${responsiveWidth}/${responsiveHeight}`,
@@ -245,13 +246,16 @@ const PuzzleCaptchaModal = ({
     // Creates different shape paths based on the shape type
     const createShapePath = (ctx, cx, cy, shapeType, width, height) => {
         const radius = Math.min(width, height) * 0.4;
-        
+
         switch (shapeType) {
             case 'star':
                 createStarPath(ctx, cx, cy, 5, radius, radius * 0.4);
                 break;
             case 'fa-puzzle':
                 createFaPuzzlePath(ctx, cx, cy, width, height);
+                break;
+            case 'sl-puzzle':
+                createSlPuzzlePath(ctx, cx, cy, width, height);
                 break;
             case 'triangle':
                 createTrianglePath(ctx, cx, cy, radius);
@@ -265,7 +269,6 @@ const PuzzleCaptchaModal = ({
             case 'hexagon':
                 createHexagonPath(ctx, cx, cy, radius);
                 break;
-            
             default:
                 createFaPuzzlePath(ctx, cx, cy, width, height);
         }
@@ -303,50 +306,50 @@ const PuzzleCaptchaModal = ({
     //     const cornerRadius = Math.min(w, h) * 0.05;
 
     //     ctx.beginPath();
-        
+
     //     // Start from top-left corner
     //     ctx.moveTo(x + cornerRadius, y);
-        
+
     //     // Top edge - one tab in the center
     //     ctx.lineTo(x + w * 0.3, y);
     //     // Top tab (outward) - centered
     //     ctx.arc(x + w * 0.5, y, tabSize, Math.PI, 0, false);
     //     ctx.lineTo(x + w * 0.7, y);
     //     ctx.lineTo(x + w - cornerRadius, y);
-        
+
     //     // Top-right corner
     //     ctx.arcTo(x + w, y, x + w, y + cornerRadius, cornerRadius);
-        
+
     //     // Right edge - one tab in the center
     //     ctx.lineTo(x + w, y + h * 0.3);
     //     // Right tab (outward) - centered
     //     ctx.arc(x + w, y + h * 0.5, tabSize, -Math.PI/2, Math.PI/2, false);
     //     ctx.lineTo(x + w, y + h * 0.7);
     //     ctx.lineTo(x + w, y + h - cornerRadius);
-        
+
     //     // Bottom-right corner
     //     ctx.arcTo(x + w, y + h, x + w - cornerRadius, y + h, cornerRadius);
-        
+
     //     // Bottom edge - one blank in the center
     //     ctx.lineTo(x + w * 0.7, y + h);
     //     // Bottom blank (inward) - centered
     //     ctx.arc(x + w * 0.5, y + h, tabSize, 0, Math.PI, false);
     //     ctx.lineTo(x + w * 0.3, y + h);
     //     ctx.lineTo(x + cornerRadius, y + h);
-        
+
     //     // Bottom-left corner
     //     ctx.arcTo(x, y + h, x, y + h - cornerRadius, cornerRadius);
-        
+
     //     // Left edge - one blank in the center
     //     ctx.lineTo(x, y + h * 0.7);
     //     // Left blank (inward) - centered
     //     ctx.arc(x, y + h * 0.5, tabSize, Math.PI/2, -Math.PI/2, false);
     //     ctx.lineTo(x, y + h * 0.3);
     //     ctx.lineTo(x, y + cornerRadius);
-        
+
     //     // Top-left corner
     //     ctx.arcTo(x, y, x + cornerRadius, y, cornerRadius);
-        
+
     //     ctx.closePath();
     // };
 
@@ -360,54 +363,57 @@ const PuzzleCaptchaModal = ({
     //     const cornerRadius = Math.min(w, h) * 0.05;
 
     //     ctx.beginPath();
-        
+
     //     // Start from top-left corner
     //     ctx.moveTo(x + cornerRadius, y);
-        
+
     //     // Top edge - one tab in the center
     //     ctx.lineTo(x + w * 0.3, y);
     //     // Top tab (outward) - centered
     //     ctx.arc(x + w * 0.5, y, tabSize, Math.PI, 0, false);
     //     ctx.lineTo(x + w * 0.7, y);
     //     ctx.lineTo(x + w - cornerRadius, y);
-        
+
     //     // Top-right corner
     //     ctx.arcTo(x + w, y, x + w, y + cornerRadius, cornerRadius);
-        
+
     //     // Right edge - one tab in the center
     //     ctx.lineTo(x + w, y + h * 0.3);
     //     // Right tab (outward) - centered
     //     ctx.arc(x + w, y + h * 0.5, tabSize, -Math.PI/2, Math.PI/2, false);
     //     ctx.lineTo(x + w, y + h * 0.7);
     //     ctx.lineTo(x + w, y + h - cornerRadius);
-        
+
     //     // Bottom-right corner
     //     ctx.arcTo(x + w, y + h, x + w - cornerRadius, y + h, cornerRadius);
-        
+
     //     // Bottom edge - one blank in the center
     //     ctx.lineTo(x + w * 0.7, y + h);
     //     // Bottom blank (inward) - centered
     //     ctx.arc(x + w * 0.5, y + h, tabSize, 0, Math.PI, false);
     //     ctx.lineTo(x + w * 0.3, y + h);
     //     ctx.lineTo(x + cornerRadius, y + h);
-        
+
     //     // Bottom-left corner
     //     ctx.arcTo(x, y + h, x, y + h - cornerRadius, cornerRadius);
-        
+
     //     // Left edge - one blank in the center
     //     ctx.lineTo(x, y + h * 0.7);
     //     // Left blank (inward) - centered
     //     ctx.arc(x, y + h * 0.5, tabSize, Math.PI/2, -Math.PI/2, false);
     //     ctx.lineTo(x, y + h * 0.3);
     //     ctx.lineTo(x, y + cornerRadius);
-        
+
     //     // Top-left corner
     //     ctx.arcTo(x, y, x + cornerRadius, y, cornerRadius);
-        
+
     //     ctx.closePath();
     // };
 
     // Approximate Font Awesome FaPuzzlePiece silhouette
+
+
+
     const createFaPuzzlePath = (ctx, cx, cy, width, height) => {
         // Inset scale to prevent any edge clipping on canvas
         const insetScale = 0.70;
@@ -458,6 +464,54 @@ const PuzzleCaptchaModal = ({
         // Left edge with socket (inward circle)
         ctx.lineTo(x, y + h * 0.65);
         ctx.arc(x, leftCenterY, socketRadius, Math.PI / 2, -Math.PI / 2, true);
+        ctx.lineTo(x, y + cornerRadius);
+
+        // Top-left corner to close
+        ctx.arcTo(x, y, x + cornerRadius, y, cornerRadius);
+        ctx.closePath();
+    };
+
+    // Creates a SlPuzzle shape path (based on react-icons/sl SlPuzzle)
+    const createSlPuzzlePath = (ctx, cx, cy, width, height) => {
+        // Inset scale to prevent any edge clipping on canvas
+        const insetScale = 0.7;
+        const w = width * insetScale;
+        const h = height * insetScale;
+        const x = cx - w / 2;
+        const y = cy - h / 2;
+
+        const cornerRadius = Math.min(w, h) * 0.05;
+        const knobRadius = Math.min(w, h) * 0.2;
+        const socketRadius = knobRadius * 0.9;
+
+        ctx.beginPath();
+
+        // Start from top-left corner
+        ctx.moveTo(x + cornerRadius, y);
+
+        // Top edge with outward knob in center
+        ctx.lineTo(x + w * 0.35, y);
+        ctx.arc(cx, y, knobRadius, Math.PI, 0, false);
+        ctx.lineTo(x + w - cornerRadius, y);
+
+        // Top-right corner
+        ctx.arcTo(x + w, y, x + w, y + cornerRadius, cornerRadius);
+
+        // Right edge - straight (no knob)
+        ctx.lineTo(x + w, y + h - cornerRadius);
+
+        // Bottom-right corner
+        ctx.arcTo(x + w, y + h, x + w - cornerRadius, y + h, cornerRadius);
+
+        // Bottom edge - straight (no socket)
+        ctx.lineTo(x + cornerRadius, y + h);
+
+        // Bottom-left corner
+        ctx.arcTo(x, y + h, x, y + h - cornerRadius, cornerRadius);
+
+        // Left edge with inward socket in center
+        ctx.lineTo(x, y + h * 0.65);
+        ctx.arc(x, cy, socketRadius, Math.PI / 2, -Math.PI / 2, true);
         ctx.lineTo(x, y + cornerRadius);
 
         // Top-left corner to close
@@ -544,9 +598,9 @@ const PuzzleCaptchaModal = ({
             if (!wrapperRef.current) return;
             const wrapperWidth = wrapperRef.current.offsetWidth || responsiveWidth;
             const targetWidth = responsiveWidth;
-            const minScale = screenSize === 'small-mobile' ? 0.6 : 
-                           screenSize === 'mobile' ? 0.7 : 
-                           screenSize === 'tablet' ? 0.8 : 0.4;
+            const minScale = screenSize === 'small-mobile' ? 0.6 :
+                screenSize === 'mobile' ? 0.7 :
+                    screenSize === 'tablet' ? 0.8 : 0.4;
             const nextScale = Math.max(minScale, Math.min(1, wrapperWidth / targetWidth));
             setScale(nextScale);
         };
@@ -586,32 +640,29 @@ const PuzzleCaptchaModal = ({
                 >
                     {/* Backdrop */}
                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-                    
+
                     {/* Modal Content */}
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0, y: 50 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.8, opacity: 0, y: 50 }}
                         transition={{ type: "spring", duration: 0.5 }}
-                        className={`relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl w-full overflow-hidden ${
-                            screenSize === 'small-mobile' ? 'max-w-xs mx-1' :
-                            screenSize === 'mobile' ? 'max-w-sm mx-2' :
-                            screenSize === 'tablet' ? 'max-w-md mx-3' :
-                            screenSize === 'small-desktop' ? 'max-w-lg mx-4' :
-                            'max-w-xl mx-6'
-                        }`}
+                        className={`relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl w-full overflow-hidden ${screenSize === 'small-mobile' ? 'max-w-xs mx-1' :
+                                screenSize === 'mobile' ? 'max-w-sm mx-2' :
+                                    screenSize === 'tablet' ? 'max-w-md mx-3' :
+                                        screenSize === 'small-desktop' ? 'max-w-lg mx-4' :
+                                            'max-w-xl mx-6'
+                            }`}
                     >
                         {/* Header */}
-                        <div className={`flex items-center justify-between border-b border-white/20 ${
-                            screenSize === 'small-mobile' ? 'p-2' :
-                            screenSize === 'mobile' ? 'p-3' :
-                            'p-4'
-                        }`}>
-                            <h3 className={`font-semibold text-white ${
-                                screenSize === 'small-mobile' ? 'text-sm' :
-                                screenSize === 'mobile' ? 'text-base' :
-                                'text-lg'
-                            }`}>{cardTitle}</h3>
+                        <div className={`flex items-center justify-between border-b border-white/20 ${screenSize === 'small-mobile' ? 'p-2' :
+                                screenSize === 'mobile' ? 'p-3' :
+                                    'p-4'
+                            }`}>
+                            <h3 className={`font-semibold text-white ${screenSize === 'small-mobile' ? 'text-sm' :
+                                    screenSize === 'mobile' ? 'text-base' :
+                                        'text-lg'
+                                }`}>{cardTitle}</h3>
                             <button
                                 onClick={handleClose}
                                 className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
@@ -621,18 +672,16 @@ const PuzzleCaptchaModal = ({
                         </div>
 
                         {/* Captcha Content */}
-                        <div className={`justify-center flex ${
-                            screenSize === 'small-mobile' ? 'p-2' :
-                            screenSize === 'mobile' ? 'p-3' :
-                            'p-4'
-                        }`}>
-                            <div ref={wrapperRef} className={`relative rounded-xl bg-white/10 border border-white/20 backdrop-blur-md w-full ${
-                                screenSize === 'small-mobile' ? 'p-1 max-w-[320px]' :
-                                screenSize === 'mobile' ? 'p-1.5 max-w-[360px]' :
-                                screenSize === 'tablet' ? 'p-2 max-w-[320px]' :
-                                screenSize === 'small-desktop' ? 'p-2 max-w-[350px]' :
-                                'p-2 max-w-[400px]'
-                            }`} style={{ width: "100%" }}>
+                        <div className={`justify-center flex ${screenSize === 'small-mobile' ? 'p-2' :
+                                screenSize === 'mobile' ? 'p-3' :
+                                    'p-4'
+                            }`}>
+                            <div ref={wrapperRef} className={`relative rounded-xl bg-white/10 border border-white/20 backdrop-blur-md w-full ${screenSize === 'small-mobile' ? 'p-1 max-w-[320px]' :
+                                    screenSize === 'mobile' ? 'p-1.5 max-w-[360px]' :
+                                        screenSize === 'tablet' ? 'p-2 max-w-[320px]' :
+                                            screenSize === 'small-desktop' ? 'p-2 max-w-[350px]' :
+                                                'p-2 max-w-[400px]'
+                                }`} style={{ width: "100%" }}>
 
                                 {/* Add Dynamic Styling for slider arrow */}
                                 {!isLoading && (
@@ -641,7 +690,7 @@ const PuzzleCaptchaModal = ({
                                             /* WebKit-based browsers */
                                             input[type="range"]::-webkit-slider-thumb {
                                                 background: ${isSolved ? successColor : initialColor
-                                                                        } url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8.5 12l4 4 4-4'/%3E%3C/svg%3E") 
+                                            } url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8.5 12l4 4 4-4'/%3E%3C/svg%3E") 
                                                 no-repeat center !important;
                                                 background-size: 16px 16px;
                                             }
@@ -649,7 +698,7 @@ const PuzzleCaptchaModal = ({
                                             /* Firefox */
                                             input[type="range"]::-moz-range-thumb {
                                                 background: ${isSolved ? successColor : initialColor
-                                                                        } url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8.5 12l4 4 4-4'/%3E%3C/svg%3E") 
+                                            } url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8.5 12l4 4 4-4'/%3E%3C/svg%3E") 
                                                 no-repeat center !important;
                                                 background-size: 16px 16px;
                                             }
@@ -692,7 +741,7 @@ const PuzzleCaptchaModal = ({
                                                 width={pieceWidth + 6}
                                                 height={pieceHeight + 6}
                                                 style={{
-                                                    overflow:"visible",
+                                                    overflow: "visible",
                                                     cursor: "pointer",
                                                     filter: "drop-shadow(0px 6px 12px rgba(0,0,0,0.4)) drop-shadow(0px 2px 4px rgba(0,0,0,0.2)) drop-shadow(0px 1px 2px rgba(0,0,0,0.1))",
                                                 }}
@@ -722,37 +771,33 @@ const PuzzleCaptchaModal = ({
                                         className={`captcha-range-input captcha-slider w-full h-[6px] bg-white/30 rounded outline-none appearance-none cursor-pointer transition duration-300 ease-in-out ${isSolved ? "[&::-webkit-slider-thumb]:bg-emerald-500" : ""}`}
                                     />
                                 </div>
- 
+
 
                                 {/* If failed */}
                                 {isFailed ? (
-                                    <p className={`text-danger text-break text-red-500 ${
-                                        screenSize === 'small-mobile' ? 'mt-2 text-xs' :
-                                        screenSize === 'mobile' ? 'mt-3 text-sm' :
-                                        'mt-4 text-base'
-                                    }`} style={{ width: "90%" }}>
+                                    <p className={`text-danger text-break text-red-500 ${screenSize === 'small-mobile' ? 'mt-2 text-xs' :
+                                            screenSize === 'mobile' ? 'mt-3 text-sm' :
+                                                'mt-4 text-base'
+                                        }`} style={{ width: "90%" }}>
                                         Captcha Failed. Please Let's try once more!
                                     </p>
                                 ) : (
-                                    <div className={`text-center flex items-center justify-center gap-2 ${
-                                        screenSize === 'small-mobile' ? 'mt-1' :
-                                        screenSize === 'mobile' ? 'mt-1.5' :
-                                        'mt-2'
-                                    }`}>
-                                        <span className={`text-white/80 ${
-                                            screenSize === 'small-mobile' ? 'text-xs' :
-                                            screenSize === 'mobile' ? 'text-sm' :
-                                            'text-base'
-                                        }`}>{sliderBarTitle}</span>
+                                    <div className={`text-center flex items-center justify-center gap-2 ${screenSize === 'small-mobile' ? 'mt-1' :
+                                            screenSize === 'mobile' ? 'mt-1.5' :
+                                                'mt-2'
+                                        }`}>
+                                        <span className={`text-white/80 ${screenSize === 'small-mobile' ? 'text-xs' :
+                                                screenSize === 'mobile' ? 'text-sm' :
+                                                    'text-base'
+                                            }`}>{sliderBarTitle}</span>
                                     </div>
                                 )}
 
                                 {/* Status message */}
-                                <div className={`text-center ${
-                                    screenSize === 'small-mobile' ? 'mt-2' :
-                                    screenSize === 'mobile' ? 'mt-3' :
-                                    'mt-4'
-                                }`}>
+                                <div className={`text-center ${screenSize === 'small-mobile' ? 'mt-2' :
+                                        screenSize === 'mobile' ? 'mt-3' :
+                                            'mt-4'
+                                    }`}>
                                     {isSolved && (
                                         <span style={{ color: successColor, fontWeight: "bold" }} className="text-green-500">Captcha Verified!</span>
                                     )}
@@ -761,24 +806,21 @@ const PuzzleCaptchaModal = ({
                         </div>
 
                         {/* Footer */}
-                        <div className={`border-t border-white/20 ${
-                            screenSize === 'small-mobile' ? 'p-2' :
-                            screenSize === 'mobile' ? 'p-3' :
-                            'p-4'
-                        }`}>
+                        <div className={`border-t border-white/20 ${screenSize === 'small-mobile' ? 'p-2' :
+                                screenSize === 'mobile' ? 'p-3' :
+                                    'p-4'
+                            }`}>
                             <div className="flex justify-end space-x-2">
                                 <button
                                     onClick={handleClose}
                                     disabled={!isSolved}
-                                    className={`py-2 rounded-lg transition-all duration-300 ${
-                                        screenSize === 'small-mobile' ? 'px-2 text-xs' :
-                                        screenSize === 'mobile' ? 'px-3 text-sm' :
-                                        'px-4 text-base'
-                                    } ${
-                                        isSolved 
-                                            ? 'bg-green-500 hover:bg-green-600 text-white' 
+                                    className={`py-2 rounded-lg transition-all duration-300 ${screenSize === 'small-mobile' ? 'px-2 text-xs' :
+                                            screenSize === 'mobile' ? 'px-3 text-sm' :
+                                                'px-4 text-base'
+                                        } ${isSolved
+                                            ? 'bg-green-500 hover:bg-green-600 text-white'
                                             : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-                                    }`}
+                                        }`}
                                 >
                                     {isSolved ? 'Continue' : (screenSize === 'small-mobile' ? 'Complete puzzle' : 'Complete puzzle first')}
                                 </button>

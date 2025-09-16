@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react'
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
@@ -23,6 +23,8 @@ import {
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
 import { getuserLogging } from '../Redux/Slice/user.slice';
+import ScratchGame from './ScratchGame';
+import { useNavigate } from 'react-router-dom'
 
 
 const gamerTheme = `
@@ -88,6 +90,7 @@ export default function Rewards() {
 
 const RewardsExperience = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const rewards = useSelector((state) => state.reward.rewards);
     const user = useSelector((state) => state.user.currentUser);
     const userBalance = useSelector((state) => state.reward.userBalance);
@@ -121,12 +124,18 @@ const RewardsExperience = () => {
     const [referralHistory, setReferralHistory] = useState([]);
     const [isClaimingReferral, setIsClaimingReferral] = useState(false);
     const [showAll, setShowAll] = useState(false);
+    const canvasRef = useRef(null);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [scratchPercentage, setScratchPercentage] = useState(0);
+    const [currentPrize, setCurrentPrize] = useState("");
+    const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
 
     // Add state for task claim data
     const [taskClaimData, setTaskClaimData] = useState({
         daily: [],
         weekly: { week: '', claimedTasks: [] },
-        milestone: { claimedTasks: [] }
+        milestone: { claimedTasks: [] },
+        taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
     });
 
     // Calculate total earned from recent transactions
@@ -162,15 +171,17 @@ const RewardsExperience = () => {
                 
                 // Set the entire task claim data
                 setTaskClaimData({
-                    daily: res.data?.result?.daily || [],
-                    weekly: res.data?.result?.weekly || { week: '', claimedTasks: [] },
-                    milestone: res.data?.result?.milestone || { claimedTasks: [] }
+                    daily: res.data?.result?.claim?.daily || [],
+                    weekly: res.data?.result?.claim?.weekly || { week: '', claimedTasks: [] },
+                    milestone: res.data?.result?.claim?.milestone || { claimedTasks: [] },
+                    taskCompletion: res.data?.result?.taskCompletion || { completedDays: [], isWeeklyTaskEligible: false }
                 });
 
                 // Maintain backward compatibility with existing state
-                const daily = res.data?.result?.daily?.flatMap(d => d.claimedTasks || []);
-                const weekly = res.data?.result?.weekly?.claimedTasks || [];
-                const milestone = res.data?.result?.milestone?.claimedTasks || [];
+                const daily = res.data?.result?.claim?.daily?.flatMap(d => d.claimedTasks || []);
+                const weekly = res.data?.result?.claim?.weekly?.claimedTasks || [];
+                const milestone = res.data?.result?.claim?.milestone?.claimedTasks || [];
+
 
                 setClaimedDailyTasks(new Set(daily));
                 setClaimedWeeklyTasks(new Set(weekly));
@@ -180,7 +191,8 @@ const RewardsExperience = () => {
                 setTaskClaimData({
                     daily: [],
                     weekly: { week: '', claimedTasks: [] },
-                    milestone: { claimedTasks: [] }
+                    milestone: { claimedTasks: [] },
+                    taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
                 });
                 setClaimedDailyTasks(new Set());
                 setClaimedWeeklyTasks(new Set());
@@ -399,6 +411,7 @@ const RewardsExperience = () => {
     const completeWeeklyTask = async (task) => {
         const isPlayTimeTask = /play any game for/i.test(task?.title || '');
         const isLoggingTask = /Login 4 days this week/i.test(task?.title || '')
+        const is3DayTask = /Complete 3 daily tasks/i.test(task?.title || '')
         let goal = 0;
         let progress=0;
         if(isPlayTimeTask){
@@ -408,6 +421,10 @@ const RewardsExperience = () => {
         if(isLoggingTask){
             goal = Number(task?.limit ||task?.goal || 0);
             progress =  userLogging?.weeklyLogging ? Number(userLogging?.weeklyLogging || 0) : 0;
+        }
+        if( is3DayTask ){
+            goal = Number(task?.limit || task?.goal || 0);
+            progress = is3DayTask ? (taskClaimData?.taskCompletion?.completedDays?.filter(day => day.taskCount >= 3).length || 0) : Number(task?.progress || 0);
         }
         const key = task?._id || task?.id;
         
@@ -422,6 +439,16 @@ const RewardsExperience = () => {
         
         if (!key) return;
         if (isTaskClaimedThisWeek) return;
+
+        // Special handling for 3 daily tasks for 5 days task
+        if (is3DayTask) {
+            // Check if user is eligible for the weekly task
+            if (!taskClaimData?.taskCompletion?.isWeeklyTaskEligible) {
+                enqueueSnackbar('Not eligible for this task yet', { variant: 'warning' });
+                return;
+            }
+        }
+        // General task completion check
         if (!(progress >= goal && goal > 0)) return;
         
         setLoadingTaskClaim(true);
@@ -479,7 +506,21 @@ const RewardsExperience = () => {
 
     const handleTaskComplete = (task) => {
         if (completedTasks.has(task.id)) return;
-        dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
+        if (task?.title === 'Take a quiz') {
+            if (!hasPlayedQuiz) {
+                navigate('/quizRewards');
+                return;
+            }
+            const score = Number(quizScore || 0);
+            if (!score) {
+                enqueueSnackbar('Finish the quiz to get a score to claim.', { variant: 'warning' });
+                return;
+            }
+            dispatch(completeTask({ taskId: 'quiz', points: score, title: task.title, completed: true }));
+            try { localStorage.removeItem('quiz:lastScore'); } catch {}
+        } else {
+            dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
+        }
         setCompletedTasks(prev => new Set(prev).add(task.id));
     };
 
@@ -503,6 +544,12 @@ const RewardsExperience = () => {
     const userId = useMemo(() => {
         try { return localStorage.getItem('userId') || '' } catch { return '' }
     }, []);
+    const hasPlayedQuiz = useMemo(() => {
+        try { return localStorage.getItem(`quizPlayed:${userId}`) === '1' } catch { return false }
+    }, [userId]);
+    const quizScore = useMemo(() => {
+        try { return Number(localStorage.getItem('quiz:lastScore') || 0) } catch { return 0 }
+    }, [hasPlayedQuiz]);
     // console.log("user", user);
     const referralLink = useMemo(() => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -603,7 +650,7 @@ const RewardsExperience = () => {
 
     return (
         <section className='pb-12 overflow-x-hidden'>
-            <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
+            <div className='max-w-[95%] md:max-w-[85%] m-auto overflow-x-hidden'>
                 {/* Hero */}
                 <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
                     <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
@@ -624,6 +671,7 @@ const RewardsExperience = () => {
                                 <p className='text-white/70 text-xs'>Total Earned</p>
                                 <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -648,7 +696,7 @@ const RewardsExperience = () => {
                     <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
                         <div className='flex items-center justify-between mb-4 sm:mb-5'>
                             <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
-                            <span className='text-white/50 text-xs'>Daily refresh</span>
+                            <span className='text-white/50 text-xs'>1 Time Play</span>
                         </div>
                         <div className="space-y-3 sm:space-y-4">
                             {(showAll
@@ -674,16 +722,21 @@ const RewardsExperience = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <button
-                                            onClick={() => handleTaskComplete(task)}
-                                            disabled={done}
-                                            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap ${done
-                                                ? "btn-soft cursor-not-allowed opacity-60"
-                                                : "btn-primary"
-                                                }`}
-                                        >
-                                            {done ? "Completed" : "Earn"}
-                                        </button>
+                                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                            <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={task?.title === 'Take a quiz' && hasPlayedQuiz} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${task?.title === 'Take a quiz' && hasPlayedQuiz ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                                {task?.title === 'Take a quiz' ? (hasPlayedQuiz ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : ''}
+                                            </button>
+                                            <button
+                                                onClick={() => handleTaskComplete(task)}
+                                                disabled={done}
+                                                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap w-full sm:w-auto ${done
+                                                    ? "btn-soft cursor-not-allowed opacity-60"
+                                                    : "btn-primary"
+                                                    }`}
+                                            >
+                                                {done ? "All Claimed" : (task?.title === 'Take a quiz' && quizScore > 0 ? `Claim ${quizScore}` : 'Claim Points')}
+                                            </button>
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -872,6 +925,18 @@ const RewardsExperience = () => {
                                     canComplete = progress >= goal && !claimed;
                                     console.log('progerss',   userLogging?.weeklyLogging)
                                 }
+                                if (is3DayTask) {
+                                    // Logic for tracking 3 daily tasks for 5 days
+                                    goal = Number(q?.limit || q?.goal || 5);
+                                    progress = taskClaimData?.taskCompletion?.completedDays?.filter(
+                                        day => day.taskCount >= 3
+                                    ).length || 0;
+                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                    claimed = claimedWeeklyTasks.has(q?._id || q?.id);
+                                    // Ensure the claim button shows when 5 days with 3+ tasks are completed
+                                    canComplete = progress >= goal && !claimed && 
+                                        taskClaimData?.taskCompletion?.isWeeklyTaskEligible;
+                                }
 
                                 return (
                                     <div key={q._id || q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
@@ -987,7 +1052,7 @@ const RewardsExperience = () => {
                                         <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
                                         <span className='text-white/50 text-xs'>{it.time}</span>
                                     </div>
-                                    <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount}</div>
+                                    <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount.toFixed(2)}</div>
                                 </div>
                             ))}
                         </div>
@@ -1037,6 +1102,9 @@ const RewardsExperience = () => {
                     </div>
                     <p className='text-white/60 text-xs mt-3'>Total Earned so far: {totalEarned}</p>
                 </div>
+
+                {/* ***** Scratch Card ***** */}
+                <ScratchGame/>
             </div>
         </section>
     )

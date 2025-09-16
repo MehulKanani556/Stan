@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { memo, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import shadow from "../images/shadow.jpg";
 import hd from "../images/hd.png";
@@ -106,4 +106,4 @@ const StackingCard = ({ card, index, containerRef }) => {
   );
 };
 
-export default MultiHome;
+export default memo(MultiHome);
