@@ -12,15 +12,10 @@ import { getAllCategories } from "../Redux/Slice/category.slice";
 import { addToWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
 import { addToCart } from "../Redux/Slice/cart.slice";
 import { allorders } from "../Redux/Slice/Payment.slice";
-
-// Components
-import StylishDiv from "../components/StylishDiv";
 import LazyGameCard from "../lazyLoader/LazyGameCard";
-
-// Assets
 import game1 from "../images/game1.jpg";
 
-// Constants
+
 const GAMES_PER_PAGE = 12;
 const DEBOUNCE_DELAY = 500;
 
@@ -60,7 +55,6 @@ const useDebounce = (value, delay) => {
     return debouncedValue;
 };
 
-// Custom CSS for select dropdowns (moved to separate constant)
 const SELECT_STYLES = `
     select {
         appearance: none !important;
@@ -108,7 +102,6 @@ const SELECT_STYLES = `
     }
 `;
 
-// Utility functions (moved outside component to prevent re-creation)
 const getGamePrice = (game) => {
     const priceCandidates = [
         game?.platforms?.windows?.price,
@@ -116,6 +109,33 @@ const getGamePrice = (game) => {
         game?.platforms?.android?.price,
     ];
     return priceCandidates.find((p) => typeof p === "number" && !Number.isNaN(p)) ?? 0;
+};
+
+// Parse size like "60 MB", "6GB", "1.5 gb", "700kb" to a common unit (MB)
+const parseGameSizeToMB = (sizeString) => {
+    if (!sizeString || typeof sizeString !== 'string') return 0;
+    const normalized = sizeString.trim().replace(/,/g, '').toLowerCase();
+    const match = normalized.match(/([\d.]+)\s*(tb|t|gb|g|mb|m|kb|k|b)?/i);
+    if (!match) return 0;
+
+    const value = parseFloat(match[1]);
+    const unit = (match[2] || 'mb').toLowerCase();
+
+    const unitToMb = {
+        tb: 1024 * 1024,
+        t: 1024 * 1024,
+        gb: 1024,
+        g: 1024,
+        mb: 1,
+        m: 1,
+        kb: 1 / 1024,
+        k: 1 / 1024,
+        b: 1 / (1024 * 1024),
+    };
+
+    const multiplier = unitToMb[unit] ?? 1; 
+    const result = value * multiplier;
+    return Number.isFinite(result) ? result : 0;
 };
 
 const sortGames = (games, sortBy) => {
@@ -126,13 +146,13 @@ const sortGames = (games, sortBy) => {
             case "price-high-low":
                 return getGamePrice(b) - getGamePrice(a);
             case "size-low-high": {
-                const sizeA = parseFloat(a.size?.replace(/[^\d.]/g, '') || '0');
-                const sizeB = parseFloat(b.size?.replace(/[^\d.]/g, '') || '0');
+                const sizeA = parseGameSizeToMB(a?.platforms?.windows?.size || '');
+                const sizeB = parseGameSizeToMB(b?.platforms?.windows?.size || '');
                 return sizeA - sizeB;
             }
             case "size-high-low": {
-                const sizeA = parseFloat(a.size?.replace(/[^\d.]/g, '') || '0');
-                const sizeB = parseFloat(b.size?.replace(/[^\d.]/g, '') || '0');
+                const sizeA = parseGameSizeToMB(a?.platforms?.windows?.size || '');
+                const sizeB = parseGameSizeToMB(b?.platforms?.windows?.size || '');
                 return sizeB - sizeA;
             }
             case "a-z":
@@ -167,13 +187,13 @@ const filterGamesByPrice = (games, priceRange) => {
     });
 };
 
-// Game Card Component (extracted for better organization)
+ 
 const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wishlistStatus, cartItems }) => {
     const navigate = useNavigate();
     const imageUrl = game?.cover_image?.url || game1;
     const priceValue = getGamePrice(game);
 
-    // Check if the game has been purchased
+  
     const isPurchased = useMemo(() =>
         Array.isArray(orders) && orders.some(order =>
             order?.status === 'paid' &&
@@ -818,7 +838,7 @@ export default function AllGames() {
             {hasGames ? (
                 <>
                     <div className="grid  grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 mb-12 all-games-grid">
-                        {games.map((game, index) => (
+                        {processedGames.map((game, index) => (
                             <LazyGameCard key={game.id || index}>
                                 <GameCard game={game} orders={orders} isLoggedIn={isLoggedIn} />
                             </LazyGameCard>

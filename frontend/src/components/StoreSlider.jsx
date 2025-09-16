@@ -91,9 +91,16 @@ export default function StoreSlider() {
 
                                 return (
                                     <button
-                                        key={game._id || gameIndex}
+                                        key={`${game?._id || gameIndex}-${i}`}
                                         onClick={() => {
-                                            setLeftIndex(gameIndex);
+                                            const len = leftGames.length;
+                                            if (len > 0) {
+                                                // Adjust leftIndex so the clicked item becomes the center (i === 2)
+                                                const targetIndex = gameIndex;
+                                                const newLeftIndex = (targetIndex - 2 + len) % len;
+                                                setLeftIndex(newLeftIndex);
+                                                setCenterGame(leftGames[targetIndex]);
+                                            }
                                         }}
                                         className={`block w-full rounded-md overflow-hidden transition-all duration-500 
                                             drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]

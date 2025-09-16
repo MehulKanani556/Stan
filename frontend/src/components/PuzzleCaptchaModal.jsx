@@ -14,9 +14,9 @@ const PuzzleCaptchaModal = ({
     successColor = "#10B981",
     imageWidth = 380,
     imageHeight = 200,
-    pieceWidth = 30,
-    pieceHeight = 60,
-    tolerance = 12,
+    pieceWidth = 10,
+    pieceHeight = 20,
+    tolerance = 5,
     showResetBtn = true
 }) => {
     const maxCanvasWidth = 380;
@@ -89,6 +89,7 @@ const PuzzleCaptchaModal = ({
     const canvasRef = useRef(null);      // Background image with puzzle hole
     const pieceCanvasRef = useRef(null); // Draggable puzzle piece
     const wrapperRef = useRef(null);     // Responsive wrapper
+    const piecePadding = 3;              // Extra pixels around piece to avoid edge clipping
     const [scale, setScale] = useState(1);
     const [gapX, setGapX] = useState(0); // X-coordinate of the puzzle gap
     const [gapY, setGapY] = useState(0); // Y-coordinate of the puzzle gap
@@ -96,10 +97,10 @@ const PuzzleCaptchaModal = ({
     const [isSolved, setIsSolved] = useState(false);
     const [isFailed, setIsFailed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [currentShape, setCurrentShape] = useState('classic-jigsaw'); // Current puzzle shape
+    const [currentShape, setCurrentShape] = useState('fa-puzzle'); // Current puzzle shape
 
     // Available puzzle shapes (prioritize jigsaw shapes)
-    const puzzleShapes = ['classic-jigsaw', 'jigsaw', 'classic-jigsaw', 'jigsaw', 'star', 'triangle', 'circle', 'diamond', 'hexagon'];
+    const puzzleShapes = ['fa-puzzle', 'classic-jigsaw', 'jigsaw', 'classic-jigsaw', 'jigsaw', 'star', 'triangle', 'circle', 'diamond', 'hexagon'];
 
     // Get a random puzzle shape
     const getRandomShape = () => {
@@ -204,15 +205,22 @@ const PuzzleCaptchaModal = ({
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        ctx.clearRect(0, 0, pieceWidth, pieceHeight);
+        const paddedWidth = pieceWidth + piecePadding * 2;
+        const paddedHeight = pieceHeight + piecePadding * 2;
+        // Ensure canvas matches padded size
+        if (canvas.width !== paddedWidth || canvas.height !== paddedHeight) {
+            canvas.width = paddedWidth;
+            canvas.height = paddedHeight;
+        }
+        ctx.clearRect(0, 0, paddedWidth, paddedHeight);
 
         // 1) Clip to the selected shape
         ctx.save();
         ctx.beginPath();
         createShapePath(
             ctx,
-            pieceWidth / 2,
-            pieceHeight / 2,
+            pieceWidth / 2 + piecePadding,
+            pieceHeight / 2 + piecePadding,
             currentShape,
             pieceWidth,
             pieceHeight
@@ -226,8 +234,8 @@ const PuzzleCaptchaModal = ({
             cropY,
             pieceWidth,
             pieceHeight,
-            0,
-            0,
+            piecePadding,
+            piecePadding,
             pieceWidth,
             pieceHeight
         );
@@ -242,11 +250,8 @@ const PuzzleCaptchaModal = ({
             case 'star':
                 createStarPath(ctx, cx, cy, 5, radius, radius * 0.4);
                 break;
-            case 'jigsaw':
-                createJigsawPath(ctx, cx, cy, width, height);
-                break;
-            case 'classic-jigsaw':
-                createClassicJigsawPath(ctx, cx, cy, width, height);
+            case 'fa-puzzle':
+                createFaPuzzlePath(ctx, cx, cy, width, height);
                 break;
             case 'triangle':
                 createTrianglePath(ctx, cx, cy, radius);
@@ -262,7 +267,7 @@ const PuzzleCaptchaModal = ({
                 break;
             
             default:
-                createCirclePath(ctx, cx, cy, radius);
+                createFaPuzzlePath(ctx, cx, cy, width, height);
         }
     };
 
@@ -288,117 +293,175 @@ const PuzzleCaptchaModal = ({
         ctx.closePath();
     };
 
-    // Creates a jigsaw puzzle piece path (simple version with one tab/blank per side)
-    const createJigsawPath = (ctx, cx, cy, width, height) => {
-        const w = width * 0.7;
-        const h = height * 0.7;
+    // // Creates a jigsaw puzzle piece path (simple version with one tab/blank per side)
+    // const createJigsawPath = (ctx, cx, cy, width, height) => {
+    //     const w = width * 0.7;
+    //     const h = height * 0.7;
+    //     const x = cx - w / 2;
+    //     const y = cy - h / 2;
+    //     const tabSize = Math.min(w, h) * 0.15;
+    //     const cornerRadius = Math.min(w, h) * 0.05;
+
+    //     ctx.beginPath();
+        
+    //     // Start from top-left corner
+    //     ctx.moveTo(x + cornerRadius, y);
+        
+    //     // Top edge - one tab in the center
+    //     ctx.lineTo(x + w * 0.3, y);
+    //     // Top tab (outward) - centered
+    //     ctx.arc(x + w * 0.5, y, tabSize, Math.PI, 0, false);
+    //     ctx.lineTo(x + w * 0.7, y);
+    //     ctx.lineTo(x + w - cornerRadius, y);
+        
+    //     // Top-right corner
+    //     ctx.arcTo(x + w, y, x + w, y + cornerRadius, cornerRadius);
+        
+    //     // Right edge - one tab in the center
+    //     ctx.lineTo(x + w, y + h * 0.3);
+    //     // Right tab (outward) - centered
+    //     ctx.arc(x + w, y + h * 0.5, tabSize, -Math.PI/2, Math.PI/2, false);
+    //     ctx.lineTo(x + w, y + h * 0.7);
+    //     ctx.lineTo(x + w, y + h - cornerRadius);
+        
+    //     // Bottom-right corner
+    //     ctx.arcTo(x + w, y + h, x + w - cornerRadius, y + h, cornerRadius);
+        
+    //     // Bottom edge - one blank in the center
+    //     ctx.lineTo(x + w * 0.7, y + h);
+    //     // Bottom blank (inward) - centered
+    //     ctx.arc(x + w * 0.5, y + h, tabSize, 0, Math.PI, false);
+    //     ctx.lineTo(x + w * 0.3, y + h);
+    //     ctx.lineTo(x + cornerRadius, y + h);
+        
+    //     // Bottom-left corner
+    //     ctx.arcTo(x, y + h, x, y + h - cornerRadius, cornerRadius);
+        
+    //     // Left edge - one blank in the center
+    //     ctx.lineTo(x, y + h * 0.7);
+    //     // Left blank (inward) - centered
+    //     ctx.arc(x, y + h * 0.5, tabSize, Math.PI/2, -Math.PI/2, false);
+    //     ctx.lineTo(x, y + h * 0.3);
+    //     ctx.lineTo(x, y + cornerRadius);
+        
+    //     // Top-left corner
+    //     ctx.arcTo(x, y, x + cornerRadius, y, cornerRadius);
+        
+    //     ctx.closePath();
+    // };
+
+    // // Creates a classic jigsaw puzzle piece path (exactly like the image)
+    // const createClassicJigsawPath = (ctx, cx, cy, width, height) => {
+    //     const w = width * 0.7;
+    //     const h = height * 0.7;
+    //     const x = cx - w / 2;
+    //     const y = cy - h / 2;
+    //     const tabSize = Math.min(w, h) * 0.15;
+    //     const cornerRadius = Math.min(w, h) * 0.05;
+
+    //     ctx.beginPath();
+        
+    //     // Start from top-left corner
+    //     ctx.moveTo(x + cornerRadius, y);
+        
+    //     // Top edge - one tab in the center
+    //     ctx.lineTo(x + w * 0.3, y);
+    //     // Top tab (outward) - centered
+    //     ctx.arc(x + w * 0.5, y, tabSize, Math.PI, 0, false);
+    //     ctx.lineTo(x + w * 0.7, y);
+    //     ctx.lineTo(x + w - cornerRadius, y);
+        
+    //     // Top-right corner
+    //     ctx.arcTo(x + w, y, x + w, y + cornerRadius, cornerRadius);
+        
+    //     // Right edge - one tab in the center
+    //     ctx.lineTo(x + w, y + h * 0.3);
+    //     // Right tab (outward) - centered
+    //     ctx.arc(x + w, y + h * 0.5, tabSize, -Math.PI/2, Math.PI/2, false);
+    //     ctx.lineTo(x + w, y + h * 0.7);
+    //     ctx.lineTo(x + w, y + h - cornerRadius);
+        
+    //     // Bottom-right corner
+    //     ctx.arcTo(x + w, y + h, x + w - cornerRadius, y + h, cornerRadius);
+        
+    //     // Bottom edge - one blank in the center
+    //     ctx.lineTo(x + w * 0.7, y + h);
+    //     // Bottom blank (inward) - centered
+    //     ctx.arc(x + w * 0.5, y + h, tabSize, 0, Math.PI, false);
+    //     ctx.lineTo(x + w * 0.3, y + h);
+    //     ctx.lineTo(x + cornerRadius, y + h);
+        
+    //     // Bottom-left corner
+    //     ctx.arcTo(x, y + h, x, y + h - cornerRadius, cornerRadius);
+        
+    //     // Left edge - one blank in the center
+    //     ctx.lineTo(x, y + h * 0.7);
+    //     // Left blank (inward) - centered
+    //     ctx.arc(x, y + h * 0.5, tabSize, Math.PI/2, -Math.PI/2, false);
+    //     ctx.lineTo(x, y + h * 0.3);
+    //     ctx.lineTo(x, y + cornerRadius);
+        
+    //     // Top-left corner
+    //     ctx.arcTo(x, y, x + cornerRadius, y, cornerRadius);
+        
+    //     ctx.closePath();
+    // };
+
+    // Approximate Font Awesome FaPuzzlePiece silhouette
+    const createFaPuzzlePath = (ctx, cx, cy, width, height) => {
+        // Inset scale to prevent any edge clipping on canvas
+        const insetScale = 0.70;
+        const w = width * insetScale;
+        const h = height * insetScale;
         const x = cx - w / 2;
         const y = cy - h / 2;
-        const tabSize = Math.min(w, h) * 0.15;
-        const cornerRadius = Math.min(w, h) * 0.05;
+
+        const cornerRadius = Math.min(w, h) * 0.12;
+        const knobRadius = Math.min(w, h) * 0.18;
+        const socketRadius = knobRadius * 0.9;
+
+        const topCenterX = cx;
+        const rightCenterY = cy;
+        const bottomCenterX = cx;
+        const leftCenterY = cy;
 
         ctx.beginPath();
-        
-        // Start from top-left corner
+
+        // Start top-left with rounded corner
         ctx.moveTo(x + cornerRadius, y);
-        
-        // Top edge - one tab in the center
-        ctx.lineTo(x + w * 0.3, y);
-        // Top tab (outward) - centered
-        ctx.arc(x + w * 0.5, y, tabSize, Math.PI, 0, false);
-        ctx.lineTo(x + w * 0.7, y);
+        ctx.lineTo(x + w * 0.35, y);
+
+        // Top knob (outward circle) centered
+        ctx.arc(topCenterX, y, knobRadius, Math.PI, 0, false);
         ctx.lineTo(x + w - cornerRadius, y);
-        
-        // Top-right corner
+
+        // Top-right rounded corner
         ctx.arcTo(x + w, y, x + w, y + cornerRadius, cornerRadius);
-        
-        // Right edge - one tab in the center
-        ctx.lineTo(x + w, y + h * 0.3);
-        // Right tab (outward) - centered
-        ctx.arc(x + w, y + h * 0.5, tabSize, -Math.PI/2, Math.PI/2, false);
-        ctx.lineTo(x + w, y + h * 0.7);
+
+        // Right edge to before right knob
+        ctx.lineTo(x + w, y + h * 0.35);
+        // Right knob (outward)
+        ctx.arc(x + w, rightCenterY, knobRadius, -Math.PI / 2, Math.PI / 2, false);
         ctx.lineTo(x + w, y + h - cornerRadius);
-        
+
         // Bottom-right corner
         ctx.arcTo(x + w, y + h, x + w - cornerRadius, y + h, cornerRadius);
-        
-        // Bottom edge - one blank in the center
-        ctx.lineTo(x + w * 0.7, y + h);
-        // Bottom blank (inward) - centered
-        ctx.arc(x + w * 0.5, y + h, tabSize, 0, Math.PI, false);
-        ctx.lineTo(x + w * 0.3, y + h);
+
+        // Bottom edge with socket (inward circle)
+        ctx.lineTo(x + w * 0.65, y + h);
+        ctx.arc(bottomCenterX, y + h, socketRadius, 0, Math.PI, true);
         ctx.lineTo(x + cornerRadius, y + h);
-        
+
         // Bottom-left corner
         ctx.arcTo(x, y + h, x, y + h - cornerRadius, cornerRadius);
-        
-        // Left edge - one blank in the center
-        ctx.lineTo(x, y + h * 0.7);
-        // Left blank (inward) - centered
-        ctx.arc(x, y + h * 0.5, tabSize, Math.PI/2, -Math.PI/2, false);
-        ctx.lineTo(x, y + h * 0.3);
-        ctx.lineTo(x, y + cornerRadius);
-        
-        // Top-left corner
-        ctx.arcTo(x, y, x + cornerRadius, y, cornerRadius);
-        
-        ctx.closePath();
-    };
 
-    // Creates a classic jigsaw puzzle piece path (exactly like the image)
-    const createClassicJigsawPath = (ctx, cx, cy, width, height) => {
-        const w = width * 0.7;
-        const h = height * 0.7;
-        const x = cx - w / 2;
-        const y = cy - h / 2;
-        const tabSize = Math.min(w, h) * 0.15;
-        const cornerRadius = Math.min(w, h) * 0.05;
-
-        ctx.beginPath();
-        
-        // Start from top-left corner
-        ctx.moveTo(x + cornerRadius, y);
-        
-        // Top edge - one tab in the center
-        ctx.lineTo(x + w * 0.3, y);
-        // Top tab (outward) - centered
-        ctx.arc(x + w * 0.5, y, tabSize, Math.PI, 0, false);
-        ctx.lineTo(x + w * 0.7, y);
-        ctx.lineTo(x + w - cornerRadius, y);
-        
-        // Top-right corner
-        ctx.arcTo(x + w, y, x + w, y + cornerRadius, cornerRadius);
-        
-        // Right edge - one tab in the center
-        ctx.lineTo(x + w, y + h * 0.3);
-        // Right tab (outward) - centered
-        ctx.arc(x + w, y + h * 0.5, tabSize, -Math.PI/2, Math.PI/2, false);
-        ctx.lineTo(x + w, y + h * 0.7);
-        ctx.lineTo(x + w, y + h - cornerRadius);
-        
-        // Bottom-right corner
-        ctx.arcTo(x + w, y + h, x + w - cornerRadius, y + h, cornerRadius);
-        
-        // Bottom edge - one blank in the center
-        ctx.lineTo(x + w * 0.7, y + h);
-        // Bottom blank (inward) - centered
-        ctx.arc(x + w * 0.5, y + h, tabSize, 0, Math.PI, false);
-        ctx.lineTo(x + w * 0.3, y + h);
-        ctx.lineTo(x + cornerRadius, y + h);
-        
-        // Bottom-left corner
-        ctx.arcTo(x, y + h, x, y + h - cornerRadius, cornerRadius);
-        
-        // Left edge - one blank in the center
-        ctx.lineTo(x, y + h * 0.7);
-        // Left blank (inward) - centered
-        ctx.arc(x, y + h * 0.5, tabSize, Math.PI/2, -Math.PI/2, false);
-        ctx.lineTo(x, y + h * 0.3);
+        // Left edge with socket (inward circle)
+        ctx.lineTo(x, y + h * 0.65);
+        ctx.arc(x, leftCenterY, socketRadius, Math.PI / 2, -Math.PI / 2, true);
         ctx.lineTo(x, y + cornerRadius);
-        
-        // Top-left corner
+
+        // Top-left corner to close
         ctx.arcTo(x, y, x + cornerRadius, y, cornerRadius);
-        
         ctx.closePath();
     };
 
@@ -618,16 +681,16 @@ const PuzzleCaptchaModal = ({
                                         <div
                                             style={{
                                                 position: "absolute",
-                                                top: gapY,
-                                                left: sliderValue,
-                                                width: pieceWidth,
-                                                height: pieceHeight,
+                                                top: gapY - 3,
+                                                left: sliderValue - 3,
+                                                width: pieceWidth + 6,
+                                                height: pieceHeight + 6,
                                             }}
                                         >
                                             <canvas
                                                 ref={pieceCanvasRef}
-                                                width={pieceWidth}
-                                                height={pieceHeight}
+                                                width={pieceWidth + 6}
+                                                height={pieceHeight + 6}
                                                 style={{
                                                     overflow:"visible",
                                                     cursor: "pointer",
