@@ -115,15 +115,28 @@ const RewardsExperience = () => {
     const [completedDailyTasks, setCompletedDailyTasks] = useState(new Set());
     const [claimedDailyTasks, setClaimedDailyTasks] = useState(new Set());
     const [claimedWeeklyTasks, setClaimedWeeklyTasks] = useState(new Set());
+    const [claimedMilestoneTasks, setClaimedMilestoneTasks] = useState(new Set());
     const [loadingTaskClaim, setLoadingTaskClaim] = useState(false);
     const [referralPoints, setReferralPoints] = useState(0);
     const [referralHistory, setReferralHistory] = useState([]);
     const [isClaimingReferral, setIsClaimingReferral] = useState(false);
     const [showAll, setShowAll] = useState(false);
 
+    // Add state for task claim data
+    const [taskClaimData, setTaskClaimData] = useState({
+        daily: [],
+        weekly: { week: '', claimedTasks: [] },
+        milestone: { claimedTasks: [] }
+    });
+
     // Calculate total earned from recent transactions
     const totalEarned = recentTransactions
-        .filter(transaction => transaction.type === 'earn')
+        // .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
+        .reduce((total, transaction) => total + (transaction.amount || 0), 0);
+
+    // Calculate earn balance (sum of all EARN transactions)
+    const earnBalance = recentTransactions
+        // .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
         .reduce((total, transaction) => total + (transaction.amount || 0), 0);
 
     useEffect(() => {
@@ -140,19 +153,38 @@ const RewardsExperience = () => {
     }), []);
 
 
-    // Fetch claimed daily and weekly tasks from backend on mount
+    // Fetch claimed daily, weekly, and milestone tasks from backend on mount
     useEffect(() => {
         const fetchClaimed = async () => {
             setLoadingTaskClaim(true);
             try {
                 const res = await axiosInstance.get('/user/task-claim');
-                const daily = res.data?.result?.daily?.claimedTasks || [];
+                
+                // Set the entire task claim data
+                setTaskClaimData({
+                    daily: res.data?.result?.daily || [],
+                    weekly: res.data?.result?.weekly || { week: '', claimedTasks: [] },
+                    milestone: res.data?.result?.milestone || { claimedTasks: [] }
+                });
+
+                // Maintain backward compatibility with existing state
+                const daily = res.data?.result?.daily?.flatMap(d => d.claimedTasks || []);
                 const weekly = res.data?.result?.weekly?.claimedTasks || [];
+                const milestone = res.data?.result?.milestone?.claimedTasks || [];
+
                 setClaimedDailyTasks(new Set(daily));
                 setClaimedWeeklyTasks(new Set(weekly));
+                setClaimedMilestoneTasks(new Set(milestone));
             } catch (e) {
+                // Reset to default state if fetch fails
+                setTaskClaimData({
+                    daily: [],
+                    weekly: { week: '', claimedTasks: [] },
+                    milestone: { claimedTasks: [] }
+                });
                 setClaimedDailyTasks(new Set());
                 setClaimedWeeklyTasks(new Set());
+                setClaimedMilestoneTasks(new Set());
             } finally {
                 setLoadingTaskClaim(false);
             }
@@ -259,62 +291,7 @@ const RewardsExperience = () => {
         }
     }, [userGamePlayTime]);
 
-    // Use API tasks or fallback to default tasks
-    // const baseTasks = availableTasks.length > 0 ? availableTasks.slice(0, 3).map(task => ({
-    //     id: task.id || task._id,
-    //     title: task.title || task.name,
-    //     icon: <FaQuestionCircle className="text-purple-300" />, // Default icon
-    //     points: task.points || task.reward
-    // })) : [
-    //     { id: 1, title: 'Take a quiz', icon: <FaQuestionCircle className="text-purple-300" />, points: 50 },
-    //     { id: 2, title: 'Watch a video', icon: <MdOutlineOndemandVideo className="text-pink-300" />, points: 5 },
-    //     { id: 3, title: 'Refer a friend', icon: <FaUserFriends className="text-emerald-300" />, points: 50 },
-    // ];
-
-    // const dailyTasks = [
-    //     { id: 'd1', title: 'Login to the app', points: 15, progress: 1, goal: 1 },
-    //     { id: 'd2', title: 'Play any game for 15 minutes', points: 15, progress: 10, goal: 15 },
-    //     { id: 'd3', title: 'Daily Streak Bonus', points: 15, progress: 1, goal: 1 },
-    // ];
-
-    // const iconCycle = [
-    //     <FaQuestionCircle className="text-purple-300" />,
-    //     <MdOutlineOndemandVideo className="text-pink-300" />,
-    //     <FaUserFriends className="text-emerald-300" />,
-    // ];
-
-    // const moreTasks = Array.from({ length: 13 }).map((_, i) => ({
-    //     id: 100 + i,
-    //     title: `Bonus task #${i + 1}`,
-    //     icon: iconCycle[i % iconCycle.length],
-    //     points: [25, 40, 75, 100, 120][i % 5]
-    // }));
-
-    // const allTasks = [...baseTasks];
-    // const tasksToShow = showAllTasks ? allTasks : baseTasks;
-
-    // const weeklyQuests = [
-    //     { id: 'q1', title: 'Play any game for 60 minutes', progress: 10, goal: 60, reward: 50 },
-    //     { id: 'q2', title: 'Complete 3 daily tasks for 5 days', progress: 2, goal: 5, reward: 45 },
-    //     { id: 'q3', title: 'Login 5 days this week', progress: streakDay, goal: 5, reward: 40 },
-    // ];
-
-    // Use API rewards or fallback to default rewards
-    // const rewardsData = rewards.length > 0 ? rewards.map(reward => ({
-    //     id: reward._id,
-    //     title: reward.title,
-    //     img: reward.image || yoyoLogo,
-    //     price: reward.price,
-    //     status: reward.isRedeemed ? 'redeemed' : (userBalance >= reward.price ? 'unlocked' : 'locked')
-    // })) : [
-    //     { id: 1, title: 'tbh welcome pack', img: yoyoLogo, price: 500, status: 'redeemed' },
-    //     { id: 2, title: 'Amazon.com $5 gift card', img: amazonImg, price: 1500, status: 'unlocked' },
-    //     { id: 3, title: 'Sticker pack', img: stickerImg, price: 1500, status: 'locked' },
-    //     { id: 4, title: 'Disposable camera', img: cameraImg, price: 3500, status: 'locked' },
-    //     { id: 5, title: 'Gaming poster', img: posterImg, price: 800, status: 'locked' },
-    //     { id: 6, title: 'Mystery loot', img: mysteryImg, price: 1200, status: 'locked' },
-    // ];
-
+   
     // Use API leaderboard or fallback to default leaderboard
     const leaderboardData = leaderboard.length > 0 ? leaderboard.map(user => ({
         id: user._id || user.id,
@@ -367,14 +344,32 @@ const RewardsExperience = () => {
         const goal = Number(task?.limit || task?.goal || 0);
         const progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
         const key = task?._id || task?.id;
+        
+        // Check if task is already claimed for today
+        const today = new Date().toISOString().split('T')[0];
+        const dailyClaimData = taskClaimData?.daily?.find(d => d.date === today);
+        const isTaskClaimedToday = dailyClaimData?.claimedTasks?.includes(key);
+        
         if (!key) return;
-        if (claimedDailyTasks.has(key)) return;
+        if (isTaskClaimedToday) return;
         if (!(progress >= goal && goal > 0)) return;
+        
         setLoadingTaskClaim(true);
         try {
-            await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily' });
-            setClaimedDailyTasks(prev => new Set(prev).add(key));
-            // dispatch(completeTask({ taskId: key, points: task?.reward, title: task?.title }));
+            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily' });
+            // Update local state to reflect the new claim
+            setTaskClaimData(prevData => {
+                const updatedDaily = prevData.daily.map(d => 
+                    d.date === today 
+                    ? { ...d, claimedTasks: [...(d.claimedTasks || []), key] }
+                    : d
+                );
+                
+                return {
+                    ...prevData,
+                    daily: updatedDaily
+                };
+            });
             enqueueSnackbar('Task claimed!', { variant: 'success' });
         } catch (e) {
             enqueueSnackbar('Failed to claim task', { variant: 'error' });
@@ -388,14 +383,31 @@ const RewardsExperience = () => {
         const goal = Number(task?.limit || task?.goal || 0);
         const progress = isPlayTimeTask ? playedMinutesThisWeek : Number(task?.progress || 0);
         const key = task?._id || task?.id;
+        
+        // Get current week in YYYY-Www format
+        const currentWeek = getCurrentWeek();
+        
+        // Check if task is already claimed for this week
+        const isTaskClaimedThisWeek = (
+            taskClaimData?.weekly?.week === currentWeek && 
+            taskClaimData?.weekly?.claimedTasks?.includes(key)
+        );
+        
         if (!key) return;
-        if (claimedWeeklyTasks.has(key)) return;
+        if (isTaskClaimedThisWeek) return;
         if (!(progress >= goal && goal > 0)) return;
+        
         setLoadingTaskClaim(true);
         try {
-            await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly' });
-            setClaimedWeeklyTasks(prev => new Set(prev).add(key));
-            // dispatch(completeTask({ taskId: key, points: task?.reward, title: task?.title }));
+            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly' });
+            // Update local state to reflect the new claim
+            setTaskClaimData(prevData => ({
+                ...prevData,
+                weekly: {
+                    week: currentWeek,
+                    claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
+                }
+            }));
             enqueueSnackbar('Weekly quest claimed!', { variant: 'success' });
         } catch (e) {
             enqueueSnackbar('Failed to claim weekly quest', { variant: 'error' });
@@ -404,14 +416,36 @@ const RewardsExperience = () => {
         }
     };
 
-    const claimMilestone = (mid) => {
-        setMilestones(prev => prev.map(m => {
-            if (m.id === mid && !m.claimed && totalEarned >= m.target) {
-                earnPoints(m.bonus, `${m.title} Milestone`);
-                return { ...m, claimed: true };
-            }
-            return m;
-        }));
+    const claimMilestone = async (milestoneId) => {
+        // Check if milestone task is already claimed
+        const isTaskClaimedMilestone = taskClaimData?.milestone?.claimedTasks?.includes(milestoneId);
+        
+        if (isTaskClaimedMilestone) return;
+        
+        setLoadingTaskClaim(true);
+        try {
+            const response = await axiosInstance.post('/user/task-claim', { taskId: milestoneId, type: 'milestone' });
+            // Update local state to reflect the new claim
+            setTaskClaimData(prevData => ({
+                ...prevData,
+                milestone: {
+                    claimedTasks: [...(prevData.milestone?.claimedTasks || []), milestoneId]
+                }
+            }));
+            enqueueSnackbar('Milestone claimed!', { variant: 'success' });
+        } catch (e) {
+            enqueueSnackbar('Failed to claim milestone', { variant: 'error' });
+        } finally {
+            setLoadingTaskClaim(false);
+        }
+    };
+
+    // Utility function to get current week in YYYY-Www format
+    const getCurrentWeek = () => {
+        const currentDate = new Date();
+        const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+        const weekNumber = Math.ceil(((currentDate - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+        return `${currentDate.getFullYear()}-W${weekNumber.toString().padStart(2, '0')}`;
     };
 
     const handleTaskComplete = (task) => {
@@ -518,6 +552,26 @@ const RewardsExperience = () => {
             d1.getMonth() === d2.getMonth() &&
             d1.getDate() === d2.getDate();
     }
+
+    // Helper function to check if a daily task is claimed for today
+    const isDailyTaskClaimed = (taskId) => {
+        const today = new Date().toISOString().split('T')[0];
+        const dailyClaimData = taskClaimData?.daily?.find(d => d.date === today);
+        return dailyClaimData?.claimedTasks?.includes(taskId);
+    };
+
+    // Helper function to check if a weekly task is claimed for current week
+    const isWeeklyTaskClaimed = (taskId) => {
+        const currentWeek = getCurrentWeek();
+        return taskClaimData?.weekly?.week === currentWeek && 
+               taskClaimData?.weekly?.claimedTasks?.includes(taskId);
+    };
+
+    // Helper function to check if a milestone task is claimed
+    const isMilestoneTaskClaimed = (taskId) => {
+        return taskClaimData?.milestone?.claimedTasks?.includes(taskId);
+    };
+
     return (
         <section className='pb-12 overflow-x-hidden'>
             <div className='max-w-[90%] md:max-w-[85%] m-auto overflow-x-hidden'>
@@ -555,7 +609,8 @@ const RewardsExperience = () => {
                             <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance.toFixed(2)}</div>
                             <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
                             <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
-                            <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {totalEarned.toFixed(2)}</p>
+                            <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {earnBalance.toFixed(2)}</p>
+                            <p className='text-emerald-300 text-xs md:text-sm mt-2'>Earn Balance: {earnBalance.toFixed(2)}</p>
                         </div>
                     </div>
 
@@ -695,6 +750,17 @@ const RewardsExperience = () => {
                                     progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
                                     claimed = claimedDailyTasks.has(task?._id || task?.id);
                                     canComplete = progress >= goal && !claimed;
+                                    
+                                    console.log('Play Time Task Debug:', {
+                                        taskId: task?._id,
+                                        goal,
+                                        progress,
+                                        progressPct,
+                                        claimed,
+                                        canComplete,
+                                        isDailyTaskClaimed: isDailyTaskClaimed(task?._id),
+                                        loadingTaskClaim
+                                    });
                                 }
                                 if (isLoggingTask) {
                                     const today = new Date();
@@ -735,10 +801,10 @@ const RewardsExperience = () => {
                                         </div>
                                         <button
                                             onClick={() => completeDailyTask(task)}
-                                            disabled={!canComplete || loadingTaskClaim}
-                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${claimed ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                            disabled={!canComplete || loadingTaskClaim || isDailyTaskClaimed(task?._id)}
+                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isDailyTaskClaimed(task?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                         >
-                                            {claimed ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim') : 'In Progress'}
+                                            {isDailyTaskClaimed(task?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim') : 'In Progress'}
                                         </button>
                                     </div>
                                 );
@@ -792,8 +858,12 @@ const RewardsExperience = () => {
                                         <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
                                             <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
                                         </div>
-                                        <button onClick={() => completeWeeklyTask(q)} disabled={!canComplete || loadingTaskClaim} className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${claimed ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}>
-                                            {claimed ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim Reward') : 'In Progress'}
+                                        <button 
+                                            onClick={() => completeWeeklyTask(q)} 
+                                            disabled={!canComplete || loadingTaskClaim || isWeeklyTaskClaimed(q?._id)} 
+                                            className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isWeeklyTaskClaimed(q?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        >
+                                            {isWeeklyTaskClaimed(q?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim Reward') : 'In Progress'}
                                         </button>
                                     </div>
                                 );
@@ -809,7 +879,7 @@ const RewardsExperience = () => {
                         <span className='text-white/50 text-xs'>Choose your loot</span>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
-                        {allTasksState?.milestone?.map(item => (
+                        {(allTasksState?.milestone || []).map(item => (
                             <div key={item?._id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
                                 <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
                                     {item.status === 'locked' && (
@@ -900,14 +970,16 @@ const RewardsExperience = () => {
                         <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-purple-300' /> Milestones & Badges</h3>
                         <span className='text-white/50 text-xs'>Lifetime progress</span>
                     </div>
+                    {console.log("allTasksState.milestone", allTasksState)}
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
-                        {milestones.map(m => {
+                        {(allTasksState?.milestone || []).map(m => {
                             const pct = Math.min(100, (totalEarned / m.target) * 100);
-                            const canClaim = !m.claimed && totalEarned >= m.target;
+                            const claimed = claimedMilestoneTasks.has(m._id || m.id);
+                            const canClaim = !claimed && totalEarned >= m.target;
                             return (
-                                <div key={m.id} className='glass-card rounded-2xl p-4 sm:p-5 reward-glow'>
+                                <div key={m._id} className='glass-card rounded-2xl p-4 sm:p-5 reward-glow'>
                                     <div className='flex items-center gap-2 sm:gap-3 mb-2'>
-                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${canClaim ? 'bg-purple-300 text-white' : m.claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
+                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${canClaim ? 'bg-purple-300 text-white' : claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
                                             <FaStar className='text-xs sm:text-sm' />
                                         </div>
                                         <div className='min-w-0 flex-1'>
@@ -920,14 +992,14 @@ const RewardsExperience = () => {
                                     </div>
                                     <div className='flex items-center justify-between mt-2 sm:mt-3'>
                                         <span className='text-white/70 text-xs'>Bonus</span>
-                                        <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {m.bonus}</div>
+                                        <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {m.reward}</div>
                                     </div>
                                     <button
-                                        onClick={() => claimMilestone(m.id)}
-                                        disabled={!canClaim}
-                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        onClick={() => claimMilestone(m._id)}
+                                        disabled={!canClaim || loadingTaskClaim || isMilestoneTaskClaimed(m._id)}
+                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${isMilestoneTaskClaimed(m._id) ? 'btn-soft cursor-not-allowed opacity-60' : canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                     >
-                                        {m.claimed ? 'Claimed' : canClaim ? 'Claim Bonus' : 'In Progress'}
+                                        {isMilestoneTaskClaimed(m._id) ? 'Claimed' : canClaim ? (loadingTaskClaim ? 'Claiming...' : 'Claim Bonus') : 'In Progress'}
                                     </button>
                                 </div>
                             );
@@ -939,5 +1011,6 @@ const RewardsExperience = () => {
         </section>
     )
 }
+
 
 

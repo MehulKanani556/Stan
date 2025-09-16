@@ -207,15 +207,64 @@ export const getUserRewardBalance = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const user = await User.findById(userId).select('fanCoins fanCoinTransactions');
+        const user = await User.findById(userId).select('fanCoins');
         if (!user) {
             return sendNotFoundResponse(res, "User not found");
         }
 
-        // Get recent transactions
-        const recentTransactions = user.fanCoinTransactions
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .slice(0, 10);
+        // Get recent claimed tasks from UserTaskClaim
+        const UserTaskClaim = (await import('../models/UserDailyTaskClaim.model.js')).default;
+        const { DailyTask, WeeklyTask, Milestone } = await import('../models/Task.model.js');
+        const claim = await UserTaskClaim.findOne({ user: userId });
+        let recentTransactions = [];
+        if (claim) {
+            // Daily
+            if (claim.daily && Array.isArray(claim.daily.claimedTasks) && claim.daily.claimedTasks.length) {
+                const dailyTasks = await DailyTask.find({ _id: { $in: claim.daily.claimedTasks } });
+                for (const t of dailyTasks) {
+                    recentTransactions.push({
+                        type: 'DAILY',
+                        taskId: t._id,
+                        title: t.title,
+                        amount: t.reward,
+                        claimedAt: claim.daily.date
+                    });
+                }
+            }
+            // Weekly
+            if (claim.weekly && Array.isArray(claim.weekly.claimedTasks) && claim.weekly.claimedTasks.length) {
+                const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
+                for (const t of weeklyTasks) {
+                    recentTransactions.push({
+                        type: 'WEEKLY',
+                        taskId: t._id,
+                        title: t.title,
+                        amount: t.reward,
+                        claimedAt: claim.weekly.week
+                    });
+                }
+            }
+            // Milestone
+            if (claim.milestone && Array.isArray(claim.milestone.claimedTasks) && claim.milestone.claimedTasks.length) {
+                const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
+                for (const t of milestoneTasks) {
+                    recentTransactions.push({
+                        type: 'MILESTONE',
+                        taskId: t._id,
+                        title: t.title,
+                        amount: t.reward,
+                        claimedAt: null // Optionally add a timestamp if you store it
+                    });
+                }
+            }
+        }
+        // Sort by claimedAt (or fallback to type order)
+        recentTransactions = recentTransactions.sort((a, b) => {
+            if (a.claimedAt && b.claimedAt) return new Date(b.claimedAt) - new Date(a.claimedAt);
+            if (a.claimedAt) return -1;
+            if (b.claimedAt) return 1;
+            return 0;
+        }).slice(0, 10);
 
         return sendSuccessResponse(res, "User balance retrieved successfully", {
             balance: user.fanCoins || 0,
