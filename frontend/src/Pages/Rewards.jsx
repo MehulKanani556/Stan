@@ -386,8 +386,15 @@ const RewardsExperience = () => {
 
     const completeWeeklyTask = async (task) => {
         const isPlayTimeTask = /play any game for/i.test(task?.title || '');
+        const isLoggingTask = /Login 4 days this week/i.test(task?.title || '')
+        const is3DayTask = /Complete 3 daily tasks/i.test(task?.title || '')
         const goal = Number(task?.limit || task?.goal || 0);
-        const progress = isPlayTimeTask ? playedMinutesThisWeek : Number(task?.progress || 0);
+        const progress = isPlayTimeTask ? playedMinutesThisWeek : 
+                         isLoggingTask ? (userLogging?.weeklyLogging || 0) :
+                         is3DayTask ? (taskClaimData?.taskCompletion?.completedDays?.filter(
+                             day => day.taskCount >= 3
+                         ).length || 0) : 
+                         Number(task?.progress || 0);
         const key = task?._id || task?.id;
         
         // Get current week in YYYY-Www format
@@ -401,6 +408,16 @@ const RewardsExperience = () => {
         
         if (!key) return;
         if (isTaskClaimedThisWeek) return;
+
+        // Special handling for 3 daily tasks for 5 days task
+        if (is3DayTask) {
+            // Check if user is eligible for the weekly task
+            if (!taskClaimData?.taskCompletion?.isWeeklyTaskEligible) {
+                enqueueSnackbar('Not eligible for this task yet', { variant: 'warning' });
+                return;
+            }
+        }
+        // General task completion check
         if (!(progress >= goal && goal > 0)) return;
         
         setLoadingTaskClaim(true);
@@ -876,21 +893,15 @@ const RewardsExperience = () => {
                                 }
                                 if (is3DayTask) {
                                     // Logic for tracking 3 daily tasks for 5 days
-                                    // goal = Number(q?.limit || q?.goal || 5);
-                                    goal = 1;
+                                    goal = Number(q?.limit || q?.goal || 5);
                                     progress = taskClaimData?.taskCompletion?.completedDays?.filter(
                                         day => day.taskCount >= 3
                                     ).length || 0;
                                     progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
                                     claimed = claimedWeeklyTasks.has(q?._id || q?.id);
-                                    canComplete = progress >= goal && !claimed;
-                                    console.log('3 Daily Tasks Progress:', {
-                                        goal,
-                                        progress,
-                                        progressPct,
-                                        claimed,
-                                        canComplete
-                                    });
+                                    // Ensure the claim button shows when 5 days with 3+ tasks are completed
+                                    canComplete = progress >= goal && !claimed && 
+                                        taskClaimData?.taskCompletion?.isWeeklyTaskEligible;
                                 }
 
                                 return (
