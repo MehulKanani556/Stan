@@ -681,7 +681,6 @@ const RewardsExperience = () => {
                         </div>
                         <div className='space-y-3'>
                             {allTasksState?.dailytask?.map(task => {
-                                // Play any game for 90 minutes logic
                                 const isPlayTimeTask = /play any game for/i.test(task?.title || '');
                                 const isLoggingTask = /Login to the app/i.test(task?.title || '')
                                 const isStreakTask = /Daily Streak Bonus/i.test(task?.title || '')
@@ -761,20 +760,20 @@ const RewardsExperience = () => {
                                 let progress = 0;
                                 let progressPct = 0;
                                 let canComplete = false;
-                                let done = false;
+                                let claimed = false;
                                 if (isPlayTimeTask) {
                                     goal = Number(q?.limit || q?.goal || 0);
                                     progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
                                     progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                    canComplete = progress >= goal && !completedQuests.has(q?._id || q?.id);
-                                    done = completedQuests.has(q?._id || q?.id);
+                                    claimed = claimedWeeklyTasks.has(q?._id || q?.id);
+                                    canComplete = progress >= goal && !claimed;
                                 }
                                 if (isLoggingTask) {
                                     goal = Number(q?.limit || q?.goal || 0);
                                     progress =  userLogging?.weeklyLogging ? Number(userLogging?.weeklyLogging || 0) : 0;
                                     progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                    canComplete = progress >= goal && !completedQuests.has(q?._id || q?.id);
-                                    done = completedQuests.has(q?._id || q?.id);
+                                    claimed = claimedWeeklyTasks.has(q?._id || q?.id);
+                                    canComplete = progress >= goal && !claimed;
                                     console.log('progerss',   userLogging?.weeklyLogging)
                                 }
 
