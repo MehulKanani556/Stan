@@ -507,7 +507,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                     </div>
 
                     <button
-                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
+                        className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center  justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-medium transition-all ${currentPage === totalPages
                             ? "bg-slate-800/40 text-slate-500 border-slate-700 cursor-not-allowed"
                             : "bg-slate-900/60 text-white border-slate-700 hover:bg-slate-700 hover:border-slate-500/80 hover:shadow-md"
                             }`}
