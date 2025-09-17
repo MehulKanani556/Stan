@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../Utils/axiosInstance";
 import { enqueueSnackbar } from "notistack";
+import ScratchCard from "../../Pages/ScratchCard";
 
 // ==================== REWARD MANAGEMENT (ADMIN) ====================
 
@@ -287,6 +288,50 @@ export const getRewardsStatistics = createAsyncThunk(
     }
 );
 
+
+// create scratch card
+export const createScratchCard = createAsyncThunk(
+    "reward/createScratchCard",
+    async (cardData, { rejectWithValue }) => {   
+        try {
+            const response = await axiosInstance.post('/scratch-card/create',cardData);
+            // enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Failed to create scratch card";
+            // enqueueSnackbar(errorMessage, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+// get  scratch card user wise
+export const getScratchCard = createAsyncThunk(
+    "reward/getScratchCard",
+    async (_, { rejectWithValue }) => {   
+        try {
+            const response = await axiosInstance.get('/get-scratch-card');
+            // enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Failed to create scratch card";
+            // enqueueSnackbar(errorMessage, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+// reveal scratch card
+export const revealScratchCard = createAsyncThunk(
+    "reward/revealScratchCard",
+    async (cardData, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post('/scratch-card/reveal', cardData);
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Failed to reveal scratch card";
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
 // ==================== INITIAL STATE ====================
 
 const initialState = {
@@ -310,6 +355,7 @@ const initialState = {
         totalItems: 0,
         itemsPerPage: 20
     },
+    scratchCard:[],
 
     // Tasks
     availableTasks: [],
@@ -340,7 +386,8 @@ const initialState = {
         redeem: false,
         completeTask: false,
         userGamePlayTime:false,
-        allTasks:false
+        allTasks:false,
+        scratchCard:false,
     },
 
     // Error states
@@ -623,7 +670,71 @@ const rewardSlice = createSlice({
             .addCase(getRewardsStatistics.rejected, (state, action) => {
                 state.loading.statistics = false;
                 state.error = action.payload?.message || "Failed to fetch statistics";
-            });
+            })
+
+            // ==================== CREATE SCRATCH CARD ====================
+     
+            .addCase(createScratchCard.pending, (state) => {
+                state.loading.scratchCard = true;
+                state.error = null;
+            })
+            .addCase(createScratchCard.fulfilled, (state, action) => {
+                state.loading.scratchCard = false;
+                state.message = action.payload.message;
+                state.error = null;
+                // Add new reward to the beginning of the list
+                if (action.payload.result) {
+                    state.scratchCard.unshift(action.payload.result);
+                }
+            })
+            .addCase(createScratchCard.rejected, (state, action) => {
+                state.loading.scratchCard = false;
+                state.error = action.payload?.message || "Failed to create scratch card";
+            })
+
+            // ==================== GET SCRATCH CARD USER WISE ====================
+     
+            .addCase(getScratchCard.pending, (state) => {
+                state.loading.scratchCard = true;
+                state.error = null;
+            })
+            .addCase(getScratchCard.fulfilled, (state, action) => {
+                state.loading.scratchCard = false;
+                state.message = action.payload.message;
+                state.error = null;
+                // Add new reward to the beginning of the list
+                if (action.payload.result) {
+                    state.scratchCard=action.payload.result;
+                }
+            })
+            .addCase(getScratchCard.rejected, (state, action) => {
+                state.loading.scratchCard = false;
+                state.error = action.payload?.message || "Failed to create scratch card";
+            })
+
+            // ==================== REVEAL SCRATCH CARD ====================
+            .addCase(revealScratchCard.pending, (state) => {
+                state.loading.revealScratchCard = true;
+                state.error = null;
+            })
+            .addCase(revealScratchCard.fulfilled, (state, action) => {
+                state.loading.revealScratchCard = false;
+                state.message = action.payload.message;
+                state.error = null;
+                // Add new reward to the beginning of the list
+                if (action.payload.result) {
+                    // Find the index of the card to update
+                    const updatedCard = action.payload.result;
+                    const idx = state.scratchCard.findIndex(card => card._id === updatedCard._id);
+                    if (idx !== -1) {
+                        state.scratchCard[idx] = updatedCard;
+                    }
+                }
+            })
+            .addCase(revealScratchCard.rejected, (state, action) => {
+                state.loading.revealScratchCard = false;
+                state.error = action.payload?.message || "Failed to reveal scratch card";
+            })
     },
 });
 

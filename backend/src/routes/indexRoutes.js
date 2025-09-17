@@ -49,6 +49,7 @@ import { getUserLogging, loggingHistory } from "../controllers/LoggingHistroyCon
 // import { loggingHistory } from "../controllers/LoggingHistroyController.js";
 import { getUserGamePlayTime } from "../controllers/userGameplay.controller.js";
 import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, getAllTask } from "../controllers/task.controller.js";
+import { createScratchCard, getUserScratchCards, revealScratchCard } from "../controllers/scratchCard.controller.js";
 // import {
 //     createQuiz,
 //     getAllQuizzes,
@@ -308,5 +309,14 @@ indexRoutes.get("/getuserLogging",UserAuth,getUserLogging);
 // // User quiz history and leaderboard
 // indexRoutes.get('/user/quiz/history', UserAuth, getUserQuizHistory);
 // indexRoutes.get('/quiz/leaderboard', getQuizLeaderboard);
+
+
+// scratch card routes
+indexRoutes.post('/scratch-card/create', UserAuth, createScratchCard);
+indexRoutes.get('/get-scratch-card', UserAuth, getUserScratchCards);
+indexRoutes.post('/scratch-card/reveal', UserAuth, revealScratchCard);
+// indexRoutes.post('/scratch-card/claim', UserAuth, claimScratchCardReward);
+// indexRoutes.get('/scratch-card/my-cards', UserAuth, getMyScratchCards);
+// indexRoutes.get('/scratch-card/types', getScratchCardTypes);
 
 export default indexRoutes;

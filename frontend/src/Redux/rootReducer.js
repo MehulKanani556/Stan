@@ -23,4 +23,5 @@ export const rootReducer = combineReducers({
   payment: paymentSlice,
   profile: profileSlice,
   reward: rewardSlice,
+  
 });
