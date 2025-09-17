@@ -297,14 +297,13 @@ export default function Profile() {
 
     // show skeleton briefly when opening Transaction section
     useEffect(() => {
-        if (activeMenu === 'Transaction') {
-            setTransactionLoading(true);
-            const timeoutId = setTimeout(() => setTransactionLoading(false), 600);
-            return () => clearTimeout(timeoutId);
+        if (activeMenu === "Transaction") {
+          setTransactionLoading(true);
+          const timeoutId = setTimeout(() => setTransactionLoading(false), 600);
+          return () => clearTimeout(timeoutId);
         }
-        return undefined;
-    }, [activeMenu, isActive]);
-
+      }, [activeMenu]); 
+      
 
     // Handle edit mode toggle
     const handleEditToggle = () => {
@@ -519,6 +518,13 @@ export default function Profile() {
            
         }
     })
+
+    useEffect(() => {
+        if (!transactionLoading) {
+          console.log("Now showing real transaction data...");
+        }
+      }, [transactionLoading]);
+      
 
 
     // handle  input change 
@@ -1049,7 +1055,7 @@ export default function Profile() {
                                                                             '❌ Failed'}
                                                                 </span>
                                                                 <div className="mt-1">
-                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order.originalAmount.toFixed(2)}</span>
+                                                                    <span className="text-lg sm:text-xl font-bold text-white">${order?.originalAmount?.toFixed(2)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>

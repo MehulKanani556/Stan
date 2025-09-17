@@ -354,12 +354,13 @@ export default function Home() {
   );
 
   const filteredGames = useMemo(() => {
-    if (!activeTab || !gameData) return gameData;
+    if (!gameData) return [];
+    if (activeTab == null) return gameData;
     return gameData.filter(game => game?.category?._id === activeTab);
   }, [gameData, activeTab]);
 
   const currentSectionTitle = useMemo(() => {
-    if (!activeTab) return "All Games";
+    if (activeTab == null) return "All Games";
     const category = cateData?.find(c => c._id === activeTab);
     return `${category?.name || "Category"} Games`;
   }, [activeTab, cateData]);
@@ -430,20 +431,17 @@ export default function Home() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (currentPage != null && gamesPerPage != null && activeTab != null) {
-      const handler = setTimeout(() => {
-        dispatch(getAllGames({
-          page: currentPage,
-          limit: gamesPerPage,
-          category: activeTab
-        }));
-      }, 300); // Debounce the API call by 300ms
-
-      return () => {
-        clearTimeout(handler); // Clear the timeout if dependencies change before the delay
-      };
-    }
-  }, [currentPage, activeTab, gamesPerPage, dispatch, isLoggedIn]);
+    const handler = setTimeout(() => {
+      dispatch(getAllGames({
+        page: currentPage,
+        limit: gamesPerPage,
+        category: activeTab || undefined  
+      }));
+    }, 300);
+  
+    return () => clearTimeout(handler);
+  }, [currentPage, activeTab, gamesPerPage, dispatch]);
+  
 
 
 
@@ -559,54 +557,51 @@ export default function Home() {
             </div>
 
             {/* Games Swiper */}
-            {gameData.length > 0 ? filteredGames && filteredGames.length > 0 ? (
-              <Swiper
-                modules={[Navigation]}
-                spaceBetween={12}
-                slidesPerView={1.1}
-                breakpoints={SWIPER_BREAKPOINTS}
-                style={{ padding: '20px 4px' }}
-                className="game-swiper"
-                onSwiper={(swiper) => {
-                  gameSwiperRef.current = swiper;
-                  setTimeout(() => updateSwiperStates(swiper), 100);
-                }}
-                onSlideChange={updateSwiperStates}
-                onResize={updateSwiperStates}
-              >
-                {filteredGames.map((game) => (
-                  <SwiperSlide key={game._id}>
-                    <GameCard
-                      game={game}
-                      onGameClick={handleGameClick}
-                      onWishlistToggle={handleWishlistToggle}
-                      onAddToCart={handleAddToCart}
-                      isInWishlist={wishlistStatus[game._id]}
-                      isInCart={cartItems.some(item => item.game?._id === game._id)}
-                      orders={orders}
-                      isLoggedIn={isLoggedIn}
-                    />
+            {Array.isArray(gameData) && gameData.length > 0 ? (
+              filteredGames?.length > 0 ? (
+                <Swiper
+                  modules={[Navigation]}
+                  spaceBetween={12}
+                  slidesPerView={1.1}
+                  breakpoints={SWIPER_BREAKPOINTS}
+                  style={{ padding: '20px 4px' }}
+                  className="game-swiper"
+                  onSwiper={(swiper) => {
+                    gameSwiperRef.current = swiper;
+                    setTimeout(() => updateSwiperStates(swiper), 100);
+                  }}
+                  onSlideChange={updateSwiperStates}
+                  onResize={updateSwiperStates}
+                >
+                  {filteredGames.map((game) => (
+                    <SwiperSlide key={game._id}>
+                      <GameCard
+                        game={game}
+                        onGameClick={handleGameClick}
+                        onWishlistToggle={handleWishlistToggle}
+                        onAddToCart={handleAddToCart}
+                        isInWishlist={wishlistStatus[game._id]}
+                        isInCart={cartItems.some(item => item.game?._id === game._id)}
+                        orders={orders}
+                        isLoggedIn={isLoggedIn}
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              ) : (
+                <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">No games found for this category.</div>
+              )
+            ) : (
+              // Skeleton Swiper: NO wrapping <div> around SwiperSlide
+              <Swiper modules={[Navigation]} spaceBetween={12} slidesPerView={1.1} breakpoints={SWIPER_BREAKPOINTS}>
+                {Array.from({ length: 4 }, (_, i) => (
+                  <SwiperSlide key={i}>
+                    <LazyGameCard />
                   </SwiperSlide>
                 ))}
               </Swiper>
-            ) : (
-              <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
-                No games found for this category.
-              </div>
-            ) :
-              <Swiper
-                modules={[Navigation]}
-                spaceBetween={12}
-                slidesPerView={1.1}
-                breakpoints={SWIPER_BREAKPOINTS}>
-                <div >
-                  {Array.from({ length: 4 }, (_, i) => (
-                    <SwiperSlide key={i}>
-                      <LazyGameCard key={i} />
-                    </SwiperSlide>
-                  ))}
-                </div>
-              </Swiper>}
+            )}
+
 
           </div>
         </div>

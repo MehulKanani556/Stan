@@ -154,9 +154,9 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
       className="glass-card rounded-2xl p-4 sm:p-5 reward-glow cursor-pointer"
       onClick={() => onDetailsClick && onDetailsClick(prize)}
     >
-      <div className={`relative `}>
+      <div className={`relative h-full`}>
         {/* Prize background - always rendered */}
-        <div className="absolute inset-0 rounded-lg overflow-hidden border-2 border-[#1d1931]">
+        <div className="absolute inset-0 rounded-lg overflow-hidden border-2 border-[#1d1931] h-full">
           {typeof prize === "object" && prize?.reward.type === "game" ? (() => {
             // Calculate expiration
             let isExpired = false;
@@ -238,7 +238,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
 
         {/* Scratch Canvas - Only show if not revealed */}
      
-        <div className="relative z-10 w-full h-auto rounded-lg overflow-hidden bg-white/10">
+        <div className="relative z-10 w-full h-auto rounded-lg overflow-hidden bg-white/10 h-full">
             <canvas
               ref={canvasRef}
               className={`w-full h-full  block ${revealed ? '' : 'cursor-crosshair'}`}

@@ -42,6 +42,7 @@ function App() {
   const chatwidegt = location.pathname == "/GGTalks" || location.pathname === "/ggtalks";
   return (
     <>
+    <BackgroundColor>
       {!isAuthPage && <Header />}
       <SnackbarProvider
         maxSnack={3}
@@ -55,7 +56,6 @@ function App() {
         <SocketProvider>
           <LoaderProvider>
             <LoaderWrapper>
-              <BackgroundColor>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/loader" element={<Loader />} />
@@ -84,7 +84,6 @@ function App() {
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/quizRewards" element={<QuizGame />} />
                 </Routes>
-              </BackgroundColor>
               {!chatwidegt && <ChatWidget />}
             </LoaderWrapper>
           </LoaderProvider>
@@ -92,7 +91,9 @@ function App() {
       </SnackbarProvider>
 
       {(!showFooter) && <Footer />}
+      </BackgroundColor>
     </>
+  
   );
 }
 export default App;
