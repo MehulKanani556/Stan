@@ -150,7 +150,7 @@ export const getTaskClaimState = async (req, res) => {
 export const claimTask = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { taskId, type,rewards } = req.body; // type: 'daily' | 'weekly' | 'milestone'
+    const { taskId, type , rewards } = req.body; // type: 'daily' | 'weekly' | 'milestone'
 
     if (!['daily', 'weekly', 'milestone'].includes(type)) {
       return sendErrorResponse(res, 400, 'Invalid type');
@@ -217,11 +217,17 @@ export const claimTask = async (req, res) => {
 
     // Milestone (never reset)
     if (type === 'milestone') {
-      if (!claim.milestone) {
-        claim.milestone = { claimedTasks: [taskId] };
+      console.log('taskCompletion111', claim.milestone);
+    
+      if (!claim.milestone || claim.milestone.length === 0) {
+        claim.milestone.push({ claimedTasks: [taskId] });
       } else {
-        if (!claim.milestone.claimedTasks.includes(taskId)) {
-          claim.milestone.claimedTasks.push(taskId);
+        console.log('taskCompletion', claim);
+    
+        // Example: Add taskId to the first milestone where it's not already included
+        const milestone = claim.milestone[0]; // Or find the correct one dynamically
+        if (!milestone.claimedTasks.includes(taskId)) {
+          milestone.claimedTasks.push(taskId);
         }
       }
     }

@@ -13,9 +13,9 @@ const userTaskClaimSchema = new mongoose.Schema({
     week: { type: String }, // e.g. 2025-W38
     claimedTasks: [{ type: String }]
   }],
-  milestone: {
+  milestone: [{
     claimedTasks: [{ type: String }]
-  }
+  }]
 }, { timestamps: true });
 
 userTaskClaimSchema.index({ user: 1 }, { unique: true });
