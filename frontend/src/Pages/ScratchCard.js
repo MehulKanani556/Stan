@@ -1,4 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import gameFallback from "../images/game1.jpg";
 
 const ScratchCard = ({ prize }) => {
   const canvasRef = useRef(null);
@@ -6,6 +8,7 @@ const ScratchCard = ({ prize }) => {
   const [scratchPercentage, setScratchPercentage] = useState(0);
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [revealed, setRevealed] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     initCanvas();
@@ -22,7 +25,7 @@ const ScratchCard = ({ prize }) => {
     canvas.width = 300;
     canvas.height = 200;
 
-    ctx.fillStyle = "#C0C0C0"; // Silver background
+    ctx.fillStyle = "#252327"; // Silver background
     ctx.fillRect(0, 0, 300, 200);
 
     ctx.fillStyle = "#666";
@@ -139,10 +142,34 @@ const ScratchCard = ({ prize }) => {
     <div className="glass-card rounded-2xl p-4 sm:p-5 reward-glow">
       <div className="relative mb-4">
         {/* Prize background */}
-        <div className="absolute inset-0 bg-yellow-200 rounded-lg flex items-center justify-center border-2 border-yellow-400">
-          <div className="text-xl font-bold text-center text-purple-800 px-4">
-            {prize}
-          </div>
+        <div className="absolute inset-0 rounded-lg overflow-hidden border-2 border-[#1d1931]">
+          {typeof prize === "object" && prize?.type === "paid_game" ? (
+            <div className="w-full h-full relative">
+              <img
+                src={prize?.game?.cover_image?.url || gameFallback}
+                alt={prize?.game?.title || "Game"}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/50" />
+              <div className="relative z-10 h-full flex items-center justify-center px-4">
+                <div className="text-center">
+                  <div className="text-white text-lg font-bold">
+                    {prize?.game?.title || "Paid Game"}
+                  </div>
+                  <div className="text-purple-300 text-sm mt-1">
+                    {prize?.label}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full h-full bg-[#171423] flex items-center justify-center">
+              <div className="text-xl font-bold text-center text-purple-500 px-4">
+                {typeof prize === "object" ? prize?.label : String(prize)}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Scratch Canvas */}
@@ -177,6 +204,17 @@ const ScratchCard = ({ prize }) => {
           />
         </div>
       </div>
+
+      {revealed && prize && typeof prize === "object" && prize.type === "paid_game" && prize.game?._id && (
+        <div className="mt-3">
+          <button
+            onClick={() => navigate(`/single/${prize.game._id}`)}
+            className="px-4 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300"
+          >
+            Play now
+          </button>
+        </div>
+      )}
     </div>
   );
 };
