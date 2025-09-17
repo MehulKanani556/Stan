@@ -627,12 +627,19 @@ const Login = () => {
               </svg>
             </span>
           </button>
-          <p className="cursor-pointer text-sm text-blue-300 mt-2 text-center hover:text-blue-200" onClick={() => {
-            setActiveForm("login");
-            resetCaptcha();
-          }}>
-            Already have an account? Login
+          <p className="mt-2 text-center text-sm text-slate-300">
+          Already have an account?{" "}
+            <span
+              className="cursor-pointer text-blue-300 hover:text-blue-200"
+              onClick={() => {
+                setActiveForm("login");
+                resetCaptcha();
+              }}
+            >
+             Login
+            </span>
           </p>
+         
         </>
       ),
     },
