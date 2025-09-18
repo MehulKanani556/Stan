@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaHeart, FaShoppingCart, FaWallet } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
@@ -45,7 +45,7 @@ export default function Header() {
     //     const stored = localStorage.getItem("userName");
     //     return stored ? JSON.parse(stored) : "";
     // });
-
+    const location = useLocation()
 
     // user looging task manage code ----------------------------------------------------------------
     useEffect(()=>{
@@ -167,9 +167,16 @@ if(isLoggedIn){
                                         }>Rewards</NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to="/store" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
-                                        }>Store</NavLink>
+                                    <NavLink to="/store" end={false} className={({ isActive }) => {
+                                        const path = location.pathname;
+                                        const isCustomActive =
+                                          path.startsWith("/single/") || path.startsWith("/store");
+                              
+                                        return isActive || isCustomActive
+                                          ? "text-[#ab99e1] md:px-2 lg:px-3"
+                                          : "hover:text-[#ab99e1] md:px-2 lg:px-3";
+                                      }}
+                                    >Store</NavLink>
                                     </li>
                                 </ul>
                             </div>
