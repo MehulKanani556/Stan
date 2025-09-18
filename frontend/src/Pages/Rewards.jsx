@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
+import { SiScratch } from "react-icons/si";
 import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
 import amazonImg from '../images/Amazon.png'
 import yoyoLogo from '../images/YOYO-LOGO.svg'
@@ -104,6 +105,7 @@ const RewardsExperience = () => {
     const user = useSelector((state) => state.user.currentUser);
     const userBalance = useSelector((state) => state.reward.userBalance);
     const thresholdClaims = useSelector((state) => state.reward.thresholdClaims);
+    const isClaimingThreshold = useSelector((state) => state.reward.loading.redeem);
     const recentTransactions = useSelector((state) => state.reward.recentTransactions) || [];
     const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
     const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
@@ -1100,77 +1102,72 @@ const RewardsExperience = () => {
                         <h3 className='text-white font-semibold text-base md:text-lg'>Redeem</h3>
                         <span className='text-white/50 text-xs'>Choose your loot</span>
                     </div>
-                    {/* <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
-                        {(allTasksState?.milestone || []).map(item => (
-                            <div key={item?._id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
-                                <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
-                                    {item.status === 'locked' && (
-                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10 flex items-center gap-1'>
-                                            <FaLock className='text-white/80' /> Locked
-                                        </div>
-                                    )}
-                                    {item.status !== 'locked' && (
-                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10'>
-                                            Unlocked
-                                        </div>
-                                    )}
-                                    {item.status === 'redeemed' && (
-                                        <div className='absolute top-2 sm:top-3 right-2 sm:right-3 text-[10px] sm:text-xs bg-emerald-600/80 text-white px-2 py-1 rounded-md flex items-center gap-1 z-10'>
-                                            <FaCheckCircle /> Redeemed
-                                        </div>
-                                    )}
-                                    {item.img ? (
-                                        <img src={item.img} alt={item.title} className='absolute inset-0 w-full h-full object-cover opacity-70' />
-                                    ) : (
-                                        <FaPlay className='text-white/30 text-2xl sm:text-3xl' />
-                                    )}
-                                </div>
-                                <div>
-                                    <p className='text-white text-sm sm:text-base font-medium line-clamp-2 break-words'>{item.title}</p>
-                                    <div className='mt-2 sm:mt-3 flex items-center gap-2 text-purple-300'>
-                                        <FaGem />
-                                        <span className='font-semibold text-sm sm:text-base'>{item.price}</span>
-                                    </div>
-                                    <div className='mt-2 sm:mt-3'>
-                                        <progress value={Math.min(userBalance, item.price)} max={item.price} className='redeem-progress'></progress>
-                                    </div>
-                                    <button
-                                        onClick={() => tryRedeem(item)}
-                                        disabled={item.status !== 'unlocked' || userBalance < item.price}
-                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && userBalance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
-                                    >
-                                        {item.status === 'redeemed' ? 'Redeemed' : 'Redeem'}
-                                    </button>
+
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
+                        <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6'>
+                            {/* Threshold Claims - Left Side */}
+                            <div className='lg:col-span-2'>
+                                <div className='mt-4 grid grid-cols-3 gap-2'>
+                                    {[{ tier: 100, coins: 5, key: 'm100' }, { tier: 200, coins: 10, key: 'm200' }, { tier: 500, coins: 25, key: 'm500' }].map(t => {
+                                        const claimed = !!thresholdClaims?.[t.key];
+                                        const canClaim = !claimed && userBalance >= t.tier;
+                                        const isDisabled = claimed || userBalance < t.tier || isClaimingThreshold;
+                                        return (
+                                            <div key={t.key} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
+                                                <p className='text-white/70 text-[10px] sm:text-xs'>Spend {t.tier}</p>
+                                                <p className='text-emerald-300 text-xs sm:text-sm'>+{t.coins} Fan</p>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (isDisabled) return;
+                                                        try {
+                                                            await dispatch(claimThresholdTier(t.tier)).unwrap();
+                                                            dispatch(getUserRewardBalance());
+                                                            dispatch(getThresholdClaims());
+                                                        } catch (error) {
+                                                            console.error('Failed to claim threshold:', error);
+                                                        }
+                                                    }}
+                                                    disabled={isDisabled}
+                                                    className={`mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold ${claimed
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : canClaim && !isClaimingThreshold
+                                                            ? 'btn-primary'
+                                                            : 'btn-soft cursor-not-allowed opacity-60'
+                                                        }`}
+                                                >
+                                                    {claimed ? 'Claimed' : isClaimingThreshold ? 'Claiming...' : 'Claim'}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                        ))}
-                    </div> */}
 
-                    <div className='mt-4 grid grid-cols-3 gap-2'>
-                        {[{ tier: 100, coins: 5, key: 'm100' }, { tier: 200, coins: 10, key: 'm200' }, { tier: 500, coins: 25, key: 'm500' }].map(t => {
-                            const claimed = !!thresholdClaims?.[t.key];
-                            const canClaim = !claimed && userBalance >= t.tier;
-                            return (
-                                <div key={t.key} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
-                                    <p className='text-white/70 text-[10px] sm:text-xs'>Spend {t.tier}</p>
-                                    <p className='text-emerald-300 text-xs sm:text-sm'>+{t.coins} Fan</p>
-                                    <button
-                                        onClick={async () => {
-                                            try {
-                                                await dispatch(claimThresholdTier(t.tier)).unwrap();
-                                                dispatch(getUserRewardBalance());
-                                                dispatch(getThresholdClaims());
-                                            } catch { }
-                                        }}
-                                        disabled={!canClaim}
-                                        className={`mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold ${canClaim ? "btn-primary" : "btn-soft opacity-60 cursor-not-allowed"
-                                            }`}
-                                    >
-                                        Claim
-                                    </button>
+                            {/* Scratch Card - Right Side */}
+                            <div className='lg:col-span-1'>
+                                <div className='mt-4 grid grid-cols-1 gap-2'>
+                                    <div className='space-y-3'>
+                                        <div className='grid grid-cols-1 gap-2'>
+                                            {[{ tier: 1000, coins: 1, key: 'm100' }].map((option, index) => (
+                                                <div key={index} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
+                                                    <p className='text-white/70 text-xs'>Spend {option.tier}</p>
+                                                    <p className='text-emerald-300 text-xs sm:text-sm'>{option.coins} Scratch Card</p>
+                                                    <button
+                                                        onClick={() => {
+                                                            // Handle scratch card purchase
+                                                            console.log('Purchase scratch card:', option);
+                                                        }}
+                                                        className='mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold btn-primary'
+                                                    >
+                                                        Buy
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
-                            );
-                        })}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

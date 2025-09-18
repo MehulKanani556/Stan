@@ -689,7 +689,7 @@ export const getRewardsLeaderboard = async (req, res) => {
                 $sort: { rewards: -1 }
             },
             {
-                $limit: 4
+                $limit: 6
             }
         ]);
 
