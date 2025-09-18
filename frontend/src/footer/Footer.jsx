@@ -22,6 +22,23 @@ const Footer = () => {
   const { user: authUser } = useSelector((state) => state.auth);
   const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
 
+  const getPath = (link) => {
+    switch (link) {
+      case "Home":
+        return "/";
+      case "Games":
+        return "/games";
+      case "GGtalks":
+        return isLoggedIn ? "/ggtalks" : "/login";
+      case "Store":
+        return "/store";
+      case "Rewards":
+        return isLoggedIn ? "/rewards" : "/login";
+      default:
+        return "#";
+    }
+  };
+
   return (
     <>
       {/* {showGoUp && (
@@ -72,16 +89,30 @@ const Footer = () => {
                 Quick Links
               </h4>
               <ul className="space-y-2">
-                {["Home", "GGtalks", "Games", "Rewards", "Store"].map((link, i) => (
-                  <li key={i}>
-                    <Link
-                      to={link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? isLoggedIn ? "/ggtalks" : "/login"  : link === "Store" ? "/store" : link === "Rewards" ? isLoggedIn ? "/rewards" : "/login"  : "#"}
-                      className={` hover:text-[#ab99e1] transition-colors text-sm ${location.pathname === (link === "Home" ? "/" : link === "Games" ? "/games" : link === "GGtalks" ? "/GGTalks" : link === "Store" ? "/store" : link === "Rewards" ? "/rewards" : "#") ? "font-semibold text-[#ab99e1]" : "text-gray-300"}`}
-                    >
-                      {link}
-                    </Link>
-                  </li>
-                ))}
+                 {["Home", "GGtalks", "Games", "Rewards", "Store"].map((link, i) => {
+                   const path = getPath(link);
+                   const isActive =
+                   
+                   // Check if active
+                   location.pathname === path ||
+                   (link === "Store" &&
+                    (location.pathname.startsWith("/store") ||
+                    location.pathname.startsWith("/single/"))) ||
+                    (link === "Games" && location.pathname.startsWith("/games/"))
+                    
+                    return (
+                    <li key={i}>
+                       <Link
+                         to={path}
+                         className={`hover:text-[#ab99e1] transition-colors text-sm ${
+                           isActive ? "font-semibold text-[#ab99e1]" : "text-gray-300"
+                         }`}
+                       >
+                         {link}
+                       </Link>
+                     </li>
+                   );
+                 })}
               </ul>
             </div>
 
