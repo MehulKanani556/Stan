@@ -31,7 +31,9 @@ import {
     claimThresholdTier,
     getTaskClaim,
     claimCompleteTask,
-    referralBonus
+    referralBonus,
+    createScratchCard,
+    getScratchCard
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
 import { getuserLogging, muteChat } from '../Redux/Slice/user.slice';
