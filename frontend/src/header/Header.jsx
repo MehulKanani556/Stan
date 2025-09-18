@@ -162,7 +162,7 @@ if(isLoggedIn){
                                         }>Games</NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to="/rewards" className={({ isActive }) =>
+                                        <NavLink to={isLoggedIn ? "/rewards" : "/login"}  className={({ isActive }) =>
                                             isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
                                         }>Rewards</NavLink>
                                     </li>

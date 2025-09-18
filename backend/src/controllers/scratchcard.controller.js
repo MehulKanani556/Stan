@@ -4,11 +4,16 @@ import User from "../models/userModel.js";
 import { sendSuccessResponse, sendBadRequestResponse, sendNotFoundResponse, sendCreatedResponse } from "../utils/ResponseUtils.js";
 
 // Function to generate reward based on probability
-const generateReward = async () => {
+const generateReward = async (amount) => {
     const randomValue = Math.random();
     
-    // Reward probabilities
-    if (randomValue < 0.5) { // 5% chance of winning a game
+     // Define winning chance based on amount
+     let winChance = 0.05; // default 5%
+     if (amount >= 2000) {
+         winChance = 0.15; // 15% for 2000 or more
+     } 
+     // Reward probabilities
+     if (randomValue < winChance) {
         const winningGames = await Game.find({           
             "platforms.windows.available": true,
             "platforms.windows.download_link": { $exists: true, $ne: null }
@@ -37,14 +42,14 @@ const generateReward = async () => {
 
 export const createScratchCard = async (req, res) => {
     try {
-        const {  type } = req.body;
+        const {  type ,amount} = req.body;
         const userId = req.user._id;     
 
         // Generate a unique code for the scratch card
         const uniqueCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
         // Generate reward
-        const reward = await generateReward();
+        const reward = await generateReward(amount);
  
         const scratchCard = await ScratchCard.create({
             user: userId,           
@@ -52,7 +57,17 @@ export const createScratchCard = async (req, res) => {
             reward: reward, // Store as JSON string
             
         });
-
+        // Deduct reward points
+        const user = await User.findById(userId);
+        user.rewards -= amount;
+        user.rewardsTransactions = user.rewardsTransactions || [];
+        user.rewardsTransactions.push({
+            type: 'SPEND',
+            amount: amount,
+            description: `Scratch card purchase`,
+            date: new Date()
+        });
+         await user.save();
         return sendCreatedResponse(res, "Scratch card created successfully", scratchCard);
     } catch (error) {
         return sendBadRequestResponse(res, error.message);
