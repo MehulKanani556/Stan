@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import {  NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoIosArrowBack, IoIosLogOut } from "react-icons/io";
-import { MdEdit, MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
-import { FaUser, FaBirthdayCake, FaGamepad } from "react-icons/fa";
+import { MdEdit, MdEmail} from "react-icons/md";
+import { FaUser } from "react-icons/fa";
 import { getUserById, editUserProfile, logoutUser, clearUser, getFanCoinDetails } from '../Redux/Slice/user.slice';
 import { ChangePassSlice, DeleteUser, fetchProfile, SendDeleteOtp } from '../Redux/Slice/profile.slice';
 import ProfileSkeleton from '../lazyLoader/ProfileSkeleton';
@@ -12,38 +12,30 @@ import OrderListSkeleton from '../lazyLoader/OrderListSkeleton';
 import { allorders, retryOrderPayment } from '../Redux/Slice/Payment.slice';
 import stanUser from "../images/stan-user.jpg";
 import { decryptData } from "../Utils/encryption";
-import { Dialog, Transition } from '@headlessui/react'
-
+import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from "react";
 import lazyCatImage from '../images/lazy-cat-1.png'
 import { FaUserLarge } from 'react-icons/fa6';
 import { GiTakeMyMoney } from "react-icons/gi";
 import { useNavigate } from 'react-router-dom'
-import { IoLocation, IoClose, IoTrash, IoPencil, IoEye, IoEyeOff } from "react-icons/io5";
+import {  IoClose, IoEye, IoEyeOff } from "react-icons/io5";
 import { BsBoxSeam } from "react-icons/bs";
-import manageAddress from "../images/manage_addres-1.png"
 import StylishDiv from '../components/StylishDiv';
-
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
 import { handleMyToggle } from '../Redux/Slice/game.slice';
-
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useFormik } from 'formik'
 import * as Yup from "yup";
 import { enqueueSnackbar } from "notistack";
-
-
 const stripePromise = loadStripe("pk_test_51R8wmeQ0DPGsMRTSHTci2XmwYmaDLRqeSSRS2hNUCU3xU7ikSAvXzSI555Rxpyf9SsTIgI83PXvaaQE3pJAlkMaM00g9BdsrOB");
-
 // FANCoin Component
 const FANCoin = () => {
     const [openId, setOpenId] = useState(null);
     const dispatch = useDispatch();
     const transactions = useSelector((state) => state.user.currentUser.fanCoinTransactions);
-    console.log("transactionssssss", transactions);
     const userId = localStorage.getItem("userId")
     useEffect(() => {
         dispatch(getFanCoinDetails(userId));
@@ -54,7 +46,6 @@ const FANCoin = () => {
         if (!inputDate) return "";
         const dateObj = new Date(inputDate);
         if (isNaN(dateObj.getTime())) return String(inputDate);
-
         const day = String(dateObj.getDate()).padStart(2, "0");
         const month = dateObj.toLocaleString("en-US", { month: "short" });
         const hours = String(dateObj.getHours()).padStart(2, "0");
@@ -142,14 +133,6 @@ const UPICard = () => {
     return (
         <div className="flex flex-col items-center justify-center  px-3 sm:px-4 py-4 sm:py-6 ">
 
-            {/* <div className=" -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
-              from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
-              animate-pulse"></div>
-            <div className=" -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
-              from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
-              animate-pulse"></div> */}
-
-
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
               relative overflow-hidden shadow-lg shadow-purple-500/30">
                 <img
@@ -174,15 +157,7 @@ const UPICard = () => {
 const PlayStore = () => {
     return (
         <div className="flex flex-col items-center justify-center px-3 sm:px-4 py-4 sm:py-6 ">
-            {/* 
-            <div className=" -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
-                  from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
-                  animate-pulse"></div>
-            <div className=" -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
-                  from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
-                  animate-pulse"></div> */}
-
-
+          
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
                   relative overflow-hidden shadow-lg shadow-purple-500/30">
                 <img
@@ -206,7 +181,6 @@ const PlayStore = () => {
 const StyleDiv = ({ children }) => {
     return (
         <div
-
             className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl p-3  border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden ds_height_manage"
         >
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
@@ -246,14 +220,10 @@ export default function Profile() {
     const [passwordError, setPasswordError] = useState("");
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [showDeleteOtpModal, setShowDeleteOtpModal] = useState(false);
-    const [deleteEmail, setDeleteEmail] = useState("");
     const [isSendingOtp, setIsSendingOtp] = useState(false);
     const [deleteOtp, setDeleteOtp] = useState(false)
-    const [otp, setOtp] = useState(["", "", "", ""]);
     const inputsRef = useRef([]);
     const [btnLoader, setBtnLoader] = useState(false)
-
-    // console.log("aaaaaa", currentUser)
 
     // user profile handling ------------------------------------------------------------------------------------------
     const [formData, setFormData] = useState({
@@ -297,12 +267,17 @@ export default function Profile() {
 
     // show skeleton briefly when opening Transaction section
     useEffect(() => {
+        let timeoutId;
         if (activeMenu === "Transaction") {
-          setTransactionLoading(true);
-          const timeoutId = setTimeout(() => setTransactionLoading(false), 600);
-          return () => clearTimeout(timeoutId);
+            setTransactionLoading(true);
+            timeoutId = setTimeout(() => setTransactionLoading(false), 600);
+        } else {
+            setTransactionLoading(false);
         }
-      }, [activeMenu]); 
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+    }, [activeMenu]);
       
 
     // Handle edit mode toggle
@@ -519,14 +494,6 @@ export default function Profile() {
         }
     })
 
-    useEffect(() => {
-        if (!transactionLoading) {
-          console.log("Now showing real transaction data...");
-        }
-      }, [transactionLoading]);
-      
-
-
     // handle  input change 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -553,7 +520,7 @@ export default function Profile() {
 
         try {
             await dispatch(editUserProfile({ userId, userData: payload })).unwrap().then((response) => {
-                console.log(response.success);
+                // console.log(response.success);
                 if (response.success) {
                     const userId = authUser?._id || localStorage.getItem("userId");
                     if (userId) {
@@ -577,13 +544,13 @@ export default function Profile() {
     };
 
     const handleOrderClick = (order) => {
-        console.log('Order clicked:', order);
+        // console.log('Order clicked:', order);
         setSelectedOrder(order);
         setShowOrderDetails(true);
     };
 
     const handlePaymentClick = async (order) => {
-        console.log('Payment clicked for order:', order._id);
+        // console.log('Payment clicked for order:', order._id);
 
         try {
             // Close the order details modal
@@ -628,6 +595,7 @@ export default function Profile() {
     };
 
     // Loading state using skeleton
+    // console.log("loading", loading)
     if (loading) {
         return <ProfileSkeleton />;
     }
@@ -903,7 +871,6 @@ export default function Profile() {
                 )}
 
 
-
                 {/* transaction */}
                 {activeMenu === "Transaction" && (
                     <div className='px-4 md:py-6 pt-4 pb-0  w-full'>
@@ -1115,7 +1082,6 @@ export default function Profile() {
                                                                 className="flex items-center gap-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1.5 rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300 border border-purple-500/30 hover:scale-105 active:scale-95 cursor-pointer shadow-lg hover:shadow-purple-500/20 w-full sm:w-auto order-1 sm:order-2"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    console.log('View details clicked for order:', order._id);
                                                                     handleOrderClick(order);
                                                                 }}
                                                             >
@@ -1497,7 +1463,6 @@ export default function Profile() {
                                                                 <span className="text-white font-bold text-2xl">${selectedOrder?.amount?.toFixed(2) || '0.00'}</span>
                                                             </div>
                                                         </div>
-                                                        {console.log(selectedOrder)}
                                                     </div>
                                                 </div>
 

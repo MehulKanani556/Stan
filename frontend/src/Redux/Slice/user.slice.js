@@ -982,7 +982,7 @@ const userSlice = createSlice({
       state.loading = false;
     })
     .addCase(getFanCoinDetails.fulfilled, (state, action) => {
-      state.loading = true;
+      state.loading = false;
       state.userLogging = action.payload.data;
     })
     .addCase(getFanCoinDetails.rejected, (state, action) => {
