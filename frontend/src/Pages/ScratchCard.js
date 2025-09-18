@@ -17,11 +17,17 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
   useEffect(() => {
     setRevealed(prize.isRevealed);
     if (prize.isRevealed) {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+  
+      const ctx = canvas.getContext("2d");
+      canvas.width = 300;
+      canvas.height = 150;
       // If already revealed, set scratch percentage to 100% and skip canvas initialization
       setScratchPercentage(100);
     } else {
-      // Only initialize canvas if not revealed
       initCanvas();
+      // Only initialize canvas if not revealed
       setScratchPercentage(0);
     }
   }, [prize]);
@@ -33,17 +39,17 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
 
     const ctx = canvas.getContext("2d");
     canvas.width = 300;
-    canvas.height = 200;
+    canvas.height = 150;
 
     ctx.fillStyle = "#252327"; // Silver background
-    ctx.fillRect(0, 0, 300, 200);
+    ctx.fillRect(0, 0, 300, 150);
 
     ctx.fillStyle = "#666";
     ctx.font = "bold 20px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("SCRATCH HERE", 150, 90);
+    ctx.fillText("SCRATCH HERE", 150, 70);
     ctx.font = "14px Arial";
-    ctx.fillText("TO WIN A PRIZE", 150, 120);
+    ctx.fillText("TO WIN A PRIZE", 150, 90);
   };
 
   const getMousePos = (canvas, e) => {
@@ -152,7 +158,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
   return (
     <div 
       className="glass-card rounded-2xl p-4 sm:p-5 reward-glow cursor-pointer"
-      onClick={() => onDetailsClick && onDetailsClick(prize)}
+      onClick={() => (onDetailsClick && revealed) && onDetailsClick(prize)}
     >
       <div className={`relative h-full`}>
         {/* Prize background - always rendered */}
@@ -186,7 +192,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
                   </div>
                 </div>
                 <div
-                  className="absolute"
+                  className={`absolute ${revealed ? '' : 'hidden'}`}
                   style={{
                     top: "5px",
                     right: "5px",

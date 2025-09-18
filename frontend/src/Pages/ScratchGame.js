@@ -2,9 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ScratchCard from "./ScratchCard";
 import { SiScratch } from "react-icons/si";
-import { 
-  FaGamepad, FaCalendarAlt, FaGift, FaTrophy, FaFireAlt, 
-  FaStar, FaRocket, FaCoins, FaGem 
+import {
+  FaGamepad, FaCalendarAlt, FaGift, FaTrophy, FaFireAlt,
+  FaStar, FaRocket, FaCoins, FaGem,
+  FaArrowLeft
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActiveGames } from "../Redux/Slice/game.slice";
@@ -23,7 +24,7 @@ const PrizeConfetti = () => {
         left: `${Math.random() * 100}%`,
         animationDelay: `${Math.random() * 2}s`,
         color: [
-          'text-purple-500', 'text-pink-500', 'text-yellow-500', 
+          'text-purple-500', 'text-pink-500', 'text-yellow-500',
           'text-blue-500', 'text-green-500'
         ][Math.floor(Math.random() * 5)],
         size: `text-${['xs', 'sm', 'base', 'lg'][Math.floor(Math.random() * 4)]}`,
@@ -65,11 +66,17 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [interactionEffect, setInteractionEffect] = useState('');
 
+  let isExpired = false;
+  if (prize?.expiresAt) {
+    const now = new Date();
+    const expires = new Date(prize.expiresAt);
+    isExpired = expires - now <= 0;
+  }
   // Prevent background scrolling when modal is open
   useEffect(() => {
     // Disable scrolling
     document.body.style.overflow = 'hidden';
-    
+
     // Re-enable scrolling when component unmounts
     return () => {
       document.body.style.overflow = 'unset';
@@ -78,7 +85,7 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
 
   if (!prize) return null;
 
-  const renderPrizeDetails = ({onClose}) => {
+  const renderPrizeDetails = ({ onClose }) => {
     if (prize.reward.type === "game") {
       const game = prize.reward.game;
       const expirationDate = new Date(prize.expiresAt);
@@ -94,125 +101,153 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
           onClose();
         }, 300);
       };
+      let isExpired = false;
+      if (prize?.expiresAt) {
+        const now = new Date();
+        const expires = new Date(prize.expiresAt);
+        isExpired = expires - now <= 0;
+      }
 
       return (
         <div
-        className="relative w-full  sm:p-6 p-4 rounded-3xl 
+          className="relative w-full  sm:p-6 p-4 rounded-3xl 
          from-gray-900/90 via-purple-900/60 to-black/80 
         backdrop-blur-2xl shadow-[0_0_25px_rgba(168,85,247,0.5)] 
         border border-purple-500/30 overflow-hidden 
         animate-fadeInUp"
-      >
-
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-white/70 hover:text-white 
-            bg-red-500/30 hover:bg-red-500/50 rounded-full py-1 px-1 transition-all z-[1]"
         >
-          <CgCloseO className="text-xl" />
-        </button>
 
-        {/* Floating Trophy Badge */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20">
-          <div className=" from-purple-500 to-purple-800 
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-white/70 hover:text-white 
+            bg-red-500/30 hover:bg-red-500/50 rounded-full py-1 px-1 transition-all z-[1]"
+          >
+            <CgCloseO className="text-xl" />
+          </button>
+
+          {/* Floating Trophy Badge */}
+          <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20">
+            <div className=" from-purple-500 to-purple-800 
             rounded-full ms:p-5 p-3 shadow-2xl border-4 border-white/20 
             animate-bounce-slow ring-4 ring-purple-500/40">
-            <FaTrophy className="ms:text-5xl text-3xl text-yellow-300 drop-shadow-lg" />
+              <FaTrophy className="ms:text-5xl text-3xl text-yellow-300 drop-shadow-lg" />
+            </div>
           </div>
-        </div>
 
-        {/* Game Image */}
-        <div className="ms:mt-7  relative group rounded-2xl overflow-hidden">
-          <img
-            src={game.cover_image?.url || gameFallback}
-            alt={game.title}
-            className="w-full h-64 object-cover rounded-2xl 
+          {/* Game Image */}
+          <div className="ms:mt-7  relative group rounded-2xl overflow-hidden">
+            <img
+              src={game.cover_image?.url || gameFallback}
+              alt={game.title}
+              className="w-full h-64 object-cover rounded-2xl 
               transform transition-transform duration-500 
               group-hover:scale-110 brightness-90 group-hover:brightness-100"
-          />
-          {/* Neon overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
+            />
+            {/* Neon overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
             opacity-0 group-hover:opacity-100 transition-all duration-500" />
-          <div className="absolute -inset-1 rounded-2xl border border-purple-500/50 blur opacity-40 group-hover:opacity-70"></div>
-        </div>
+            <div className="absolute -inset-1 rounded-2xl border border-purple-500/50 blur opacity-40 group-hover:opacity-70"></div>
+          </div>
 
-        {/* Title */}
-        <h2
-          className="mt-6 text-center ms:text-3xl text-2xl font-extrabold text-purple-300 
+          {/* Title */}
+          <h2
+            className="mt-6 text-center ms:text-3xl text-2xl font-extrabold text-purple-300 
             flex items-center justify-center gap-3 tracking-wide"
-        >
-          <FaGamepad className="text-purple-500 animate-bounce" />
-          {game.title}
-          <FaFireAlt className="text-red-500 animate-pulse" />
-        </h2>
+          >
+            <FaGamepad className="text-purple-500 animate-bounce" />
+            {game.title}
+            <FaFireAlt className="text-red-500 animate-pulse" />
+          </h2>
 
-        {/* Prize Message */}
-        <p
-          className="mt-3 text-center ms:text-xl text-lg italic font-medium 
+          {/* Prize Message */}
+          <p
+            className="mt-3 text-center ms:text-xl text-lg italic font-medium 
             bg-gradient-to-r from-purple-400 to-pink-500 
             bg-clip-text text-transparent"
-        >
-          "{prize.reward.message}"
-        </p>
+          >
+            "{prize.reward.message}"
+          </p>
 
-        {/* Info Badges */}
-        <div className="mt-6 grid sm:grid-cols-2 grid-cols-2 sm:gap-4 gap-2">
-          <div
-            className="bg-white/10 backdrop-blur-md rounded-xl sm:p-4 p-2 
+          {/* Info Badges */}
+          <div className="mt-6 grid sm:grid-cols-2 grid-cols-2 sm:gap-4 gap-2">
+            <div
+              className="bg-white/10 backdrop-blur-md rounded-xl sm:p-4 p-2 
               text-center border border-purple-500/30 
               hover:scale-105 hover:shadow-purple-500/30 transition-all"
-          >
-            <FaCalendarAlt className="mx-auto text-2xl text-purple-400 mb-2" />
-            <span className="text-sm text-white/80">
-              {daysLeft > 0 ? `${daysLeft} Days Left` : "Expires Soon"}
-            </span>
-          </div>
-          <div
-            className="bg-white/10 backdrop-blur-md rounded-xl sm:p-4 p-2 
+            >
+              <FaCalendarAlt className="mx-auto text-2xl text-purple-400 mb-2" />
+              <span className="text-sm text-white/80">
+                {daysLeft > 0 ? `${daysLeft} Days Left` : "Expires Soon"}
+              </span>
+            </div>
+            <div
+              className="bg-white/10 backdrop-blur-md rounded-xl sm:p-4 p-2 
               text-center border border-purple-500/30 
               hover:scale-105 hover:shadow-purple-500/30 transition-all"
-          >
-            <FaGift className="mx-auto text-2xl text-pink-400 mb-2 animate-pulse" />
-            <span className="text-sm text-white/80">Scratch Card Prize</span>
+            >
+              <FaGift className="mx-auto text-2xl text-pink-400 mb-2 animate-pulse" />
+              <span className="text-sm text-white/80">Scratch Card Prize</span>
+            </div>
           </div>
-        </div>
 
-        {/* Download Button */}
-        {game._id && (
-          <button
-            onClick={handlePlayNow}
-            className="mt-6 w-full py-4 rounded-xl text-lg font-bold 
+          {/* Download Button */}
+          {game._id && (
+            <button
+              onClick={isExpired ? handleClose : handlePlayNow}
+              className="mt-6 w-full py-4 rounded-xl text-lg font-bold 
               bg-gradient-to-r from-purple-600 via-pink-600 to-purple-800 
               shadow-[0_0_20px_rgba(236,72,153,0.5)] text-white 
               hover:from-purple-700 hover:via-pink-700 hover:to-purple-900 
               transition-all duration-300 hover:scale-105 active:scale-95 
               flex items-center justify-center gap-3 relative"
-          >
-            <span className="absolute inset-0 rounded-xl border-2 border-pink-400 opacity-40 animate-pulse"></span>
-            <FaGamepad className="animate-bounce" />
-            Download
-          </button>
-        )}
-      </div>
+            >
+              {isExpired ? (
+                <>
+                  <FaArrowLeft className="group-active:animate-ping" />
+                  Back
+                </>
+              ) : (
+                <>
+                  <FaGamepad className="group-active:animate-ping" />
+                  Download
+                </>
+              )}
+            </button>
+          )}
+
+        </div>
       );
     }
-    
+
     return (
       <div
-      className="text-white text-center bg-gradient-to-br from-purple-600 
-        to-pink-700 p-8 rounded-2xl animate-fadeInUp shadow-2xl 
-        border border-white/20 backdrop-blur-lg"
-    >
-      <FaGift className="mx-auto text-6xl text-yellow-300 mb-4 animate-bounce" />
-      <p
-        className="text-2xl font-bold 
-          bg-gradient-to-r from-pink-400 to-purple-600 
-          bg-clip-text text-transparent"
+        className="relative w-full sm:p-6 p-4 rounded-3xl 
+        from-gray-900/90 via-purple-900/60 to-black/80 
+        backdrop-blur-2xl shadow-[0_0_25px_rgba(168,85,247,0.5)] 
+        border border-purple-500/30 overflow-hidden 
+        animate-fadeInUp"
       >
-        {prize.reward.message}
-      </p>
-    </div>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white/70 hover:text-white 
+          bg-red-500/30 hover:bg-red-500/50 rounded-full py-1 px-1 transition-all z-[1]"
+        >
+          <CgCloseO className="text-xl" />
+        </button>
+    
+        <div className="flex flex-col items-center justify-center py-12">
+          <FaGift className="text-6xl text-yellow-300 mb-6 animate-bounce" />
+          <p
+            className="text-2xl font-bold text-center 
+            bg-gradient-to-r from-pink-400 to-purple-600 
+            bg-clip-text text-transparent"
+          >
+            {prize.reward.message}
+          </p>
+        </div>
+      </div>
     );
+    
   };
 
   const handleClose = () => {
@@ -225,18 +260,18 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
     <>
       {showConfetti && <PrizeConfetti />}
       <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center 
-        bg-black/70 backdrop-blur-lg p-4 ${animationClass}`}
-    >
-      <div
-        className="max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-3xl 
-    shadow-[0_0_40px_rgba(168,85,247,0.6)] scrollbar-thin scrollbar-thumb-purple-500/50"
+        className={`fixed inset-0 z-[100] flex items-center justify-center 
+        bg-black/30 backdrop-blur-lg p-4 ${animationClass}`}
       >
-        {/* Close Button */}
-       
-        {renderPrizeDetails({onClose})}
+        <div
+          className="max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-3xl 
+    shadow-[0_0_40px_rgba(168,85,247,0.6)] scrollbar-thin scrollbar-thumb-purple-500/50"
+        >
+          {/* Close Button */}
+
+          {renderPrizeDetails({ onClose })}
+        </div>
       </div>
-    </div>
     </>
   );
 };
@@ -264,7 +299,7 @@ const ScratchGame = () => {
   }, [dispatch]);
 
 
-   const paidGames = useMemo(() => {
+  const paidGames = useMemo(() => {
     if (!Array.isArray(games)) return [];
     return games.filter((g) => {
       const price = g?.platforms?.windows?.price || g?.platforms?.ios?.price || g?.platforms?.android?.price || 0;
@@ -316,18 +351,18 @@ const ScratchGame = () => {
       {/* Scratch Card Purchase Options */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {cardPrices.map((option, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6 text-center hover:scale-105 transition-transform"
           >
             <h3 className="text-xl font-semibold text-purple-300 mb-2">{option.label}</h3>
             <p className="text-white/80 mb-4">${option.price.toFixed(2)}</p>
-            <button 
+            <button
               onClick={() => handlePurchaseScratchCards(option)}
               // disabled={loading}
               className="w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors disabled:opacity-50"
             >
-              {  'Buy Now'}
+              {'Buy Now'}
             </button>
           </div>
         ))}
@@ -338,19 +373,19 @@ const ScratchGame = () => {
         {[...scratchCards]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map((prize, index) => (
-            <ScratchCard 
-              key={index} 
-              prize={prize} 
-              onDetailsClick={setSelectedPrize} 
+            <ScratchCard
+              key={index}
+              prize={prize}
+              onDetailsClick={setSelectedPrize}
             />
-        ))}
+          ))}
       </div>
 
       {/* Modal */}
       {selectedPrize && (
-        <ScratchCardDetailsModal 
-          prize={selectedPrize} 
-          onClose={() => setSelectedPrize(null)} 
+        <ScratchCardDetailsModal
+          prize={selectedPrize}
+          onClose={() => setSelectedPrize(null)}
         />
       )}
     </div>
