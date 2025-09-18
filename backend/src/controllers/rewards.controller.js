@@ -8,6 +8,7 @@ import cloudinaryHelper from '../helper/cloudinary.js';
 import fs from 'fs';
 import UserTaskClaim from '../models/UserDailyTaskClaim.model.js';
 import { DailyTask, WeeklyTask, Milestone } from '../models/Task.model.js';
+
 const { fileupload, deleteFile } = cloudinaryHelper;
 
 // ==================== REWARD MANAGEMENT (ADMIN) ====================
@@ -214,7 +215,7 @@ export const getUserRewardBalance = async (req, res) => {
         }
 
         // Get recent claimed tasks from UserTaskClaim
-     
+
         // const claim = await UserTaskClaim.findOne({ user: userId });
         let recentTransactions = user.rewardsTransactions || [];
         // console.log(claim);
@@ -413,7 +414,7 @@ export const completeTask = async (req, res) => {
     try {
         const { taskType, taskId, points, completed } = req.body;
         const userId = req.user._id;
-
+        let claim = await UserTaskClaim.findOne({ user: userId });
         const user = await User.findById(userId);
         if (!user) {
             return sendNotFoundResponse(res, "User not found");
@@ -426,23 +427,34 @@ export const completeTask = async (req, res) => {
             'referral': 50,
             'login': 15,
             'game_play': 15,
-            'streak': 20
+            'streak': 20,
+            'buy': 200
         };
 
         // Enforce completion rules for quiz task
+        // Ensure earn array exists
+        if (!Array.isArray(claim.earn)) {
+            claim.earn = [];
+        }
         if (taskType === 'quiz') {
             // Require explicit completed flag from client indicating all questions answered
             if (!completed) {
                 return sendBadRequestResponse(res, 'Quiz must be completed to earn points');
             }
-            const alreadyCompletedQuiz = (user.fanCoinTransactions || []).some(txn =>
-                txn.type === 'EARN' && typeof txn.description === 'string' && txn.description.toLowerCase().includes('task completed: quiz')
-            );
+            const alreadyCompletedQuiz = claim.earn.includes(taskId);
             if (alreadyCompletedQuiz) {
                 return sendBadRequestResponse(res, 'Quiz already completed');
             }
         }
+        if (taskType === 'buy') {
+            const alreadyCompletedQuiz = claim.earn.includes(taskId);
 
+            if (alreadyCompletedQuiz) {
+                return sendBadRequestResponse(res, 'Task already completed');
+            }
+        }
+        claim.earn.push(taskId)
+        claim.save();
         // const points = taskRewards[taskType] || 0;
         if (points === 0) {
             return sendBadRequestResponse(res, "Invalid task type");
