@@ -530,18 +530,21 @@ if(isLoggedIn){
 
 
                     <li>
-                        <NavLink to="/games" className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => (
-                                <>
-                                    {isActive ? (
-                                        <IoGameController className="size-5 text-[#ab99e1]" />
-                                    ) : (
-                                        <IoGameControllerOutline className="size-5 text-gray-400" />
-                                    )}
-                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>Games</p>
-                                </>
+                      <NavLink to="/games" end={false} className="flex items-center justify-center flex-col gap-1 text-xs">
+                        {({ isActive }) =>{ 
+                          const active = location.pathname.startsWith("/game") || location.pathname.startsWith("/games/");
+                          return(
+                          <>
+                            {active ? (
+                              <IoGameController className="size-5 text-[#ab99e1]" />
+                            ) : (
+                              <IoGameControllerOutline className="size-5 text-gray-400" />
                             )}
-                        </NavLink>
+                            <p className={active ? "text-[#ab99e1]" : "text-gray-400"}>Games</p>
+                          </>
+                        )}}
+                       </NavLink>
+
                     </li>
 
                     <li>
@@ -561,16 +564,18 @@ if(isLoggedIn){
 
                     <li>
                         <NavLink to="/store" className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => (
+                            {({ isActive }) => {
+                             const active = location.pathname.startsWith("/store") || location.pathname.startsWith("/single/");
+                            return(
                                 <>
-                                    {isActive ? (
+                                    {active ? (
                                         <IoBag className="size-5 text-[#ab99e1]" />
                                     ) : (
                                         <IoBagOutline className="size-5 text-gray-400" />
                                     )}
-                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>Store</p>
+                                    <p className={active ? "text-[#ab99e1]" : "text-gray-400"}>Store</p>
                                 </>
-                            )}
+                            )}}
                         </NavLink>
                     </li>
                 </ul>
