@@ -240,7 +240,8 @@ export const completeTask = createAsyncThunk(
                 title,
                 taskId,
                 points,
-                taskType
+                taskType,
+                completed
             });
             enqueueSnackbar(response?.data?.message, { variant: "success" });
             return response.data;
@@ -279,6 +280,54 @@ export const getAllTasks = createAsyncThunk(
     }
 );
 
+// get all claimed task by user
+export const getTaskClaim = createAsyncThunk(
+    'user/getTaskClaim',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/user/task-claim')
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to fetch thresholds';
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+// claim a complete task
+
+export const claimCompleteTask = createAsyncThunk(
+    "reward/claimCompleteTask",
+    async (values, { rejectWithValue }) => {  
+        try {
+        console.log('daily task value',values) 
+            const response = await axiosInstance.post('/user/task-claim', { taskId: values?.taskId, type: values?.type, rewards: values.rewards });
+            // enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "field to claim completed task";
+            // enqueueSnackbar(errorMessage, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+// get fan coinr referal bonus
+export const referralBonus =  createAsyncThunk(
+    "/fan-coins/referral-bonus",
+    async (values, { rejectWithValue }) => {  
+        try {
+        console.log('daily task value',values) 
+            const response = await axiosInstance.post('/fan-coins/referral-bonus');
+            // enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "field to get referral bonus task";
+            // enqueueSnackbar(errorMessage, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
 // ==================== LEADERBOARD ====================
 
 // Get rewards leaderboard
@@ -420,11 +469,15 @@ const initialState = {
         userGamePlayTime:false,
         allTasks:false,
         scratchCard:false,
+        taskClaim:false
     },
 
     // Error states
     error: null,
-    message: null
+    message: null,
+
+    // user claimed task
+    taskClaim : null
 };
 
 // ==================== SLICE ====================
@@ -797,6 +850,24 @@ const rewardSlice = createSlice({
             })
             .addCase(revealScratchCard.rejected, (state, action) => {
                 state.loading.revealScratchCard = false;
+                state.error = action.payload?.message || "Failed to reveal scratch card";
+            })
+            // ==================== REVEAL SCRATCH CARD ====================
+            .addCase(getTaskClaim.pending, (state) => {
+                state.loading.taskClaim = true;
+                state.error = null;
+            })
+            .addCase(getTaskClaim.fulfilled, (state, action) => {
+                state.loading.taskClaim = false;
+                state.message = action.payload.message;
+                state.error = null;
+                // Add new reward to the beginning of the list
+                if (action.payload.result) {
+                    state.taskClaim = action.payload.result
+                }
+            })
+            .addCase(getTaskClaim.rejected, (state, action) => {
+                state.loading.taskClaim = false;
                 state.error = action.payload?.message || "Failed to reveal scratch card";
             })
     },

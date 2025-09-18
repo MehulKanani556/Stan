@@ -26,10 +26,13 @@ import {
     getUserGamePlayTime,
     getAllTasks,
     getThresholdClaims,
-    claimThresholdTier
+    claimThresholdTier,
+    getTaskClaim,
+    claimCompleteTask,
+    referralBonus
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
-import { getuserLogging } from '../Redux/Slice/user.slice';
+import { getuserLogging, muteChat } from '../Redux/Slice/user.slice';
 import ScratchGame from './ScratchGame';
 import { useNavigate } from 'react-router-dom'
 import { decryptData } from '../Utils/encryption'
@@ -194,23 +197,26 @@ const RewardsExperience = () => {
         return 1 + Math.ceil((firstThursday - tmp) / 604800000);
     }
     // Fetch claimed daily, weekly, and milestone tasks from backend on mount
+    const taskClaim = useSelector((state => state.reward.taskClaim)) || null;
+    useEffect(() => {
+        dispatch(getTaskClaim());
+    }, [])
     useEffect(() => {
         const fetchClaimed = async () => {
+            console.log('taskClaim', taskClaim)
             setLoadingTaskClaim(true);
             try {
-                const res = await axiosInstance.get('/user/task-claim');
                 const today = new Date().toISOString().split('T')[0];
                 // Set the entire task claim data
-                console.log('ressss', res)
                 setTaskClaimData({
-                    daily: res.data?.result?.claim?.daily || [],
-                    weekly: res.data?.result?.claim?.weekly || [],
-                    milestone: res.data?.result?.claim?.milestone || { claimedTasks: [] },
-                    taskCompletion: res.data?.result?.taskCompletion || { completedDays: [], isWeeklyTaskEligible: false }
+                    daily: taskClaim?.claim?.daily || [],
+                    weekly: taskClaim?.claim?.weekly || [],
+                    milestone: taskClaim?.claim?.milestone || { claimedTasks: [] },
+                    taskCompletion: taskClaim?.taskCompletion || { completedDays: [], isWeeklyTaskEligible: false }
                 });
-                setCompletedTasks(res.data?.result?.claim.earn || [])
+                setCompletedTasks(taskClaim?.claim.earn || [])
                 // Maintain backward compatibility with existing state
-                const todayDaily = res.data?.result?.claim?.daily?.find(d => {
+                const todayDaily = taskClaim?.claim?.daily?.find(d => {
                     // Clean the date string (remove any whitespace/newlines) and compare
                     const cleanDate = d.date?.trim();
                     return cleanDate === today;
@@ -223,13 +229,13 @@ const RewardsExperience = () => {
                 const week = getISOWeek(now);
                 const weekStr = `${year}-W${String(week).padStart(2, '0')}`;
 
-                const currentWeek = res.data?.result?.claim?.weekly?.find(w => w.week === weekStr);
+                const currentWeek = taskClaim?.claim?.weekly?.find(w => w.week === weekStr);
                 const weeklyTasksThisWeek = currentWeek?.claimedTasks || [];
 
                 const dailyTasksToday = todayDaily?.claimedTasks || [];
-                const daily = res.data?.result?.claim?.daily?.flatMap(d => d.claimedTasks || []);
-                const weekly = res.data?.result?.claim?.weekly?.claimedTasks || [];
-                const milestone = res.data?.result?.claim?.milestone?.claimedTasks || [];
+                const daily = taskClaim?.claim?.daily?.flatMap(d => d.claimedTasks || []);
+                const weekly = taskClaim?.claim?.weekly?.claimedTasks || [];
+                const milestone = taskClaim?.claim?.milestone?.claimedTasks || [];
 
                 // console.log("dailyTasksToday", weeklyTasksThisWeek,dailyTasksToday);
 
@@ -254,7 +260,7 @@ const RewardsExperience = () => {
             }
         };
         fetchClaimed();
-    }, []);
+    }, [taskClaim]);
 
     // Load referral data
     const loadReferralData = useCallback(async () => {
@@ -443,20 +449,30 @@ const RewardsExperience = () => {
 
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily', rewards: task?.reward });
+            const response = await dispatch(claimCompleteTask({ taskId: key, type: 'daily', rewards: task?.reward }))
             // Update local state to reflect the new claim
-            setTaskClaimData(prevData => {
-                const updatedDaily = prevData.daily?.map(d =>
-                    d.date === today
-                        ? { ...d, claimedTasks: [...(d.claimedTasks || []), key] }
-                        : d
-                );
-                return {
-                    ...prevData,
-                    daily: updatedDaily
-                };
-            });
-            enqueueSnackbar('Task claimed!', { variant: 'success' });
+            if (response.payload.success) {
+                setTaskClaimData(prevData => {
+                    const hasToday = (prevData.daily || []).some(d => d.date === today);
+
+                    const updatedDaily = hasToday
+                        ? prevData.daily.map(d =>
+                            d.date === today
+                                ? { ...d, claimedTasks: [...(d.claimedTasks || []), key] }
+                                : d
+                        )
+                        : [
+                            ...(prevData.daily || []),
+                            { date: today, claimedTasks: [key] } // ✅ create new entry if today not found
+                        ];
+
+                    return {
+                        ...prevData,
+                        daily: updatedDaily
+                    };
+                });
+                enqueueSnackbar('Task claimed!', { variant: 'success' });
+            }
         } catch (e) {
             enqueueSnackbar('Failed to claim task', { variant: 'error' });
         } finally {
@@ -502,22 +518,26 @@ const RewardsExperience = () => {
 
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly', rewards: task?.reward });
-            // Update local state to reflect the new claim
-            setTaskClaimData(prevData => {
-                const updatedWeekly = [
-                    ...prevData.weekly, {
-                        week: currentWeek,
-                        claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
-                    }
-                ];
+            const response = await dispatch(claimCompleteTask({ taskId: key, type: 'weekly', rewards: task?.reward }))
+            if (response.payload.success) {
+                console.log('daily task response', response.payload.success);
 
-                return {
-                    ...prevData,
-                    weekly: updatedWeekly
-                };
-            });
-            enqueueSnackbar('Weekly quest claimed!', { variant: 'success' });
+                // Update local state to reflect the new claim
+                setTaskClaimData(prevData => {
+                    const updatedWeekly = [
+                        ...prevData.weekly, {
+                            week: currentWeek,
+                            claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
+                        }
+                    ];
+                    return {
+                        ...prevData,
+                        weekly: updatedWeekly
+                    };
+                });
+                enqueueSnackbar('Weekly quest claimed!', { variant: 'success' });
+            }
+
         } catch (e) {
             enqueueSnackbar('Failed to claim weekly quest', { variant: 'error' });
         } finally {
@@ -533,22 +553,25 @@ const RewardsExperience = () => {
         if (isTaskClaimedMilestone) return;
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: milestone?._id, type: 'milestone', rewards: milestone?.reward });
+            const response = await dispatch(claimCompleteTask({ taskId: milestone?._id, type: 'milestone', rewards: milestone?.reward }))
             // Update local state to reflect the new claim
-            setTaskClaimData(prevData => {
-                const updatedMilestone = [
-                    ...(prevData.milestone || []),
-                    {
-                        claimedTasks: [...(prevData.milestone?.claimedTasks || []), milestone?._id]
-                    }
-                ];
+            if (response.payload.success) {
 
-                return {
-                    ...prevData,
-                    milestone: updatedMilestone
-                };
-            });
-            enqueueSnackbar('Milestone claimed!', { variant: 'success' });
+                setTaskClaimData(prevData => {
+                    const updatedMilestone = [
+                        ...(prevData.milestone || []),
+                        {
+                            claimedTasks: [...(prevData.milestone?.claimedTasks || []), milestone?._id]
+                        }
+                    ];
+
+                    return {
+                        ...prevData,
+                        milestone: updatedMilestone
+                    };
+                });
+                enqueueSnackbar('Milestone claimed!', { variant: 'success' });
+            }
         } catch (e) {
             enqueueSnackbar('Failed to claim milestone', { variant: 'error' });
         } finally {
@@ -568,7 +591,6 @@ const RewardsExperience = () => {
     const handleTaskComplete = (task) => {
         if (completedTasks?.includes(task.id)) return;
         if (task?.title === 'Take a quiz') {
-            console.log('Quiz task clicked:', { hasPlayedQuiz, quizScore, taskId });
             if (!hasPlayedQuiz) {
                 navigate('/quizRewards');
                 return;
@@ -661,7 +683,7 @@ const RewardsExperience = () => {
         try {
             console.log('Calling backend API to claim referral bonus...');
             // Call the backend API to claim referral bonus
-            const response = await axiosInstance.post('/fan-coins/referral-bonus');
+            const response = dispatch(referralBonus());
 
             console.log('Backend response:', response.data);
 
@@ -842,7 +864,7 @@ const RewardsExperience = () => {
                                                             : task?.title === 'Take a quiz'
                                                                 ? (hasPlayedQuiz
                                                                     ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
-                                                                    : 'Play Quiz'
+                                                                    : 'Complete Task'
                                                                 )
                                                                 : task?.title === 'Watch a video'
                                                                     ? 'Watch Video'

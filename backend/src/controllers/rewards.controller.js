@@ -560,6 +560,9 @@ export const completeTask = async (req, res) => {
         const { taskType, taskId, points, completed } = req.body;
         const userId = req.user._id;
         let claim = await UserTaskClaim.findOne({ user: userId });
+        if (!claim) {
+          claim = new UserTaskClaim({ user: userId });
+        }
         const user = await User.findById(userId);
         if (!user) {
             return sendNotFoundResponse(res, "User not found");
