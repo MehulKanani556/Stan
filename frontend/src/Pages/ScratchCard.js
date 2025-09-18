@@ -19,7 +19,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
     if (prize.isRevealed) {
       const canvas = canvasRef.current;
       if (!canvas) return;
-  
+
       const ctx = canvas.getContext("2d");
       canvas.width = 300;
       canvas.height = 150;
@@ -161,7 +161,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
     isExpired = expires - now <= 0;
   }
   return (
-    <div 
+    <div
       className="glass-card rounded-2xl p-4 sm:p-5 reward-glow cursor-pointer"
       onClick={() => (onDetailsClick && revealed) && onDetailsClick(prize)}
     >
@@ -243,27 +243,27 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
         </div>
 
         {/* Scratch Canvas - Only show if not revealed */}
-     
+
         <div className="relative z-10 w-full h-auto rounded-lg overflow-hidden bg-white/10 h-full">
-            <canvas
-              ref={canvasRef}
-              className={`w-full h-full  block ${revealed ? '' : 'cursor-crosshair'}`}
-              style={{ touchAction: "none" }}
-              onMouseDown={handleStart}
-              onMouseMove={handleMove}
-              onMouseUp={handleEnd}
-              onMouseLeave={handleEnd}
-              onTouchStart={handleStart}
-              onTouchMove={handleMove}
-              onTouchEnd={handleEnd}
-            />
-          </div>
-       
+          <canvas
+            ref={canvasRef}
+            className={`w-full h-full  block ${revealed ? '' : 'cursor-crosshair'}`}
+            style={{ touchAction: "none" }}
+            onMouseDown={handleStart}
+            onMouseMove={handleMove}
+            onMouseUp={handleEnd}
+            onMouseLeave={handleEnd}
+            onTouchStart={handleStart}
+            onTouchMove={handleMove}
+            onTouchEnd={handleEnd}
+          />
+        </div>
+
       </div>
 
-   
 
-   
+
+
 
       {/* {revealed && prize && typeof prize === "object" && prize.reward.type === "game" && prize.reward.game?._id && (
         <div className="mt-3">

@@ -35,8 +35,7 @@ import {
     createScratchCard,
     getScratchCard
 } from '../Redux/Slice/reward.slice'
-import axiosInstance from '../Utils/axiosInstance'
-import { getuserLogging, muteChat } from '../Redux/Slice/user.slice';
+import { getuserLogging } from '../Redux/Slice/user.slice';
 import ScratchGame from './ScratchGame';
 import { useNavigate } from 'react-router-dom'
 import { decryptData } from '../Utils/encryption'
@@ -153,7 +152,8 @@ const RewardsExperience = () => {
     const [scratchPercentage, setScratchPercentage] = useState(0);
     const [currentPrize, setCurrentPrize] = useState("");
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
-
+    const [claimingTier, setClaimingTier] = useState(null);
+    const [scratchingTier, setScratchingTier] = useState(null);
     // Add state for task claim data
     const [taskClaimData, setTaskClaimData] = useState({
         daily: [],
@@ -1125,100 +1125,155 @@ const RewardsExperience = () => {
                 </div>
 
                 {/* Redeem */}
-                <div className='mt-8 sm:mt-12'>
-                    <div className='flex items-center justify-between mb-3'>
-                        <h3 className='text-white font-semibold text-base md:text-lg'>Redeem</h3>
-                        <span className='text-white/50 text-xs'>Choose your loot</span>
+                <div className="mt-10">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-white font-semibold text-lg md:text-xl">Redeem</h3>
+                        <span className="text-white/50 text-sm">Choose your loot</span>
                     </div>
 
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
-                        <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6'>
-                            {/* Threshold Claims - Left Side */}
-                            <div className='lg:col-span-2'>
-                                <div className='mt-4 grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2'>
-                                    {[{ tier: 100, coins: 5, key: 'm100', image: redeem1 }, { tier: 200, coins: 10, key: 'm200', image: redeem1 }, { tier: 500, coins: 25, key: 'm500', image: redeem1 }].map(t => {
-                                        const claimed = !!thresholdClaims?.[t.key];
-                                        const canClaim = !claimed && userBalance >= t.tier;
-                                        const isDisabled = claimed || userBalance < t.tier || isClaimingThreshold;
-                                        return (
-                                            <div key={t.key} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
-                                                {t.image && (
-                                                    <img
-                                                        src={t.image}
-                                                        alt={`Offer ${t.tier}`}
-                                                        className='w-28 h-20 sm:w-48 sm:h-28 object-contain mx-auto mb-2 rounded'
-                                                    />
-                                                )}
-                                                <p className='text-white/70 text-[10px] sm:text-xs'>Spend {t.tier}</p>
-                                                <p className='text-emerald-300 text-xs sm:text-sm'>+{t.coins} Fan</p>
-                                                <button
-                                                    onClick={async () => {
-                                                        if (isDisabled) return;
-                                                        try {
-                                                            await dispatch(claimThresholdTier(t.tier)).unwrap();
-                                                            dispatch(getUserRewardBalance());
-                                                            dispatch(getThresholdClaims());
-                                                        } catch (error) {
-                                                            console.error('Failed to claim threshold:', error);
-                                                        }
-                                                    }}
-                                                    disabled={isDisabled}
-                                                    className={`mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold ${claimed
+                    {/* Horizontal Scroll Rewards */}
+                    <div className="glass-card rounded-2xl p-6 reward-glow">
+                        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                            {[
+                                {
+                                    tier: 100,
+                                    label: '+5 Fan',
+                                    type: 'fan',
+                                    key: 'm100',
+                                    image: redeem1,
+                                    description: 'Boost your fan points instantly.',
+                                },
+                                {
+                                    tier: 200,
+                                    label: '+10 Fan',
+                                    type: 'fan',
+                                    key: 'm200',
+                                    image: redeem1,
+                                    description: 'Double the rewards for active fans.',
+                                },
+                                {
+                                    tier: 500,
+                                    label: '+25 Fan',
+                                    type: 'fan',
+                                    key: 'm500',
+                                    image: redeem1,
+                                    description: 'Big reward boost for loyal fans.',
+                                },
+                                {
+                                    tier: 1000,
+                                    label: '1 Scratch Card',
+                                    type: 'scratch',
+                                    key: 's1000',
+                                    image: redeem2,
+                                    description: 'Try your luck! 🎉 Winning chance: 5%',
+                                },
+                                {
+                                    tier: 2000,
+                                    label: '1 Scratch Card',
+                                    type: 'scratch',
+                                    key: 's2000',
+                                    image: redeem2,
+                                    description: 'Premium scratch card 💎 Winning chance: 15%',
+                                },
+                            ].map((reward, index) => {
+                                const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
+                                const canClaim =
+                                    reward.type === 'fan'
+                                        ? !claimed && userBalance >= reward.tier
+                                        : userBalance >= reward.tier;
+
+                                // Check if THIS specific button is loading
+                                const isThisButtonLoading =
+                                    reward.type === 'fan'
+                                        ? isClaimingThreshold && claimingTier === reward.tier
+                                        : scratchLoading && scratchingTier === reward.tier;
+
+                                const isDisabled =
+                                    reward.type === 'fan'
+                                        ? claimed || userBalance < reward.tier || isThisButtonLoading
+                                        : userBalance < reward.tier || isThisButtonLoading;
+
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex-shrink-1 w-full bg-white/5 border border-white/10 rounded-xl p-4 text-center hover:bg-white/10 transition"
+                                    >
+                                        {/* Reward Image */}
+                                        <img
+                                            src={reward.image}
+                                            alt={`Reward ${reward.tier}`}
+                                            className="w-full h-32 object-cover mx-auto mb-3 rounded"
+                                        />
+
+                                        {/* Reward Info */}
+                                        <p className="text-white/70 text-xs">Spend {reward.tier}</p>
+                                        <p className="text-emerald-300 font-medium text-sm">{reward.label}</p>
+
+                                        {/* Description */}
+                                        <p className="text-white/50 text-[11px] mt-1 leading-snug">
+                                            {reward.description}
+                                        </p>
+
+                                        {/* Claim Button */}
+                                        <button
+                                            onClick={async () => {
+                                                try {
+                                                    if (isDisabled) return;
+
+                                                    if (reward.type === 'fan') {
+                                                        setClaimingTier(reward.tier);
+                                                        await dispatch(claimThresholdTier(reward.tier)).unwrap();
+                                                        dispatch(getUserRewardBalance());
+                                                        dispatch(getThresholdClaims());
+                                                    } else {
+                                                        setScratchingTier(reward.tier);
+                                                        await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
+                                                        dispatch(getScratchCard());
+                                                        enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
+                                                    }
+                                                } catch (e) {
+                                                    enqueueSnackbar(e?.message || 'Failed to claim reward', {
+                                                        variant: 'error',
+                                                    });
+                                                } finally {
+                                                    if (reward.type === 'fan') {
+                                                        setClaimingTier(null);
+                                                    } else {
+                                                        setScratchingTier(null);
+                                                    }
+                                                }
+                                            }}
+                                            disabled={isDisabled}
+                                            className={`mt-3 w-full py-1.5 rounded-md text-xs sm:text-sm font-semibold transition ${reward.type === 'fan'
+                                                    ? claimed
                                                         ? 'btn-soft cursor-not-allowed opacity-60'
-                                                        : canClaim && !isClaimingThreshold
+                                                        : canClaim && !isThisButtonLoading
                                                             ? 'btn-primary'
                                                             : 'btn-soft cursor-not-allowed opacity-60'
-                                                        }`}
-                                                >
-                                                    {claimed ? 'Claimed' : isClaimingThreshold ? 'Claiming...' : 'Claim'}
-                                                </button>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            {/* Scratch Card - Right Side */}
-                            <div className='lg:col-span-1'>
-                                <div className='mt-4 grid grid-cols-1 gap-2'>
-                                    <div className='space-y-3'>
-                                        <div className='grid grid-cols-1 gap-2'>
-                                            {[{ tier: 1000, coins: 1, key: 'm100', image: redeem2 }].map((option, index) => (
-                                                <div key={index} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
-                                                    {option.image && (
-                                                        <img
-                                                            src={option.image}
-                                                            alt={`Scratch Card ${option.tier}`}
-                                                            className='w-28 h-20 sm:w-48 sm:h-28 object-contain mx-auto mb-2 rounded'
-                                                        />
-                                                    )}
-                                                    <p className='text-white/70 text-xs'>Spend {option.tier}</p>
-                                                    <p className='text-emerald-300 text-xs sm:text-sm'>{option.coins} Scratch Card</p>
-                                                    <button
-                                                        onClick={async () => {
-                                                            try {
-                                                                if (userBalance < option.tier || scratchLoading) return;
-                                                                await dispatch(createScratchCard({ type: option.tier })).unwrap();
-                                                                dispatch(getScratchCard());
-                                                                enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
-                                                            } catch (e) {
-                                                                enqueueSnackbar(e?.message || 'Failed to purchase scratch card', { variant: 'error' });
-                                                            }
-                                                        }}
-                                                        disabled={userBalance < option.tier || scratchLoading}
-                                                        className={`mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold ${userBalance < option.tier || scratchLoading ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}
-                                                    >
-                                                        {scratchLoading ? 'Processing...' : 'Claim'}
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
+                                                    : userBalance < reward.tier || isThisButtonLoading
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : 'btn-primary'
+                                                }`}
+                                        >
+                                            {reward.type === 'fan'
+                                                ? claimed
+                                                    ? 'Claimed'
+                                                    : isThisButtonLoading
+                                                        ? 'Claiming...'
+                                                        : 'Claim'
+                                                : isThisButtonLoading
+                                                    ? 'Processing...'
+                                                    : 'Purchase'}
+                                        </button>
                                     </div>
-                                </div>
-                            </div>
+                                );
+                            })}
                         </div>
                     </div>
+
                 </div>
+
 
                 {/* Leaderboard & Activity */}
                 <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
@@ -1240,7 +1295,7 @@ const RewardsExperience = () => {
                                                     ? '#C0C0C0'
                                                     : idx === 2
                                                         ? '#CD7F32'
-                                                    : 'rgba(255,255,255,0.06)',
+                                                        : 'rgba(255,255,255,0.06)',
                                         borderWidth: '1px',
                                         borderStyle: 'solid'
                                     }}
