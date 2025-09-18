@@ -208,80 +208,83 @@ export const getUserRewardBalance = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const user = await User.findById(userId).select('rewards');
+        const user = await User.findById(userId).select('rewards rewardsTransactions');
         if (!user) {
             return sendNotFoundResponse(res, "User not found");
         }
 
         // Get recent claimed tasks from UserTaskClaim
      
-        const claim = await UserTaskClaim.findOne({ user: userId });
-        let recentTransactions = [];
-        console.log(claim);
-        if (claim) {
-            // Handle daily claims (array of days)
-            if (Array.isArray(claim.daily) && claim.daily.length > 0) {
-                for (const dailyEntry of claim.daily) {
-                    if (Array.isArray(dailyEntry.claimedTasks) && dailyEntry.claimedTasks.length > 0) {
-                        const dailyTasks = await DailyTask.find({ _id: { $in: dailyEntry.claimedTasks } });
-                        for (const t of dailyTasks) {
-                            recentTransactions.push({
-                                type: 'DAILY',
-                                taskId: t._id,
-                                title: t.title,
-                                amount: t.reward,
-                                claimedAt: dailyEntry.date
-                            });
-                        }
-                    }
-                }
-            }
-            // Handle weekly claims (single object)
-            if (
-                claim.weekly &&
-                Array.isArray(claim.weekly.claimedTasks) &&
-                claim.weekly.claimedTasks.length > 0
-            ) {
-                const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
-                for (const t of weeklyTasks) {
-                    recentTransactions.push({
-                        type: 'WEEKLY',
-                        taskId: t._id,
-                        title: t.title,
-                        amount: t.reward,
-                        claimedAt: claim.weekly.week
-                    });
-                }
-            }
-            // Handle milestone claims (single object)
-            if (
-                claim.milestone &&
-                Array.isArray(claim.milestone.claimedTasks) &&
-                claim.milestone.claimedTasks.length > 0
-            ) {
-                const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
-                for (const t of milestoneTasks) {
-                    recentTransactions.push({
-                        type: 'MILESTONE',
-                        taskId: t._id,
-                        title: t.title,
-                        amount: t.reward,
-                        claimedAt: null // Optionally add a timestamp if you store it
-                    });
-                }
-            }
-        }
+        // const claim = await UserTaskClaim.findOne({ user: userId });
+        let recentTransactions = user.rewardsTransactions || [];
+        // console.log(claim);
+        // if (claim) {
+        //     // Handle daily claims (array of days)
+        //     if (Array.isArray(claim.daily) && claim.daily.length > 0) {
+        //         for (const dailyEntry of claim.daily) {
+        //             if (Array.isArray(dailyEntry.claimedTasks) && dailyEntry.claimedTasks.length > 0) {
+        //                 const dailyTasks = await DailyTask.find({ _id: { $in: dailyEntry.claimedTasks } });
+        //                 for (const t of dailyTasks) {
+        //                     recentTransactions.push({
+        //                         type: 'DAILY',
+        //                         taskId: t._id,
+        //                         title: t.title,
+        //                         amount: t.reward,
+        //                         claimedAt: dailyEntry.date
+        //                     });
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     // Handle weekly claims (single object)
+        //     if (
+        //         claim.weekly &&
+        //         Array.isArray(claim.weekly.claimedTasks) &&
+        //         claim.weekly.claimedTasks.length > 0
+        //     ) {
+        //         const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
+        //         for (const t of weeklyTasks) {
+        //             recentTransactions.push({
+        //                 type: 'WEEKLY',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: claim.weekly.week
+        //             });
+        //         }
+        //     }
+        //     // Handle milestone claims (single object)
+        //     if (
+        //         claim.milestone &&
+        //         Array.isArray(claim.milestone.claimedTasks) &&
+        //         claim.milestone.claimedTasks.length > 0
+        //     ) {
+        //         const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
+        //         for (const t of milestoneTasks) {
+        //             recentTransactions.push({
+        //                 type: 'MILESTONE',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: null // Optionally add a timestamp if you store it
+        //             });
+        //         }
+        //     }
+        // }
+        console.log('recentTransactions',);
+
         // Sort by claimedAt (or fallback to type order)
         recentTransactions = recentTransactions.sort((a, b) => {
-            if (a.claimedAt && b.claimedAt) return new Date(b.claimedAt) - new Date(a.claimedAt);
-            if (a.claimedAt) return -1;
-            if (b.claimedAt) return 1;
+            if (a.date && b.date) return new Date(b.date) - new Date(a.date);
+            if (a.date) return -1;
+            if (b.date) return 1;
             return 0;
-        }).slice(0, 10);
-
+        });
+        let recentEarn = recentTransactions.filter(item => item.type === "EARN")
         return sendSuccessResponse(res, "User balance retrieved successfully", {
             balance: user.rewards || 0,
-            recentTransactions
+            recentTransactions,
+            recentEarn,
         });
     } catch (error) {
         return ThrowError(res, 500, error.message);

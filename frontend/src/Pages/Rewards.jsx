@@ -9,6 +9,10 @@ import stickerImg from '../images/gens-logo1.png'
 import cameraImg from '../images/stan-user.jpg'
 import posterImg from '../images/game5.jpg'
 import mysteryImg from '../images/shadow.jpg'
+import gold from '../images/gold.png'
+import silver from '../images/silver.png'
+import bronze from '../images/bronze.png'
+
 import { enqueueSnackbar } from 'notistack';
 import {
     getAllRewards,
@@ -26,7 +30,7 @@ import { getuserLogging } from '../Redux/Slice/user.slice';
 import ScratchGame from './ScratchGame';
 import { useNavigate } from 'react-router-dom'
 
-
+const Trophy = [gold, silver, bronze];
 const gamerTheme = `
   .page-bg {
     background: radial-gradient(1200px 600px at 10% -10%, rgba(98,29,242,0.25), transparent 60%),
@@ -101,6 +105,7 @@ const RewardsExperience = () => {
     const allTasksState = useSelector((state) => state.reward.allTasks);
     const userGamePlayTime = useSelector((state) => state.reward.userGamePlayTime);
     const userLogging = useSelector((state) => state.user.userLogging)
+    
     // console.log('userLogging', userLogging)
     // console.log("Reward state:", allTasksState);
 
@@ -133,19 +138,20 @@ const RewardsExperience = () => {
     // Add state for task claim data
     const [taskClaimData, setTaskClaimData] = useState({
         daily: [],
-        weekly: { week: '', claimedTasks: [] },
-        milestone: { claimedTasks: [] },
+        weekly: [],
+        milestone: [],
         taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
-    });
+    });;
 
     // Calculate total earned from recent transactions
     const totalEarned = recentTransactions
-        // .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
+        .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
         .reduce((total, transaction) => total + (transaction.amount || 0), 0);
 
     // Calculate earn balance (sum of all EARN transactions)
+    console.log('recentTransactions', recentTransactions)
     const earnBalance = recentTransactions
-        // .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
+        .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
         .reduce((total, transaction) => total + (transaction.amount || 0), 0);
 
     useEffect(() => {
@@ -168,10 +174,10 @@ const RewardsExperience = () => {
         const firstThursday = tmp.valueOf();
         tmp.setMonth(0, 1);
         if (tmp.getDay() !== 4) {
-          tmp.setMonth(0, 1 + ((4 - tmp.getDay()) + 7) % 7);
+            tmp.setMonth(0, 1 + ((4 - tmp.getDay()) + 7) % 7);
         }
         return 1 + Math.ceil((firstThursday - tmp) / 604800000);
-      }
+    }
     // Fetch claimed daily, weekly, and milestone tasks from backend on mount
     useEffect(() => {
         const fetchClaimed = async () => {
@@ -180,6 +186,7 @@ const RewardsExperience = () => {
                 const res = await axiosInstance.get('/user/task-claim');
                 const today = new Date().toISOString().split('T')[0];
                 // Set the entire task claim data
+                console.log('ressss', res)
                 setTaskClaimData({
                     daily: res.data?.result?.claim?.daily || [],
                     weekly: res.data?.result?.claim?.weekly || { week: '', claimedTasks: [] },
@@ -219,8 +226,8 @@ const RewardsExperience = () => {
                 // Reset to default state if fetch fails
                 setTaskClaimData({
                     daily: [],
-                    weekly: { week: '', claimedTasks: [] },
-                    milestone: { claimedTasks: [] },
+                    weekly: [],
+                    milestone: [],
                     taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
                 });
                 setClaimedDailyTasks(new Set());
@@ -379,23 +386,22 @@ const RewardsExperience = () => {
         setStreakClaimedToday(true);
         localStorage.setItem('rewards:lastStreakClaim', today);
     };
-
     const completeDailyTask = async (task) => {
         const isPlayTimeTask = /play any game for/i.test(task?.title || '');
         const isLoggingTask = /Login to the app/i.test(task?.title || '')
         const isStreakTask = /Daily Streak Bonus/i.test(task?.title || '')
         let goal = 0;
-        let progress=0;
-        if(isPlayTimeTask){
+        let progress = 0;
+        if (isPlayTimeTask) {
             goal = Number(task?.limit || task?.goal || 0);
             progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
         }
-        if(isLoggingTask){
+        if (isLoggingTask) {
             const today = new Date();
             goal = Number(task?.limit || task?.goal || 0);
             progress = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 1 : 0;
         }
-        if(isStreakTask){
+        if (isStreakTask) {
             goal = Number(task?.limit || task?.goal || 0)
             progress = 1;
         }
@@ -414,7 +420,7 @@ const RewardsExperience = () => {
 
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily' , rewards : task?.reward });
+            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily', rewards: task?.reward });
             // Update local state to reflect the new claim
             setTaskClaimData(prevData => {
                 const updatedDaily = prevData.daily.map(d =>
@@ -432,7 +438,7 @@ const RewardsExperience = () => {
             enqueueSnackbar('Failed to claim task', { variant: 'error' });
         } finally {
             setLoadingTaskClaim(false);
-        dispatch(getUserRewardBalance());
+            dispatch(getUserRewardBalance());
 
         }
     };
@@ -475,46 +481,58 @@ const RewardsExperience = () => {
 
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly',rewards : task?.reward });
+            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly', rewards: task?.reward });
             // Update local state to reflect the new claim
-            setTaskClaimData(prevData => ({
-                ...prevData,
-                weekly: {
-                    week: currentWeek,
-                    claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
-                }
-            }));
+            setTaskClaimData(prevData => {
+                const updatedWeekly = [
+                    ...prevData.weekly, {
+                        week: currentWeek,
+                        claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
+                    }
+                ];
+
+                return {
+                    ...prevData,
+                    weekly: updatedWeekly
+                };
+            });
             enqueueSnackbar('Weekly quest claimed!', { variant: 'success' });
         } catch (e) {
             enqueueSnackbar('Failed to claim weekly quest', { variant: 'error' });
         } finally {
             setLoadingTaskClaim(false);
-        dispatch(getUserRewardBalance());
+            dispatch(getUserRewardBalance());
 
         }
     };
-
-    const claimMilestone = async (milestoneId) => {
+    const claimMilestone = async (milestone) => {
         // Check if milestone task is already claimed
-        const isTaskClaimedMilestone = taskClaimData?.milestone?.claimedTasks?.includes(milestoneId);
+        const isTaskClaimedMilestone = taskClaimData?.milestone?.claimedTasks?.includes(milestone?._id || milestone?.id);
 
         if (isTaskClaimedMilestone) return;
-
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: milestoneId, type: 'milestone' });
+            const response = await axiosInstance.post('/user/task-claim', { taskId: milestone?._id, type: 'milestone', rewards: milestone?.reward });
             // Update local state to reflect the new claim
-            setTaskClaimData(prevData => ({
-                ...prevData,
-                milestone: {
-                    claimedTasks: [...(prevData.milestone?.claimedTasks || []), milestoneId]
-                }
-            }));
+            setTaskClaimData(prevData => {
+                const updatedMilestone = [
+                    ...(prevData.milestone || []),
+                    {
+                        claimedTasks: [...(prevData.milestone?.claimedTasks || []), milestone?._id]
+                    }
+                ];
+
+                return {
+                    ...prevData,
+                    milestone: updatedMilestone
+                };
+            });
             enqueueSnackbar('Milestone claimed!', { variant: 'success' });
         } catch (e) {
             enqueueSnackbar('Failed to claim milestone', { variant: 'error' });
         } finally {
             setLoadingTaskClaim(false);
+            dispatch(getUserRewardBalance());
         }
     };
 
@@ -659,19 +677,22 @@ const RewardsExperience = () => {
     };
 
     // Helper function to check if a weekly task is claimed for current week
+
     const isWeeklyTaskClaimed = (taskId) => {
         const currentWeek = getCurrentWeek();
-      
-        // Find the entry for this week
-        const currentWeekData = taskClaimData?.weekly?.find(w => w.week === currentWeek);
-  
-      
+        console.log('taskClaimDataweekly', taskClaimData)
+
+        let currentWeekData = taskClaimData?.weekly?.find(w => w.week === currentWeek) || null;
+
         return currentWeekData?.claimedTasks?.includes(String(taskId)) || false;
-      };
-      
+    };
+
     // Helper function to check if a milestone task is claimed
     const isMilestoneTaskClaimed = (taskId) => {
-        return taskClaimData?.milestone?.claimedTasks?.includes(taskId);
+        console.log('taskClaimDataweekly', taskClaimData)
+
+        let milestoneWithTask = taskClaimData?.milestone?.find(m => m.claimedTasks.includes(String(taskId)));
+        return !!milestoneWithTask;
     };
 
     return (
@@ -705,8 +726,8 @@ const RewardsExperience = () => {
                 {/* Top grid */}
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-10 md:items-stretch'>
                     {/* My Points */}
-                    { console.log('userBalance',userBalance)}
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
+                    {console.log('userBalance', userBalance)}
+                    {/* <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
                         <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
                             <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
@@ -716,7 +737,7 @@ const RewardsExperience = () => {
                             <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {earnBalance.toFixed(2)}</p>
                             <p className='text-emerald-300 text-xs md:text-sm mt-2'>Earn Balance: {earnBalance.toFixed(2)}</p>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Earn more points */}
                     <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
@@ -733,7 +754,7 @@ const RewardsExperience = () => {
                                 return (
                                     <div
                                         key={task._id}
-                                        className="flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10"
+                                        className="flex flex-wrap items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 gap-4"
                                     >
                                         <div className="flex items-center gap-3 sm:gap-4">
                                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
@@ -748,7 +769,7 @@ const RewardsExperience = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                        <div className='flex  flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
                                             <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={task?.title === 'Take a quiz' && hasPlayedQuiz} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${task?.title === 'Take a quiz' && hasPlayedQuiz ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
                                                 {task?.title === 'Take a quiz' ? (hasPlayedQuiz ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : ''}
                                             </button>
@@ -780,61 +801,63 @@ const RewardsExperience = () => {
                         </div>
 
                     </div>
-                </div>
 
-                {/* Refer a friend */}
-                <div className='mt-6 sm:mt-10 grid grid-cols-1'>
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
-                        <div className='flex items-center justify-between mb-3'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaUserFriends className='text-emerald-300' /> Invite friends, earn coins</h3>
-                            <span className='text-white/60 text-xs'>+50 on signup</span>
-                        </div>
-                        <p className='text-white/70 text-sm mb-3'>Share your link. When a friend registers, you earn referral coins.</p>
-                        <div className='flex flex-col sm:flex-row gap-2'>
-                            <input readOnly value={referralLink} className='flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm' />
-                            <button onClick={handleCopyReferral} className='btn-primary px-4 py-2 rounded-lg text-sm font-semibold'>Copy link</button>
-                        </div>
-
-                        <div className='flex items-center justify-between mb-3'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-yellow-300' /> Referral Points</h3>
-                            <span className='text-white/60 text-xs'>Claim your rewards</span>
-                        </div>
-                        <div className='bg-white/5 rounded-xl p-4 border border-white/10'>
+                    {/* Refer a friend */}
+                    <div className=' grid grid-cols-1'>
+                        <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
                             <div className='flex items-center justify-between mb-3'>
-                                <div>
-                                    <p className='text-white font-medium text-sm'>Pending Referral Points</p>
-                                    <p className='text-white/70 text-xs'>Earned from successful referrals</p>
-                                </div>
-                                <div className='text-right'>
-                                    <div className='text-yellow-300 font-extrabold text-2xl flex items-center gap-2'>
-                                        <FaGem /> {referralPoints}
-                                    </div>
-                                    <p className='text-white/60 text-xs'>Points available</p>
-                                </div>
+                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaUserFriends className='text-emerald-300' /> Invite friends, earn coins</h3>
+                                <span className='text-white/60 text-xs'>+50 on signup</span>
                             </div>
-                            <div className='flex items-center justify-between'>
-                                <div className='text-white/70 text-sm'>
-                                    {referralHistory.length} successful referral{referralHistory.length !== 1 ? 's' : ''}
-                                    {referralPoints > 0 && (
-                                        <span className='block text-yellow-300 text-xs mt-1'>
-                                            {referralPoints} points ready to claim
-                                        </span>
-                                    )}
+                            <p className='text-white/70 text-sm mb-3'>Share your link. When a friend registers, you earn referral coins.</p>
+                            <div className='flex flex-col sm:flex-row gap-2'>
+                                <input readOnly value={referralLink} className='flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm' />
+                                <button onClick={handleCopyReferral} className='btn-primary px-4 py-2 rounded-lg text-sm font-semibold'>Copy link</button>
+                            </div>
+
+                            <div className='flex items-center justify-between mb-3'>
+                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-yellow-300' /> Referral Points</h3>
+                                <span className='text-white/60 text-xs'>Claim your rewards</span>
+                            </div>
+                            <div className='bg-white/5 rounded-xl p-4 border border-white/10'>
+                                <div className='flex items-center justify-between mb-3'>
+                                    <div>
+                                        <p className='text-white font-medium text-sm'>Pending Referral Points</p>
+                                        <p className='text-white/70 text-xs'>Earned from successful referrals</p>
+                                    </div>
+                                    <div className='text-right'>
+                                        <div className='text-yellow-300 font-extrabold text-2xl flex items-center gap-2'>
+                                            <FaGem /> {referralPoints}
+                                        </div>
+                                        <p className='text-white/60 text-xs'>Points available</p>
+                                    </div>
                                 </div>
-                                <button
-                                    onClick={handleClaimReferralPoints}
-                                    disabled={referralPoints === 0 || isClaimingReferral}
-                                    className={`px-4 py-2 rounded-lg text-sm font-semibold ${referralPoints === 0 || isClaimingReferral
-                                        ? 'btn-soft cursor-not-allowed opacity-60'
-                                        : 'btn-primary'
-                                        }`}
-                                >
-                                    {isClaimingReferral ? 'Claiming...' : referralPoints === 0 ? 'All Claimed' : 'Claim Points'}
-                                </button>
+                                <div className='flex items-center justify-between'>
+                                    <div className='text-white/70 text-sm'>
+                                        {referralHistory.length} successful referral{referralHistory.length !== 1 ? 's' : ''}
+                                        {referralPoints > 0 && (
+                                            <span className='block text-yellow-300 text-xs mt-1'>
+                                                {referralPoints} points ready to claim
+                                            </span>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={handleClaimReferralPoints}
+                                        disabled={referralPoints === 0 || isClaimingReferral}
+                                        className={`px-4 py-2 rounded-lg text-sm font-semibold ${referralPoints === 0 || isClaimingReferral
+                                            ? 'btn-soft cursor-not-allowed opacity-60'
+                                            : 'btn-primary'
+                                            }`}
+                                    >
+                                        {isClaimingReferral ? 'Claiming...' : referralPoints === 0 ? 'All Claimed' : 'Claim Points'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
 
                 {/* Daily streak + Weekly quests */}
                 <div className='mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
@@ -938,13 +961,13 @@ const RewardsExperience = () => {
                                 let progressPct = 0;
                                 let canComplete = false;
                                 let claimed = false;
-                                
+
                                 if (isPlayTimeTask) {
                                     goal = Number(q?.limit || q?.goal || 0);
                                     progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
                                     progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
                                     claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
-                                    console.log("dailyTasksTodaay",claimedWeeklyTasks,claimed,progress,goal);
+                                    console.log("dailyTasksTodaay", claimedWeeklyTasks, claimed, progress, goal);
                                     canComplete = progress >= goal && !claimed;
                                 }
                                 if (isLoggingTask) {
@@ -1061,7 +1084,10 @@ const RewardsExperience = () => {
                             {leaderboardData.map((u, idx) => (
                                 <div key={u.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex items-center justify-between'>
                                     <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-                                        <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>{idx + 1}</div>
+                                        {Trophy[idx] ? <img className='w-8 h-8 sm:w-9 sm:h-9 ' src={Trophy[idx]}></img> :
+                                            <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>{idx + 1}</div>
+                                        }
+
                                         <div className='min-w-0 flex-1'>
                                             <p className='text-white font-medium text-sm sm:text-base truncate'>{u.name}</p>
                                             <span className='text-white/60 text-xs'>Top Player</span>
@@ -1101,6 +1127,7 @@ const RewardsExperience = () => {
                             const pct = Math.min(100, (totalEarned / m.target) * 100);
                             const claimed = claimedMilestoneTasks.has(m._id || m.id);
                             const canClaim = !claimed && totalEarned >= m.target;
+
                             return (
                                 <div key={m._id} className='glass-card rounded-2xl p-4 sm:p-5 reward-glow'>
                                     <div className='flex items-center gap-2 sm:gap-3 mb-2'>
@@ -1120,7 +1147,7 @@ const RewardsExperience = () => {
                                         <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {m.reward}</div>
                                     </div>
                                     <button
-                                        onClick={() => claimMilestone(m._id)}
+                                        onClick={() => claimMilestone(m)}
                                         disabled={!canClaim || loadingTaskClaim || isMilestoneTaskClaimed(m._id)}
                                         className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${isMilestoneTaskClaimed(m._id) ? 'btn-soft cursor-not-allowed opacity-60' : canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                     >
@@ -1134,7 +1161,7 @@ const RewardsExperience = () => {
                 </div>
 
                 {/* ***** Scratch Card ***** */}
-                <ScratchGame/>
+                <ScratchGame />
             </div>
         </section>
     )

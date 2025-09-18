@@ -1,276 +1,396 @@
-import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllGames } from "../Redux/Slice/game.slice";
-import { Link } from "react-router-dom";
-// import "./style.css";
+import React, { useState } from 'react';
+import mountain from '../images/mountain.png'
+import mountain1 from '../images/mountain1.jpg'
+import bronzehunter from '../images/bronzehunter.png'
+const Demo = () => {
+    const [userDiamonds, setUserDiamonds] = useState(300);
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/effect-fade";
+    // Stage thresholds with dark theme colors
+    const stages = [
+        { id: 1, name: "Starter Island", threshold: 500, baseColor: "#4B5563", topColor: "#6B7280", icon:bronzehunter },
+        { id: 2, name: "Adventure Isle", threshold: 1500, baseColor: "#7C3AED", topColor: "#8B5CF6", icon: mountain },
+        { id: 3, name: "Crystal Peaks", threshold: 3000, baseColor: "#059669", topColor: "#10B981", icon: mountain },
+        { id: 4, name: "Diamond Kingdom", threshold: 6000, baseColor: "#DC2626", topColor: "#EF4444", icon: mountain }
+    ];
 
-
-import { EffectFade, Navigation, Pagination, Autoplay } from 'swiper/modules';
-const slides = [
-    {
-        img: "https://u.cubeupload.com/Leo21/eagel1.jpg",
-        name: "EAGLE",
-        desc: "Eagles are majestic birds of prey known for their incredible strength, sharp vision, and powerful talons"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/owl1.jpg",
-        name: "OWL",
-        desc: "Owls are nocturnal birds of prey, shrouded in an aura of mystery and wisdom"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/crow.jpg",
-        name: "CROW",
-        desc: "Crows are highly intelligent and adaptable birds known for their glossy black plumage and distinctive calls."
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/butterfly1.jpeg",
-        name: "BUTTERFLY",
-        desc: "Butterflies, with their vibrant wings and graceful flight, are a symbol of transformation and beauty in the natural world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/owl2.jpg",
-        name: "OWL",
-        desc: "Owls have long been associated with mystery, wisdom, and the supernatural in various cultures"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/eagel3.jpg",
-        name: "EAGLE",
-        desc: "Eagles represent freedom, power, and nobility in many cultures"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/kingfirser2.jpeg",
-        name: "KINGFISHER",
-        desc: "Kingfishers, with their dazzling plumage, are vibrant jewels of the aquatic world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/parrot2.jpg",
-        name: "PARROT",
-        desc: "Parrots are social creatures, often living in flocks and exhibiting complex communication patterns"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/heron.jpeg",
-        name: "HERON",
-        desc: "Herons are known for their striking appearance, often characterized by graceful necks and stilt-like legs"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/butterfly2.jpg",
-        name: "BUTTERFLY",
-        desc: "Butterflies, with their delicate wings and vibrant colors, are among the most enchanting creatures in the natural world"
-    },
-    {
-        img: "https://u.cubeupload.com/Leo21/parrot1.jpg",
-        name: "PARROT",
-        desc: "Parrots are known for their long lifespans, with some species living for several decades"
-    }
-];
-
-export default function Demo() {
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        dispatch(getAllGames());
-    }, [dispatch]);
-
-    const games = useSelector((state) => state.game.games)?.slice(0, 10) || [];
-    const listRef = useRef(null);
-    const carouselRef = useRef(null);
-    const timeRunning = 3000;
-    const timeAutoNext = 30000000;
-    const runTimeOut = useRef(null);
-    const runNextAuto = useRef(null);
-    const timeBarRef = useRef(null);
-
-    // Function to get image URL with fallback
-    const getImageUrl = (slide) => {
-        // Check if slide has cover_image url
-        if (slide?.cover_image?.url) {
-            return slide.cover_image.url;
-        }
-        // Fallback to default image if no cover_image
-        return "https://via.placeholder.com/800x600/333333/ffffff?text=No+Image";
-    };
-
-    const resetTimeAnimation = () => {
-        if (timeBarRef.current) {
-            timeBarRef.current.style.animation = "none";
-            void timeBarRef.current.offsetHeight;
-            timeBarRef.current.style.animation = null;
-            timeBarRef.current.style.animation = "runningTime 7s linear 1 forwards";
-        }
-    };
-
-    const showSlider = (type) => {
-        const list = listRef.current;
-        const carousel = carouselRef.current;
-        if (!list || !carousel) return;
-
-        const items = list.querySelectorAll(".item");
-
-        // Check if items exist and have length
-        if (!items || items.length === 0) return;
-
-        if (type === "next") {
-            // Check if first item exists before trying to append it
-            if (items[0]) {
-                list.appendChild(items[0]);
-                carousel.classList.add("next");
-            }
-        } else {
-            // Check if last item exists before trying to prepend it
-            if (items[items.length - 1]) {
-                list.prepend(items[items.length - 1]);
-                carousel.classList.add("prev");
+    // Calculate current stage and progress
+    const getCurrentStage = (diamonds) => {
+        for (let i = 0; i < stages.length; i++) {
+            if (diamonds < stages[i].threshold) {
+                return {
+                    currentStage: i,
+                    progress: i === 0 ? (diamonds / stages[i].threshold) * 100 :
+                        ((diamonds - stages[i - 1].threshold) / (stages[i].threshold - stages[i - 1].threshold)) * 100,
+                    previousThreshold: i === 0 ? 0 : stages[i - 1].threshold,
+                    nextThreshold: stages[i].threshold
+                };
             }
         }
-
-        clearTimeout(runTimeOut.current);
-        runTimeOut.current = setTimeout(() => {
-            carousel.classList.remove("next");
-            carousel.classList.remove("prev");
-        }, timeRunning);
-
-        clearTimeout(runNextAuto.current);
-        runNextAuto.current = setTimeout(() => {
-            showSlider("next");
-        }, timeAutoNext);
-
-        resetTimeAnimation();
-    };
-
-    useEffect(() => {
-        // Only start auto-slide if games are loaded
-        if (games && games.length > 0) {
-            runNextAuto.current = setTimeout(() => {
-                showSlider("next");
-            }, timeAutoNext);
-            resetTimeAnimation();
-        }
-
-        return () => {
-            clearTimeout(runNextAuto.current);
-            clearTimeout(runTimeOut.current);
+        return {
+            currentStage: stages.length,
+            progress: 100,
+            previousThreshold: stages[stages.length - 1].threshold,
+            nextThreshold: stages[stages.length - 1].threshold
         };
-    }, [games]);
+    };
 
-    // Don't render carousel until games are loaded
-    if (!games || games.length === 0) {
-        return <div>Loading...</div>;
-    }
+    const stageInfo = getCurrentStage(userDiamonds);
 
     return (
-        <div className="carousel w-full h-[500px]  md:h-[500px] lg:h-[500px] xl:h-[700px]" ref={carouselRef}>
-            <div className="list hidden md:flex" ref={listRef}>
-                {games.map((slide, i) => {
-                    const imageUrl = getImageUrl(slide);
-                    console.log('img', i, imageUrl);
+        <div className="w-full max-w-6xl mx-auto p-6 bg-transparent min-h-screen">
+            {/* Header
+            <div className="text-center mb-8">
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-4">Diamond Journey</h2>
+                <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 inline-block shadow-2xl border border-gray-700/50">
+                    <div className="flex items-center justify-center gap-3 text-white">
+                        <span className="text-3xl drop-shadow-lg">💎</span>
+                        <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                            {userDiamonds.toLocaleString()}
+                        </span>
+                    </div>
+                    <div className="text-gray-300 mt-2 font-medium">
+                        Stage {Math.min(stageInfo.currentStage + 1, 4)} - {stageInfo.progress.toFixed(1)}% Complete
+                    </div>
+                </div>
+            </div> */}
 
-                    return (
-                        <div
-                            className="item"
-                            style={{
-                                backgroundImage: `url("${imageUrl}")`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                                minHeight: '10px',
-                            }}
-                            key={slide.id || i}
-                        >
-                            <div className="image-overlay" style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                zIndex: 1
-                            }}></div>
-                            <div className="blob md:w-[50%] w-full h-[600px] absolute bottom-0 right-0 bg-[#141414] z-[2] bg-[0,0,0,0.1] ms-0" >
-                                <div className="content w-[80%] m-auto  w-full z-10  md:h-full h-full flex flex-col lg:justify-center 3xl:px-16 xl:px-8 px-4 sp_font py-10" style={{ position: 'relative', zIndex: 2 }}>
-                                    <div className="name xl:text-[50px] md:text-[28px] text-[24px] z-10">{slide.title || slide.name || 'Untitled'}</div>
-                                    <div className="des xl:text-base md:text-sm  text-xs text-[#ccc]">{slide.description?.slice(0, 100) + '...' || 'No description available'}</div>
-                                    <Link to={'/single/' + slide._id} className='flex justify-center mt-5'>
-                                        <button className='btn xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
-                                            Learn More
-                                        </button>
-                                    </Link>
-                                </div>
-                            </div>
+            {/* Progress Controls */}
+            {/* <div className="text-center mb-8">
+                <div className="inline-block bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 shadow-2xl border border-gray-700/50">
+                    <input
+                        type="range"
+                        min="0"
+                        max="7000"
+                        value={userDiamonds}
+                        onChange={(e) => setUserDiamonds(parseInt(e.target.value))}
+                        className="w-80 h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                            background: `linear-gradient(to right, #FFD700 0%, #FFD700 ${(userDiamonds / 7000) * 100}%, #374151 ${(userDiamonds / 7000) * 100}%, #374151 100%)`
+                        }}
+                    />
+                    <div className="mt-3 text-gray-300 text-sm font-medium">Drag to simulate different diamond amounts</div>
+                </div>
+            </div> */}
 
+            {/* 3D Map Container */}
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 mb-8 border border-gray-700/50">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900" style={{ height: '500px' }}>
+                    <svg viewBox="0 0 1000 500" className="w-full h-full">
+                        {/* SVG Filters for 3D effects */}
+                        <defs>
+                            <filter id="depth" x="-50%" y="-50%" width="200%" height="200%">
+                                <feDropShadow dx="4" dy="8" stdDeviation="6" floodColor="rgba(0,0,0,0.6)" />
+                            </filter>
+                            <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feOffset dx="0" dy="0" />
+                                <feGaussianBlur stdDeviation="3" result="offset-blur" />
+                                <feFlood floodColor="rgba(0,0,0,0.4)" />
+                                <feComposite in2="offset-blur" operator="in" />
+                            </filter>
+                            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                            <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#6B7280" />
+                                <stop offset="100%" stopColor="#4B5563" />
+                            </linearGradient>
+                            {/* Stars background */}
+                            <pattern id="stars" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                                <circle cx="20" cy="30" r="1" fill="rgba(255,255,255,0.3)" />
+                                <circle cx="60" cy="10" r="0.8" fill="rgba(255,255,255,0.2)" />
+                                <circle cx="80" cy="70" r="1.2" fill="rgba(255,255,255,0.4)" />
+                                <circle cx="40" cy="80" r="0.6" fill="rgba(255,255,255,0.3)" />
+                                <circle cx="10" cy="60" r="0.9" fill="rgba(255,255,255,0.2)" />
+                            </pattern>
+                        </defs>
 
+                        {/* Star background */}
+                        <rect width="1000" height="500" fill="url(#stars)" opacity="0.5" />
 
-                            <img
-                                className=""
-                                src={imageUrl}
-                                alt={slide.title || slide.name || 'Game image'}
-                                style={{ display: 'none' }}
-                                onError={() => console.warn('Image failed to load:', imageUrl)}
-                                onLoad={() => console.log('Image loaded successfully:', imageUrl)}
-                            />
-                        </div>
-                    );
-                })}
-            </div>
-            <div className="relative w-full sp_slider_dot md:hidden">
-                <Swiper
-                    modules={[EffectFade, Pagination, Autoplay]}
-                    effect="fade"
-                    speed={1200}
-                    slidesPerView={1}
-                    pagination={{
-                        clickable: true,
-                        renderBullet: (index, className) => {
-                            return `<span class="${className} custom-bullet"></span>`;
-                        },
-                    }}
-                    autoplay={{ delay: 5000 }}
-                    loop={true}
-                    className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[700px]"
-                >
-                    {games && games.length > 0 ? (
-                        games.slice(0, 5).map((game, index) => (
-                            <SwiperSlide key={index}>
-                                <div className="relative md:flex w-full md:h-[500px]  h-[600px] xl:h-[700px] overflow-hidden bg-[#141414]">
-                                    <div className='blob md:w-[60%] w-full h-[600px]' >
-                                        <img
-                                            src={game?.cover_image?.url}
-                                            alt={game.title || `Game ${index + 1}`}
-                                            className="w-full lg:h-[600px] xl:h-[700px] object-center object-cover "
+                        {/* Continent-style paths */}
+                        {[
+                            {
+                                from: { x: 180, y: 350 },
+                                to: { x: 320, y: 220 },
+                                d: "M 180 350 Q 220 300 250 280 Q 280 250 320 220"
+                            },
+                            {
+                                from: { x: 320, y: 220 },
+                                to: { x: 580, y: 250 },
+                                d: "M 320 220 Q 400 180 450 190 Q 520 200 580 250"
+                            },
+                            {
+                                from: { x: 580, y: 250 },
+                                to: { x: 750, y: 320 },
+                                d: "M 580 250 Q 640 270 680 280 Q 720 290 750 320"
+                            }
+                        ].map((path, index) => {
+                            const isActive = index < stageInfo.currentStage;
+                            const isCurrentPath = index === stageInfo.currentStage - 1 && stageInfo.currentStage > 0;
+
+                            return (
+                                <g key={index}>
+                                    {/* Path shadow */}
+                                    <path
+                                        d={path.d}
+                                        fill="none"
+                                        stroke="rgba(0,0,0,0.6)"
+                                        strokeWidth="18"
+                                        strokeLinecap="round"
+                                        transform="translate(3, 6)"
+                                    />
+                                    {/* Path base */}
+                                    <path
+                                        d={path.d}
+                                        fill="none"
+                                        stroke={isActive ? "#6B7280" : "#374151"}
+                                        strokeWidth="16"
+                                        strokeLinecap="round"
+                                        opacity={isActive ? "1" : "0.4"}
+                                    />
+                                    {/* Path highlight */}
+                                    <path
+                                        d={path.d}
+                                        fill="none"
+                                        stroke={isActive ? "#9CA3AF" : "#4B5563"}
+                                        strokeWidth="8"
+                                        strokeLinecap="round"
+                                        opacity={isActive ? "0.8" : "0.3"}
+                                    />
+                                    {/* Moving progress dot */}
+                                    {isCurrentPath && (
+                                        <circle r="8" fill="#FFD700" filter="url(#glow)">
+                                            <animateMotion dur="4s" repeatCount="indefinite" path={path.d} />
+                                        </circle>
+                                    )}
+                                </g>
+                            );
+                        })}
+
+                        {/* 3D Continent-style Islands */}
+                        {stages.map((stage, index) => {
+                            const positions = [
+                                { x: 180, y: 350, shape: "M -80,-40 Q -60,-60 -20,-55 Q 20,-50 60,-45 Q 80,-30 70,10 Q 50,40 10,45 Q -30,50 -70,30 Q -85,10 -80,-40 Z" },
+                                { x: 320, y: 220, shape: "M -70,-50 Q -40,-70 0,-65 Q 40,-60 75,-40 Q 85,-10 80,20 Q 70,50 30,55 Q -10,60 -50,45 Q -75,25 -70,-50 Z" },
+                                { x: 580, y: 250, shape: "M -85,-45 Q -50,-75 -10,-70 Q 30,-65 70,-50 Q 90,-20 85,15 Q 75,45 35,50 Q -5,55 -45,40 Q -70,20 -85,-45 Z" },
+                                { x: 750, y: 320, shape: "M -75,-55 Q -45,-80 -5,-75 Q 35,-70 70,-55 Q 85,-25 80,10 Q 70,40 30,45 Q -10,50 -50,35 Q -80,15 -75,-55 Z" }
+                            ];
+
+                            const pos = positions[index];
+                            const isCompleted = userDiamonds >= stage.threshold;
+                            const isCurrent = index === stageInfo.currentStage && !isCompleted;
+                            const isLocked = index > stageInfo.currentStage;
+
+                            return (
+                                <g key={stage.id} transform={`translate(${pos.x}, ${pos.y})`}>
+                                    {/* Continent shadow */}
+                                    {/* <path
+                                        d={pos.shape}
+                                        fill="rgba(0,0,0,0.5)"
+                                        transform="translate(6, 10)"
+                                    /> */}
+
+                                    {/* Continent base (darker) */}
+                                    {/* <path
+                                        d={pos.shape}
+                                        fill={isLocked ? "#374151" : stage.baseColor}
+                                        opacity={isLocked ? "0.5" : "1"}
+                                        filter="url(#innerShadow)"
+                                    /> */}
+
+                                    {/* Continent top layer */}
+                                    {/* <path
+                                        d={pos.shape}
+                                        fill={isLocked ? "#4B5563" : stage.topColor}
+                                        opacity={isLocked ? "0.6" : "0.9"}
+                                        transform="translate(-2, -4)"
+                                    /> */}
+
+                                    {/* Continent highlight */}
+                                    {/* <path
+                                        d="M -40,-30 Q -20,-40 0,-35 Q 20,-30 35,-20 Q 25,-10 5,-5 Q -15,0 -35,-10 Q -45,-20 -40,-30 Z"
+                                        fill="rgba(255,255,255,0.2)"
+                                        opacity={isLocked ? "0.1" : "0.3"}
+                                    /> */}
+
+                                    {/* Glowing edge for current stage */}
+                                    {/* {isCurrent && (
+                                        <path
+                                            d={pos.shape}
+                                            fill="none"
+                                            stroke="#FFD700"
+                                            strokeWidth="2"
+                                            opacity="0.6"
+                                            filter="url(#glow)"
+                                            transform="translate(-2, -4)"
                                         />
-                                        {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div> */}
+                                    )} */}
 
-                                    </div>
+                                    {/* Stage icon */}
+                                    <image
+                                        x="-100"
+                                        y="-100"
+                                        width="200"
+                                        height="200"
+                                        href={stage.icon}
+                                        className={isLocked ? "grayscale" : ""}
+                                        filter="url(#depth)"
+                                    />
 
-                                    <div className='md:w-[40%] w-full  md:h-full h-[40%] flex flex-col justify-center 3xl:px-16 xl:px-8 px-4 sp_font  '>
-                                        <div className="xl:text-[50px] md:text-[28px] text-[24px] z-10 ">{game.title}</div>
-                                        <p className='xl:text-base md:text-sm  text-xs text-[#ccc]'>
-                                            {game.description.slice(0, 200) + '...'}
-                                        </p>
-                                        <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
-                                            <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
-                                                Learn More
-                                            </button>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </SwiperSlide>
-                        ))
-                    ) : (
-                        <p className="text-center text-white py-10">No games available</p>
-                    )}
-                </Swiper>
+                                    {/* Progress ring for current stage */}
+                                    {/* {isCurrent && (
+                                        <circle
+                                            cx="0"
+                                            cy="0"
+                                            r="65"
+                                            fill="none"
+                                            stroke="#FFD700"
+                                            strokeWidth="4"
+                                            strokeDasharray={`${(stageInfo.progress / 100) * 408} 408`}
+                                            transform="rotate(-90)"
+                                            opacity="0.8"
+                                            filter="url(#glow)"
+                                        />
+                                    )} */}
+
+                                    {/* Completion badge */}
+                                    {isCompleted && (
+                                        <g transform="translate(45, -45)">
+                                            <circle cx="3" cy="3" r="18" fill="rgba(34, 197, 94, 0.3)" />
+                                            <circle cx="0" cy="0" r="16" fill="#22C55E" filter="url(#depth)" />
+                                            <circle cx="0" cy="0" r="12" fill="#4ADE80" />
+                                            <text x="0" y="6" textAnchor="middle" fontSize="16" fill="white" fontWeight="bold">✓</text>
+                                        </g>
+                                    )}
+
+                                    {/* Labels */}
+                                    <text
+                                        x="0"
+                                        y="85"
+                                        textAnchor="middle"
+                                        fontSize="16"
+                                        fill="#E5E7EB"
+                                        className="font-bold drop-shadow-lg"
+                                    >
+                                        {stage.name}
+                                    </text>
+                                    <text
+                                        x="0"
+                                        y="105"
+                                        textAnchor="middle"
+                                        fontSize="14"
+                                        fill="#9CA3AF"
+                                        className="drop-shadow-md"
+                                    >
+                                        {stage.threshold.toLocaleString()} 💎
+                                    </text>
+                                </g>
+                            );
+                        })}
+
+                        {/* Current position indicator */}
+                        {stageInfo.currentStage < stages.length && (
+                            <g transform={`translate(${180 + stageInfo.currentStage * 190}, ${350 - stageInfo.currentStage * 43})`}>
+                                <circle cx="3" cy="-87" r="14" fill="rgba(239, 68, 68, 0.3)" />
+                                <circle cx="0" cy="-90" r="12" fill="#EF4444" filter="url(#glow)" />
+                                <circle cx="0" cy="-90" r="8" fill="#FCA5A5" />
+                                <text x="0" y="-65" textAnchor="middle" fontSize="14" fill="#E5E7EB" className="font-bold drop-shadow-lg">
+                                    YOU
+                                </text>
+                            </g>
+                        )}
+
+                        {/* Decorative nebula effects */}
+                        <g opacity="0.1">
+                            <circle cx="150" cy="100" r="30" fill="url(#stars)" />
+                            <circle cx="400" cy="80" r="25" fill="url(#stars)" />
+                            <circle cx="700" cy="120" r="35" fill="url(#stars)" />
+                            <circle cx="850" cy="150" r="20" fill="url(#stars)" />
+                        </g>
+                    </svg>
+                </div>
             </div>
-            <div className="arrows hidden">
-                <button className="prev hidden md:block" onClick={() => showSlider("prev")}>&lt;</button>
-                <button className="next hidden  md:block" onClick={() => showSlider("next")}>&gt;</button>
-            </div>
 
-            {/* <div className="timeRunning" ref={timeBarRef}></div> */}
+            {/* Progress Details Cards */}
+            {/* <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700/50 p-6 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {stages.map((stage, index) => {
+                        const isCompleted = userDiamonds >= stage.threshold;
+                        const isCurrent = index === stageInfo.currentStage;
+
+                        return (
+                            <div
+                                key={stage.id}
+                                className={`text-center p-4 rounded-xl border transition-all duration-300 backdrop-blur-sm ${isCompleted ? 'bg-green-900/30 border-green-600/30 shadow-lg shadow-green-500/10' :
+                                    isCurrent ? 'bg-yellow-900/30 border-yellow-600/30 shadow-lg shadow-yellow-500/10' :
+                                        'bg-gray-800/30 border-gray-600/30'
+                                    }`}
+                            >
+                                <div className="text-2xl mb-2 drop-shadow-lg">{stage.icon}</div>
+                                <div className="text-sm font-bold text-gray-100 mb-1 drop-shadow-sm">{stage.name}</div>
+                                <div className="text-xs text-gray-400 mb-2">{stage.threshold.toLocaleString()} 💎</div>
+                                {isCurrent && (
+                                    <div className="text-xs font-bold text-yellow-400 drop-shadow-sm">
+                                        {stageInfo.progress.toFixed(0)}% Complete
+                                    </div>
+                                )}
+                                {isCompleted && (
+                                    <div className="text-xs font-bold text-green-400 drop-shadow-sm">✓ Unlocked</div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div> */}
+
+            {/* Next milestone progress bar */}
+            {/* {stageInfo.currentStage < stages.length && (
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-2xl border border-gray-700/50 p-4">
+                    <div className="text-center text-gray-300 mb-3">
+                        <div className="text-sm font-medium drop-shadow-sm">
+                            Next milestone: {(stageInfo.nextThreshold - userDiamonds).toLocaleString()} more diamonds needed
+                        </div>
+                    </div>
+                    <div className="relative w-full bg-gray-700/50 rounded-full h-4 shadow-inner">
+                        <div
+                            className="absolute top-0 left-0 h-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full transition-all duration-700 shadow-lg"
+                            style={{
+                                width: `${stageInfo.progress}%`,
+                                boxShadow: '0 2px 10px rgba(251, 191, 36, 0.5)'
+                            }}
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            )} */}
+
+            <style jsx>{`
+        input[type="range"]::-webkit-slider-thumb {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: linear-gradient(145deg, #FFD700, #FFA500);
+          box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3);
+          cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: linear-gradient(145deg, #FFD700, #FFA500);
+          box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3);
+          border: none;
+          cursor: pointer;
+        }
+      `}</style>
         </div>
     );
-}
+};
+
+export default Demo;
