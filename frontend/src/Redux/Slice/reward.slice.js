@@ -184,6 +184,36 @@ export const getUserRedemptionHistory = createAsyncThunk(
     }
 );
 
+// Get threshold claims status (100/200/500)
+export const getThresholdClaims = createAsyncThunk(
+    'reward/getThresholdClaims',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/user/rewards/thresholds');
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to fetch thresholds';
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+// Claim a threshold tier and receive fan coins
+export const claimThresholdTier = createAsyncThunk(
+    'reward/claimThresholdTier',
+    async (tier, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(`/user/rewards/thresholds/${tier}/claim`);
+            enqueueSnackbar(response?.data?.message || 'Claimed successfully', { variant: 'success' });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to claim threshold';
+            enqueueSnackbar(errorMessage, { variant: 'error' });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
 // ==================== REWARD TASKS & QUESTS ====================
 
 // Complete a task and earn points
@@ -191,7 +221,7 @@ export const completeTask = createAsyncThunk(
     "reward/completeTask",
     async (taskData, { rejectWithValue }) => {
         try {
-            const { taskId, points, title, completed } = taskData;
+            const { taskId, points, title } = taskData;
 
             // Map task titles to task types for backend
             const taskTypeMap = {
@@ -209,8 +239,7 @@ export const completeTask = createAsyncThunk(
                 title,
                 taskId,
                 points,
-                taskType,
-                completed
+                taskType
             });
             enqueueSnackbar(response?.data?.message, { variant: "success" });
             return response.data;
@@ -347,6 +376,8 @@ const initialState = {
 
     // User rewards
     userBalance: 0,
+    thresholdClaims: { m100: false, m200: false, m500: false },
+    fanCoins: 0,
     recentTransactions: [],
     redemptionHistory: [],
     redemptionPagination: {
@@ -603,6 +634,38 @@ const rewardSlice = createSlice({
             .addCase(getUserRedemptionHistory.rejected, (state, action) => {
                 state.loading.redemption = false;
                 state.error = action.payload?.message || "Failed to fetch redemption history";
+            })
+
+            // ==================== THRESHOLD CLAIMS ====================
+            .addCase(getThresholdClaims.pending, (state) => {
+                state.loading.balance = true;
+                state.error = null;
+            })
+            .addCase(getThresholdClaims.fulfilled, (state, action) => {
+                state.loading.balance = false;
+                state.userBalance = action.payload.result?.balance ?? state.userBalance;
+                state.thresholdClaims = action.payload.result?.claims || state.thresholdClaims;
+                state.fanCoins = action.payload.result?.fanCoins ?? state.fanCoins;
+            })
+            .addCase(getThresholdClaims.rejected, (state, action) => {
+                state.loading.balance = false;
+                state.error = action.payload?.message || 'Failed to fetch thresholds';
+            })
+
+            .addCase(claimThresholdTier.pending, (state) => {
+                state.loading.redeem = true;
+                state.error = null;
+            })
+            .addCase(claimThresholdTier.fulfilled, (state, action) => {
+                state.loading.redeem = false;
+                const res = action.payload.result || {};
+                state.userBalance = res.newBalance ?? state.userBalance;
+                state.fanCoins = res.fanCoins ?? state.fanCoins;
+                if (res.claims) state.thresholdClaims = res.claims;
+            })
+            .addCase(claimThresholdTier.rejected, (state, action) => {
+                state.loading.redeem = false;
+                state.error = action.payload?.message || 'Failed to claim threshold';
             })
 
             // ==================== COMPLETE TASK ====================
