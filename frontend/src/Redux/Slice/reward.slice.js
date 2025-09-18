@@ -750,6 +750,11 @@ const rewardSlice = createSlice({
                 if (action.payload.result) {
                     state.scratchCard.unshift(action.payload.result);
                 }
+                // Optimistically decrement user balance by the purchased tier amount
+                const purchasedTierAmount = Number(action.meta?.arg?.type) || 0;
+                if (purchasedTierAmount > 0) {
+                    state.userBalance = Math.max(0, state.userBalance - purchasedTierAmount);
+                }
             })
             .addCase(createScratchCard.rejected, (state, action) => {
                 state.loading.scratchCard = false;

@@ -13,6 +13,8 @@ import mysteryImg from '../images/shadow.jpg'
 import gold from '../images/gold.png'
 import silver from '../images/silver.png'
 import bronze from '../images/bronze.png'
+import redeem1 from '../images/redeem.jpg'
+import redeem2 from '../images/redeem2.jpg'
 
 import { enqueueSnackbar } from 'notistack';
 import {
@@ -26,7 +28,9 @@ import {
     getUserGamePlayTime,
     getAllTasks,
     getThresholdClaims,
-    claimThresholdTier
+    claimThresholdTier,
+    createScratchCard,
+    getScratchCard
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
 import { getuserLogging } from '../Redux/Slice/user.slice';
@@ -111,6 +115,7 @@ const RewardsExperience = () => {
     const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
     const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
     const allTasksState = useSelector((state) => state.reward.allTasks);
+    const scratchLoading = useSelector((state) => state.reward.loading.scratchCard);
 
     console.log(allTasksState, "allTasksStateeeeee");
 
@@ -568,7 +573,7 @@ const RewardsExperience = () => {
     const handleTaskComplete = (task) => {
         if (completedTasks?.includes(task.id)) return;
         if (task?.title === 'Take a quiz') {
-            console.log('Quiz task clicked:', { hasPlayedQuiz, quizScore, taskId });
+            console.log('Quiz task clicked:', { hasPlayedQuiz, quizScore });
             if (!hasPlayedQuiz) {
                 navigate('/quizRewards');
                 return;
@@ -1108,12 +1113,19 @@ const RewardsExperience = () => {
                             {/* Threshold Claims - Left Side */}
                             <div className='lg:col-span-2'>
                                 <div className='mt-4 grid grid-cols-3 gap-2'>
-                                    {[{ tier: 100, coins: 5, key: 'm100' }, { tier: 200, coins: 10, key: 'm200' }, { tier: 500, coins: 25, key: 'm500' }].map(t => {
+                                    {[{ tier: 100, coins: 5, key: 'm100', image: redeem1 }, { tier: 200, coins: 10, key: 'm200', image: redeem1 }, { tier: 500, coins: 25, key: 'm500', image: redeem1 }].map(t => {
                                         const claimed = !!thresholdClaims?.[t.key];
                                         const canClaim = !claimed && userBalance >= t.tier;
                                         const isDisabled = claimed || userBalance < t.tier || isClaimingThreshold;
                                         return (
                                             <div key={t.key} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
+                                                {t.image && (
+                                                    <img
+                                                        src={t.image}
+                                                        alt={`Offer ${t.tier}`}
+                                                        className='w-28 h-20 sm:w-48 sm:h-28 object-contain mx-auto mb-2 rounded'
+                                                    />
+                                                )}
                                                 <p className='text-white/70 text-[10px] sm:text-xs'>Spend {t.tier}</p>
                                                 <p className='text-emerald-300 text-xs sm:text-sm'>+{t.coins} Fan</p>
                                                 <button
@@ -1148,18 +1160,32 @@ const RewardsExperience = () => {
                                 <div className='mt-4 grid grid-cols-1 gap-2'>
                                     <div className='space-y-3'>
                                         <div className='grid grid-cols-1 gap-2'>
-                                            {[{ tier: 1000, coins: 1, key: 'm100' }].map((option, index) => (
+                                            {[{ tier: 1000, coins: 1, key: 'm100', image: redeem2 }].map((option, index) => (
                                                 <div key={index} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
+                                                    {option.image && (
+                                                        <img
+                                                            src={option.image}
+                                                            alt={`Scratch Card ${option.tier}`}
+                                                            className='w-28 h-20 sm:w-48 sm:h-28 object-contain mx-auto mb-2 rounded'
+                                                        />
+                                                    )}
                                                     <p className='text-white/70 text-xs'>Spend {option.tier}</p>
                                                     <p className='text-emerald-300 text-xs sm:text-sm'>{option.coins} Scratch Card</p>
                                                     <button
-                                                        onClick={() => {
-                                                            // Handle scratch card purchase
-                                                            console.log('Purchase scratch card:', option);
+                                                        onClick={async () => {
+                                                            try {
+                                                                if (userBalance < option.tier || scratchLoading) return;
+                                                                await dispatch(createScratchCard({ type: option.tier })).unwrap();
+                                                                dispatch(getScratchCard());
+                                                                enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
+                                                            } catch (e) {
+                                                                enqueueSnackbar(e?.message || 'Failed to purchase scratch card', { variant: 'error' });
+                                                            }
                                                         }}
-                                                        className='mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold btn-primary'
+                                                        disabled={userBalance < option.tier || scratchLoading}
+                                                        className={`mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold ${userBalance < option.tier || scratchLoading ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}
                                                     >
-                                                        Buy
+                                                        {scratchLoading ? 'Processing...' : 'Claim'}
                                                     </button>
                                                 </div>
                                             ))}
