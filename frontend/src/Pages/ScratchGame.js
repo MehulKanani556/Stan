@@ -234,7 +234,7 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
         >
           <CgCloseO className="text-xl" />
         </button>
-    
+
         <div className="flex flex-col items-center justify-center py-12">
           <FaGift className="text-6xl text-yellow-300 mb-6 animate-bounce" />
           <p
@@ -247,7 +247,7 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
         </div>
       </div>
     );
-    
+
   };
 
   const handleClose = () => {
@@ -282,6 +282,7 @@ const ScratchGame = () => {
   const { scratchCard: scratchCards, error } = useSelector((state) => state.reward);
 
   const [selectedPrize, setSelectedPrize] = useState(null);
+  const [showAll, setShowAll] = useState(false);
 
   const [cardPrices] = useState([
     { price: 1.99, label: "Basic Pack" },
@@ -349,7 +350,7 @@ const ScratchGame = () => {
       </div>
 
       {/* Scratch Card Purchase Options */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {cardPrices.map((option, index) => (
           <div
             key={index}
@@ -359,19 +360,19 @@ const ScratchGame = () => {
             <p className="text-white/80 mb-4">${option.price.toFixed(2)}</p>
             <button
               onClick={() => handlePurchaseScratchCards(option)}
-              // disabled={loading}
               className="w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors disabled:opacity-50"
             >
               {'Buy Now'}
             </button>
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* Scratch Card Display */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[...scratchCards]
+        {[...(Array.isArray(scratchCards) ? scratchCards : [])]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, showAll ? undefined : 8)
           .map((prize, index) => (
             <ScratchCard
               key={index}
@@ -380,6 +381,17 @@ const ScratchGame = () => {
             />
           ))}
       </div>
+
+      {Array.isArray(scratchCards) && scratchCards.length > 8 && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
+            className="px-5 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300"
+          >
+            {showAll ? 'View less' : 'View all'}
+          </button>
+        </div>
+      )}
 
       {/* Modal */}
       {selectedPrize && (
