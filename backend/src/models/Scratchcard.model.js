@@ -23,7 +23,6 @@ const ScratchCardSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    default: Date.now,
   },
   uniqueCode: {
     type: String,

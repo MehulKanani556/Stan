@@ -45,13 +45,12 @@ export const createScratchCard = async (req, res) => {
 
         // Generate reward
         const reward = await generateReward();
-        console.log(reward);
-
+ 
         const scratchCard = await ScratchCard.create({
             user: userId,           
             uniqueCode,
             reward: reward, // Store as JSON string
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+            
         });
 
         return sendCreatedResponse(res, "Scratch card created successfully", scratchCard);
@@ -137,11 +136,13 @@ export const revealScratchCard = async (req, res) => {
             _id: cardId, 
             user: userId,
             isRevealed: false,
-            expiresAt: { $gt: new Date() }
         });
         if (!scratchCard) {
             return sendNotFoundResponse(res, 'Invalid or expired scratch card');
         }
+        const randomDays = Math.floor(Math.random() * (9 - 3 + 1)) + 3;
+
+        scratchCard.expiresAt = new Date(Date.now() + randomDays * 24 * 60 * 60 * 1000);
         scratchCard.isRevealed = true;
         await scratchCard.save();
         return sendSuccessResponse(res,  'Scratch card revealed successfully', scratchCard);

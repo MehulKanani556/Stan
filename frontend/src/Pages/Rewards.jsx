@@ -1135,7 +1135,7 @@ const RewardsExperience = () => {
                         <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6'>
                             {/* Threshold Claims - Left Side */}
                             <div className='lg:col-span-2'>
-                                <div className='mt-4 grid grid-cols-3 gap-2'>
+                                <div className='mt-4 grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2'>
                                     {[{ tier: 100, coins: 5, key: 'm100', image: redeem1 }, { tier: 200, coins: 10, key: 'm200', image: redeem1 }, { tier: 500, coins: 25, key: 'm500', image: redeem1 }].map(t => {
                                         const claimed = !!thresholdClaims?.[t.key];
                                         const canClaim = !claimed && userBalance >= t.tier;
@@ -1229,12 +1229,30 @@ const RewardsExperience = () => {
                         </div>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
                             {leaderboardData.map((u, idx) => (
-                                <div key={u.key || u.id || idx} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex items-center justify-between'>
+                                <div
+                                    key={u.key || u.id || idx}
+                                    className='bg-white/5 rounded-xl p-3 sm:p-4 border flex items-center justify-between'
+                                    style={{
+                                        borderColor:
+                                            idx === 0
+                                                ? '#FFD700'
+                                                : idx === 1
+                                                    ? '#C0C0C0'
+                                                    : idx === 2
+                                                        ? '#CD7F32'
+                                                    : 'rgba(255,255,255,0.06)',
+                                        borderWidth: '1px',
+                                        borderStyle: 'solid'
+                                    }}
+                                >
                                     <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-                                        {Trophy[idx] ? <img className='w-8 h-8 sm:w-9 sm:h-9 ' src={Trophy[idx]}></img> :
-                                            <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>{idx + 1}</div>
-                                        }
-
+                                        {Trophy[idx] ? (
+                                            <img className='w-8 h-8 sm:w-9 sm:h-9 ' src={Trophy[idx]}></img>
+                                        ) : (
+                                            <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>
+                                                {idx + 1}
+                                            </div>
+                                        )}
                                         <div className='min-w-0 flex-1'>
                                             <p className='text-white font-medium text-sm sm:text-base truncate'>{decryptData(u.name)}</p>
                                             <span className='text-white/60 text-xs'>Top Player</span>
@@ -1252,7 +1270,7 @@ const RewardsExperience = () => {
                             {recentTransactions.map(it => (
                                 <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>
                                     <div className='min-w-0 flex-1'>
-                                        <p className='text-white text-xs sm:text-sm truncate'>{it.title}</p>
+                                        <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
                                         <span className='text-white/50 text-xs'>{it.claimedAt}</span>
                                     </div>
                                     <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount.toFixed(2)}</div>

@@ -154,7 +154,12 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
       revealAll();
     }
   };
-
+  let isExpired = false;
+  if (prize?.expiresAt) {
+    const now = new Date();
+    const expires = new Date(prize.expiresAt);
+    isExpired = expires - now <= 0;
+  }
   return (
     <div 
       className="glass-card rounded-2xl p-4 sm:p-5 reward-glow cursor-pointer"
@@ -162,15 +167,10 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
     >
       <div className={`relative h-full`}>
         {/* Prize background - always rendered */}
-        <div className="absolute inset-0 rounded-lg overflow-hidden border-2 border-[#1d1931] h-full">
+        <div className={`absolute inset-0 rounded-lg overflow-hidden border-2 border-[#1d1931] h-full${isExpired ? " grayscale" : ""}`}>
           {typeof prize === "object" && prize?.reward.type === "game" ? (() => {
             // Calculate expiration
-            let isExpired = false;
-            if (prize?.expiresAt) {
-              const now = new Date();
-              const expires = new Date(prize.expiresAt);
-              isExpired = expires - now <= 0;
-            }
+           
             return (
               <div className="w-full h-full relative">
                 <img
