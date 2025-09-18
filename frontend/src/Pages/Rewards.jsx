@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaGem, FaPlay, FaUserFriends, FaQuestionCircle, FaLock, FaCheckCircle, FaTrophy, FaCalendarDay, FaRegClock, FaMedal, FaStar } from "react-icons/fa";
 import { MdOutlineOndemandVideo } from "react-icons/md";
+import { SiScratch } from "react-icons/si";
 import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
 import amazonImg from '../images/Amazon.png'
 import yoyoLogo from '../images/YOYO-LOGO.svg'
@@ -23,12 +24,20 @@ import {
     getAvailableTasks,
     getRewardsLeaderboard,
     getUserGamePlayTime,
-    getAllTasks
+    getAllTasks,
+    getThresholdClaims,
+    claimThresholdTier,
+    getTaskClaim,
+    claimCompleteTask,
+    referralBonus
 } from '../Redux/Slice/reward.slice'
 import axiosInstance from '../Utils/axiosInstance'
-import { getuserLogging } from '../Redux/Slice/user.slice';
+import { getuserLogging, muteChat } from '../Redux/Slice/user.slice';
 import ScratchGame from './ScratchGame';
 import { useNavigate } from 'react-router-dom'
+import { decryptData } from '../Utils/encryption'
+
+import { allorders } from '../Redux/Slice/Payment.slice';
 
 const Trophy = [gold, silver, bronze];
 const gamerTheme = `
@@ -98,14 +107,19 @@ const RewardsExperience = () => {
     const rewards = useSelector((state) => state.reward.rewards);
     const user = useSelector((state) => state.user.currentUser);
     const userBalance = useSelector((state) => state.reward.userBalance);
+    const thresholdClaims = useSelector((state) => state.reward.thresholdClaims);
+    const isClaimingThreshold = useSelector((state) => state.reward.loading.redeem);
     const recentTransactions = useSelector((state) => state.reward.recentTransactions) || [];
     const redemptionHistory = useSelector((state) => state.reward.redemptionHistory);
     const availableTasks = useSelector((state) => state.reward.availableTasks) || [];
     const leaderboard = useSelector((state) => state.reward.leaderboard) || [];
     const allTasksState = useSelector((state) => state.reward.allTasks);
+
+    console.log(allTasksState, "allTasksStateeeeee");
+
     const userGamePlayTime = useSelector((state) => state.reward.userGamePlayTime);
     const userLogging = useSelector((state) => state.user.userLogging)
-    
+
     // console.log('userLogging', userLogging)
     // console.log("Reward state:", allTasksState);
 
@@ -116,7 +130,7 @@ const RewardsExperience = () => {
     }, [])
 
     const [streakDay, setStreakDay] = useState(3);
-    const [completedTasks, setCompletedTasks] = useState(new Set());
+    const [completedTasks, setCompletedTasks] = useState([]);
     const [completedQuests, setCompletedQuests] = useState(new Set());
     const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
@@ -141,8 +155,12 @@ const RewardsExperience = () => {
         weekly: [],
         milestone: [],
         taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
-    });;
-
+    });
+    const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
+    const anyPurchase = orders?.find((order) => order?.status === 'paid');
+    useEffect(() => {
+        dispatch(allorders());
+    }, []);
     // Calculate total earned from recent transactions
     const totalEarned = recentTransactions
         .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
@@ -179,22 +197,26 @@ const RewardsExperience = () => {
         return 1 + Math.ceil((firstThursday - tmp) / 604800000);
     }
     // Fetch claimed daily, weekly, and milestone tasks from backend on mount
+    const taskClaim = useSelector((state => state.reward.taskClaim)) || null;
+    useEffect(() => {
+        dispatch(getTaskClaim());
+    }, [])
     useEffect(() => {
         const fetchClaimed = async () => {
+            console.log('taskClaim', taskClaim)
             setLoadingTaskClaim(true);
             try {
-                const res = await axiosInstance.get('/user/task-claim');
                 const today = new Date().toISOString().split('T')[0];
                 // Set the entire task claim data
-                console.log('ressss', res)
                 setTaskClaimData({
-                    daily: res.data?.result?.claim?.daily || [],
-                    weekly: res.data?.result?.claim?.weekly || { week: '', claimedTasks: [] },
-                    milestone: res.data?.result?.claim?.milestone || { claimedTasks: [] },
-                    taskCompletion: res.data?.result?.taskCompletion || { completedDays: [], isWeeklyTaskEligible: false }
+                    daily: taskClaim?.claim?.daily || [],
+                    weekly: taskClaim?.claim?.weekly || [],
+                    milestone: taskClaim?.claim?.milestone || { claimedTasks: [] },
+                    taskCompletion: taskClaim?.taskCompletion || { completedDays: [], isWeeklyTaskEligible: false }
                 });
+                setCompletedTasks(taskClaim?.claim.earn || [])
                 // Maintain backward compatibility with existing state
-                const todayDaily = res.data?.result?.claim?.daily?.find(d => {
+                const todayDaily = taskClaim?.claim?.daily?.find(d => {
                     // Clean the date string (remove any whitespace/newlines) and compare
                     const cleanDate = d.date?.trim();
                     return cleanDate === today;
@@ -207,13 +229,13 @@ const RewardsExperience = () => {
                 const week = getISOWeek(now);
                 const weekStr = `${year}-W${String(week).padStart(2, '0')}`;
 
-                const currentWeek = res.data?.result?.claim?.weekly?.find(w => w.week === weekStr);
+                const currentWeek = taskClaim?.claim?.weekly?.find(w => w.week === weekStr);
                 const weeklyTasksThisWeek = currentWeek?.claimedTasks || [];
 
                 const dailyTasksToday = todayDaily?.claimedTasks || [];
-                const daily = res.data?.result?.claim?.daily?.flatMap(d => d.claimedTasks || []);
-                const weekly = res.data?.result?.claim?.weekly?.claimedTasks || [];
-                const milestone = res.data?.result?.claim?.milestone?.claimedTasks || [];
+                const daily = taskClaim?.claim?.daily?.flatMap(d => d.claimedTasks || []);
+                const weekly = taskClaim?.claim?.weekly?.claimedTasks || [];
+                const milestone = taskClaim?.claim?.milestone?.claimedTasks || [];
 
                 // console.log("dailyTasksToday", weeklyTasksThisWeek,dailyTasksToday);
 
@@ -238,7 +260,7 @@ const RewardsExperience = () => {
             }
         };
         fetchClaimed();
-    }, []);
+    }, [taskClaim]);
 
     // Load referral data
     const loadReferralData = useCallback(async () => {
@@ -289,6 +311,7 @@ const RewardsExperience = () => {
         dispatch(getUserGamePlayTime());
         dispatch(getAllTasks());
         dispatch(getRewardsLeaderboard({ page: 1, limit: 10 }));
+        dispatch(getThresholdClaims());
     }, [dispatch]);
 
     // Load referral data when user data is available
@@ -340,17 +363,15 @@ const RewardsExperience = () => {
     }, [userGamePlayTime]);
 
 
-    // Use API leaderboard or fallback to default leaderboard
-    const leaderboardData = leaderboard.length > 0 ? leaderboard.map(user => ({
-        id: user._id || user.id,
-        name: user.username || user.name,
-        points: user.points || user.balance
-    })) : [
-        { id: 'u1', name: 'ShadowFox', points: 4820 },
-        { id: 'u2', name: 'NovaBlade', points: 4330 },
-        { id: 'u3', name: 'PixelMage', points: 4105 },
-        { id: 'u4', name: 'RiftRunner', points: 3970 },
-    ];
+    // Use API leaderboard only (no static fallback)
+    const leaderboardData = (Array.isArray(leaderboard) && leaderboard.length > 0)
+        ? leaderboard.map((user, idx) => ({
+            key: user._id || user.id || user.rank || idx,
+            name: user.username || user.name,
+            points: typeof user.points === 'number' ? user.points : (user.balance || 0),
+            rank: user.rank || (idx + 1)
+        }))
+        : [];
 
     const milestonesInit = [
         { id: 'm1', title: 'Bronze Hunter', target: 500, bonus: 40, claimed: false },
@@ -370,11 +391,19 @@ const RewardsExperience = () => {
         // This function is kept for compatibility but balance comes from userBalance
     };
 
-    const tryRedeem = (item) => {
+    const tryRedeem = async (item) => {
         if (item.status !== 'unlocked') return;
         if (userBalance < item.price) return;
         if (!window.confirm(`Redeem ${item.title} for ${item.price} points?`)) return;
-        dispatch(redeemReward(item._id));
+        try {
+            await dispatch(redeemReward(item._id)).unwrap();
+            // Refresh balance, history, and rewards list to reflect latest state
+            dispatch(getUserRewardBalance());
+            dispatch(getUserRedemptionHistory({ page: 1, limit: 10 }));
+            dispatch(getAllRewards({ page: 1, limit: 20 }));
+        } catch (_) {
+            // errors are handled via snackbar in the thunk
+        }
     };
 
     const claimStreak = () => {
@@ -420,20 +449,30 @@ const RewardsExperience = () => {
 
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily', rewards: task?.reward });
+            const response = await dispatch(claimCompleteTask({ taskId: key, type: 'daily', rewards: task?.reward }))
             // Update local state to reflect the new claim
-            setTaskClaimData(prevData => {
-                const updatedDaily = prevData.daily.map(d =>
-                    d.date === today
-                        ? { ...d, claimedTasks: [...(d.claimedTasks || []), key] }
-                        : d
-                );
-                return {
-                    ...prevData,
-                    daily: updatedDaily
-                };
-            });
-            enqueueSnackbar('Task claimed!', { variant: 'success' });
+            if (response.payload.success) {
+                setTaskClaimData(prevData => {
+                    const hasToday = (prevData.daily || []).some(d => d.date === today);
+
+                    const updatedDaily = hasToday
+                        ? prevData.daily.map(d =>
+                            d.date === today
+                                ? { ...d, claimedTasks: [...(d.claimedTasks || []), key] }
+                                : d
+                        )
+                        : [
+                            ...(prevData.daily || []),
+                            { date: today, claimedTasks: [key] } // ✅ create new entry if today not found
+                        ];
+
+                    return {
+                        ...prevData,
+                        daily: updatedDaily
+                    };
+                });
+                enqueueSnackbar('Task claimed!', { variant: 'success' });
+            }
         } catch (e) {
             enqueueSnackbar('Failed to claim task', { variant: 'error' });
         } finally {
@@ -460,10 +499,8 @@ const RewardsExperience = () => {
         const currentWeek = getCurrentWeek();
 
         // Check if task is already claimed for this week
-        const isTaskClaimedThisWeek = (
-            taskClaimData?.weekly?.week === currentWeek &&
-            taskClaimData?.weekly?.claimedTasks?.includes(key)
-        );
+        const currentWeekData = taskClaimData?.weekly?.find(w => w.week === currentWeek);
+        const isTaskClaimedThisWeek = currentWeekData?.claimedTasks?.includes(key);
 
         if (!key) return;
         if (isTaskClaimedThisWeek) return;
@@ -481,22 +518,26 @@ const RewardsExperience = () => {
 
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'weekly', rewards: task?.reward });
-            // Update local state to reflect the new claim
-            setTaskClaimData(prevData => {
-                const updatedWeekly = [
-                    ...prevData.weekly, {
-                        week: currentWeek,
-                        claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
-                    }
-                ];
+            const response = await dispatch(claimCompleteTask({ taskId: key, type: 'weekly', rewards: task?.reward }))
+            if (response.payload.success) {
+                console.log('daily task response', response.payload.success);
 
-                return {
-                    ...prevData,
-                    weekly: updatedWeekly
-                };
-            });
-            enqueueSnackbar('Weekly quest claimed!', { variant: 'success' });
+                // Update local state to reflect the new claim
+                setTaskClaimData(prevData => {
+                    const updatedWeekly = [
+                        ...prevData.weekly, {
+                            week: currentWeek,
+                            claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
+                        }
+                    ];
+                    return {
+                        ...prevData,
+                        weekly: updatedWeekly
+                    };
+                });
+                enqueueSnackbar('Weekly quest claimed!', { variant: 'success' });
+            }
+
         } catch (e) {
             enqueueSnackbar('Failed to claim weekly quest', { variant: 'error' });
         } finally {
@@ -512,22 +553,25 @@ const RewardsExperience = () => {
         if (isTaskClaimedMilestone) return;
         setLoadingTaskClaim(true);
         try {
-            const response = await axiosInstance.post('/user/task-claim', { taskId: milestone?._id, type: 'milestone', rewards: milestone?.reward });
+            const response = await dispatch(claimCompleteTask({ taskId: milestone?._id, type: 'milestone', rewards: milestone?.reward }))
             // Update local state to reflect the new claim
-            setTaskClaimData(prevData => {
-                const updatedMilestone = [
-                    ...(prevData.milestone || []),
-                    {
-                        claimedTasks: [...(prevData.milestone?.claimedTasks || []), milestone?._id]
-                    }
-                ];
+            if (response.payload.success) {
 
-                return {
-                    ...prevData,
-                    milestone: updatedMilestone
-                };
-            });
-            enqueueSnackbar('Milestone claimed!', { variant: 'success' });
+                setTaskClaimData(prevData => {
+                    const updatedMilestone = [
+                        ...(prevData.milestone || []),
+                        {
+                            claimedTasks: [...(prevData.milestone?.claimedTasks || []), milestone?._id]
+                        }
+                    ];
+
+                    return {
+                        ...prevData,
+                        milestone: updatedMilestone
+                    };
+                });
+                enqueueSnackbar('Milestone claimed!', { variant: 'success' });
+            }
         } catch (e) {
             enqueueSnackbar('Failed to claim milestone', { variant: 'error' });
         } finally {
@@ -545,23 +589,33 @@ const RewardsExperience = () => {
     };
 
     const handleTaskComplete = (task) => {
-        if (completedTasks.has(task.id)) return;
+        if (completedTasks?.includes(task.id)) return;
         if (task?.title === 'Take a quiz') {
             if (!hasPlayedQuiz) {
                 navigate('/quizRewards');
                 return;
             }
             const score = Number(quizScore || 0);
+            console.log('Quiz score for claim:', score);
             if (!score) {
                 enqueueSnackbar('Finish the quiz to get a score to claim.', { variant: 'warning' });
                 return;
             }
-            dispatch(completeTask({ taskId: 'quiz', points: score, title: task.title, completed: true }));
+            dispatch(completeTask({ taskId: task._id, taskType: 'quiz', points: score, title: task.title, completed: true }));
             try { localStorage.removeItem('quiz:lastScore'); } catch { }
-        } else {
+        }
+        else if (task?.title === 'Buy a game') {
+            if (anyPurchase) {
+                dispatch(completeTask({ taskId: task._id, taskType: 'buy', points: task.reward, title: task.title, completed: true }));
+            }
+            else {
+                navigate('/store')
+            }
+        }
+        else {
             dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
         }
-        setCompletedTasks(prev => new Set(prev).add(task.id));
+        setCompletedTasks(prev => prev.includes(task._id) ? prev : [...prev, task._id]);
     };
 
     const completeQuest = (q) => {
@@ -588,7 +642,14 @@ const RewardsExperience = () => {
         try { return localStorage.getItem(`quizPlayed:${userId}`) === '1' } catch { return false }
     }, [userId]);
     const quizScore = useMemo(() => {
-        try { return Number(localStorage.getItem('quiz:lastScore') || 0) } catch { return 0 }
+        try {
+            const score = Number(localStorage.getItem('quiz:lastScore') || 0);
+            console.log('Quiz score retrieved:', score);
+            return score;
+        } catch {
+            console.log('Error retrieving quiz score');
+            return 0;
+        }
     }, [hasPlayedQuiz]);
     // console.log("user", user);
     const referralLink = useMemo(() => {
@@ -622,7 +683,7 @@ const RewardsExperience = () => {
         try {
             console.log('Calling backend API to claim referral bonus...');
             // Call the backend API to claim referral bonus
-            const response = await axiosInstance.post('/fan-coins/referral-bonus');
+            const response = dispatch(referralBonus());
 
             console.log('Backend response:', response.data);
 
@@ -672,8 +733,9 @@ const RewardsExperience = () => {
     // Helper function to check if a daily task is claimed for today
     const isDailyTaskClaimed = (taskId) => {
         const today = new Date().toISOString().split('T')[0];
-        const dailyClaimData = taskClaimData?.daily?.find(d => d.date === today);
-        return dailyClaimData?.claimedTasks?.includes(String(taskId));
+        const dailyClaimData = taskClaimData?.daily?.find(d => d.date === today) || null
+        console.log('dailyClaimData?.claimedTasks?.includes(String(taskId))', taskClaimData)
+        return dailyClaimData?.claimedTasks?.includes(String(taskId)) || false;
     };
 
     // Helper function to check if a weekly task is claimed for current week
@@ -750,7 +812,9 @@ const RewardsExperience = () => {
                                 ? allTasksState?.earntask
                                 : allTasksState?.earntask?.slice(0, 2)
                             )?.map((task) => {
-                                const done = completedTasks.has(task._id);
+                                console.log('anyPurchase', completedTasks);
+                                const done = completedTasks?.includes(task._id);
+
                                 return (
                                     <div
                                         key={task._id}
@@ -769,25 +833,58 @@ const RewardsExperience = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className='flex  flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
-                                            <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={task?.title === 'Take a quiz' && hasPlayedQuiz} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${task?.title === 'Take a quiz' && hasPlayedQuiz ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
-                                                {task?.title === 'Take a quiz' ? (hasPlayedQuiz ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : ''}
-                                            </button>
-                                            <button
-                                                onClick={() => handleTaskComplete(task)}
-                                                disabled={done}
-                                                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap w-full sm:w-auto ${done
-                                                    ? "btn-soft cursor-not-allowed opacity-60"
-                                                    : "btn-primary"
-                                                    }`}
-                                            >
-                                                {done ? "All Claimed" : (task?.title === 'Take a quiz' && quizScore > 0 ? `Claim ${quizScore}` : 'Claim Points')}
-                                            </button>
+                                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                            <div className='flex  flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                                {(task?.title !== 'Buy a game') ? <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={((task?.title === 'Take a quiz' && hasPlayedQuiz) || done)} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${((task?.title === 'Take a quiz' && hasPlayedQuiz) || done) ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                                    {task?.title === 'Take a quiz' ? ((hasPlayedQuiz || done) ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : 'claim'}
+                                                </button> : null}
+
+                                                <button
+                                                    onClick={async () => {
+                                                        if (task?.title === 'Take a quiz') {
+                                                            if (!hasPlayedQuiz) {
+                                                                navigate('/quizRewards');
+                                                            } else {
+                                                                await handleTaskComplete(task);
+                                                            }
+                                                        } else {
+                                                            await handleTaskComplete(task);
+                                                        }
+                                                    }}
+                                                    disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
+                                                    className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : 'btn-primary'
+                                                        }`}
+                                                >
+                                                    {loadingTaskClaim
+                                                        ? "Claiming..."
+                                                        : done
+                                                            ? "All Claimed"
+                                                            : task?.title === 'Take a quiz'
+                                                                ? (hasPlayedQuiz
+                                                                    ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
+                                                                    : 'Complete Task'
+                                                                )
+                                                                : task?.title === 'Watch a video'
+                                                                    ? 'Watch Video'
+                                                                    : task?.title === 'Refer a friend'
+                                                                        ? 'Refer Friend'
+                                                                        : task?.title === 'Login to the app'
+                                                                            ? 'Login'
+                                                                            : task?.title === 'Play any game for 15 minutes'
+                                                                                ? 'Play Game'
+                                                                                : task?.title === 'Daily streak bonus'
+                                                                                    ? 'Daily Streak'
+                                                                                    : (task?.title === 'Buy a game' && anyPurchase) ? 'Claim'
+                                                                                        : 'Complete Now'
+                                                    }
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                );
+                                )
                             })}
-
                             {allTasksState?.earntask?.length > 2 && (
                                 <button
                                     onClick={() => setShowAll((v) => !v)}
@@ -798,6 +895,8 @@ const RewardsExperience = () => {
                                         : `View ${allTasksState?.earntask?.length - 2} More`}
                                 </button>
                             )}
+
+
                         </div>
 
                     </div>
@@ -882,7 +981,6 @@ const RewardsExperience = () => {
                                     progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
                                     claimed = claimedDailyTasks.has(task?._id || task?.id);
                                     canComplete = progress >= goal && !claimed;
-
 
                                     console.log('Play Time Task Debug:', {
                                         taskId: task?._id,
@@ -1026,50 +1124,72 @@ const RewardsExperience = () => {
                         <h3 className='text-white font-semibold text-base md:text-lg'>Redeem</h3>
                         <span className='text-white/50 text-xs'>Choose your loot</span>
                     </div>
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'>
-                        {(allTasksState?.milestone || []).map(item => (
-                            <div key={item?._id} className='glass-card rounded-2xl p-3 sm:p-4 md:p-5 reward-glow'>
-                                <div className='bg-white/10 h-28 sm:h-32 md:h-40 rounded-xl mb-3 sm:mb-4 flex items-center justify-center relative overflow-hidden'>
-                                    {item.status === 'locked' && (
-                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10 flex items-center gap-1'>
-                                            <FaLock className='text-white/80' /> Locked
-                                        </div>
-                                    )}
-                                    {item.status !== 'locked' && (
-                                        <div className='absolute top-2 sm:top-3 left-2 sm:left-3 text-[10px] sm:text-xs bg-black/60 text-white px-2 py-1 rounded-md z-10'>
-                                            Unlocked
-                                        </div>
-                                    )}
-                                    {item.status === 'redeemed' && (
-                                        <div className='absolute top-2 sm:top-3 right-2 sm:right-3 text-[10px] sm:text-xs bg-emerald-600/80 text-white px-2 py-1 rounded-md flex items-center gap-1 z-10'>
-                                            <FaCheckCircle /> Redeemed
-                                        </div>
-                                    )}
-                                    {item.img ? (
-                                        <img src={item.img} alt={item.title} className='absolute inset-0 w-full h-full object-cover opacity-70' />
-                                    ) : (
-                                        <FaPlay className='text-white/30 text-2xl sm:text-3xl' />
-                                    )}
-                                </div>
-                                <div>
-                                    <p className='text-white text-sm sm:text-base font-medium line-clamp-2 break-words'>{item.title}</p>
-                                    <div className='mt-2 sm:mt-3 flex items-center gap-2 text-purple-300'>
-                                        <FaGem />
-                                        <span className='font-semibold text-sm sm:text-base'>{item.price}</span>
-                                    </div>
-                                    <div className='mt-2 sm:mt-3'>
-                                        <progress value={Math.min(userBalance, item.price)} max={item.price} className='redeem-progress'></progress>
-                                    </div>
-                                    <button
-                                        onClick={() => tryRedeem(item)}
-                                        disabled={item.status !== 'unlocked' || userBalance < item.price}
-                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${item.status === 'redeemed' ? 'btn-soft cursor-not-allowed opacity-60' : (item.status === 'unlocked' && userBalance >= item.price) ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
-                                    >
-                                        {item.status === 'redeemed' ? 'Redeemed' : 'Redeem'}
-                                    </button>
+
+                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
+                        <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6'>
+                            {/* Threshold Claims - Left Side */}
+                            <div className='lg:col-span-2'>
+                                <div className='mt-4 grid grid-cols-3 gap-2'>
+                                    {[{ tier: 100, coins: 5, key: 'm100' }, { tier: 200, coins: 10, key: 'm200' }, { tier: 500, coins: 25, key: 'm500' }].map(t => {
+                                        const claimed = !!thresholdClaims?.[t.key];
+                                        const canClaim = !claimed && userBalance >= t.tier;
+                                        const isDisabled = claimed || userBalance < t.tier || isClaimingThreshold;
+                                        return (
+                                            <div key={t.key} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
+                                                <p className='text-white/70 text-[10px] sm:text-xs'>Spend {t.tier}</p>
+                                                <p className='text-emerald-300 text-xs sm:text-sm'>+{t.coins} Fan</p>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (isDisabled) return;
+                                                        try {
+                                                            await dispatch(claimThresholdTier(t.tier)).unwrap();
+                                                            dispatch(getUserRewardBalance());
+                                                            dispatch(getThresholdClaims());
+                                                        } catch (error) {
+                                                            console.error('Failed to claim threshold:', error);
+                                                        }
+                                                    }}
+                                                    disabled={isDisabled}
+                                                    className={`mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold ${claimed
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : canClaim && !isClaimingThreshold
+                                                            ? 'btn-primary'
+                                                            : 'btn-soft cursor-not-allowed opacity-60'
+                                                        }`}
+                                                >
+                                                    {claimed ? 'Claimed' : isClaimingThreshold ? 'Claiming...' : 'Claim'}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                        ))}
+
+                            {/* Scratch Card - Right Side */}
+                            <div className='lg:col-span-1'>
+                                <div className='mt-4 grid grid-cols-1 gap-2'>
+                                    <div className='space-y-3'>
+                                        <div className='grid grid-cols-1 gap-2'>
+                                            {[{ tier: 1000, coins: 1, key: 'm100' }].map((option, index) => (
+                                                <div key={index} className='bg-white/5 rounded-lg p-2 border border-white/10 text-center'>
+                                                    <p className='text-white/70 text-xs'>Spend {option.tier}</p>
+                                                    <p className='text-emerald-300 text-xs sm:text-sm'>{option.coins} Scratch Card</p>
+                                                    <button
+                                                        onClick={() => {
+                                                            // Handle scratch card purchase
+                                                            console.log('Purchase scratch card:', option);
+                                                        }}
+                                                        className='mt-2 w-full py-1 rounded-md text-[10px] sm:text-xs font-semibold btn-primary'
+                                                    >
+                                                        Buy
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1082,14 +1202,14 @@ const RewardsExperience = () => {
                         </div>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
                             {leaderboardData.map((u, idx) => (
-                                <div key={u.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex items-center justify-between'>
+                                <div key={u.key || u.id || idx} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex items-center justify-between'>
                                     <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
                                         {Trophy[idx] ? <img className='w-8 h-8 sm:w-9 sm:h-9 ' src={Trophy[idx]}></img> :
                                             <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>{idx + 1}</div>
                                         }
 
                                         <div className='min-w-0 flex-1'>
-                                            <p className='text-white font-medium text-sm sm:text-base truncate'>{u.name}</p>
+                                            <p className='text-white font-medium text-sm sm:text-base truncate'>{decryptData(u.name)}</p>
                                             <span className='text-white/60 text-xs'>Top Player</span>
                                         </div>
                                     </div>
@@ -1105,8 +1225,8 @@ const RewardsExperience = () => {
                             {recentTransactions.map(it => (
                                 <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>
                                     <div className='min-w-0 flex-1'>
-                                        <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
-                                        <span className='text-white/50 text-xs'>{it.time}</span>
+                                        <p className='text-white text-xs sm:text-sm truncate'>{it.title}</p>
+                                        <span className='text-white/50 text-xs'>{it.claimedAt}</span>
                                     </div>
                                     <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount.toFixed(2)}</div>
                                 </div>

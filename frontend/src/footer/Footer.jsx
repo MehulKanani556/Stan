@@ -140,18 +140,41 @@ const Footer = () => {
               </h4>
               <div className="space-y-4 text-sm text-gray-300">
                 <div className="flex gap-3 items-center ">
-                  <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
-                  <a rel="noopener noreferrer" className=''>
-                    264 Weber St W, Kitchener, ON N2H 4A6, Canada
+                  <a
+                    href="https://maps.google.com/?q=264+Weber+St+W,+Kitchener,+ON+N2H+4A6,+Canada"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#ab99e1] transition-colors flex items-center"
+                  >
+                    <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
+                    <span className="ml-1">
+                      264 Weber St W, Kitchener, ON N2H 4A6, Canada
+                    </span>
                   </a>
                 </div>
                 <div className="flex gap-3 items-center ">
-                  <IoCallOutline className="text-[#ab99e1]" />
-                  <a rel="noopener noreferrer" className=''>1800-9797-6361</a>
+                  <a
+                    href="tel:180097976361"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#ab99e1] transition-colors flex items-center"
+                  >
+                    <IoCallOutline className="text-[#ab99e1]" />
+                    <span className="ml-1">
+                      1800-9797-6361
+                    </span>
+                  </a>
                 </div>
                 <div className="flex gap-3 items-center ">
-                  <IoMailOutline className="text-[#ab99e1]" />
-                  <a rel="noopener noreferrer" className=''>info@yoyokhel.com</a>
+                  <a
+                    href="mailto:info@yoyokhel.com"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#ab99e1] transition-colors flex items-center"
+                  >
+                    <IoMailOutline className="text-[#ab99e1]" />
+                    <span className="ml-1">
+                      info@yoyokhel.com
+                    </span>
+                  </a>
                 </div>
               </div>
             </div>

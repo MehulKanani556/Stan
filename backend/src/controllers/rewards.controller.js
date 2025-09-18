@@ -8,6 +8,7 @@ import cloudinaryHelper from '../helper/cloudinary.js';
 import fs from 'fs';
 import UserTaskClaim from '../models/UserDailyTaskClaim.model.js';
 import { DailyTask, WeeklyTask, Milestone } from '../models/Task.model.js';
+
 const { fileupload, deleteFile } = cloudinaryHelper;
 
 // ==================== REWARD MANAGEMENT (ADMIN) ====================
@@ -65,6 +66,95 @@ export const createReward = function (req, res) {
             return ThrowError(res, 500, error.message);
         }
     })();
+};
+
+// ==================== REWARD THRESHOLD CLAIMS (100/200/500) ====================
+export const getRewardThresholdStatus = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).select('rewards fanCoins rewardsThresholdClaims');
+        if (!user) {
+            return sendNotFoundResponse(res, 'User not found');
+        }
+
+        const claims = user.rewardsThresholdClaims || { m100: false, m200: false, m500: false };
+        return sendSuccessResponse(res, 'Fetched threshold claim status', {
+            balance: user.rewards || 0,
+            fanCoins: user.fanCoins || 0,
+            claims
+        });
+    } catch (error) {
+        return ThrowError(res, 500, error.message);
+    }
+};
+
+export const claimRewardThreshold = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { tier } = req.params; // '100' | '200' | '500'
+
+        const tierNumber = Number(tier);
+        const validTiers = [100, 200, 500];
+        if (!validTiers.includes(tierNumber)) {
+            return sendBadRequestResponse(res, 'Invalid threshold tier');
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return sendNotFoundResponse(res, 'User not found');
+        }
+
+        // Initialize claims object if missing
+        if (!user.rewardsThresholdClaims) {
+            user.rewardsThresholdClaims = { m100: false, m200: false, m500: false };
+        }
+
+        const claimKey = tierNumber === 100 ? 'm100' : tierNumber === 200 ? 'm200' : 'm500';
+        const fanCoinReward = tierNumber === 100 ? 5 : tierNumber === 200 ? 10 : 25;
+
+        if (user.rewardsThresholdClaims[claimKey]) {
+            return sendBadRequestResponse(res, 'Threshold already claimed');
+        }
+
+        if ((user.rewards || 0) < tierNumber) {
+            return sendBadRequestResponse(res, 'Insufficient points to claim this threshold');
+        }
+
+        // Deduct reward points
+        user.rewards -= tierNumber;
+        user.rewardsTransactions = user.rewardsTransactions || [];
+        user.rewardsTransactions.push({
+            type: 'SPEND',
+            amount: tierNumber,
+            description: `Threshold claim: ${tierNumber}`,
+            date: new Date()
+        });
+
+        // Add fan coins
+        user.fanCoins = (user.fanCoins || 0) + fanCoinReward;
+        user.fanCoinTransactions = user.fanCoinTransactions || [];
+        user.fanCoinTransactions.push({
+            type: 'EARN',
+            amount: fanCoinReward,
+            description: `Threshold reward: ${tierNumber}`,
+            date: new Date()
+        });
+
+        // Mark claimed
+        user.rewardsThresholdClaims[claimKey] = true;
+
+        await user.save();
+
+        return sendSuccessResponse(res, 'Threshold claimed successfully', {
+            tier: tierNumber,
+            fanCoinsAwarded: fanCoinReward,
+            newBalance: user.rewards,
+            fanCoins: user.fanCoins,
+            claims: user.rewardsThresholdClaims
+        });
+    } catch (error) {
+        return ThrowError(res, 500, error.message);
+    }
 };
 
 // Get all rewards (public)
@@ -214,7 +304,7 @@ export const getUserRewardBalance = async (req, res) => {
         }
 
         // Get recent claimed tasks from UserTaskClaim
-     
+
         // const claim = await UserTaskClaim.findOne({ user: userId });
         let recentTransactions = user.rewardsTransactions || [];
         // console.log(claim);
@@ -273,6 +363,62 @@ export const getUserRewardBalance = async (req, res) => {
         // }
         console.log('recentTransactions',);
 
+        // const claim = await UserTaskClaim.findOne({ user: userId });
+        // let recentTransactions = [];
+        // console.log(claim);
+        // if (claim) {
+        //     // Handle daily claims (array of days)
+        //     if (Array.isArray(claim.daily) && claim.daily.length > 0) {
+        //         for (const dailyEntry of claim.daily) {
+        //             if (Array.isArray(dailyEntry.claimedTasks) && dailyEntry.claimedTasks.length > 0) {
+        //                 const dailyTasks = await DailyTask.find({ _id: { $in: dailyEntry.claimedTasks } });
+        //                 for (const t of dailyTasks) {
+        //                     recentTransactions.push({
+        //                         type: 'DAILY',
+        //                         taskId: t._id,
+        //                         title: t.title,
+        //                         amount: t.reward,
+        //                         claimedAt: dailyEntry.date
+        //                     });
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     // Handle weekly claims (single object)
+        //     if (
+        //         claim.weekly &&
+        //         Array.isArray(claim.weekly.claimedTasks) &&
+        //         claim.weekly.claimedTasks.length > 0
+        //     ) {
+        //         const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
+        //         for (const t of weeklyTasks) {
+        //             recentTransactions.push({
+        //                 type: 'WEEKLY',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: claim.weekly.week
+        //             });
+        //         }
+        //     }
+        //     // Handle milestone claims (single object)
+        //     if (
+        //         claim.milestone &&
+        //         Array.isArray(claim.milestone.claimedTasks) &&
+        //         claim.milestone.claimedTasks.length > 0
+        //     ) {
+        //         const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
+        //         for (const t of milestoneTasks) {
+        //             recentTransactions.push({
+        //                 type: 'MILESTONE',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: null // Optionally add a timestamp if you store it
+        //             });
+        //         }
+        //     }
+        // }
         // Sort by claimedAt (or fallback to type order)
         recentTransactions = recentTransactions.sort((a, b) => {
             if (a.date && b.date) return new Date(b.date) - new Date(a.date);
@@ -413,7 +559,10 @@ export const completeTask = async (req, res) => {
     try {
         const { taskType, taskId, points, completed } = req.body;
         const userId = req.user._id;
-
+        let claim = await UserTaskClaim.findOne({ user: userId });
+        if (!claim) {
+          claim = new UserTaskClaim({ user: userId });
+        }
         const user = await User.findById(userId);
         if (!user) {
             return sendNotFoundResponse(res, "User not found");
@@ -426,23 +575,34 @@ export const completeTask = async (req, res) => {
             'referral': 50,
             'login': 15,
             'game_play': 15,
-            'streak': 20
+            'streak': 20,
+            'buy': 200
         };
 
         // Enforce completion rules for quiz task
+        // Ensure earn array exists
+        if (!Array.isArray(claim.earn)) {
+            claim.earn = [];
+        }
         if (taskType === 'quiz') {
             // Require explicit completed flag from client indicating all questions answered
             if (!completed) {
                 return sendBadRequestResponse(res, 'Quiz must be completed to earn points');
             }
-            const alreadyCompletedQuiz = (user.fanCoinTransactions || []).some(txn =>
-                txn.type === 'EARN' && typeof txn.description === 'string' && txn.description.toLowerCase().includes('task completed: quiz')
-            );
+            const alreadyCompletedQuiz = claim.earn.includes(taskId);
             if (alreadyCompletedQuiz) {
                 return sendBadRequestResponse(res, 'Quiz already completed');
             }
         }
+        if (taskType === 'buy') {
+            const alreadyCompletedQuiz = claim.earn.includes(taskId);
 
+            if (alreadyCompletedQuiz) {
+                return sendBadRequestResponse(res, 'Task already completed');
+            }
+        }
+        claim.earn.push(taskId)
+        claim.save();
         // const points = taskRewards[taskType] || 0;
         if (points === 0) {
             return sendBadRequestResponse(res, "Invalid task type");
@@ -532,7 +692,7 @@ export const getRewardsLeaderboard = async (req, res) => {
                 $sort: { rewards: -1 }
             },
             {
-                $limit: 10
+                $limit: 6
             }
         ]);
 

@@ -184,6 +184,36 @@ export const getUserRedemptionHistory = createAsyncThunk(
     }
 );
 
+// Get threshold claims status (100/200/500)
+export const getThresholdClaims = createAsyncThunk(
+    'reward/getThresholdClaims',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/user/rewards/thresholds/status');
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to fetch thresholds';
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+// Claim a threshold tier and receive fan coins
+export const claimThresholdTier = createAsyncThunk(
+    'reward/claimThresholdTier',
+    async (tier, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(`/user/rewards/thresholds/${tier}/claim`);
+            enqueueSnackbar(response?.data?.message || 'Claimed successfully', { variant: 'success' });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to claim threshold';
+            enqueueSnackbar(errorMessage, { variant: 'error' });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
 // ==================== REWARD TASKS & QUESTS ====================
 
 // Complete a task and earn points
@@ -191,7 +221,7 @@ export const completeTask = createAsyncThunk(
     "reward/completeTask",
     async (taskData, { rejectWithValue }) => {
         try {
-            const { taskId, points, title, completed } = taskData;
+            const { taskId,points, title, completed } = taskData;
 
             // Map task titles to task types for backend
             const taskTypeMap = {
@@ -200,7 +230,8 @@ export const completeTask = createAsyncThunk(
                 'Refer a friend': 'referral',
                 'Login to the app': 'login',
                 'Play any game for 15 minutes': 'game_play',
-                'Daily Streak Bonus': 'streak'
+                'Daily Streak Bonus': 'streak',
+                'Buy a game':'buy'
             };
 
             const taskType = taskTypeMap[title] || 'quiz';
@@ -249,6 +280,54 @@ export const getAllTasks = createAsyncThunk(
     }
 );
 
+// get all claimed task by user
+export const getTaskClaim = createAsyncThunk(
+    'user/getTaskClaim',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/user/task-claim')
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Failed to fetch thresholds';
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+// claim a complete task
+
+export const claimCompleteTask = createAsyncThunk(
+    "reward/claimCompleteTask",
+    async (values, { rejectWithValue }) => {  
+        try {
+        console.log('daily task value',values) 
+            const response = await axiosInstance.post('/user/task-claim', { taskId: values?.taskId, type: values?.type, rewards: values.rewards });
+            // enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "field to claim completed task";
+            // enqueueSnackbar(errorMessage, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
+
+// get fan coinr referal bonus
+export const referralBonus =  createAsyncThunk(
+    "/fan-coins/referral-bonus",
+    async (values, { rejectWithValue }) => {  
+        try {
+        console.log('daily task value',values) 
+            const response = await axiosInstance.post('/fan-coins/referral-bonus');
+            // enqueueSnackbar(response?.data?.message, { variant: "success" });
+            return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "field to get referral bonus task";
+            // enqueueSnackbar(errorMessage, { variant: "error" });
+            return rejectWithValue(error.response?.data || { message: errorMessage });
+        }
+    }
+);
 // ==================== LEADERBOARD ====================
 
 // Get rewards leaderboard
@@ -347,6 +426,8 @@ const initialState = {
 
     // User rewards
     userBalance: 0,
+    thresholdClaims: { m100: false, m200: false, m500: false },
+    fanCoins: 0,
     recentTransactions: [],
     redemptionHistory: [],
     redemptionPagination: {
@@ -388,11 +469,15 @@ const initialState = {
         userGamePlayTime:false,
         allTasks:false,
         scratchCard:false,
+        taskClaim:false
     },
 
     // Error states
     error: null,
-    message: null
+    message: null,
+
+    // user claimed task
+    taskClaim : null
 };
 
 // ==================== SLICE ====================
@@ -605,6 +690,38 @@ const rewardSlice = createSlice({
                 state.error = action.payload?.message || "Failed to fetch redemption history";
             })
 
+            // ==================== THRESHOLD CLAIMS ====================
+            .addCase(getThresholdClaims.pending, (state) => {
+                state.loading.balance = true;
+                state.error = null;
+            })
+            .addCase(getThresholdClaims.fulfilled, (state, action) => {
+                state.loading.balance = false;
+                state.userBalance = action.payload.result?.balance ?? state.userBalance;
+                state.thresholdClaims = action.payload.result?.claims || state.thresholdClaims;
+                state.fanCoins = action.payload.result?.fanCoins ?? state.fanCoins;
+            })
+            .addCase(getThresholdClaims.rejected, (state, action) => {
+                state.loading.balance = false;
+                state.error = action.payload?.message || 'Failed to fetch thresholds';
+            })
+
+            .addCase(claimThresholdTier.pending, (state) => {
+                state.loading.redeem = true;
+                state.error = null;
+            })
+            .addCase(claimThresholdTier.fulfilled, (state, action) => {
+                state.loading.redeem = false;
+                const res = action.payload.result || {};
+                state.userBalance = res.newBalance ?? state.userBalance;
+                state.fanCoins = res.fanCoins ?? state.fanCoins;
+                if (res.claims) state.thresholdClaims = res.claims;
+            })
+            .addCase(claimThresholdTier.rejected, (state, action) => {
+                state.loading.redeem = false;
+                state.error = action.payload?.message || 'Failed to claim threshold';
+            })
+
             // ==================== COMPLETE TASK ====================
             .addCase(completeTask.pending, (state) => {
                 state.loading.completeTask = true;
@@ -733,6 +850,24 @@ const rewardSlice = createSlice({
             })
             .addCase(revealScratchCard.rejected, (state, action) => {
                 state.loading.revealScratchCard = false;
+                state.error = action.payload?.message || "Failed to reveal scratch card";
+            })
+            // ==================== REVEAL SCRATCH CARD ====================
+            .addCase(getTaskClaim.pending, (state) => {
+                state.loading.taskClaim = true;
+                state.error = null;
+            })
+            .addCase(getTaskClaim.fulfilled, (state, action) => {
+                state.loading.taskClaim = false;
+                state.message = action.payload.message;
+                state.error = null;
+                // Add new reward to the beginning of the list
+                if (action.payload.result) {
+                    state.taskClaim = action.payload.result
+                }
+            })
+            .addCase(getTaskClaim.rejected, (state, action) => {
+                state.loading.taskClaim = false;
                 state.error = action.payload?.message || "Failed to reveal scratch card";
             })
     },
