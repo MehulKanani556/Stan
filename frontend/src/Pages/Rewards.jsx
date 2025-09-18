@@ -33,6 +33,7 @@ import ScratchGame from './ScratchGame';
 import { useNavigate } from 'react-router-dom'
 import { decryptData } from '../Utils/encryption'
 
+import { allorders } from '../Redux/Slice/Payment.slice';
 
 const Trophy = [gold, silver, bronze];
 const gamerTheme = `
@@ -113,7 +114,7 @@ const RewardsExperience = () => {
 
     const userGamePlayTime = useSelector((state) => state.reward.userGamePlayTime);
     const userLogging = useSelector((state) => state.user.userLogging)
-    
+
     // console.log('userLogging', userLogging)
     // console.log("Reward state:", allTasksState);
 
@@ -124,7 +125,7 @@ const RewardsExperience = () => {
     }, [])
 
     const [streakDay, setStreakDay] = useState(3);
-    const [completedTasks, setCompletedTasks] = useState(new Set());
+    const [completedTasks, setCompletedTasks] = useState([]);
     const [completedQuests, setCompletedQuests] = useState(new Set());
     const [streakClaimedToday, setStreakClaimedToday] = useState(false);
     const [showAllTasks, setShowAllTasks] = useState(false);
@@ -149,8 +150,12 @@ const RewardsExperience = () => {
         weekly: [],
         milestone: [],
         taskCompletion: { completedDays: [], isWeeklyTaskEligible: false }
-    });;
-
+    });
+    const { orders, loading: ordersLoading } = useSelector((state) => state.payment);
+    const anyPurchase = orders?.find((order) => order?.status === 'paid');
+    useEffect(() => {
+        dispatch(allorders());
+    }, []);
     // Calculate total earned from recent transactions
     const totalEarned = recentTransactions
         .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
@@ -201,6 +206,7 @@ const RewardsExperience = () => {
                     milestone: res.data?.result?.claim?.milestone || { claimedTasks: [] },
                     taskCompletion: res.data?.result?.taskCompletion || { completedDays: [], isWeeklyTaskEligible: false }
                 });
+                setCompletedTasks(res.data?.result?.claim.earn || [])
                 // Maintain backward compatibility with existing state
                 const todayDaily = res.data?.result?.claim?.daily?.find(d => {
                     // Clean the date string (remove any whitespace/newlines) and compare
@@ -438,7 +444,7 @@ const RewardsExperience = () => {
             const response = await axiosInstance.post('/user/task-claim', { taskId: key, type: 'daily', rewards: task?.reward });
             // Update local state to reflect the new claim
             setTaskClaimData(prevData => {
-                const updatedDaily = prevData.daily.map(d =>
+                const updatedDaily = prevData.daily?.map(d =>
                     d.date === today
                         ? { ...d, claimedTasks: [...(d.claimedTasks || []), key] }
                         : d
@@ -557,10 +563,8 @@ const RewardsExperience = () => {
         return `${currentDate.getFullYear()}-W${weekNumber.toString().padStart(2, '0')}`;
     };
 
-    const handleTaskComplete = async (task) => {
-        const taskId = task._id || task.id;
-        if (completedTasks.has(taskId)) return;
-
+    const handleTaskComplete = (task) => {
+        if (completedTasks?.includes(task.id)) return;
         if (task?.title === 'Take a quiz') {
             console.log('Quiz task clicked:', { hasPlayedQuiz, quizScore, taskId });
             if (!hasPlayedQuiz) {
@@ -573,44 +577,21 @@ const RewardsExperience = () => {
                 enqueueSnackbar('Finish the quiz to get a score to claim.', { variant: 'warning' });
                 return;
             }
-            // Use the new task claim system for quiz
-            setLoadingTaskClaim(true);
-            try {
-                console.log('Sending quiz claim request:', { taskId, type: 'daily', rewards: score });
-                const response = await axiosInstance.post('/user/task-claim', {
-                    taskId: taskId,
-                    type: 'daily',
-                    rewards: score
-                });
-                console.log('Quiz claim response:', response.data);
-                enqueueSnackbar('Quiz task claimed!', { variant: 'success' });
-                setCompletedTasks(prev => new Set(prev).add(taskId));
-                try { localStorage.removeItem('quiz:lastScore'); } catch { }
-                dispatch(getUserRewardBalance());
-            } catch (e) {
-                console.error('Quiz claim error:', e.response?.data || e.message);
-                enqueueSnackbar(`Failed to claim quiz task: ${e.response?.data?.message || e.message}`, { variant: 'error' });
-            } finally {
-                setLoadingTaskClaim(false);
+            dispatch(completeTask({ taskId: task._id, taskType: 'quiz', points: score, title: task.title, completed: true }));
+            try { localStorage.removeItem('quiz:lastScore'); } catch { }
+        }
+        else if (task?.title === 'Buy a game') {
+            if (anyPurchase) {
+                dispatch(completeTask({ taskId: task._id, taskType: 'buy', points: task.reward, title: task.title, completed: true }));
             }
-        } else {
-            // Use the new task claim system for other earn tasks
-            setLoadingTaskClaim(true);
-            try {
-                const response = await axiosInstance.post('/user/task-claim', {
-                    taskId: taskId,
-                    type: 'daily',
-                    rewards: task.reward
-                });
-                enqueueSnackbar('Task claimed!', { variant: 'success' });
-                setCompletedTasks(prev => new Set(prev).add(taskId));
-                dispatch(getUserRewardBalance());
-            } catch (e) {
-                enqueueSnackbar('Failed to claim task', { variant: 'error' });
-            } finally {
-                setLoadingTaskClaim(false);
+            else {
+                navigate('/store')
             }
         }
+        else {
+            dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
+        }
+        setCompletedTasks(prev => prev.includes(task._id) ? prev : [...prev, task._id]);
     };
 
     const completeQuest = (q) => {
@@ -728,8 +709,9 @@ const RewardsExperience = () => {
     // Helper function to check if a daily task is claimed for today
     const isDailyTaskClaimed = (taskId) => {
         const today = new Date().toISOString().split('T')[0];
-        const dailyClaimData = taskClaimData?.daily?.find(d => d.date === today);
-        return dailyClaimData?.claimedTasks?.includes(String(taskId));
+        const dailyClaimData = taskClaimData?.daily?.find(d => d.date === today) || null
+        console.log('dailyClaimData?.claimedTasks?.includes(String(taskId))', taskClaimData)
+        return dailyClaimData?.claimedTasks?.includes(String(taskId)) || false;
     };
 
     // Helper function to check if a weekly task is claimed for current week
@@ -806,7 +788,9 @@ const RewardsExperience = () => {
                                 ? allTasksState?.earntask
                                 : allTasksState?.earntask?.slice(0, 2)
                             )?.map((task) => {
-                                const done = completedTasks.has(task._id);
+                                console.log('anyPurchase', completedTasks);
+                                const done = completedTasks?.includes(task._id);
+
                                 return (
                                     <div
                                         key={task._id}
@@ -826,51 +810,57 @@ const RewardsExperience = () => {
                                             </div>
                                         </div>
                                         <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
-                                            <button
-                                                onClick={async () => {
-                                                    if (task?.title === 'Take a quiz') {
-                                                        if (!hasPlayedQuiz) {
-                                                            navigate('/quizRewards');
+                                            <div className='flex  flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                                {(task?.title !== 'Buy a game') ? <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={((task?.title === 'Take a quiz' && hasPlayedQuiz) || done)} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${((task?.title === 'Take a quiz' && hasPlayedQuiz) || done) ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
+                                                    {task?.title === 'Take a quiz' ? ((hasPlayedQuiz || done) ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : 'claim'}
+                                                </button> : null}
+
+                                                <button
+                                                    onClick={async () => {
+                                                        if (task?.title === 'Take a quiz') {
+                                                            if (!hasPlayedQuiz) {
+                                                                navigate('/quizRewards');
+                                                            } else {
+                                                                await handleTaskComplete(task);
+                                                            }
                                                         } else {
                                                             await handleTaskComplete(task);
                                                         }
-                                                    } else {
-                                                        await handleTaskComplete(task);
+                                                    }}
+                                                    disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
+                                                    className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : 'btn-primary'
+                                                        }`}
+                                                >
+                                                    {loadingTaskClaim
+                                                        ? "Claiming..."
+                                                        : done
+                                                            ? "All Claimed"
+                                                            : task?.title === 'Take a quiz'
+                                                                ? (hasPlayedQuiz
+                                                                    ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
+                                                                    : 'Play Quiz'
+                                                                )
+                                                                : task?.title === 'Watch a video'
+                                                                    ? 'Watch Video'
+                                                                    : task?.title === 'Refer a friend'
+                                                                        ? 'Refer Friend'
+                                                                        : task?.title === 'Login to the app'
+                                                                            ? 'Login'
+                                                                            : task?.title === 'Play any game for 15 minutes'
+                                                                                ? 'Play Game'
+                                                                                : task?.title === 'Daily streak bonus'
+                                                                                    ? 'Daily Streak'
+                                                                                    : (task?.title === 'Buy a game' && anyPurchase) ? 'Claim'
+                                                                                        : 'Complete Now'
                                                     }
-                                                }}
-                                                disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
-                                                className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
-                                                    ? 'btn-soft cursor-not-allowed opacity-60'
-                                                    : 'btn-primary'
-                                                    }`}
-                                            >
-                                                {loadingTaskClaim
-                                                    ? "Claiming..."
-                                                    : done
-                                                        ? "All Claimed"
-                                                        : task?.title === 'Take a quiz'
-                                                            ? (hasPlayedQuiz
-                                                                ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
-                                                                : 'Play Quiz'
-                                                            )
-                                                            : task?.title === 'Watch a video'
-                                                                ? 'Watch Video'
-                                                                : task?.title === 'Refer a friend'
-                                                                    ? 'Refer Friend'
-                                                                    : task?.title === 'Login to the app'
-                                                                        ? 'Login'
-                                                                        : task?.title === 'Play any game for 15 minutes'
-                                                                            ? 'Play Game'
-                                                                            : task?.title === 'Daily streak bonus'
-                                                                                ? 'Daily Streak'
-                                                                                : 'Claim Points'
-                                                }
-                                            </button>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                );
+                                )
                             })}
-
                             {allTasksState?.earntask?.length > 2 && (
                                 <button
                                     onClick={() => setShowAll((v) => !v)}
@@ -881,6 +871,8 @@ const RewardsExperience = () => {
                                         : `View ${allTasksState?.earntask?.length - 2} More`}
                                 </button>
                             )}
+
+
                         </div>
 
                     </div>

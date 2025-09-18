@@ -15,7 +15,10 @@ const userTaskClaimSchema = new mongoose.Schema({
   }],
   milestone: [{
     claimedTasks: [{ type: String }]
-  }]
+  }],
+  earn: {
+    type: Array
+  }
 }, { timestamps: true });
 
 userTaskClaimSchema.index({ user: 1 }, { unique: true });

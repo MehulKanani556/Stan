@@ -8,6 +8,7 @@ import cloudinaryHelper from '../helper/cloudinary.js';
 import fs from 'fs';
 import UserTaskClaim from '../models/UserDailyTaskClaim.model.js';
 import { DailyTask, WeeklyTask, Milestone } from '../models/Task.model.js';
+
 const { fileupload, deleteFile } = cloudinaryHelper;
 
 // ==================== REWARD MANAGEMENT (ADMIN) ====================
@@ -304,62 +305,120 @@ export const getUserRewardBalance = async (req, res) => {
 
         // Get recent claimed tasks from UserTaskClaim
 
-        const claim = await UserTaskClaim.findOne({ user: userId });
-        let recentTransactions = [];
-        console.log(claim);
-        if (claim) {
-            // Handle daily claims (array of days)
-            if (Array.isArray(claim.daily) && claim.daily.length > 0) {
-                for (const dailyEntry of claim.daily) {
-                    if (Array.isArray(dailyEntry.claimedTasks) && dailyEntry.claimedTasks.length > 0) {
-                        const dailyTasks = await DailyTask.find({ _id: { $in: dailyEntry.claimedTasks } });
-                        for (const t of dailyTasks) {
-                            recentTransactions.push({
-                                type: 'DAILY',
-                                taskId: t._id,
-                                title: t.title,
-                                amount: t.reward,
-                                claimedAt: dailyEntry.date
-                            });
-                        }
-                    }
-                }
-            }
-            // Handle weekly claims (single object)
-            if (
-                claim.weekly &&
-                Array.isArray(claim.weekly.claimedTasks) &&
-                claim.weekly.claimedTasks.length > 0
-            ) {
-                const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
-                for (const t of weeklyTasks) {
-                    recentTransactions.push({
-                        type: 'WEEKLY',
-                        taskId: t._id,
-                        title: t.title,
-                        amount: t.reward,
-                        claimedAt: claim.weekly.week
-                    });
-                }
-            }
-            // Handle milestone claims (single object)
-            if (
-                claim.milestone &&
-                Array.isArray(claim.milestone.claimedTasks) &&
-                claim.milestone.claimedTasks.length > 0
-            ) {
-                const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
-                for (const t of milestoneTasks) {
-                    recentTransactions.push({
-                        type: 'MILESTONE',
-                        taskId: t._id,
-                        title: t.title,
-                        amount: t.reward,
-                        claimedAt: null // Optionally add a timestamp if you store it
-                    });
-                }
-            }
-        }
+        // const claim = await UserTaskClaim.findOne({ user: userId });
+        let recentTransactions = user.rewardsTransactions || [];
+        // console.log(claim);
+        // if (claim) {
+        //     // Handle daily claims (array of days)
+        //     if (Array.isArray(claim.daily) && claim.daily.length > 0) {
+        //         for (const dailyEntry of claim.daily) {
+        //             if (Array.isArray(dailyEntry.claimedTasks) && dailyEntry.claimedTasks.length > 0) {
+        //                 const dailyTasks = await DailyTask.find({ _id: { $in: dailyEntry.claimedTasks } });
+        //                 for (const t of dailyTasks) {
+        //                     recentTransactions.push({
+        //                         type: 'DAILY',
+        //                         taskId: t._id,
+        //                         title: t.title,
+        //                         amount: t.reward,
+        //                         claimedAt: dailyEntry.date
+        //                     });
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     // Handle weekly claims (single object)
+        //     if (
+        //         claim.weekly &&
+        //         Array.isArray(claim.weekly.claimedTasks) &&
+        //         claim.weekly.claimedTasks.length > 0
+        //     ) {
+        //         const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
+        //         for (const t of weeklyTasks) {
+        //             recentTransactions.push({
+        //                 type: 'WEEKLY',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: claim.weekly.week
+        //             });
+        //         }
+        //     }
+        //     // Handle milestone claims (single object)
+        //     if (
+        //         claim.milestone &&
+        //         Array.isArray(claim.milestone.claimedTasks) &&
+        //         claim.milestone.claimedTasks.length > 0
+        //     ) {
+        //         const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
+        //         for (const t of milestoneTasks) {
+        //             recentTransactions.push({
+        //                 type: 'MILESTONE',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: null // Optionally add a timestamp if you store it
+        //             });
+        //         }
+        //     }
+        // }
+        console.log('recentTransactions',);
+
+        // const claim = await UserTaskClaim.findOne({ user: userId });
+        // let recentTransactions = [];
+        // console.log(claim);
+        // if (claim) {
+        //     // Handle daily claims (array of days)
+        //     if (Array.isArray(claim.daily) && claim.daily.length > 0) {
+        //         for (const dailyEntry of claim.daily) {
+        //             if (Array.isArray(dailyEntry.claimedTasks) && dailyEntry.claimedTasks.length > 0) {
+        //                 const dailyTasks = await DailyTask.find({ _id: { $in: dailyEntry.claimedTasks } });
+        //                 for (const t of dailyTasks) {
+        //                     recentTransactions.push({
+        //                         type: 'DAILY',
+        //                         taskId: t._id,
+        //                         title: t.title,
+        //                         amount: t.reward,
+        //                         claimedAt: dailyEntry.date
+        //                     });
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     // Handle weekly claims (single object)
+        //     if (
+        //         claim.weekly &&
+        //         Array.isArray(claim.weekly.claimedTasks) &&
+        //         claim.weekly.claimedTasks.length > 0
+        //     ) {
+        //         const weeklyTasks = await WeeklyTask.find({ _id: { $in: claim.weekly.claimedTasks } });
+        //         for (const t of weeklyTasks) {
+        //             recentTransactions.push({
+        //                 type: 'WEEKLY',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: claim.weekly.week
+        //             });
+        //         }
+        //     }
+        //     // Handle milestone claims (single object)
+        //     if (
+        //         claim.milestone &&
+        //         Array.isArray(claim.milestone.claimedTasks) &&
+        //         claim.milestone.claimedTasks.length > 0
+        //     ) {
+        //         const milestoneTasks = await Milestone.find({ _id: { $in: claim.milestone.claimedTasks } });
+        //         for (const t of milestoneTasks) {
+        //             recentTransactions.push({
+        //                 type: 'MILESTONE',
+        //                 taskId: t._id,
+        //                 title: t.title,
+        //                 amount: t.reward,
+        //                 claimedAt: null // Optionally add a timestamp if you store it
+        //             });
+        //         }
+        //     }
+        // }
         // Sort by claimedAt (or fallback to type order)
         recentTransactions = recentTransactions.sort((a, b) => {
             if (a.date && b.date) return new Date(b.date) - new Date(a.date);
@@ -500,7 +559,7 @@ export const completeTask = async (req, res) => {
     try {
         const { taskType, taskId, points, completed } = req.body;
         const userId = req.user._id;
-
+        let claim = await UserTaskClaim.findOne({ user: userId });
         const user = await User.findById(userId);
         if (!user) {
             return sendNotFoundResponse(res, "User not found");
@@ -513,23 +572,34 @@ export const completeTask = async (req, res) => {
             'referral': 50,
             'login': 15,
             'game_play': 15,
-            'streak': 20
+            'streak': 20,
+            'buy': 200
         };
 
         // Enforce completion rules for quiz task
+        // Ensure earn array exists
+        if (!Array.isArray(claim.earn)) {
+            claim.earn = [];
+        }
         if (taskType === 'quiz') {
             // Require explicit completed flag from client indicating all questions answered
             if (!completed) {
                 return sendBadRequestResponse(res, 'Quiz must be completed to earn points');
             }
-            const alreadyCompletedQuiz = (user.fanCoinTransactions || []).some(txn =>
-                txn.type === 'EARN' && typeof txn.description === 'string' && txn.description.toLowerCase().includes('task completed: quiz')
-            );
+            const alreadyCompletedQuiz = claim.earn.includes(taskId);
             if (alreadyCompletedQuiz) {
                 return sendBadRequestResponse(res, 'Quiz already completed');
             }
         }
+        if (taskType === 'buy') {
+            const alreadyCompletedQuiz = claim.earn.includes(taskId);
 
+            if (alreadyCompletedQuiz) {
+                return sendBadRequestResponse(res, 'Task already completed');
+            }
+        }
+        claim.earn.push(taskId)
+        claim.save();
         // const points = taskRewards[taskType] || 0;
         if (points === 0) {
             return sendBadRequestResponse(res, "Invalid task type");

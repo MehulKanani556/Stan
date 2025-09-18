@@ -221,7 +221,7 @@ export const completeTask = createAsyncThunk(
     "reward/completeTask",
     async (taskData, { rejectWithValue }) => {
         try {
-            const { taskId, points, title } = taskData;
+            const { taskId,points, title, completed } = taskData;
 
             // Map task titles to task types for backend
             const taskTypeMap = {
@@ -230,7 +230,8 @@ export const completeTask = createAsyncThunk(
                 'Refer a friend': 'referral',
                 'Login to the app': 'login',
                 'Play any game for 15 minutes': 'game_play',
-                'Daily Streak Bonus': 'streak'
+                'Daily Streak Bonus': 'streak',
+                'Buy a game':'buy'
             };
 
             const taskType = taskTypeMap[title] || 'quiz';
