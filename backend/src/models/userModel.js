@@ -99,6 +99,15 @@ const userSchema = new mongoose.Schema(
                 default: Date.now
             }
         }],
+        // Track one-time claims for reward point thresholds
+        rewardsThresholdClaims: {
+            type: new mongoose.Schema({
+                m100: { type: Boolean, default: false },
+                m200: { type: Boolean, default: false },
+                m500: { type: Boolean, default: false },
+            }, { _id: false }),
+            default: undefined
+        },
     },
     { timestamps: true }
 );

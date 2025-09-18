@@ -41,7 +41,9 @@ import {
     getAvailableTasks,
     getRewardsLeaderboard,
     getRewardsStatistics,
-    updateLoginTask
+  updateLoginTask,
+  getRewardThresholdStatus,
+  claimRewardThreshold
 } from '../controllers/rewards.controller.js';
 import { getTaskClaimState, claimTask } from '../controllers/userDailyTaskClaim.controller.js';
 
@@ -260,6 +262,8 @@ indexRoutes.post('/fan-coins/referral-bonus', UserAuth, getReferralBonus);
 // Admin routes for reward management
 indexRoutes.post('/rewards', UserAuth, isAdmin, upload.single('image'), handleMulterError, convertJfifToWebp, createReward);
 indexRoutes.get('/rewards', getAllRewards);
+// Place specific routes BEFORE parameterized routes to avoid conflicts
+indexRoutes.get('/rewards/leaderboard', getRewardsLeaderboard);
 indexRoutes.get('/rewards/:id', getRewardById);
 indexRoutes.put('/rewards/:id', UserAuth, isAdmin, upload.single('image'), handleMulterError, convertJfifToWebp, updateReward);
 indexRoutes.delete('/rewards/:id', UserAuth, isAdmin, deleteReward);
@@ -276,8 +280,11 @@ indexRoutes.get('/rewards/tasks', getAvailableTasks);
 indexRoutes.post('/rewards/tasks/complete', UserAuth, completeTask);
 indexRoutes.post('/updateLoginTask',UserAuth, updateLoginTask)
 // Leaderboard and statistics
-indexRoutes.get('/rewards/leaderboard', getRewardsLeaderboard);
 indexRoutes.get('/admin/rewards/statistics', UserAuth, isAdmin, getRewardsStatistics);
+
+// Reward thresholds (100/200/500) claim routes
+indexRoutes.get('/user/rewards/thresholds', UserAuth, getRewardThresholdStatus);
+indexRoutes.post('/user/rewards/thresholds/:tier/claim', UserAuth, claimRewardThreshold);
 
 indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
 
