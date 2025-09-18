@@ -189,7 +189,7 @@ export const getThresholdClaims = createAsyncThunk(
     'reward/getThresholdClaims',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get('/user/rewards/thresholds');
+            const response = await axiosInstance.get('/user/rewards/thresholds/status');
             return response.data;
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'Failed to fetch thresholds';

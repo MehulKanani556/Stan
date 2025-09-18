@@ -41,9 +41,9 @@ import {
     getAvailableTasks,
     getRewardsLeaderboard,
     getRewardsStatistics,
-  updateLoginTask,
-  getRewardThresholdStatus,
-  claimRewardThreshold
+    updateLoginTask,
+    getRewardThresholdStatus,
+    claimRewardThreshold
 } from '../controllers/rewards.controller.js';
 import { getTaskClaimState, claimTask } from '../controllers/userDailyTaskClaim.controller.js';
 
@@ -275,6 +275,9 @@ indexRoutes.get('/getUserGamePlayTime', UserAuth,getUserGamePlayTime);
 indexRoutes.get('/user/rewards/balance', UserAuth, getUserRewardBalance);
 indexRoutes.post('/user/rewards/:rewardId/redeem', UserAuth, redeemReward);
 indexRoutes.get('/user/rewards/history', UserAuth, getUserRedemptionHistory);
+// Threshold claim routes
+indexRoutes.get('/user/rewards/thresholds/status', UserAuth, getRewardThresholdStatus);
+indexRoutes.post('/user/rewards/thresholds/:tier/claim', UserAuth, claimRewardThreshold);
 indexRoutes.post('/user/LogginHistory',UserAuth,loggingHistory);
 // Task and quest routes
 indexRoutes.get('/rewards/tasks', getAvailableTasks);
@@ -282,10 +285,6 @@ indexRoutes.post('/rewards/tasks/complete', UserAuth, completeTask);
 indexRoutes.post('/updateLoginTask',UserAuth, updateLoginTask)
 // Leaderboard and statistics
 indexRoutes.get('/admin/rewards/statistics', UserAuth, isAdmin, getRewardsStatistics);
-
-// Reward thresholds (100/200/500) claim routes
-indexRoutes.get('/user/rewards/thresholds', UserAuth, getRewardThresholdStatus);
-indexRoutes.post('/user/rewards/thresholds/:tier/claim', UserAuth, claimRewardThreshold);
 
 indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
 
@@ -297,6 +296,12 @@ indexRoutes.post("/earntask",UserAuth,isAdmin,createEarnTask);
 indexRoutes.post("/milestone",UserAuth,isAdmin,createMilestone);
 indexRoutes.get("/getAllTask",getAllTask);
 indexRoutes.get("/getuserLogging",UserAuth,getUserLogging);
+
+
+// scratch card routes
+indexRoutes.post('/scratch-card/create', UserAuth, createScratchCard);
+indexRoutes.get('/get-scratch-card', UserAuth, getUserScratchCards);
+indexRoutes.post('/scratch-card/reveal', UserAuth, revealScratchCard);
 
 // Quiz Routes
 // Admin routes for quiz management
@@ -316,14 +321,5 @@ indexRoutes.get("/getuserLogging",UserAuth,getUserLogging);
 // // User quiz history and leaderboard
 // indexRoutes.get('/user/quiz/history', UserAuth, getUserQuizHistory);
 // indexRoutes.get('/quiz/leaderboard', getQuizLeaderboard);
-
-
-// scratch card routes
-indexRoutes.post('/scratch-card/create', UserAuth, createScratchCard);
-indexRoutes.get('/get-scratch-card', UserAuth, getUserScratchCards);
-indexRoutes.post('/scratch-card/reveal', UserAuth, revealScratchCard);
-// indexRoutes.post('/scratch-card/claim', UserAuth, claimScratchCardReward);
-// indexRoutes.get('/scratch-card/my-cards', UserAuth, getMyScratchCards);
-// indexRoutes.get('/scratch-card/types', getScratchCardTypes);
 
 export default indexRoutes;
