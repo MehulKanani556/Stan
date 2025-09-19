@@ -227,15 +227,14 @@ const GamePlay = () => {
                     <div className='flex flex-col md:flex-row md:items-center gap-2'>
                         <h1 className='text-white text-2xl font-semibold uppercase'>{game ? game.name : 'Game'}</h1>
                         {/* Show play time if game loaded and not error */}
-                        {game && !iframeError && (
+                        {/* {game && !iframeError && (
                             <span className='ml-0 md:ml-4 text-purple-200 text-sm bg-white/10 px-3 py-1 rounded-lg border border-white/10'>
                                 Play Time: {formatTime(playSeconds)}
                             </span>
                         )}
-                        {/* Show total play time always */}
                         <span className='ml-0 md:ml-4 text-purple-300 text-xs bg-white/5 px-2 py-1 rounded border border-white/5'>
                             Total Play Time: {formatTime(totalPlaySeconds)}
-                        </span>
+                        </span> */}
                     </div>
                     <div className='flex items-center gap-4'>
                         <button

@@ -1178,3 +1178,10 @@ input[type=number]::-webkit-outer-spin-button {
 .modal-content-enter {
   animation: modalSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+input:-webkit-autofill {
+  background-color: #ffffff1a !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff1a inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

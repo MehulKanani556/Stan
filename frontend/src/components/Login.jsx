@@ -410,8 +410,8 @@ const Login = () => {
       title: "Sign In",
       initialValues: { email: "", password: "" },
       validationSchema: Yup.object({
-        email: Yup.string().email("Invalid email").required("Required"),
-        password: Yup.string().min(6, "Min 6 characters").required("Required"),
+        email: Yup.string().email("Invalid email").required("Email is required"),
+        password: Yup.string().min(6, "Min 6 characters").required("Password is required"),
       }),
       onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
         try {
@@ -538,8 +538,8 @@ const Login = () => {
       initialValues: { name: "", email: "", password: "", Reffer: referralCode, agreeToTerms: false },
       validationSchema: Yup.object({
         name: Yup.string().required("Name is required"),
-        email: Yup.string().email("Invalid email").required("Required"),
-        password: Yup.string().min(6, "Min 6 characters").required("Required"),
+        email: Yup.string().email("Invalid email").required("Email is required"),
+        password: Yup.string().min(6, "Min 6 characters").required("Password is required"),
         agreeToTerms: Yup.boolean().oneOf([true], "You must agree to the Terms of Service"),
       }),
       onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
@@ -648,7 +648,7 @@ const Login = () => {
       title: "Forgot Password",
       initialValues: { email: "" },
       validationSchema: Yup.object({
-        email: Yup.string().email("Invalid email").required("Required"),
+        email: Yup.string().email("Invalid email").required("Email is required"),
       }),
       onSubmit: async (values, { resetForm, setSubmitting, setStatus }) => {
         try {
