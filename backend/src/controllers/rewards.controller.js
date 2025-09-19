@@ -602,7 +602,7 @@ export const completeTask = async (req, res) => {
             }
         }
         claim.earn.push(taskId)
-        claim.save();
+        await claim.save();
         // const points = taskRewards[taskType] || 0;
         if (points === 0) {
             return sendBadRequestResponse(res, "Invalid task type");

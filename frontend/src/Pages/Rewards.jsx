@@ -594,35 +594,43 @@ const RewardsExperience = () => {
         return `${currentDate.getFullYear()}-W${weekNumber.toString().padStart(2, '0')}`;
     };
 
-    const handleTaskComplete = (task) => {
+    const handleTaskComplete = async (task) => {
         if (completedTasks?.includes(task.id)) return;
-        if (task?.title === 'Take a quiz') {
-            console.log('Quiz task clicked:', { hasPlayedQuiz, quizScore });
-            if (!hasPlayedQuiz) {
-                navigate('/quizRewards');
-                return;
+        setLoadingTaskClaim(true);
+        try {
+            if (task?.title === 'Take a quiz') {
+                if (!hasPlayedQuiz) {
+                    navigate('/quizRewards');
+                    return;
+                }
+                const score = Number(quizScore || 0);
+                if (!score) {
+                    enqueueSnackbar('Finish the quiz to get a score to claim.', { variant: 'warning' });
+                    return;
+                }
+                await dispatch(completeTask({ taskId: task._id, taskType: 'quiz', points: score, title: task.title, completed: true })).unwrap();
+                try { localStorage.removeItem('quiz:lastScore'); } catch { }
             }
-            const score = Number(quizScore || 0);
-            console.log('Quiz score for claim:', score);
-            if (!score) {
-                enqueueSnackbar('Finish the quiz to get a score to claim.', { variant: 'warning' });
-                return;
-            }
-            dispatch(completeTask({ taskId: task._id, taskType: 'quiz', points: score, title: task.title, completed: true }));
-            try { localStorage.removeItem('quiz:lastScore'); } catch { }
-        }
-        else if (task?.title === 'Buy a game') {
-            if (anyPurchase) {
-                dispatch(completeTask({ taskId: task._id, taskType: 'buy', points: task.reward, title: task.title, completed: true }));
+            else if (task?.title === 'Buy a game') {
+                if (anyPurchase) {
+                    await dispatch(completeTask({ taskId: task._id, taskType: 'buy', points: task.reward, title: task.title, completed: true })).unwrap();
+                }
+                else {
+                    navigate('/store')
+                    return;
+                }
             }
             else {
-                navigate('/store')
+                await dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title })).unwrap();
             }
+            setCompletedTasks(prev => prev.includes(task._id) ? prev : [...prev, task._id]);
+            // Refresh balance and recent transactions so Total Earned updates immediately
+            dispatch(getUserRewardBalance());
+        } catch (e) {
+            enqueueSnackbar(e?.message || 'Failed to claim points', { variant: 'error' });
+        } finally {
+            setLoadingTaskClaim(false);
         }
-        else {
-            dispatch(completeTask({ taskId: task._id, points: task.reward, title: task.title }));
-        }
-        setCompletedTasks(prev => prev.includes(task._id) ? prev : [...prev, task._id]);
     };
 
     const completeQuest = (q) => {
