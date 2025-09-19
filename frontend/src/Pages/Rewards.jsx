@@ -764,7 +764,7 @@ const RewardsExperience = () => {
     };
 
     return (
-        <section className='pb-12 overflow-x-hidden'>
+        <section className='ms:pb-12 pb-6 overflow-x-hidden'>
             <div className='max-w-[95%] md:max-w-[85%] m-auto overflow-x-hidden'>
                 {/* Hero */}
                 <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
@@ -1134,7 +1134,7 @@ const RewardsExperience = () => {
 
                     {/* Horizontal Scroll Rewards */}
                     <div className="glass-card rounded-2xl p-6 reward-glow">
-                        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                        <div className="grid gap-4 pb-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
                             {[
                                 {
                                     tier: 100,
@@ -1342,7 +1342,7 @@ const RewardsExperience = () => {
                         <span className='text-white/50 text-xs'>Lifetime progress</span>
                     </div>
                     {console.log("allTasksState.milestone", allTasksState)}
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 gap-4 sm:gap-6'>
                         {(allTasksState?.milestone || []).map(m => {
                             const pct = Math.min(100, (totalEarned / m.target) * 100);
                             const claimed = claimedMilestoneTasks.has(m._id || m.id);

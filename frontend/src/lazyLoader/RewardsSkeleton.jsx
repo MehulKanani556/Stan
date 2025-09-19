@@ -28,37 +28,68 @@ const RewardsSkeleton = () => {
         {/* Top grid: My Points + Earn more points */}
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-10'>
           {/* My Points card */}
-          <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit'>
-            <div className='h-4 w-28 bg-white/10 rounded mb-4 sm:mb-5 animate-pulse' />
-            <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 border border-white/10'>
-              <div className='h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 bg-white/10 rounded-full mx-auto mb-3 animate-pulse' />
-              <div className='h-8 sm:h-10 md:h-12 w-24 sm:w-28 md:w-32 bg-white/10 rounded mx-auto animate-pulse' />
-              <div className='h-4 w-24 bg-white/10 rounded mx-auto mt-3 animate-pulse' />
-              <div className='h-4 w-40 bg-white/10 rounded mx-auto mt-3 animate-pulse' />
+          <div className="glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
+              <div className="h-4 w-32 bg-white/10 rounded animate-pulse" />
+              <div className="h-3 w-20 bg-white/10 rounded animate-pulse" />
             </div>
+
+          <div className="space-y-3 sm:space-y-4">
+            {[1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10"
+              >
+                {/* Left Side (image + text) */}
+                <div className="flex items-center gap-3 sm:gap-4">
+                  {/* Image skeleton */}
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-white/10 animate-pulse" />
+                  <div>
+                    <div className="h-4 w-36 sm:w-44 bg-white/10 rounded animate-pulse" />
+                    <div className="h-3 w-20 bg-white/10 rounded mt-2 animate-pulse" />
+                  </div>
+                </div>
+        
+                {/* Right side button skeleton */}
+                <div className="h-9 w-24 bg-white/10 rounded-lg animate-pulse" />
+              </div>
+            ))}
+        
+            {/* Claim button skeleton */}
+            <div className="w-full h-10 rounded-xl bg-white/10 animate-pulse" />
           </div>
+         </div>
+
 
           {/* Earn more points list */}
-          <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow'>
-            <div className='flex items-center justify-between mb-4 sm:mb-5'>
-              <div className='h-4 w-32 bg-white/10 rounded animate-pulse' />
-              <div className='h-3 w-20 bg-white/10 rounded animate-pulse' />
+          <div className="glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
+              <div className="h-4 w-44 bg-white/10 rounded animate-pulse" />
+              <div className="h-3 w-16 bg-white/10 rounded animate-pulse" />
             </div>
-            <div className='space-y-3 sm:space-y-4'>
-              {[1,2,3].map(i => (
-                <div key={i} className='flex items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
-                  <div className='flex items-center gap-3 sm:gap-4'>
-                    <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/10 animate-pulse' />
-                    <div>
-                      <div className='h-4 w-40 sm:w-48 bg-white/10 rounded animate-pulse' />
-                      <div className='h-3 w-20 bg-white/10 rounded mt-2 animate-pulse' />
-                    </div>
-                  </div>
-                  <div className='h-8 w-20 bg-white/10 rounded-lg animate-pulse' />
-                </div>
-              ))}
-              <div className='w-full h-10 rounded-xl bg-white/10 animate-pulse' />
+          
+            {/* Referral Link Input + Button */}
+            <div className="flex items-center gap-3 mb-5">
+              <div className="h-10 w-full bg-white/10 rounded-lg animate-pulse" />
+              <div className="h-10 w-24 bg-white/10 rounded-lg animate-pulse" />
             </div>
+          
+            {/* Section Title */}
+            <div className="h-4 w-32 bg-white/10 rounded mb-3 animate-pulse" />
+          
+            {/* Referral Points Box */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-4">
+              <div className="h-4 w-52 bg-white/10 rounded animate-pulse mb-3" />
+              <div className="flex items-center justify-between">
+                <div className="h-3 w-32 bg-white/10 rounded animate-pulse" />
+                <div className="h-6 w-12 bg-white/10 rounded animate-pulse" />
+              </div>
+            </div>
+          
+            {/* Claim Button */}
+            <div className="w-full h-10 rounded-xl bg-white/10 animate-pulse" />
           </div>
         </div>
 
@@ -194,6 +225,29 @@ const RewardsSkeleton = () => {
           </div>
           <div className='mt-3 h-3 w-48 bg-white/10 rounded animate-pulse' />
         </div>
+ 
+        {/* Skeleton  */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6 ">
+          {[1,2,3,4,5,6].map(i => (
+            <div
+              key={i}
+              className="relative rounded-2xl overflow-hidden bg-black/10 border border-white/10 animate-pulse"
+            >
+              {/* Card image area */}
+              <div className="h-40 sm:h-48 bg-white/10" />
+        
+              {/* Bottom content */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/10 to-transparent">
+                <div className="h-4 w-36 bg-white/10 rounded mb-2" />
+                <div className="h-3 w-24 bg-white/10 rounded" />
+              </div>
+        
+              {/* Badge (days left) */}
+              <div className="absolute top-3 right-3 h-6 w-14 bg-white/10 rounded-full" />
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );

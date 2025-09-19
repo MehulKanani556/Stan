@@ -369,7 +369,7 @@ const ScratchGame = () => {
       </div> */}
 
       {/* Scratch Card Display */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid ms:grid-cols-2 2xl:grid-cols-4 lg:grid-cols-3 gap-4">
         {[...(Array.isArray(scratchCards) ? scratchCards : [])]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, showAll ? undefined : 8)
