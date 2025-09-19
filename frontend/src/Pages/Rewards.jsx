@@ -15,6 +15,7 @@ import silver from '../images/silver.png'
 import bronze from '../images/bronze.png'
 import redeem1 from '../images/redeem.jpg'
 import redeem2 from '../images/redeem2.jpg'
+import star from '../images/star11.png'
 
 import { enqueueSnackbar } from 'notistack';
 import {
@@ -828,7 +829,7 @@ const RewardsExperience = () => {
                                     >
                                         <div className="flex items-center gap-3 sm:gap-4">
                                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
-                                                {task?.icon}
+                                                <img src={star} alt="star" className="w-full h-full object-cover" />
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <p className="text-white font-medium text-sm sm:text-base truncate">
@@ -840,53 +841,46 @@ const RewardsExperience = () => {
                                             </div>
                                         </div>
                                         <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
-                                            <div className='flex  flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
-                                                {(task?.title !== 'Buy a game') ? <button onClick={() => { if (task?.title === 'Take a quiz' && !hasPlayedQuiz) navigate('/quizRewards') }} disabled={((task?.title === 'Take a quiz' && hasPlayedQuiz) || done)} className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${((task?.title === 'Take a quiz' && hasPlayedQuiz) || done) ? 'btn-soft cursor-not-allowed opacity-60' : 'btn-primary'}`}>
-                                                    {task?.title === 'Take a quiz' ? ((hasPlayedQuiz || done) ? 'Completed' : 'Play Quiz') : task?.title === 'Watch a video' ? 'Watch Video' : task?.title === 'Refer a friend' ? 'Refer Friend' : task?.title === 'Login to the app' ? 'Login' : task?.title === 'Play any game for 15 minutes' ? 'Play Game' : task?.title === 'Daily streak bonus' ? 'Daily Streak' : 'claim'}
-                                                </button> : null}
-
-                                                <button
-                                                    onClick={async () => {
-                                                        if (task?.title === 'Take a quiz') {
-                                                            if (!hasPlayedQuiz) {
-                                                                navigate('/quizRewards');
-                                                            } else {
-                                                                await handleTaskComplete(task);
-                                                            }
+                                            <button
+                                                onClick={async () => {
+                                                    if (task?.title === 'Take a quiz') {
+                                                        if (!hasPlayedQuiz) {
+                                                            navigate('/quizRewards');
                                                         } else {
                                                             await handleTaskComplete(task);
                                                         }
-                                                    }}
-                                                    disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
-                                                    className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
-                                                        ? 'btn-soft cursor-not-allowed opacity-60'
-                                                        : 'btn-primary'
-                                                        }`}
-                                                >
-                                                    {loadingTaskClaim
-                                                        ? "Claiming..."
-                                                        : done
-                                                            ? "All Claimed"
-                                                            : task?.title === 'Take a quiz'
-                                                                ? (hasPlayedQuiz
-                                                                    ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
-                                                                    : 'Complete Task'
-                                                                )
-                                                                : task?.title === 'Watch a video'
-                                                                    ? 'Watch Video'
-                                                                    : task?.title === 'Refer a friend'
-                                                                        ? 'Refer Friend'
-                                                                        : task?.title === 'Login to the app'
-                                                                            ? 'Login'
-                                                                            : task?.title === 'Play any game for 15 minutes'
-                                                                                ? 'Play Game'
-                                                                                : task?.title === 'Daily streak bonus'
-                                                                                    ? 'Daily Streak'
-                                                                                    : (task?.title === 'Buy a game' && anyPurchase) ? 'Claim'
-                                                                                        : 'Complete Now'
+                                                    } else {
+                                                        await handleTaskComplete(task);
                                                     }
-                                                </button>
-                                            </div>
+                                                }}
+                                                disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
+                                                className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
+                                                    ? 'btn-soft cursor-not-allowed opacity-60'
+                                                    : 'btn-primary'
+                                                    }`}
+                                            >
+                                                {loadingTaskClaim
+                                                    ? "Claiming..."
+                                                    : done
+                                                        ? "All Claimed"
+                                                        : task?.title === 'Take a quiz'
+                                                            ? (hasPlayedQuiz
+                                                                ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
+                                                                : 'Play Quiz'
+                                                            )
+                                                            : task?.title === 'Watch a video'
+                                                                ? 'Watch Video'
+                                                                : task?.title === 'Refer a friend'
+                                                                    ? 'Refer Friend'
+                                                                    : task?.title === 'Login to the app'
+                                                                        ? 'Login'
+                                                                        : task?.title === 'Play any game for 15 minutes'
+                                                                            ? 'Play Game'
+                                                                            : task?.title === 'Daily streak bonus'
+                                                                                ? 'Daily Streak'
+                                                                                : 'Claim Points'
+                                                }
+                                            </button>
                                         </div>
                                     </div>
                                 )
@@ -1125,127 +1119,122 @@ const RewardsExperience = () => {
                 </div>
 
                 {/* Redeem */}
-                <div className="mt-10">
+                <div className="mt-6 sm:mt-8 lg:mt-10">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-white font-semibold text-lg md:text-xl">Redeem</h3>
-                        <span className="text-white/50 text-sm">Choose your loot</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
+                        <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl">Redeem</h3>
+                        <span className="text-white/50 text-xs sm:text-sm">Choose your loot</span>
                     </div>
 
-                    {/* Horizontal Scroll Rewards */}
-                    <div className="glass-card rounded-2xl p-6 reward-glow">
-                        <div className="grid gap-4 pb-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-                            {[
-                                {
-                                    tier: 100,
-                                    label: '+5 Fan',
-                                    type: 'fan',
-                                    key: 'm100',
-                                    image: redeem1,
-                                    description: 'Boost your fan points instantly.',
-                                },
-                                {
-                                    tier: 200,
-                                    label: '+10 Fan',
-                                    type: 'fan',
-                                    key: 'm200',
-                                    image: redeem1,
-                                    description: 'Double the rewards for active fans.',
-                                },
-                                {
-                                    tier: 500,
-                                    label: '+25 Fan',
-                                    type: 'fan',
-                                    key: 'm500',
-                                    image: redeem1,
-                                    description: 'Big reward boost for loyal fans.',
-                                },
-                                {
-                                    tier: 1000,
-                                    label: '1 Scratch Card',
-                                    type: 'scratch',
-                                    key: 's1000',
-                                    image: redeem2,
-                                    description: 'Try your luck! 🎉 Winning chance: 5%',
-                                },
-                                {
-                                    tier: 2000,
-                                    label: '1 Scratch Card',
-                                    type: 'scratch',
-                                    key: 's2000',
-                                    image: redeem2,
-                                    description: 'Premium scratch card 💎 Winning chance: 15%',
-                                },
-                            ].map((reward, index) => {
-                                const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
-                                const canClaim =
-                                    reward.type === 'fan'
-                                        ? !claimed && userBalance >= reward.tier
-                                        : userBalance >= reward.tier;
+                    {/* Responsive Rewards Grid */}
+                    <div className="glass-card rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 reward-glow">
+                        {/* Mobile: Horizontal Scroll */}
+                        <div className="block sm:hidden">
+                            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                                {[
+                                    {
+                                        tier: 100,
+                                        label: '+5 Fan',
+                                        type: 'fan',
+                                        key: 'm100',
+                                        image: redeem1,
+                                        description: 'Boost your fan points instantly.',
+                                    },
+                                    {
+                                        tier: 200,
+                                        label: '+10 Fan',
+                                        type: 'fan',
+                                        key: 'm200',
+                                        image: redeem1,
+                                        description: 'Double the rewards for active fans.',
+                                    },
+                                    {
+                                        tier: 500,
+                                        label: '+25 Fan',
+                                        type: 'fan',
+                                        key: 'm500',
+                                        image: redeem1,
+                                        description: 'Big reward boost for loyal fans.',
+                                    },
+                                    {
+                                        tier: 1000,
+                                        label: '1 Scratch Card',
+                                        type: 'scratch',
+                                        key: 's1000',
+                                        image: redeem2,
+                                        description: 'Try your luck! 🎉 Winning chance: 5%',
+                                    },
+                                    {
+                                        tier: 2000,
+                                        label: '1 Scratch Card',
+                                        type: 'scratch',
+                                        key: 's2000',
+                                        image: redeem2,
+                                        description: 'Premium scratch card 💎 Winning chance: 15%',
+                                    },
+                                ].map((reward, index) => {
+                                    const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
+                                    const canClaim =
+                                        reward.type === 'fan'
+                                            ? !claimed && userBalance >= reward.tier
+                                            : userBalance >= reward.tier;
 
-                                // Check if THIS specific button is loading
-                                const isThisButtonLoading =
-                                    reward.type === 'fan'
-                                        ? isClaimingThreshold && claimingTier === reward.tier
-                                        : scratchLoading && scratchingTier === reward.tier;
+                                    const isThisButtonLoading =
+                                        reward.type === 'fan'
+                                            ? isClaimingThreshold && claimingTier === reward.tier
+                                            : scratchLoading && scratchingTier === reward.tier;
 
-                                const isDisabled =
-                                    reward.type === 'fan'
-                                        ? claimed || userBalance < reward.tier || isThisButtonLoading
-                                        : userBalance < reward.tier || isThisButtonLoading;
+                                    const isDisabled =
+                                        reward.type === 'fan'
+                                            ? claimed || userBalance < reward.tier || isThisButtonLoading
+                                            : userBalance < reward.tier || isThisButtonLoading;
 
-                                return (
-                                    <div
-                                        key={index}
-                                        className="flex-shrink-1 w-full bg-white/5 border border-white/10 rounded-xl p-4 text-center hover:bg-white/10 transition"
-                                    >
-                                        {/* Reward Image */}
-                                        <img
-                                            src={reward.image}
-                                            alt={`Reward ${reward.tier}`}
-                                            className="w-full h-32 object-cover mx-auto mb-3 rounded"
-                                        />
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="flex-shrink-0 w-32 bg-white/5 border border-white/10 rounded-lg p-3 text-center hover:bg-white/10 transition"
+                                        >
+                                            <img
+                                                src={reward.image}
+                                                alt={`Reward ${reward.tier}`}
+                                                className="w-full h-20 object-cover mx-auto mb-2 rounded"
+                                            />
+                                            <p className="text-white/70 text-[10px]">Spend {reward.tier}</p>
+                                            <p className="text-emerald-300 font-medium text-xs">{reward.label}</p>
+                                            <p className="text-white/50 text-[9px] mt-1 leading-tight">
+                                                {reward.description}
+                                            </p>
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        if (isDisabled) return;
 
-                                        {/* Reward Info */}
-                                        <p className="text-white/70 text-xs">Spend {reward.tier}</p>
-                                        <p className="text-emerald-300 font-medium text-sm">{reward.label}</p>
-
-                                        {/* Description */}
-                                        <p className="text-white/50 text-[11px] mt-1 leading-snug">
-                                            {reward.description}
-                                        </p>
-
-                                        {/* Claim Button */}
-                                        <button
-                                            onClick={async () => {
-                                                try {
-                                                    if (isDisabled) return;
-
-                                                    if (reward.type === 'fan') {
-                                                        setClaimingTier(reward.tier);
-                                                        await dispatch(claimThresholdTier(reward.tier)).unwrap();
-                                                        dispatch(getUserRewardBalance());
-                                                        dispatch(getThresholdClaims());
-                                                    } else {
-                                                        setScratchingTier(reward.tier);
-                                                        await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
-                                                        dispatch(getScratchCard());
-                                                        enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
+                                                        if (reward.type === 'fan') {
+                                                            setClaimingTier(reward.tier);
+                                                            await dispatch(claimThresholdTier(reward.tier)).unwrap();
+                                                            dispatch(getUserRewardBalance());
+                                                            dispatch(getThresholdClaims());
+                                                        } else {
+                                                            setScratchingTier(reward.tier);
+                                                            await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
+                                                            dispatch(getScratchCard());
+                                                            dispatch(getUserRewardBalance());
+                                                            enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
+                                                        }
+                                                    } catch (e) {
+                                                        enqueueSnackbar(e?.message || 'Failed to claim reward', {
+                                                            variant: 'error',
+                                                        });
+                                                    } finally {
+                                                        if (reward.type === 'fan') {
+                                                            setClaimingTier(null);
+                                                        } else {
+                                                            setScratchingTier(null);
+                                                        }
                                                     }
-                                                } catch (e) {
-                                                    enqueueSnackbar(e?.message || 'Failed to claim reward', {
-                                                        variant: 'error',
-                                                    });
-                                                } finally {
-                                                    if (reward.type === 'fan') {
-                                                        setClaimingTier(null);
-                                                    } else {
-                                                        setScratchingTier(null);
-                                                    }
-                                                }
-                                            }}
-                                            disabled={isDisabled}
-                                            className={`mt-3 w-full py-1.5 rounded-md text-xs sm:text-sm font-semibold transition ${reward.type === 'fan'
+                                                }}
+                                                disabled={isDisabled}
+                                                className={`mt-2 w-full py-1 rounded text-[10px] font-semibold transition ${reward.type === 'fan'
                                                     ? claimed
                                                         ? 'btn-soft cursor-not-allowed opacity-60'
                                                         : canClaim && !isThisButtonLoading
@@ -1254,24 +1243,157 @@ const RewardsExperience = () => {
                                                     : userBalance < reward.tier || isThisButtonLoading
                                                         ? 'btn-soft cursor-not-allowed opacity-60'
                                                         : 'btn-primary'
-                                                }`}
-                                        >
-                                            {reward.type === 'fan'
-                                                ? claimed
-                                                    ? 'Claimed'
+                                                    }`}
+                                            >
+                                                {reward.type === 'fan'
+                                                    ? claimed
+                                                        ? 'Claimed'
+                                                        : isThisButtonLoading
+                                                            ? 'Claiming...'
+                                                            : 'Claim'
                                                     : isThisButtonLoading
-                                                        ? 'Claiming...'
-                                                        : 'Claim'
-                                                : isThisButtonLoading
-                                                    ? 'Processing...'
-                                                    : 'Purchase'}
-                                        </button>
-                                    </div>
-                                );
-                            })}
+                                                        ? 'Processing...'
+                                                        : 'Purchase'}
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Tablet and Desktop: Grid Layout */}
+                        <div className="hidden sm:block">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
+                                {[
+                                    {
+                                        tier: 100,
+                                        label: '+5 Fan',
+                                        type: 'fan',
+                                        key: 'm100',
+                                        image: redeem1,
+                                        description: 'Boost your fan points instantly.',
+                                    },
+                                    {
+                                        tier: 200,
+                                        label: '+10 Fan',
+                                        type: 'fan',
+                                        key: 'm200',
+                                        image: redeem1,
+                                        description: 'Double the rewards for active fans.',
+                                    },
+                                    {
+                                        tier: 500,
+                                        label: '+25 Fan',
+                                        type: 'fan',
+                                        key: 'm500',
+                                        image: redeem1,
+                                        description: 'Big reward boost for loyal fans.',
+                                    },
+                                    {
+                                        tier: 1000,
+                                        label: '1 Scratch Card',
+                                        type: 'scratch',
+                                        key: 's1000',
+                                        image: redeem2,
+                                        description: 'Try your luck! 🎉 Winning chance: 5%',
+                                    },
+                                    {
+                                        tier: 2000,
+                                        label: '1 Scratch Card',
+                                        type: 'scratch',
+                                        key: 's2000',
+                                        image: redeem2,
+                                        description: 'Premium scratch card 💎 Winning chance: 15%',
+                                    },
+                                ].map((reward, index) => {
+                                    const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
+                                    const canClaim =
+                                        reward.type === 'fan'
+                                            ? !claimed && userBalance >= reward.tier
+                                            : userBalance >= reward.tier;
+
+                                    const isThisButtonLoading =
+                                        reward.type === 'fan'
+                                            ? isClaimingThreshold && claimingTier === reward.tier
+                                            : scratchLoading && scratchingTier === reward.tier;
+
+                                    const isDisabled =
+                                        reward.type === 'fan'
+                                            ? claimed || userBalance < reward.tier || isThisButtonLoading
+                                            : userBalance < reward.tier || isThisButtonLoading;
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 text-center hover:bg-white/10 transition"
+                                        >
+                                            <img
+                                                src={reward.image}
+                                                alt={`Reward ${reward.tier}`}
+                                                className="w-full h-24 sm:h-28 md:h-32 object-cover mx-auto mb-3 rounded"
+                                            />
+                                            <p className="text-white/70 text-xs">Spend {reward.tier}</p>
+                                            <p className="text-emerald-300 font-medium text-sm">{reward.label}</p>
+                                            <p className="text-white/50 text-[11px] mt-1 leading-snug">
+                                                {reward.description}
+                                            </p>
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        if (isDisabled) return;
+
+                                                        if (reward.type === 'fan') {
+                                                            setClaimingTier(reward.tier);
+                                                            await dispatch(claimThresholdTier(reward.tier)).unwrap();
+                                                            dispatch(getUserRewardBalance());
+                                                            dispatch(getThresholdClaims());
+                                                        } else {
+                                                            setScratchingTier(reward.tier);
+                                                            await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
+                                                            dispatch(getScratchCard());
+                                                            dispatch(getUserRewardBalance());
+                                                            enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
+                                                        }
+                                                    } catch (e) {
+                                                        enqueueSnackbar(e?.message || 'Failed to claim reward', {
+                                                            variant: 'error',
+                                                        });
+                                                    } finally {
+                                                        if (reward.type === 'fan') {
+                                                            setClaimingTier(null);
+                                                        } else {
+                                                            setScratchingTier(null);
+                                                        }
+                                                    }
+                                                }}
+                                                disabled={isDisabled}
+                                                className={`mt-3 w-full py-1.5 rounded-md text-xs sm:text-sm font-semibold transition ${reward.type === 'fan'
+                                                    ? claimed
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : canClaim && !isThisButtonLoading
+                                                            ? 'btn-primary'
+                                                            : 'btn-soft cursor-not-allowed opacity-60'
+                                                    : userBalance < reward.tier || isThisButtonLoading
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : 'btn-primary'
+                                                    }`}
+                                            >
+                                                {reward.type === 'fan'
+                                                    ? claimed
+                                                        ? 'Claimed'
+                                                        : isThisButtonLoading
+                                                            ? 'Claiming...'
+                                                            : 'Claim'
+                                                    : isThisButtonLoading
+                                                        ? 'Processing...'
+                                                        : 'Purchase'}
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
-
                 </div>
 
 
@@ -1320,7 +1442,7 @@ const RewardsExperience = () => {
                     </div>
                     <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4'>Recent Activity</h3>
-                        <div className='space-y-2 sm:space-y-3 max-h-60 sm:max-h-80 overflow-auto pr-1'>
+                        <div className='space-y-2 sm:space-y-3 max-h-40 sm:max-h-72 overflow-auto pr-1'>
                             {recentTransactions.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
                             {recentTransactions.map(it => (
                                 <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>

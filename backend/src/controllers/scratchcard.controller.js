@@ -67,8 +67,15 @@ export const createScratchCard = async (req, res) => {
             description: `Scratch card purchase`,
             date: new Date()
         });
-         await user.save();
-        return sendCreatedResponse(res, "Scratch card created successfully", scratchCard);
+        await user.save();
+        
+        // Return scratch card with updated user balance
+        const result = {
+            ...scratchCard.toObject(),
+            newBalance: user.rewards
+        };
+        
+        return sendCreatedResponse(res, "Scratch card created successfully", result);
     } catch (error) {
         return sendBadRequestResponse(res, error.message);
     }

@@ -342,11 +342,21 @@ const ScratchGame = () => {
 
   return (
     <div className="py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-purple-300 flex items-center justify-center gap-3">
-          <SiScratch /> Scratch Card Game
-        </h1>
-        <p className="text-white/70 mt-2">Scratch and win exciting prizes!</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div className="text-left">
+          <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><SiScratch className='text-purple-300' /> Scratch Card Game</h3>
+          <p className="text-sm sm:text-base md:text-lg text-white/70 mt-2">Scratch and win exciting prizes!</p>
+        </div>
+        {Array.isArray(scratchCards) && scratchCards.length > 8 && (
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowAll((prev) => !prev)}
+              className="px-5 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300"
+            >
+              {showAll ? 'View less' : 'View all'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Scratch Card Purchase Options */}
@@ -382,16 +392,7 @@ const ScratchGame = () => {
           ))}
       </div>
 
-      {Array.isArray(scratchCards) && scratchCards.length > 8 && (
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={() => setShowAll((prev) => !prev)}
-            className="px-5 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300"
-          >
-            {showAll ? 'View less' : 'View all'}
-          </button>
-        </div>
-      )}
+
 
       {/* Modal */}
       {selectedPrize && (
