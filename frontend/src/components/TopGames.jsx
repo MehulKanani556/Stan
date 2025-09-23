@@ -91,7 +91,7 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
   const price = item?.platforms?.windows?.price;
   return (
     <Link to={linkTo} className='block '>
-      <div className="group relative bg-gradient-to-br cursor-pointer md:mb-0 mb-6 from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2 cursor-pointer">
+      <div className="group relative bg-gradient-to-br cursor-pointer md:mb-0 mb-6 from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2 sm:h-[-webkit-fill-available]">
 
         {/* Background gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -137,7 +137,7 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-white">${price}</span>
+                <span className="text-2xl sm:text-xl md:text-2xl font-bold text-white">${price}</span>
                 <span className="text-slate-400 text-sm">USD</span>
               </div>
             )}
@@ -211,7 +211,7 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
     
-    <div className="space-y-4 sm:space-y-0 md:grid md:grid-cols-2 md:gap-4 md:gap-5 lg:grid-cols-1 lg:gap-6">
+    <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
         console.log('data',item),

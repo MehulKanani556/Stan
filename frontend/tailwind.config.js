@@ -29,6 +29,9 @@ module.exports = {
           light: "#141414",
           dark: "#fff",
         },
+        height: {
+          fill: '-webkit-fill-available',
+        },
       },
     },
     container: {
