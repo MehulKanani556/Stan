@@ -33,7 +33,7 @@ const SWIPER_CONFIG = {
     1280: { slidesPerView: 3.5, spaceBetween: 14 },
     1480: { slidesPerView: 4.2, spaceBetween: 16 },
   },
-  style: { padding: '20px 4px' },
+  style: { padding: '20px 0' },
   className: "game-swiper"
 };
 
@@ -635,7 +635,7 @@ const Store = () => {
       </div>
 
       {/* Game Sections */}
-      <div className="py-0 w-[85%] mx-auto">
+      <div className="py-0 max-w-[95%] md:max-w-[85%]  mx-auto">
 
         <SwiperSection
           title="Trending Games"
