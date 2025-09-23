@@ -133,14 +133,14 @@ const GameCard = ({
 }) => {
   const navigate = useNavigate();
   const ordersList = Array.isArray(orders) ? orders : [];
-  const isPurchased= useMemo(() =>
+  const isPurchased = useMemo(() =>
     Array.isArray(orders) && orders.some(order =>
       order?.status === 'paid' &&
       order?.items?.some(item => item?.game?._id === game?._id)
     ),
     [orders, game?._id]
   )
- 
+
   return (
     <div
       onClick={() => onGameClick(game._id)}
@@ -168,10 +168,10 @@ const GameCard = ({
             {/* New Badge */}
             {isNewGame(game?.createdAt) && (
               <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
-              <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
-                <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
+                <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                  <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
+                </div>
               </div>
-            </div>
             )}
 
             {/* Wishlist Button */}
@@ -193,7 +193,7 @@ const GameCard = ({
               {(isInWishlist && isLoggedIn) ? (
                 <FaHeart className="text-white animate-pulse ms:text-sm text-xs" />
               ) : (
-                <FaRegHeart  className="text-slate-300 group-hover:text-red-400 transition-colors ms:text-sm text-xs" />
+                <FaRegHeart className="text-slate-300 group-hover:text-red-400 transition-colors ms:text-sm text-xs" />
               )}
             </button>
 
@@ -242,7 +242,7 @@ const GameCard = ({
                 navigate('/login')
             }}
             disabled={isInCart || isPurchased}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isInCart || isPurchased)  && isLoggedIn 
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isInCart || isPurchased) && isLoggedIn
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -255,7 +255,7 @@ const GameCard = ({
                       <span className="text-white font-bold text-sm">✓</span>
                     </div>
                   ) : (
-                    <FaShoppingCart  className="text-white  md:w-6 ms:h-6 h-4 w-4 " />
+                    <FaShoppingCart className="text-white  md:w-6 ms:h-6 h-4 w-4 " />
                   )}
                 </div>
                 <span className="text-white font-bold  tracking-wider uppercase ms:text-sm text-xs" >
@@ -280,8 +280,8 @@ const GameCard = ({
 
         {/* Decorative Elements */}
         <div className="absolute top-1 left-1 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-                        <div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
-                    </div>
+          <div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
+        </div>
         <div className="absolute bottom-2 right-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
           <div className="ms:w-12 ms:h-12 border-2 border-pink-400/30 rounded-circle" />
         </div>
@@ -373,8 +373,8 @@ export default function Home() {
     }
   }, []);
 
-  console.log("Kem Kem" , "Hello");
-  
+  console.log("Kem Kem", "Hello");
+
 
   const handleGameClick = useCallback((gameId) => {
     navigate(`/single/${gameId}`);
@@ -435,13 +435,13 @@ export default function Home() {
       dispatch(getAllGames({
         page: currentPage,
         limit: gamesPerPage,
-        category: activeTab || undefined  
+        category: activeTab || undefined
       }));
     }, 300);
-  
+
     return () => clearTimeout(handler);
   }, [currentPage, activeTab, gamesPerPage, dispatch]);
-  
+
 
 
 
@@ -557,6 +557,7 @@ export default function Home() {
             </div>
 
             {/* Games Swiper */}
+            {/* Games Swiper */}
             {Array.isArray(gameData) && gameData.length > 0 ? (
               filteredGames?.length > 0 ? (
                 <Swiper
@@ -564,7 +565,7 @@ export default function Home() {
                   spaceBetween={12}
                   slidesPerView={1.1}
                   breakpoints={SWIPER_BREAKPOINTS}
-                  style={{ padding: '20px 4px' }}
+                  style={{ padding: "20px 0px" }}
                   className="game-swiper"
                   onSwiper={(swiper) => {
                     gameSwiperRef.current = swiper;
@@ -581,7 +582,9 @@ export default function Home() {
                         onWishlistToggle={handleWishlistToggle}
                         onAddToCart={handleAddToCart}
                         isInWishlist={wishlistStatus[game._id]}
-                        isInCart={cartItems.some(item => item.game?._id === game._id)}
+                        isInCart={cartItems.some(
+                          (item) => item.game?._id === game._id
+                        )}
                         orders={orders}
                         isLoggedIn={isLoggedIn}
                       />
@@ -589,10 +592,12 @@ export default function Home() {
                   ))}
                 </Swiper>
               ) : (
-                <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">No games found for this category.</div>
+                <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
+                  No games found for this category.
+                </div>
               )
-            ) : (
-              // Skeleton Swiper: NO wrapping <div> around SwiperSlide
+            ) : loading ? (
+              // Show skeleton only while loading
               <Swiper modules={[Navigation]} spaceBetween={12} slidesPerView={1.1} breakpoints={SWIPER_BREAKPOINTS}>
                 {Array.from({ length: 4 }, (_, i) => (
                   <SwiperSlide key={i}>
@@ -600,7 +605,13 @@ export default function Home() {
                   </SwiperSlide>
                 ))}
               </Swiper>
+            ) : (
+              // No games in database
+              <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
+                No games found.
+              </div>
             )}
+
 
 
           </div>
