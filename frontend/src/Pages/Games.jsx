@@ -216,7 +216,7 @@ const Games = () => {
 				{!isInitialLoading && (
 					<>
 						{!showAll && safeGames.length > 0 && (
-							<div className="relative  px-4">
+							<div className="relative">
 								<Swiper
 									ref={swiperRef}
 									spaceBetween={32}
