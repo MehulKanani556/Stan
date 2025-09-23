@@ -168,8 +168,16 @@ const PuzzleCaptchaModal = ({
     const drawBackground = (image, x, y) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+        const dpr = window.devicePixelRatio || 1;
+        // Ensure high-DPI backing store while keeping CSS size consistent
+        canvas.width = responsiveWidth * dpr;
+        canvas.height = responsiveHeight * dpr;
+        canvas.style.width = `${responsiveWidth}px`;
+        canvas.style.height = `${responsiveHeight}px`;
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
+        // Reset transform and scale to DPR so drawing coords remain in CSS pixels
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         ctx.clearRect(0, 0, responsiveWidth, responsiveHeight);
         ctx.drawImage(image, 0, 0, responsiveWidth, responsiveHeight);
@@ -208,11 +216,18 @@ const PuzzleCaptchaModal = ({
 
         const paddedWidth = pieceWidth + piecePadding * 2;
         const paddedHeight = pieceHeight + piecePadding * 2;
-        // Ensure canvas matches padded size
-        if (canvas.width !== paddedWidth || canvas.height !== paddedHeight) {
-            canvas.width = paddedWidth;
-            canvas.height = paddedHeight;
+        const dpr = window.devicePixelRatio || 1;
+        // Ensure canvas matches padded size with high-DPI backing store
+        if (canvas.width !== paddedWidth * dpr || canvas.height !== paddedHeight * dpr) {
+            canvas.width = paddedWidth * dpr;
+            canvas.height = paddedHeight * dpr;
         }
+        // Keep CSS size in CSS pixels
+        canvas.style.width = `${paddedWidth}px`;
+        canvas.style.height = `${paddedHeight}px`;
+
+        // Reset and apply DPR transform so drawing coords stay in CSS pixels
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, paddedWidth, paddedHeight);
 
         // 1) Clip to the selected shape
@@ -615,7 +630,7 @@ const PuzzleCaptchaModal = ({
             loadImage();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps        
-    }, [isOpen, renderWidth, renderHeight, tolerance]);
+    }, [isOpen, renderWidth, renderHeight, tolerance, responsiveWidth, responsiveHeight, scale]);
 
     // Close modal on escape key
     useEffect(() => {
