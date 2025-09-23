@@ -2,7 +2,7 @@ import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaArrowUp } from 'react-icons/fa';
 import { IoMailOutline, IoCallOutline, IoLocationOutline } from 'react-icons/io5';
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-WITH-TEXT.svg";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const Footer = () => {
@@ -59,7 +59,11 @@ const Footer = () => {
 
           <div className=" py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-[425px]:grid-cols-2">
             <div className="space-y-4 max-[425px]:col-span-2">
-              <YOYO_LOGO className="svg-current-color h-9 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+              <div className='w-fit'>
+              <NavLink to={"/"} >
+              <YOYO_LOGO  className="svg-current-color h-9 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+              </NavLink>
+              </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 A realm where ancient horrors dwell and forgotten heroes rise again. Unleash your legend in the shadows.
               </p>

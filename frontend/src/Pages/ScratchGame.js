@@ -379,18 +379,26 @@ const ScratchGame = () => {
       </div> */}
 
       {/* Scratch Card Display */}
-      <div className="grid ms:grid-cols-2 2xl:grid-cols-4 lg:grid-cols-3 gap-4">
-        {[...(Array.isArray(scratchCards) ? scratchCards : [])]
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, showAll ? undefined : 8)
-          .map((prize, index) => (
-            <ScratchCard
-              key={index}
-              prize={prize}
-              onDetailsClick={setSelectedPrize}
-            />
-          ))}
-      </div>
+      {Array.isArray(scratchCards) && scratchCards.length > 0 ? (
+        <div className="grid ms:grid-cols-2 2xl:grid-cols-4 lg:grid-cols-3 gap-4">
+          {[...scratchCards]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, showAll ? undefined : 8)
+            .map((prize, index) => (
+              <ScratchCard
+                key={index}
+                prize={prize}
+                onDetailsClick={setSelectedPrize}
+              />
+            ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center py-16">
+          <p className="text-white/70 text-center">
+            No scratch cards available right now.
+          </p>
+        </div>
+      )}
 
 
 

@@ -216,8 +216,8 @@ export default function QuizGame({
     }
 
     return (
-        <div className='container pt-28 pb-24'>
-            <div className='mx-auto max-w-3xl bg-[#221f2a] rounded-2xl border border-white/10 p-6 sm:p-8 shadow-xl shadow-purple-900/20'>
+        <div className='container pt-14 lg:py-24'>
+            <div className='mx-auto max-w-3xl bg-[#221f2a] rounded-2xl border border-white/10 p-2 sm:p-5 md:p-8 shadow-xl shadow-purple-900/20'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
                         <button

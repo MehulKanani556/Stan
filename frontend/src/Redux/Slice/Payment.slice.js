@@ -10,7 +10,7 @@ const initialStatepayment = {
   message: "",
   loading: false,
   clientSecret: "",
-  orders: null,
+  orders: [],
   paymentStatus: null,
   error: null,
 };
@@ -265,7 +265,15 @@ const paymentSlice = createSlice({
 
       .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload.order;
+        // Ensure orders is always an array; append the newly created order
+        const newOrder = action.payload?.order;
+        if (Array.isArray(state.orders)) {
+          if (newOrder) {
+            state.orders.unshift(newOrder);
+          }
+        } else {
+          state.orders = newOrder ? [newOrder] : [];
+        }
         // state.clientSecret = action.payload.clientSecret;
       })
       .addCase(createOrder.rejected, (state, action) => {
@@ -291,7 +299,8 @@ const paymentSlice = createSlice({
       })
       .addCase(allorders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        // Coerce to array to prevent runtime errors when mapping
+        state.orders = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(allorders.rejected, (state, action) => {
         state.loading = false;
