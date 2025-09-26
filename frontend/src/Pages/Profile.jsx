@@ -634,12 +634,12 @@ export default function Profile() {
             </div>
 
             {/* Profile Content */}
-            <div className='flex flex-col md:flex-row items-stretch min-h-[500px]'>
+            <div className='flex flex-col md:flex-row items-stretch min-h-[500px] gap-4 md:gap-7'>
                 {/* side menu section */}
                 <div className='h-full  md:py-6 py-4'>
                     <div className='xl:w-[300px] md:w-[200px] w-full'>
                         <ul className='py-3 capitalize'>
-                            <li className={` mt-2 transition-all  duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('profile') }}>
+                            <li className={` mt-2 transition-all  duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('profile') }}>
                                 {(() => {
                                     const Tag = activeMenu === "profile" ? StyleDiv : "div";
                                     const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#31244e] rounded-md";
@@ -653,7 +653,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            {/* <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('address') }}>
+                            {/* <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('address') }}>
                                 {(() => {
                                     const Tag = activeMenu === "address" ? StylishDiv : "div";
                                     const style = activeMenu === "address" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
@@ -667,7 +667,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li> */}
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Transaction') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Transaction') }}>
                                 {(() => {
                                     const Tag = activeMenu === "Transaction" ? StyleDiv : "div";
                                     const style = activeMenu === "Transaction" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
@@ -681,7 +681,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Orders" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Orders') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Orders" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Orders') }}>
                                 {(() => {
                                     const Tag = activeMenu === "Orders" ? StyleDiv : "div";
                                     const style = activeMenu === "Orders" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
@@ -695,7 +695,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "changePassword" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('changePassword') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "changePassword" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('changePassword') }}>
                                 {(() => {
                                     const Tag = activeMenu === "changePassword" ? StyleDiv : "div";
                                     const style = activeMenu === "changePassword" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
@@ -709,7 +709,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "deleteAccount" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('deleteAccount') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "deleteAccount" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('deleteAccount') }}>
                                 {(() => {
                                     const Tag = activeMenu === "deleteAccount" ? StyleDiv : "div";
                                     const style = activeMenu === "deleteAccount" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
@@ -723,7 +723,7 @@ export default function Profile() {
                                     );
                                 })()}
                             </li>
-                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "logout" ? "md:w-[105%]   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('logout') }}>
+                            <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "logout" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('logout') }}>
                                 {(() => {
                                     const Tag = activeMenu === "logout" ? StyleDiv : "div";
                                     const style = activeMenu === "logout" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
