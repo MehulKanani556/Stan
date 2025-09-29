@@ -240,12 +240,12 @@ const RewardsExperience = () => {
 
                 const dailyTasksToday = todayDaily?.claimedTasks || [];
                 const daily = taskClaim?.claim?.daily?.flatMap(d => d.claimedTasks || []);
-                const weekly = taskClaim?.claim?.weekly?.claimedTasks || [];
+                const weekly = taskClaim?.claimedTasks || [];
                 const milestone = taskClaim?.claim?.milestone?.claimedTasks || [];
 
                 // console.log("dailyTasksToday", weeklyTasksThisWeek,dailyTasksToday);
 
-
+                console.log('weeklyTasksThisWeek', weeklyTasksThisWeek);
 
                 setClaimedDailyTasks(new Set(dailyTasksToday));
                 setClaimedWeeklyTasks(new Set(weeklyTasksThisWeek));
@@ -507,7 +507,7 @@ const RewardsExperience = () => {
         // Check if task is already claimed for this week
         const currentWeekData = taskClaimData?.weekly?.find(w => w.week === currentWeek);
         const isTaskClaimedThisWeek = currentWeekData?.claimedTasks?.includes(key);
-
+        console.log(currentWeekData);
         if (!key) return;
         if (isTaskClaimedThisWeek) return;
 
@@ -527,15 +527,28 @@ const RewardsExperience = () => {
             const response = await dispatch(claimCompleteTask({ taskId: key, type: 'weekly', rewards: task?.reward }))
             if (response.payload.success) {
                 console.log('daily task response', response.payload.success);
-
-                // Update local state to reflect the new claim
                 setTaskClaimData(prevData => {
-                    const updatedWeekly = [
-                        ...prevData.weekly, {
-                            week: currentWeek,
-                            claimedTasks: [...(prevData.weekly?.claimedTasks || []), key]
-                        }
-                    ];
+                    const existingWeekIndex = prevData.weekly.findIndex(w => w.week === currentWeek);
+
+                    let updatedWeekly;
+
+                    if (existingWeekIndex !== -1) {
+                        // Update existing week
+                        updatedWeekly = prevData.weekly.map((w, i) =>
+                            i === existingWeekIndex
+                                ? { ...w, claimedTasks: [...(w.claimedTasks || []), key] }
+                                : w
+                        );
+                    } else {
+                        // Add new week
+                        updatedWeekly = [
+                            ...prevData.weekly,
+                            { week: currentWeek, claimedTasks: [key] }
+                        ];
+                    }
+
+                    console.log('updatedWeekly', updatedWeekly);
+
                     return {
                         ...prevData,
                         weekly: updatedWeekly
@@ -757,17 +770,15 @@ const RewardsExperience = () => {
 
     const isWeeklyTaskClaimed = (taskId) => {
         const currentWeek = getCurrentWeek();
-        console.log('taskClaimDataweekly', taskClaimData)
+        console.log('taskClaimDataweekly123', taskClaimData)
 
         let currentWeekData = taskClaimData?.weekly?.find(w => w.week === currentWeek) || null;
-
+        console.log('currentWeekDatacurrentWeekData', currentWeekData);
         return currentWeekData?.claimedTasks?.includes(String(taskId)) || false;
     };
 
     // Helper function to check if a milestone task is claimed
     const isMilestoneTaskClaimed = (taskId) => {
-        console.log('taskClaimDataweekly', taskClaimData)
-
         let milestoneWithTask = taskClaimData?.milestone?.find(m => m.claimedTasks.includes(String(taskId)));
         return !!milestoneWithTask;
     };
@@ -1067,7 +1078,7 @@ const RewardsExperience = () => {
                                 let progressPct = 0;
                                 let canComplete = false;
                                 let claimed = false;
-
+                                console.log('claimedWeeklyTasks', claimedWeeklyTasks)
                                 if (isPlayTimeTask) {
                                     goal = Number(q?.limit || q?.goal || 0);
                                     progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
@@ -1082,7 +1093,7 @@ const RewardsExperience = () => {
                                     progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
                                     claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
                                     canComplete = progress >= goal && !claimed;
-                                    console.log('progerss', userLogging?.weeklyLogging)
+                                    console.log('progerss', claimed)
                                 }
                                 if (is3DayTask) {
                                     // Logic for tracking 3 daily tasks for 5 days

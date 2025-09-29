@@ -382,7 +382,7 @@ const ScratchGame = () => {
       {Array.isArray(scratchCards) && scratchCards.length > 0 ? (
         <div className="grid ms:grid-cols-2 2xl:grid-cols-4 lg:grid-cols-3 gap-4">
           {[...scratchCards]
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .reverse().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, showAll ? undefined : 8)
             .map((prize, index) => (
               <ScratchCard
