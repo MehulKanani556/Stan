@@ -9,10 +9,10 @@ const userTaskClaimSchema = new mongoose.Schema({
       claimedTasks: [{ type: String }]
     }
   ],
-  weekly: {
+  weekly: [{
     week: { type: String }, // e.g. 2025-W38
     claimedTasks: [{ type: String }]
-  },
+  }],
   milestone: {
     claimedTasks: [{ type: String }]
   }

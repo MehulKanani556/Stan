@@ -118,12 +118,16 @@ export const getTaskClaimState = async (req, res) => {
       if (!todayEntry) {
         claim.daily.push({ date: today, claimedTasks: [] });
       }
-
-      // Handle weekly reset only if week changed
-      if (!claim.weekly || claim.weekly.week !== weekStr) {
-        claim.weekly = { week: weekStr, claimedTasks: [] };
+      
+      if (!Array.isArray(claim.weekly)) {
+        claim.weekly = [];
       }
-
+      let weekEntry = claim.weekly.find(w => w.week === weekStr);
+      if (!weekEntry) {
+        claim.weekly.push({ week: weekStr, claimedTasks: [] });
+      }
+      
+      
       // Initialize milestone if it doesn't exist
       if (!claim.milestone) {
         claim.milestone = { claimedTasks: [] };
@@ -186,17 +190,18 @@ export const claimTask = async (req, res) => {
 
     // Weekly
     if (type === 'weekly') {
-      if (!claim.weekly) {
-        claim.weekly = { week: weekStr, claimedTasks: [taskId] };
+      if (!Array.isArray(claim.weekly)) {
+        claim.weekly = [];
+      }
+      
+      let weekEntry = claim.weekly.find(w => w.week === weekStr);
+      if (!weekEntry) {
+        // Create new entry for this week
+        claim.weekly.push({ week: weekStr, claimedTasks: [taskId] });
       } else {
-        // Reset weekly tasks only if it's a new week
-        if (claim.weekly.week !== weekStr) {
-          claim.weekly = { week: weekStr, claimedTasks: [taskId] };
-        } else {
-          // Same week, just add the task
-          if (!claim.weekly.claimedTasks.includes(taskId)) {
-            claim.weekly.claimedTasks.push(taskId);
-          }
+        // Add task to existing week if not already claimed
+        if (!weekEntry.claimedTasks.includes(taskId)) {
+          weekEntry.claimedTasks.push(taskId);
         }
       }
       
