@@ -61,7 +61,7 @@ const Footer = () => {
             <div className="space-y-4 max-[425px]:col-span-2">
               <div className='w-fit'>
               <NavLink to={"/"} >
-              <YOYO_LOGO  className="svg-current-color h-9 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+              <YOYO_LOGO  className="svg-current-color h-9 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
               </NavLink>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
@@ -80,7 +80,7 @@ const Footer = () => {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2  xl:p-2.5 rounded-full bg-white/10 hover:bg-[#ab99e1] hover:text-black transition-all duration-300 flex items-center justify-center"
+                    className="p-2  xl:p-2.5 rounded-full bg-white/10 hover:bg-[var(--color-change)] hover:text-black transition-all duration-300 flex items-center justify-center"
                   >
                     <Icon className="text-sm sm:text-base md:text-lg lg:text-xl" />
                   </a>
@@ -108,8 +108,8 @@ const Footer = () => {
                     <li key={i}>
                        <Link
                          to={path}
-                         className={`hover:text-[#ab99e1] transition-colors text-sm ${
-                           isActive ? "font-semibold text-[#ab99e1]" : "text-gray-300"
+                         className={`hover:text-[var(--color-change)] transition-colors text-sm ${
+                           isActive ? "font-semibold text-[var(--color-change)]" : "text-gray-300"
                          }`}
                        >
                          {link}
@@ -129,7 +129,7 @@ const Footer = () => {
                   <li key={i}>
                     <Link
                       to={link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#"}
-                      className={` hover:text-[#ab99e1] transition-colors text-sm ${location.pathname === (link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#") ? "font-semibold text-[#ab99e1]" : "text-gray-300"}`}
+                      className={` hover:text-[var(--color-change)] transition-colors text-sm ${location.pathname === (link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#") ? "font-semibold text-[var(--color-change)]" : "text-gray-300"}`}
                     >
                       {link}
                     </Link>
@@ -148,9 +148,9 @@ const Footer = () => {
                     href="https://maps.google.com/?q=264+Weber+St+W,+Kitchener,+ON+N2H+4A6,+Canada"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-[#ab99e1] transition-colors flex items-center"
+                    className="hover:text-[var(--color-change)] transition-colors flex items-center"
                   >
-                    <IoLocationOutline className="text-[#ab99e1] flex-shrink-0" />
+                    <IoLocationOutline className="text-[var(--color-change)] flex-shrink-0" />
                     <span className="ml-1">
                       264 Weber St W, Kitchener, ON N2H 4A6, Canada
                     </span>
@@ -160,9 +160,9 @@ const Footer = () => {
                   <a
                     href="tel:180097976361"
                     rel="noopener noreferrer"
-                    className="hover:text-[#ab99e1] transition-colors flex items-center"
+                    className="hover:text-[var(--color-change)] transition-colors flex items-center"
                   >
-                    <IoCallOutline className="text-[#ab99e1]" />
+                    <IoCallOutline className="text-[var(--color-change)]" />
                     <span className="ml-1">
                       1800-9797-6361
                     </span>
@@ -172,9 +172,9 @@ const Footer = () => {
                   <a
                     href="mailto:info@yoyokhel.com"
                     rel="noopener noreferrer"
-                    className="hover:text-[#ab99e1] transition-colors flex items-center"
+                    className="hover:text-[var(--color-change)] transition-colors flex items-center"
                   >
-                    <IoMailOutline className="text-[#ab99e1]" />
+                    <IoMailOutline className="text-[var(--color-change)]" />
                     <span className="ml-1">
                       info@yoyokhel.com
                     </span>

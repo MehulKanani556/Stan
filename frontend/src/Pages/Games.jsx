@@ -367,7 +367,7 @@ const GameCard = ({ game, index = 0 }) => {
 
 				{/* Card Content */}
 				<div className="flex-grow ms:flex flex-col p-2 sm:p-6 md:p-5 lg:p-7 xl:p-6 2xl:p-8">
-					<h3 className="font-bold text-white group-hover:text-purple-300 transition-colors duration-300 line-clamp-2 leading-tight mb-3 flex-grow text-sm sm:text-xl md:text-lg lg:text-2xl xl:text-xl ">
+					<h3 className="font-bold text-white group-hover:text-[var(--color-change)] transition-colors duration-300 line-clamp-2 leading-tight mb-3 flex-grow text-sm sm:text-xl md:text-lg lg:text-2xl xl:text-xl ">
 						{game.name}
 					</h3>
 					

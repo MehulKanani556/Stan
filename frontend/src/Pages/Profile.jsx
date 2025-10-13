@@ -625,7 +625,7 @@ export default function Profile() {
             {/* Header */}
             <div className="sticky top-0 z-40 border-b border-white/25 ">
                 <div className="flex items-center justify-between  py-3">
-                    <NavLink to="/" className="flex items-center gap-2 text-white hover:text-[#ab99e1] transition-colors">
+                    <NavLink to="/" className="flex items-center gap-2 text-white hover:text-[var(--color-change)] transition-colors">
                         <IoIosArrowBack className="w-6 h-6" />
                         <span className="text-lg font-medium">Back</span>
                     </NavLink>

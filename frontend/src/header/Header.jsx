@@ -138,8 +138,8 @@ if(isLoggedIn){
                         <div className="navbar  w-full px-0 justify-between">
 
                             <NavLink to="/" className="flex items-center gap-2 flex-none">
-                                <YOYO_LOGO className="svg-current-color h-12 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
-                                {/* <span className='text-[#ab99e1] font-semibold text-4xl'>YOYO</span> */}
+                                <YOYO_LOGO className="svg-current-color h-12 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                                {/* <span className='text-[var(--color-change)] font-semibold text-4xl'>YOYO</span> */}
                             </NavLink>
 
 
@@ -147,23 +147,23 @@ if(isLoggedIn){
                                 <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg px-0">
                                     <li>
                                         <NavLink to="/" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
+                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
                                         }>Home</NavLink>
                                     </li>
                                     <li>
                                         <NavLink to={isLoggedIn ? "/ggtalks" : "/login"} className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
+                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
                                         }>GGTalks</NavLink>
                                     </li>
 
                                     <li>
                                         <NavLink to="/games" className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
+                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
                                         }>Games</NavLink>
                                     </li>
                                     <li>
                                         <NavLink to={isLoggedIn ? "/rewards" : "/login"}  className={({ isActive }) =>
-                                            isActive ? "text-[#ab99e1] md:px-2 lg:px-3" : "hover:text-[#ab99e1] md:px-2 lg:px-3"
+                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
                                         }>Rewards</NavLink>
                                     </li>
                                     <li>
@@ -173,8 +173,8 @@ if(isLoggedIn){
                                           path.startsWith("/single/") || path.startsWith("/store");
                               
                                         return isActive || isCustomActive
-                                          ? "text-[#ab99e1] md:px-2 lg:px-3"
-                                          : "hover:text-[#ab99e1] md:px-2 lg:px-3";
+                                          ? "text-[var(--color-change)] md:px-2 lg:px-3"
+                                          : "hover:text-[var(--color-change)] md:px-2 lg:px-3";
                                       }}
                                     >Store</NavLink>
                                     </li>
@@ -194,12 +194,12 @@ if(isLoggedIn){
                                              <>
                                                <div
                                                  className={`p-2 border-2 rounded-full transition-colors ${
-                                                   isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                   isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
                                                  }`}
                                                >
                                                  <FaHeart
                                                    className={`text-[18px] cursor-pointer transition-colors ${
-                                                     isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                     isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
                                                    }`}
                                                  />
                                                </div>
@@ -218,12 +218,12 @@ if(isLoggedIn){
                                                <>
                                                  <div
                                                    className={`p-2 border-2 rounded-full transition-colors ${
-                                                     isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                     isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
                                                    }`}
                                                  >
                                                    <FaShoppingCart
                                                      className={`text-[18px] cursor-pointer transition-colors ${
-                                                       isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                       isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
                                                      }`}
                                                    />
                                                  </div>
@@ -241,7 +241,7 @@ if(isLoggedIn){
 
 
                                         <div
-                                            className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#ab99e1] transition-colors"
+                                            className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[var(--color-change)] transition-colors"
                                             onClick={toggleDropdown}
                                         >
                                             <img
@@ -251,7 +251,7 @@ if(isLoggedIn){
                                             />
                                         </div>
                                         <p
-                                            className='text-base cursor-pointer hover:text-[#ab99e1] transition-colors'
+                                            className='text-base cursor-pointer hover:text-[var(--color-change)] transition-colors'
                                             onClick={toggleDropdown}
                                         >
                                             {decryptData(name)?.split(" ")[0]}
@@ -319,11 +319,11 @@ if(isLoggedIn){
                                         {({ isActive }) => (
                                             <>
                                                 <div
-                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
                                                         }`}
                                                 >
                                                     <FaHeart
-                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
                                                             }`}
                                                     />
                                                 </div>
@@ -340,11 +340,11 @@ if(isLoggedIn){
                                         {({ isActive }) => (
                                             <>
                                                 <div
-                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[#ab99e1]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
                                                         }`}
                                                 >
                                                     <FaShoppingCart
-                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[#ab99e1]" : "text-[#d1d5db] hover:text-[#ab99e1]"
+                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
                                                             }`}
                                                     />
                                                 </div>
@@ -375,24 +375,24 @@ if(isLoggedIn){
                         <div className="min-h-full w-80 p-4 relative text-white bg-gradient-to-b from-[#100f14]/95 via-[#16141c]/95 to-[#0e0d12]/95 backdrop-blur-xl border-l border-white/5 shadow-[0_10px_40px_-10px_rgba(171,153,225,0.35)]">
 
                             {/* ambient glows */}
-                            <div aria-hidden className="pointer-events-none absolute -top-10 -left-10 h-40 w-40 bg-[#ab99e1]/20 rounded-full blur-3xl"></div>
+                            <div aria-hidden className="pointer-events-none absolute -top-10 -left-10 h-40 w-40 bg-[var(--color-change)]/20 rounded-full blur-3xl"></div>
                             <div aria-hidden className="pointer-events-none absolute bottom-24 -right-10 h-48 w-48 bg-[#6b5bcc]/20 rounded-full blur-3xl"></div>
 
                             {/* brand */}
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <YOYO_LOGO className="svg-current-color h-7 w-auto text-[#ab99e1]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                                    <YOYO_LOGO className="svg-current-color h-7 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
                                 </div>
                                 <label
                                     htmlFor="my-drawer-3"
-                                    className="w-full flex mt-3 justify-end cursor-pointer text-white hover:text-[#ab99e1]"
+                                    className="w-full flex mt-3 justify-end cursor-pointer text-white hover:text-[var(--color-change)]"
                                 >
                                     <HiX className="w-6 h-6 bg-black rounded-full p-[2px] " />
                                 </label>
                             </div>
 
                             {isLoggedIn ? (
-                                <div onClick={handleProfileClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[#ab99e1]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
+                                <div onClick={handleProfileClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
                                     <div className='flex gap-4 items-center'>
                                         <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center shadow-[0_0_0_3px_rgba(171,153,225,0.15)_inset]">
                                             <img
@@ -412,7 +412,7 @@ if(isLoggedIn){
                                 </div>
                             )
                                 :
-                                <div onClick={handleSigninClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[#ab99e1]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
+                                <div onClick={handleSigninClick} className="mt-3 bg-white/5 px-3 py-2 rounded-xl flex items-center justify-between cursor-pointer ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(171,153,225,0.35)]">
                                     <div className='flex gap-4 items-center'>
                                         <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden flex items-center justify-center shadow-[0_0_0_3px_rgba(171,153,225,0.15)_inset]">
                                             <img
@@ -437,37 +437,37 @@ if(isLoggedIn){
 
                                     <div className='flex flex-wrap justify-between gap-y-3'>
 
-                                        <NavLink to="/rewards" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
-                                            <SlBadge className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Rewards Offers
+                                        <NavLink to="/rewards" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <SlBadge className='text-[var(--color-change)] group-hover:scale-110 transition-transform' /> Rewards Offers
                                         </NavLink>
 
-                                        {/* <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
-                                            <CgNotes className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Transaction
+                                        {/* <NavLink to="/transaction" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <CgNotes className='text-[var(--color-change)] group-hover:scale-110 transition-transform' />  Transaction
                                         </NavLink> */}
 
-                                        <NavLink to={isLoggedIn ? "/ggtalks" : "/login"} onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
-                                            <BsChatHeartFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  GG Talks
+                                        <NavLink to={isLoggedIn ? "/ggtalks" : "/login"} onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <BsChatHeartFill className='text-[var(--color-change)] group-hover:scale-110 transition-transform' />  GG Talks
                                         </NavLink>
 
-                                        {/* <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
-                                            <BiSupport className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Support
+                                        {/* <NavLink to="/support" className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <BiSupport className='text-[var(--color-change)] group-hover:scale-110 transition-transform' />  Support
                                         </NavLink> */}
 
-                                        <NavLink to="/guides" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
-                                            <PiQuestionMarkFill className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Guides
+                                        <NavLink to="/guides" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <PiQuestionMarkFill className='text-[var(--color-change)] group-hover:scale-110 transition-transform' />  Guides
                                         </NavLink>
 
-                                        <NavLink to="/games" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
-                                            <IoGameController className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Free Games
+                                        <NavLink to="/games" onClick={() => setIsDrawerOpen(false)} className='group w-[48%] bg-white/5 px-3 py-2 text-sm rounded-xl flex items-center gap-2 ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <IoGameController className='text-[var(--color-change)] group-hover:scale-110 transition-transform' /> Free Games
                                         </NavLink>
                                         {/* 
-                                        <NavLink to="/wishlist" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
-                                            <FaHeart className='text-[#ab99e1] group-hover:scale-110 transition-transform' />  Wishlist
+                                        <NavLink to="/wishlist" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                            <FaHeart className='text-[var(--color-change)] group-hover:scale-110 transition-transform' />  Wishlist
                                         </NavLink>
 
-                                        <NavLink to="/cart" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[#ab99e1]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
+                                        <NavLink to="/cart" className='group w-[48%] bg-white/5 px-3 py-2 rounded-xl flex items-center gap-2 text-[13px] ring-1 ring-white/10 hover:ring-[var(--color-change)]/40 hover:bg-white/10 transition-all duration-300 hover:-translate-y-0.5'>
 
-                                            <FaShoppingCart className='text-[#ab99e1] group-hover:scale-110 transition-transform' /> Cart
+                                            <FaShoppingCart className='text-[var(--color-change)] group-hover:scale-110 transition-transform' /> Cart
                                         </NavLink> */}
 
 
@@ -480,11 +480,11 @@ if(isLoggedIn){
 
                             <div className='absolute bottom-4 left-0 w-full flex items-center justify-center'>
                                 {isLoggedIn ? (
-                                    <button onClick={handleLogoutClick} className="flex items-center justify-center text-sm gap-2 cursor-pointer text-black bg-gradient-to-r from-[#6b5bcc] to-[#ab99e1] px-5 py-2 rounded-full font-medium shadow-[0_10px_30px_-12px_rgba(171,153,225,0.55)] hover:from-[#7a69d9] hover:to-[#b9a9ee] transition-all">
+                                    <button onClick={handleLogoutClick} className="flex items-center justify-center text-sm gap-2 cursor-pointer text-black bg-gradient-to-r from-[#6b5bcc] to-[var(--color-change)] px-5 py-2 rounded-full font-medium shadow-[0_10px_30px_-12px_rgba(171,153,225,0.55)] hover:from-[#7a69d9] hover:to-[#b9a9ee] transition-all">
                                         <MdLogout className='text-black/80' /> Logout
                                     </button>
                                 ) : (
-                                    <button onClick={() => navigate('/login')} className="flex items-center justify-center text-sm gap-2 cursor-pointer text-black bg-gradient-to-r from-[#6b5bcc] to-[#ab99e1] px-5 py-2 rounded-full font-medium shadow-[0_10px_30px_-12px_rgba(171,153,225,0.55)] hover:from-[#7a69d9] hover:to-[#b9a9ee] transition-all">
+                                    <button onClick={() => navigate('/login')} className="flex items-center justify-center text-sm gap-2 cursor-pointer text-black bg-gradient-to-r from-[#6b5bcc] to-[var(--color-change)] px-5 py-2 rounded-full font-medium shadow-[0_10px_30px_-12px_rgba(171,153,225,0.55)] hover:from-[#7a69d9] hover:to-[#b9a9ee] transition-all">
                                         <MdLogout className='text-black/80' /> Sign In
                                     </button>
                                 )}
@@ -502,11 +502,11 @@ if(isLoggedIn){
                             {({ isActive }) => (
                                 <>
                                     {isActive ? (
-                                        <RiHome4Fill className="size-5 text-[#ab99e1]" />
+                                        <RiHome4Fill className="size-5 text-[var(--color-change)]" />
                                     ) : (
                                         <RiHome4Line className="size-5 text-gray-400" />
                                     )}
-                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>Home</p>
+                                    <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>Home</p>
                                 </>
                             )}
                         </NavLink>
@@ -517,11 +517,11 @@ if(isLoggedIn){
                             {({ isActive }) => (
                                 <>
                                     {isActive ? (
-                                        <BsChatHeartFill className="size-5 text-[#ab99e1] fill-current" />
+                                        <BsChatHeartFill className="size-5 text-[var(--color-change)] fill-current" />
                                     ) : (
                                         <BsChatHeart className="size-5 text-gray-400" />
                                     )}
-                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>GG Talks</p>
+                                    <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>GG Talks</p>
                                 </>
                             )}
                         </NavLink>
@@ -536,11 +536,11 @@ if(isLoggedIn){
                           return(
                           <>
                             {active ? (
-                              <IoGameController className="size-5 text-[#ab99e1]" />
+                              <IoGameController className="size-5 text-[var(--color-change)]" />
                             ) : (
                               <IoGameControllerOutline className="size-5 text-gray-400" />
                             )}
-                            <p className={active ? "text-[#ab99e1]" : "text-gray-400"}>Games</p>
+                            <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Games</p>
                           </>
                         )}}
                        </NavLink>
@@ -552,11 +552,11 @@ if(isLoggedIn){
                             {({ isActive }) => (
                                 <>
                                     {isActive ? (
-                                        <IoGift className="size-5 text-[#ab99e1]" />
+                                        <IoGift className="size-5 text-[var(--color-change)]" />
                                     ) : (
                                         <IoGiftOutline className="size-5 text-gray-400" />
                                     )}
-                                    <p className={isActive ? "text-[#ab99e1]" : "text-gray-400"}>Rewards</p>
+                                    <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>Rewards</p>
                                 </>
                             )}
                         </NavLink>
@@ -569,11 +569,11 @@ if(isLoggedIn){
                             return(
                                 <>
                                     {active ? (
-                                        <IoBag className="size-5 text-[#ab99e1]" />
+                                        <IoBag className="size-5 text-[var(--color-change)]" />
                                     ) : (
                                         <IoBagOutline className="size-5 text-gray-400" />
                                     )}
-                                    <p className={active ? "text-[#ab99e1]" : "text-gray-400"}>Store</p>
+                                    <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Store</p>
                                 </>
                             )}}
                         </NavLink>

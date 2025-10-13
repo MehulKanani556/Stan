@@ -48,6 +48,19 @@ const SECTION_CONFIG = [
         d="M13 10V3L4 14h7v7l9-11h-7z"
       />
     )
+  },
+  {
+    title: "Ultimate Games",
+    dataKey: 'ultimate',
+    link: '/store',
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
+    )
   }
 ];
 
@@ -122,7 +135,7 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
         {/* Content container */}
         <div className="relative p-4 sm:p-5">
           {/* Title */}
-          <h3 className="text-white text-lg font-bold mb-3 line-clamp-2 group-hover:text-purple-300 transition-colors duration-300">
+          <h3 className="text-white text-lg font-bold mb-3 line-clamp-2 group-hover:text-[var(--color-change)] transition-colors duration-300 truncate ">
             {item?.title || item?.name}
           </h3>
 
@@ -163,7 +176,7 @@ GameCard.displayName = 'GameCard';
 // Section Header Component
 const SectionHeader = React.memo(({ title, isRefreshing }) => (
   <div className="flex items-center gap-4 mb-6 sm:mb-8">
-    <div className="sm:w-12 sm:h-12 h-10 w-10 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
+    <div className="sm:w-12 sm:h-12 h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
       <svg
         className="sm:w-6 sm:h-6 h-5 w-5 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
         fill="none"
@@ -179,7 +192,7 @@ const SectionHeader = React.memo(({ title, isRefreshing }) => (
       </svg>
     </div>
 
-    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1] tracking-wide">
+    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1] tracking-wide text-nowrap">
       {title}
     </h3>
 
@@ -211,7 +224,7 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
     
-    <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
+    <div className="space-y-4 sm:space-y-0 sm:grid md:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
         console.log('data',item),
@@ -255,11 +268,36 @@ function TopGames() {
   // Extract games and loading states once
   
   // Create gameData object directly
-  const gameData = useMemo(() => ({
-    game: Homegames?.topSelling || [],
-    freeGame: Homegames?.freegames || [],
-    newGames: Homegames?.newGames || []
-  }), [Homegames]);
+  const gameData = useMemo(() => {
+    const topSelling = Array.isArray(Homegames?.topSelling) ? Homegames.topSelling : [];
+    const freegames = Array.isArray(Homegames?.freegames) ? Homegames.freegames : [];
+    const newGames = Array.isArray(Homegames?.newGames) ? Homegames.newGames : [];
+
+    const isPaid = (g) => {
+      const price = g?.platforms?.windows?.price;
+      return typeof price === 'number' && !Number.isNaN(price) && price > 0;
+    };
+
+    const paidTop = topSelling.filter(isPaid);
+    const paidNew = newGames.filter(isPaid);
+
+    // Exclude duplicates between sections so Ultimate feels distinct
+    const newIds = new Set(paidNew.map((g) => g?._id || g?.id));
+    const uniqueFromTop = paidTop.filter((g) => !newIds.has(g?._id || g?.id));
+
+    // Backfill from paid new games not already included, to ensure we have enough
+    const topIds = new Set(uniqueFromTop.map((g) => g?._id || g?.id));
+    const backfillFromNew = paidNew.filter((g) => !topIds.has(g?._id || g?.id));
+
+    const ultimate = [...uniqueFromTop, ...backfillFromNew];
+
+    return {
+      game: topSelling,
+      freeGame: freegames,
+      newGames,
+      ultimate
+    };
+  }, [Homegames]);
   
   // Compute loading and data availability
   const isLoading = useMemo(() => {
@@ -273,9 +311,10 @@ function TopGames() {
     if (isLoading) return;
     // console.log('gameData', gameData , isLoading)
     const minLength = Math.min(
-      gameData.game?.length,
-      gameData.freeGame?.length,
-      gameData.newGames?.length
+      gameData.game?.length || 0,
+      gameData.freeGame?.length || 0,
+      gameData.newGames?.length || 0,
+      gameData.ultimate?.length || 0
     );
   
     setLength(minLength < MIN_REQUIRED_ITEMS ? minLength : DEFAULT_ITEMS_COUNT);
@@ -293,31 +332,32 @@ function TopGames() {
   // }
 
   return (
-    <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto  pb-12 md:pb-16 sm:pb-14 relative">
-      {/* Section Header */}
-      <div className="text-center mb-8 ms:mb-16">
-        <h2 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
-          Top Games
-        </h2>
-        <p className="text-gray-400 text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto">
-          Discover the most popular and trending games across all platforms
-        </p>
-        {/* {isLoading && <LoadingIndicator />} */}
-      </div>
+   <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-14 md:pb-16 relative px-4 sm:px-6">
+  {/* Section Header */}
+  <div className="text-center mb-8 sm:mb-12 md:mb-16">
+    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
+      Top Games
+    </h2>
+    <p className="text-gray-400 text-base sm:text-lg md:text-xl max-w-3xl mx-auto">
+      Discover the most popular and trending games across all platforms
+    </p>
+    {/* {isLoading && <LoadingIndicator />} */}
+  </div>
 
-      {/* Games Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:gap-8 gap-5">
-        {SECTION_CONFIG.map((section, i) => (
-          <GameSection
-            key={section.title}
-            section={section}
-            items={gameData[section.dataKey]}
-            length={length}
-            isRefreshing={isLoading}
-          />
-        ))}
-      </div>
-    </div>
+  {/* Games Grid */}
+  <div className="grid grid-cols-1   lg:grid-cols-2 xl:grid-cols-4  gap-5 sm:gap-6 md:gap-8">
+    {SECTION_CONFIG.map((section, i) => (
+      <GameSection
+        key={section.title}
+        section={section}
+        items={gameData[section.dataKey]}
+        length={length}
+        isRefreshing={isLoading}
+      />
+    ))}
+  </div>
+</div>
+
   );
 }
 

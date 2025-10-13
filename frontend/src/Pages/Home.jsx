@@ -33,8 +33,8 @@ const SWIPER_BREAKPOINTS = {
 };
 
 const BUTTON_STYLES = {
-  inactive: 'text-gray-300 hover:text-[#ab99e1] hover:bg-white/5',
-  active: 'bg-[#ab99e1]/10 text-[#ab99e1] shadow-lg shadow-purple-500/20 border-purple-300'
+  inactive: 'text-gray-300 hover:text-[var(--color-change)] hover:bg-white/5',
+  active: 'bg-[#ab99e1]/10 text-[var(--color-change)] shadow-lg shadow-purple-500/20 border-purple-300'
 };
 
 // Custom hooks

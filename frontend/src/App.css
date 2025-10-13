@@ -24,6 +24,10 @@ body {
   width: 1700px;
 }
 
+:root{
+  --color-change:#7248a1
+}
+
 
 @media (min-width: 1650px) and (max-width: 1849px) {
   .container {
