@@ -6,8 +6,8 @@ import { getFreeGames } from '../Redux/Slice/freeGame.slice';
 import TopGamesSkeleton from '../lazyLoader/TopGamesSkeleton';
 
 // Constants
-const DEFAULT_ITEMS_COUNT = 5;
-const MIN_REQUIRED_ITEMS = 5;
+const DEFAULT_ITEMS_COUNT = 6;
+const MIN_REQUIRED_ITEMS = 6
 
 const SECTION_CONFIG = [
   {
@@ -224,7 +224,7 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
     
-    <div className="space-y-4 sm:space-y-0 sm:grid md:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
+    <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
         console.log('data',item),
@@ -345,7 +345,7 @@ function TopGames() {
   </div>
 
   {/* Games Grid */}
-  <div className="grid grid-cols-1   lg:grid-cols-2 xl:grid-cols-4  gap-5 sm:gap-6 md:gap-8">
+  <div className="grid grid-cols-1    lg:grid-cols-2 xl:grid-cols-4  gap-5 sm:gap-6 md:gap-8">
     {SECTION_CONFIG.map((section, i) => (
       <GameSection
         key={section.title}
