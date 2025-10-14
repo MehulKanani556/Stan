@@ -1,9 +1,11 @@
 import React from 'react';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaArrowUp } from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube, FaArrowUp } from 'react-icons/fa';
 import { IoMailOutline, IoCallOutline, IoLocationOutline } from 'react-icons/io5';
 import { ReactComponent as YOYO_LOGO } from "../images/YOYO-WITH-TEXT.svg";
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { FaXTwitter } from "react-icons/fa6";
+
 
 const Footer = () => {
   const [showGoUp, setShowGoUp] = React.useState(false);
@@ -60,9 +62,9 @@ const Footer = () => {
           <div className=" py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-[425px]:grid-cols-2">
             <div className="space-y-4 max-[425px]:col-span-2">
               <div className='w-fit'>
-              <NavLink to={"/"} >
-              <YOYO_LOGO  className="svg-current-color h-9 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
-              </NavLink>
+                <NavLink to={"/"} >
+                  <YOYO_LOGO className="svg-current-color h-9 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                </NavLink>
               </div>
               <p className="text-gray-300 text-sm leading-relaxed">
                 A realm where ancient horrors dwell and forgotten heroes rise again. Unleash your legend in the shadows.
@@ -70,7 +72,7 @@ const Footer = () => {
               <div className="flex justify-center md:justify-start gap-3 sm:gap-4 md:gap-5 flex-wrap ">
                 {[
                   { Icon: FaFacebook, href: "https://www.facebook.com" },
-                  { Icon: FaTwitter, href: "https://www.twitter.com" },
+                  { Icon: FaXTwitter, href: "https://x.com/" },
                   { Icon: FaInstagram, href: "https://www.instagram.com" },
                   { Icon: FaLinkedin, href: "https://www.linkedin.com" },
                   { Icon: FaYoutube, href: "https://www.youtube.com" },
@@ -93,30 +95,29 @@ const Footer = () => {
                 Quick Links
               </h4>
               <ul className="space-y-2">
-                 {["Home", "GGtalks", "Games", "Rewards", "Store"].map((link, i) => {
-                   const path = getPath(link);
-                   const isActive =
-                   
-                   // Check if active
-                   location.pathname === path ||
-                   (link === "Store" &&
-                    (location.pathname.startsWith("/store") ||
-                    location.pathname.startsWith("/single/"))) ||
+                {["Home", "GGtalks", "Games", "Rewards", "Store"].map((link, i) => {
+                  const path = getPath(link);
+                  const isActive =
+
+                    // Check if active
+                    location.pathname === path ||
+                    (link === "Store" &&
+                      (location.pathname.startsWith("/store") ||
+                        location.pathname.startsWith("/single/"))) ||
                     (link === "Games" && location.pathname.startsWith("/games/"))
-                    
-                    return (
+
+                  return (
                     <li key={i}>
-                       <Link
-                         to={path}
-                         className={`hover:text-[var(--color-change)] transition-colors text-sm ${
-                           isActive ? "font-semibold text-[var(--color-change)]" : "text-gray-300"
-                         }`}
-                       >
-                         {link}
-                       </Link>
-                     </li>
-                   );
-                 })}
+                      <Link
+                        to={path}
+                        className={`hover:text-[var(--color-change)] transition-colors text-sm ${isActive ? "font-semibold text-[var(--color-change)]" : "text-gray-300"
+                          }`}
+                      >
+                        {link}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
@@ -184,11 +185,11 @@ const Footer = () => {
             </div>
           </div>
           <div className='md:pb-0 pb-4'>
-             <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
-               <p>
-                 © 2025 YOYO Khel Pvt. Ltd. All rights reserved.
-               </p>
-             </div>
+            <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
+              <p>
+                © 2025 YOYO Khel Pvt. Ltd. All rights reserved.
+              </p>
+            </div>
           </div>
         </div>
       </footer>

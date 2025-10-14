@@ -176,7 +176,7 @@ GameCard.displayName = 'GameCard';
 // Section Header Component
 const SectionHeader = React.memo(({ title, isRefreshing }) => (
   <div className="flex items-center gap-4 mb-6 sm:mb-8">
-    <div className="sm:w-12 sm:h-12 h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
+    <div className=" h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
       <svg
         className="sm:w-6 sm:h-6 h-5 w-5 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
         fill="none"
@@ -192,7 +192,7 @@ const SectionHeader = React.memo(({ title, isRefreshing }) => (
       </svg>
     </div>
 
-    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#ab99e1] tracking-wide text-nowrap">
+    <h3 className=" text-xl sm:text-3xl xl:text-2xl 2xl:text-3xl font-bold text-[#ab99e1]  text-nowrap">
       {title}
     </h3>
 

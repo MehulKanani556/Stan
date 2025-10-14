@@ -397,8 +397,27 @@ export default function Home() {
   }, [dispatch]);
 
   const updateSwiperStates = useCallback((swiper) => {
-    setIsBeginning(swiper.isBeginning);
-    setIsEnd(swiper.isEnd);
+    if (swiper) {
+      setIsBeginning(swiper.isBeginning);
+      setIsEnd(swiper.isEnd);
+    }
+  }, []);
+
+  // Add fallback navigation functions
+  const handlePreviousSlide = useCallback(() => {
+    if (gameSwiperRef.current && typeof gameSwiperRef.current.slidePrev === 'function') {
+      gameSwiperRef.current.slidePrev();
+    } else {
+      console.warn('Swiper not available for previous slide');
+    }
+  }, []);
+
+  const handleNextSlide = useCallback(() => {
+    if (gameSwiperRef.current && typeof gameSwiperRef.current.slideNext === 'function') {
+      gameSwiperRef.current.slideNext();
+    } else {
+      console.warn('Swiper not available for next slide');
+    }
   }, []);
 
   // Add page change handler
@@ -534,7 +553,7 @@ export default function Home() {
                   All Games
                 </button>
                 <button
-                  onClick={() => gameSwiperRef.current?.slidePrev()}
+                  onClick={handlePreviousSlide}
                   disabled={isBeginning}
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
                     ? 'bg-gray-500 cursor-not-allowed opacity-50'
@@ -544,7 +563,7 @@ export default function Home() {
                   <FaArrowRight size={16} />
                 </button>
                 <button
-                  onClick={() => gameSwiperRef.current?.slideNext()}
+                  onClick={handleNextSlide}
                   disabled={isEnd}
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
                     ? 'bg-gray-500 cursor-not-allowed opacity-50'
@@ -568,8 +587,12 @@ export default function Home() {
                   style={{ padding: "20px 0px" }}
                   className="game-swiper"
                   onSwiper={(swiper) => {
+                    console.log('Swiper initialized:', swiper);
                     gameSwiperRef.current = swiper;
-                    setTimeout(() => updateSwiperStates(swiper), 100);
+                    setTimeout(() => {
+                      updateSwiperStates(swiper);
+                      console.log('Swiper states updated:', { isBeginning: swiper.isBeginning, isEnd: swiper.isEnd });
+                    }, 100);
                   }}
                   onSlideChange={updateSwiperStates}
                   onResize={updateSwiperStates}
