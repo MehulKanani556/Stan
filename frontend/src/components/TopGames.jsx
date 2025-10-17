@@ -61,7 +61,33 @@ const SECTION_CONFIG = [
         d="M13 10V3L4 14h7v7l9-11h-7z"
       />
     )
-  }
+  },
+  {
+    title: "Top Free Games",
+    dataKey: 'freeGame',
+    link: '/games',
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
+    )
+  },
+   {
+    title: "New Games",
+    dataKey: 'newGames',
+    link: '/store',
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
+    )
+  },
 ];
 
 // Skeleton GameCard Component
@@ -176,9 +202,9 @@ GameCard.displayName = 'GameCard';
 // Section Header Component
 const SectionHeader = React.memo(({ title, isRefreshing }) => (
   <div className="flex items-center gap-4 mb-6 sm:mb-8">
-    <div className=" h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
+    <div className=" h-8 w-8 flex-shrink-0 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
       <svg
-        className="sm:w-6 sm:h-6 h-5 w-5 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
+        className="sm:w-6 sm:h-6 h-4 w-4 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -192,7 +218,7 @@ const SectionHeader = React.memo(({ title, isRefreshing }) => (
       </svg>
     </div>
 
-    <h3 className=" text-xl sm:text-3xl xl:text-2xl 2xl:text-3xl font-bold text-[#ab99e1]  text-nowrap">
+    <h3 className=" text-lg sm:text-xl xl:text-2xl 2xl:text-[22px] font-bold text-[#ab99e1]  text-nowrap">
       {title}
     </h3>
 
@@ -345,7 +371,7 @@ function TopGames() {
   </div>
 
   {/* Games Grid */}
-  <div className="grid grid-cols-1    lg:grid-cols-2 xl:grid-cols-4  gap-5 sm:gap-6 md:gap-8">
+  <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3   2xl:grid-cols-3 3xl:grid-cols-6  gap-5 sm:gap-6 md:gap-6">
     {SECTION_CONFIG.map((section, i) => (
       <GameSection
         key={section.title}
