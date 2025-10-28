@@ -10,7 +10,7 @@ import ProfileSkeleton from '../lazyLoader/ProfileSkeleton';
 import TransactionHistorySkeleton from '../lazyLoader/TransactionHistorySkeleton';
 import OrderListSkeleton from '../lazyLoader/OrderListSkeleton';
 import { allorders, retryOrderPayment } from '../Redux/Slice/Payment.slice';
-import stanUser from "../images/stan-user.jpg";
+import stanUser from "../images/stan-user.png";
 import { decryptData } from "../Utils/encryption";
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from "react";

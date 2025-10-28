@@ -29,7 +29,7 @@ const SWIPER_BREAKPOINTS = {
   768: { slidesPerView: 2.5, spaceBetween: 14 },
   1024: { slidesPerView: 3, spaceBetween: 14 },
   1280: { slidesPerView: 3.5, spaceBetween: 14 },
-  1480: { slidesPerView: 4.2, spaceBetween: 16 },
+  1480: { slidesPerView: 4.8, spaceBetween: 16 },
 };
 
 const BUTTON_STYLES = {
@@ -154,7 +154,7 @@ const GameCard = ({
 
         {/* Image Container */}
         {/* {console.log('games image',game?.cover_image?.url)} */}
-        <div className="relative w-full h-32 ms:h-48  md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
+        <div className="relative w-full h-32 ms:h-48  md:h-64 lg:h-72 xl:h-64 overflow-hidden rounded-2xl">
           <img
             src={game?.cover_image?.url}
             alt={game?.title}
@@ -543,12 +543,12 @@ export default function Home() {
                   onClick={() => navigate('/allGames')}
                   className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
                     font-medium text-sm transition-all duration-200 ease-out
-                    border-[1px] border-purple-400 
+                    border-[1px] border-[#7041a6]
                     rounded-md
                     text-white
-                    hover:bg-purple-400  hover:scale-110
+                    hover:bg-[#7041a6]  hover:scale-110
                     active:scale-95 focus-visible:outline-none 
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    focus-visible:ring-2 focus-visible:ring-[#7041a6] focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   All Games
                 </button>

@@ -9,7 +9,7 @@ import { IoGameControllerOutline, IoGameController } from "react-icons/io5";
 import { IoGiftOutline, IoGift } from "react-icons/io5";
 import { IoBagOutline, IoBag } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
-import stanUser from "../images/stan-user.jpg"
+import stanUser from "../images/stan-user.png"
 import stanLogo from "../images/stan-logo.svg"
 import { clearUser, getUserById, logoutUser, setUser, updateLoginTask } from "../Redux/Slice/user.slice"
 import { MdRocketLaunch, MdSettings } from "react-icons/md";

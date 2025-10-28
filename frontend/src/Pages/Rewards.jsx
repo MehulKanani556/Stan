@@ -7,7 +7,7 @@ import RewardsSkeleton from '../lazyLoader/RewardsSkeleton';
 import amazonImg from '../images/Amazon.png'
 import yoyoLogo from '../images/YOYO-LOGO.svg'
 import stickerImg from '../images/gens-logo1.png'
-import cameraImg from '../images/stan-user.jpg'
+import cameraImg from '../images/stan-user.png'
 import posterImg from '../images/game5.jpg'
 import mysteryImg from '../images/shadow.jpg'
 import gold from '../images/gold.png'
