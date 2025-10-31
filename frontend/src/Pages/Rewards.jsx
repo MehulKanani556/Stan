@@ -42,6 +42,7 @@ import { useNavigate } from 'react-router-dom'
 import { decryptData } from '../Utils/encryption'
 
 import { allorders } from '../Redux/Slice/Payment.slice';
+import Advertize from '../components/Advertize';
 
 const Trophy = [gold, silver, bronze];
 const gamerTheme = `
@@ -784,38 +785,40 @@ const RewardsExperience = () => {
     };
 
     return (
-        <section className='ms:pb-12 pb-6 overflow-x-hidden'>
-            <div className='max-w-[95%] md:max-w-[85%] m-auto overflow-x-hidden'>
-                {/* Hero */}
-                <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
-                    <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
-                    <div className='relative z-10 px-4 sm:px-6 md:px-10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6'>
-                        <div className='w-full lg:w-auto'>
-                            <div className='inline-flex items-center gap-2 chip text-purple-200 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
-                                <FaGem /> Level up your loot
+        <>
+            <Advertize />
+            <section className='ms:pb-12 pb-6 overflow-x-hidden'>
+                <div className='max-w-[95%] md:max-w-[75%] m-auto overflow-x-hidden'>
+                    {/* Hero */}
+                    <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
+                        <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
+                        <div className='relative z-10 px-4 sm:px-6 md:px-10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6'>
+                            <div className='w-full lg:w-auto'>
+                                <div className='inline-flex items-center gap-2 chip text-purple-200 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
+                                    <FaGem /> Level up your loot
+                                </div>
+                                <h1 className='text-white font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight'>Rewards Hub</h1>
+                                <p className='text-white/70 mt-2 md:mt-3 max-w-2xl text-sm sm:text-base'>Grind quests, stack streaks, and redeem epic goodies. All your progress and perks live here.</p>
                             </div>
-                            <h1 className='text-white font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight'>Rewards Hub</h1>
-                            <p className='text-white/70 mt-2 md:mt-3 max-w-2xl text-sm sm:text-base'>Grind quests, stack streaks, and redeem epic goodies. All your progress and perks live here.</p>
-                        </div>
-                        <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto'>
-                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
-                                <p className='text-white/70 text-xs'>Current Balance</p>
-                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {userBalance.toFixed(2)}</div>
-                            </div>
-                            <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
-                                <p className='text-white/70 text-xs'>Total Earned</p>
-                                <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
-                            </div>
+                            <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto'>
+                                <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
+                                    <p className='text-white/70 text-xs'>Current Balance</p>
+                                    <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem /> {userBalance.toFixed(2)}</div>
+                                </div>
+                                <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
+                                    <p className='text-white/70 text-xs'>Total Earned</p>
+                                    <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
+                                </div>
 
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Top grid */}
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-10 md:items-stretch'>
-                    {/* My Points */}
-                    {console.log('userBalance', userBalance)}
-                    {/* <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
+                    {/* Top grid */}
+                    <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-6 sm:mt-10 md:items-stretch'>
+                        {/* My Points */}
+                        {console.log('userBalance', userBalance)}
+                        {/* <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
                         <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
                             <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
@@ -827,452 +830,235 @@ const RewardsExperience = () => {
                         </div>
                     </div> */}
 
-                    {/* Earn more points */}
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
-                        <div className='flex items-center justify-between mb-4 sm:mb-5'>
-                            <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
-                            <span className='text-white/50 text-xs'>1 Time Play</span>
-                        </div>
-                        <div className="space-y-3 sm:space-y-4">
-                            {(showAll
-                                ? allTasksState?.earntask
-                                : allTasksState?.earntask?.slice(0, 2)
-                            )?.map((task) => {
-                                console.log('anyPurchase', completedTasks);
-                                const done = completedTasks?.includes(task._id);
+                        {/* Earn more points */}
+                        <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 md:col-span-1 reward-glow'>
+                            <div className='flex items-center justify-between mb-4 sm:mb-5'>
+                                <h3 className='text-white font-semibold text-base md:text-lg'>Earn more points</h3>
+                                <span className='text-white/50 text-xs'>1 Time Play</span>
+                            </div>
+                            <div className="space-y-3 sm:space-y-4">
+                                {(showAll
+                                    ? allTasksState?.earntask
+                                    : allTasksState?.earntask?.slice(0, 2)
+                                )?.map((task) => {
+                                    console.log('anyPurchase', completedTasks);
+                                    const done = completedTasks?.includes(task._id);
 
-                                return (
-                                    <div
-                                        key={task._id}
-                                        className="flex flex-wrap items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 gap-4"
-                                    >
-                                        <div className="flex items-center gap-3 sm:gap-4">
-                                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
-                                                <img src={star} alt="star" className="w-full h-full object-cover" />
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <p className="text-white font-medium text-sm sm:text-base truncate">
-                                                    {task?.title}
-                                                </p>
-                                                <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
-                                                    <FaGem /> <span>{task?.reward}</span>
+                                    return (
+                                        <div
+                                            key={task._id}
+                                            className="flex flex-wrap items-center justify-between bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 gap-4"
+                                        >
+                                            <div className="flex items-center gap-3 sm:gap-4">
+                                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-black/40 flex items-center justify-center">
+                                                    <img src={star} alt="star" className="w-full h-full object-cover" />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-white font-medium text-sm sm:text-base truncate">
+                                                        {task?.title}
+                                                    </p>
+                                                    <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
+                                                        <FaGem /> <span>{task?.reward}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
-                                            <button
-                                                onClick={async () => {
-                                                    if (task?.title === 'Take a quiz') {
-                                                        if (!hasPlayedQuiz) {
-                                                            navigate('/quizRewards');
+                                            <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto'>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (task?.title === 'Take a quiz') {
+                                                            if (!hasPlayedQuiz) {
+                                                                navigate('/quizRewards');
+                                                            } else {
+                                                                await handleTaskComplete(task);
+                                                            }
                                                         } else {
                                                             await handleTaskComplete(task);
                                                         }
-                                                    } else {
-                                                        await handleTaskComplete(task);
+                                                    }}
+                                                    disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
+                                                    className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
+                                                        ? 'btn-soft cursor-not-allowed opacity-60'
+                                                        : 'btn-primary'
+                                                        }`}
+                                                >
+                                                    {loadingTaskClaim
+                                                        ? "Claiming..."
+                                                        : done
+                                                            ? "All Claimed"
+                                                            : task?.title === 'Take a quiz'
+                                                                ? (hasPlayedQuiz
+                                                                    ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
+                                                                    : 'Play Quiz'
+                                                                )
+                                                                : task?.title === 'Watch a video'
+                                                                    ? 'Watch Video'
+                                                                    : task?.title === 'Refer a friend'
+                                                                        ? 'Refer Friend'
+                                                                        : task?.title === 'Login to the app'
+                                                                            ? 'Login'
+                                                                            : task?.title === 'Play any game for 15 minutes'
+                                                                                ? 'Play Game'
+                                                                                : task?.title === 'Daily streak bonus'
+                                                                                    ? 'Daily Streak'
+                                                                                    : 'Claim Points'
                                                     }
-                                                }}
-                                                disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
-                                                className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
-                                                    ? 'btn-soft cursor-not-allowed opacity-60'
-                                                    : 'btn-primary'
-                                                    }`}
-                                            >
-                                                {loadingTaskClaim
-                                                    ? "Claiming..."
-                                                    : done
-                                                        ? "All Claimed"
-                                                        : task?.title === 'Take a quiz'
-                                                            ? (hasPlayedQuiz
-                                                                ? (quizScore > 0 ? `Claim ${quizScore}` : 'Play Quiz')
-                                                                : 'Play Quiz'
-                                                            )
-                                                            : task?.title === 'Watch a video'
-                                                                ? 'Watch Video'
-                                                                : task?.title === 'Refer a friend'
-                                                                    ? 'Refer Friend'
-                                                                    : task?.title === 'Login to the app'
-                                                                        ? 'Login'
-                                                                        : task?.title === 'Play any game for 15 minutes'
-                                                                            ? 'Play Game'
-                                                                            : task?.title === 'Daily streak bonus'
-                                                                                ? 'Daily Streak'
-                                                                                : 'Claim Points'
-                                                }
-                                            </button>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                )
-                            })}
-                            {allTasksState?.earntask?.length > 2 && (
-                                <button
-                                    onClick={() => setShowAll((v) => !v)}
-                                    className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
-                                >
-                                    {showAll
-                                        ? "Show less"
-                                        : `View ${allTasksState?.earntask?.length - 2} More`}
-                                </button>
-                            )}
+                                    )
+                                })}
+                                {allTasksState?.earntask?.length > 2 && (
+                                    <button
+                                        onClick={() => setShowAll((v) => !v)}
+                                        className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
+                                    >
+                                        {showAll
+                                            ? "Show less"
+                                            : `View ${allTasksState?.earntask?.length - 2} More`}
+                                    </button>
+                                )}
 
+
+                            </div>
 
                         </div>
 
-                    </div>
-
-                    {/* Refer a friend */}
-                    <div className=' grid grid-cols-1'>
-                        <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
-                            <div className='flex items-center justify-between mb-3'>
-                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaUserFriends className='text-emerald-300' /> Invite friends, earn coins</h3>
-                                <span className='text-white/60 text-xs'>+50 on signup</span>
-                            </div>
-                            <p className='text-white/70 text-sm mb-3'>Share your link. When a friend registers, you earn referral coins.</p>
-                            <div className='flex flex-col sm:flex-row gap-2'>
-                                <input readOnly value={referralLink} className='flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm' />
-                                <button onClick={handleCopyReferral} className='btn-primary px-4 py-2 rounded-lg text-sm font-semibold'>Copy link</button>
-                            </div>
-
-                            <div className='flex items-center justify-between mb-3'>
-                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-yellow-300' /> Referral Points</h3>
-                                <span className='text-white/60 text-xs'>Claim your rewards</span>
-                            </div>
-                            <div className='bg-white/5 rounded-xl p-4 border border-white/10'>
+                        {/* Refer a friend */}
+                        <div className=' grid grid-cols-1'>
+                            <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
                                 <div className='flex items-center justify-between mb-3'>
-                                    <div>
-                                        <p className='text-white font-medium text-sm'>Pending Referral Points</p>
-                                        <p className='text-white/70 text-xs'>Earned from successful referrals</p>
-                                    </div>
-                                    <div className='text-right'>
-                                        <div className='text-yellow-300 font-extrabold text-2xl flex items-center gap-2'>
-                                            <FaGem /> {referralPoints}
-                                        </div>
-                                        <p className='text-white/60 text-xs'>Points available</p>
-                                    </div>
+                                    <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaUserFriends className='text-emerald-300' /> Invite friends, earn coins</h3>
+                                    <span className='text-white/60 text-xs'>+50 on signup</span>
                                 </div>
-                                <div className='flex items-center justify-between'>
-                                    <div className='text-white/70 text-sm'>
-                                        {referralHistory.length} successful referral{referralHistory.length !== 1 ? 's' : ''}
-                                        {referralPoints > 0 && (
-                                            <span className='block text-yellow-300 text-xs mt-1'>
-                                                {referralPoints} points ready to claim
-                                            </span>
-                                        )}
+                                <p className='text-white/70 text-sm mb-3'>Share your link. When a friend registers, you earn referral coins.</p>
+                                <div className='flex flex-col sm:flex-row gap-2'>
+                                    <input readOnly value={referralLink} className='flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm' />
+                                    <button onClick={handleCopyReferral} className='btn-primary px-4 py-2 rounded-lg text-sm font-semibold'>Copy link</button>
+                                </div>
+
+                                <div className='flex items-center justify-between mb-3'>
+                                    <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-yellow-300' /> Referral Points</h3>
+                                    <span className='text-white/60 text-xs'>Claim your rewards</span>
+                                </div>
+                                <div className='bg-white/5 rounded-xl p-4 border border-white/10'>
+                                    <div className='flex items-center justify-between mb-3'>
+                                        <div>
+                                            <p className='text-white font-medium text-sm'>Pending Referral Points</p>
+                                            <p className='text-white/70 text-xs'>Earned from successful referrals</p>
+                                        </div>
+                                        <div className='text-right'>
+                                            <div className='text-yellow-300 font-extrabold text-2xl flex items-center gap-2'>
+                                                <FaGem /> {referralPoints}
+                                            </div>
+                                            <p className='text-white/60 text-xs'>Points available</p>
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={handleClaimReferralPoints}
-                                        disabled={referralPoints === 0 || isClaimingReferral}
-                                        className={`px-4 py-2 rounded-lg text-sm font-semibold ${referralPoints === 0 || isClaimingReferral
-                                            ? 'btn-soft cursor-not-allowed opacity-60'
-                                            : 'btn-primary'
-                                            }`}
-                                    >
-                                        {isClaimingReferral ? 'Claiming...' : referralPoints === 0 ? 'All Claimed' : 'Claim Points'}
-                                    </button>
+                                    <div className='flex items-center justify-between'>
+                                        <div className='text-white/70 text-sm'>
+                                            {referralHistory.length} successful referral{referralHistory.length !== 1 ? 's' : ''}
+                                            {referralPoints > 0 && (
+                                                <span className='block text-yellow-300 text-xs mt-1'>
+                                                    {referralPoints} points ready to claim
+                                                </span>
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={handleClaimReferralPoints}
+                                            disabled={referralPoints === 0 || isClaimingReferral}
+                                            className={`px-4 py-2 rounded-lg text-sm font-semibold ${referralPoints === 0 || isClaimingReferral
+                                                ? 'btn-soft cursor-not-allowed opacity-60'
+                                                : 'btn-primary'
+                                                }`}
+                                        >
+                                            {isClaimingReferral ? 'Claiming...' : referralPoints === 0 ? 'All Claimed' : 'Claim Points'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
 
 
-                {/* Daily streak + Weekly quests */}
-                <div className='mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
-                        <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-purple-300' /> Daily Tasks</h3>
-                            <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
-                        </div>
-                        <div className='space-y-3'>
-                            {allTasksState?.dailytask?.map(task => {
-                                const isPlayTimeTask = /play any game for/i.test(task?.title || '');
-                                const isLoggingTask = /Login to the app/i.test(task?.title || '')
-                                const isStreakTask = /Daily Streak Bonus/i.test(task?.title || '')
-                                let goal = 0;
-                                let progress = 0;
-                                let progressPct = 0;
-                                let claimed = false;
-                                let canComplete = false;
-                                if (isPlayTimeTask) {
-                                    goal = Number(task?.limit || task?.goal || 0);
-                                    progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
-                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                    claimed = claimedDailyTasks.has(task?._id || task?.id);
-                                    canComplete = progress >= goal && !claimed;
+                    {/* Daily streak + Weekly quests */}
+                    <div className='mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
+                        <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
+                            <div className='flex items-center justify-between mb-4'>
+                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-purple-300' /> Daily Tasks</h3>
+                                <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
+                            </div>
+                            <div className='space-y-3'>
+                                {allTasksState?.dailytask?.map(task => {
+                                    const isPlayTimeTask = /play any game for/i.test(task?.title || '');
+                                    const isLoggingTask = /Login to the app/i.test(task?.title || '')
+                                    const isStreakTask = /Daily Streak Bonus/i.test(task?.title || '')
+                                    let goal = 0;
+                                    let progress = 0;
+                                    let progressPct = 0;
+                                    let claimed = false;
+                                    let canComplete = false;
+                                    if (isPlayTimeTask) {
+                                        goal = Number(task?.limit || task?.goal || 0);
+                                        progress = isPlayTimeTask ? playedMinutesToday : Number(task?.progress || 0);
+                                        progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                        claimed = claimedDailyTasks.has(task?._id || task?.id);
+                                        canComplete = progress >= goal && !claimed;
 
-                                    console.log('Play Time Task Debug:', {
-                                        taskId: task?._id,
-                                        goal,
-                                        progress,
-                                        progressPct,
-                                        claimed,
-                                        canComplete,
-                                        isDailyTaskClaimed: isDailyTaskClaimed(task?._id),
-                                        loadingTaskClaim,
-                                        claimedDailyTasks
-                                    });
-                                }
-                                if (isLoggingTask) {
-                                    const today = new Date();
-                                    goal = Number(task?.limit || task?.goal || 0);
-                                    progress = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 1 : 0;
-                                    progressPct = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 100 : 0;
-                                    claimed = claimedDailyTasks.has(task?._id || task?.id);
-                                    canComplete = progress === 1 && !claimed;
-                                }
-                                if (isStreakTask) {
-                                    goal = Number(task?.limit || task?.goal || 0)
-                                    progress = 1;
-                                    progressPct = 100;
-                                    claimed = claimedDailyTasks.has(task?._id || task?.id);
-                                    canComplete = !claimed;
-                                }
+                                        console.log('Play Time Task Debug:', {
+                                            taskId: task?._id,
+                                            goal,
+                                            progress,
+                                            progressPct,
+                                            claimed,
+                                            canComplete,
+                                            isDailyTaskClaimed: isDailyTaskClaimed(task?._id),
+                                            loadingTaskClaim,
+                                            claimedDailyTasks
+                                        });
+                                    }
+                                    if (isLoggingTask) {
+                                        const today = new Date();
+                                        goal = Number(task?.limit || task?.goal || 0);
+                                        progress = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 1 : 0;
+                                        progressPct = isSameDay(new Date(userLogging?.lastLoggingDate), today) ? 100 : 0;
+                                        claimed = claimedDailyTasks.has(task?._id || task?.id);
+                                        canComplete = progress === 1 && !claimed;
+                                    }
+                                    if (isStreakTask) {
+                                        goal = Number(task?.limit || task?.goal || 0)
+                                        progress = 1;
+                                        progressPct = 100;
+                                        claimed = claimedDailyTasks.has(task?._id || task?.id);
+                                        canComplete = !claimed;
+                                    }
 
-                                // Login to the app logic
-                                return (
-                                    <div key={task._id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
-                                        <div className='flex items-center justify-between mb-2'>
-                                            <p className='text-white font-medium text-xs sm:text-sm'>{task?.title}</p>
-                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'>
-                                                <FaGem /> {task?.reward}
-                                            </div>
-                                        </div>
-                                        <div className='flex items-center justify-between mb-2'>
-                                            {isPlayTimeTask && (
-                                                <span className='text-white/60 text-xs'>{progress}/{goal} min</span>
-                                            )}
-                                            {!isPlayTimeTask && goal > 0 && (
-                                                <span className='text-white/60 text-xs'>{progress}/{goal}</span>
-                                            )}
-                                            <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
-                                        </div>
-                                        <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
-                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
-                                        </div>
-                                        <button
-                                            onClick={() => completeDailyTask(task)}
-                                            disabled={!canComplete || loadingTaskClaim || isDailyTaskClaimed(task?._id)}
-                                            className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isDailyTaskClaimed(task?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
-                                        >
-                                            {isDailyTaskClaimed(task?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim') : 'In Progress'}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 lg:col-span-2 reward-glow'>
-                        <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaRegClock className='text-pink-300' /> Weekly Quests</h3>
-                            <span className='text-white/50 text-xs'>Resets Monday</span>
-                        </div>
-                        <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
-                            {allTasksState?.weeklytask?.map(q => {
-                                const isPlayTimeTask = /play any game for/i.test(q?.title || '');
-                                const isLoggingTask = /Login 4 days this week/i.test(q?.title || '')
-                                const is3DayTask = /Complete 3 daily tasks/i.test(q?.title || '')
-                                let goal = 0;
-                                let progress = 0;
-                                let progressPct = 0;
-                                let canComplete = false;
-                                let claimed = false;
-                                console.log('claimedWeeklyTasks', claimedWeeklyTasks)
-                                if (isPlayTimeTask) {
-                                    goal = Number(q?.limit || q?.goal || 0);
-                                    progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
-                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                    claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
-                                    console.log("dailyTasksTodaay", claimedWeeklyTasks, claimed, progress, goal);
-                                    canComplete = progress >= goal && !claimed;
-                                }
-                                if (isLoggingTask) {
-                                    goal = Number(q?.limit || q?.goal || 0);
-                                    progress = userLogging?.weeklyLogging ? Number(userLogging?.weeklyLogging || 0) : 0;
-                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                    claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
-                                    canComplete = progress >= goal && !claimed;
-                                    console.log('progerss', claimed)
-                                }
-                                if (is3DayTask) {
-                                    // Logic for tracking 3 daily tasks for 5 days
-                                    goal = Number(q?.limit || q?.goal || 5);
-                                    progress = taskClaimData?.taskCompletion?.completedDays?.filter(
-                                        day => day.taskCount >= 3
-                                    ).length || 0;
-                                    progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
-                                    claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
-                                    // Ensure the claim button shows when 5 days with 3+ tasks are completed
-                                    canComplete = progress >= goal && !claimed &&
-                                        taskClaimData?.taskCompletion?.isWeeklyTaskEligible;
-                                }
-
-                                return (
-                                    <div key={q._id || q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
-                                        <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>
-                                        <div className='flex items-center justify-between mt-2'>
-                                            {isPlayTimeTask && (
-                                                <span className='text-white/60 text-xs'>{progress}/{goal} min</span>
-                                            )}
-                                            {!isPlayTimeTask && goal > 0 && (
-                                                <span className='text-white/60 text-xs'>{progress}/{goal}</span>
-                                            )}
-                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
-                                        </div>
-                                        <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
-                                        </div>
-                                        <button
-                                            onClick={() => completeWeeklyTask(q)}
-                                            disabled={!canComplete || loadingTaskClaim || isWeeklyTaskClaimed(q?._id)}
-                                            className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isWeeklyTaskClaimed(q?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
-                                        >
-                                            {isWeeklyTaskClaimed(q?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim Reward') : 'In Progress'}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Redeem */}
-                <div className="mt-6 sm:mt-8 lg:mt-10">
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
-                        <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl">Redeem</h3>
-                        <span className="text-white/50 text-xs sm:text-sm">Choose your loot</span>
-                    </div>
-
-                    {/* Responsive Rewards Grid */}
-                    <div className="glass-card rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 reward-glow">
-                        {/* Mobile: Horizontal Scroll */}
-                        <div className="block sm:hidden">
-                            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-                                {[
-                                    {
-                                        tier: 100,
-                                        label: '+5 Fan',
-                                        type: 'fan',
-                                        key: 'm100',
-                                        image: redeem1,
-                                        description: 'Boost your fan points instantly.',
-                                    },
-                                    {
-                                        tier: 200,
-                                        label: '+10 Fan',
-                                        type: 'fan',
-                                        key: 'm200',
-                                        image: redeem1,
-                                        description: 'Double the rewards for active fans.',
-                                    },
-                                    {
-                                        tier: 500,
-                                        label: '+25 Fan',
-                                        type: 'fan',
-                                        key: 'm500',
-                                        image: redeem1,
-                                        description: 'Big reward boost for loyal fans.',
-                                    },
-                                    {
-                                        tier: 1000,
-                                        label: '1 Scratch Card',
-                                        type: 'scratch',
-                                        key: 's1000',
-                                        image: redeem2,
-                                        description: 'Try your luck! 🎉 Winning chance: 5%',
-                                    },
-                                    {
-                                        tier: 2000,
-                                        label: '1 Scratch Card',
-                                        type: 'scratch',
-                                        key: 's2000',
-                                        image: redeem2,
-                                        description: 'Premium scratch card 💎 Winning chance: 15%',
-                                    },
-                                ].map((reward, index) => {
-                                    const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
-                                    const canClaim =
-                                        reward.type === 'fan'
-                                            ? !claimed && userBalance >= reward.tier
-                                            : userBalance >= reward.tier;
-
-                                    const isThisButtonLoading =
-                                        reward.type === 'fan'
-                                            ? isClaimingThreshold && claimingTier === reward.tier
-                                            : scratchLoading && scratchingTier === reward.tier;
-
-                                    const isDisabled =
-                                        reward.type === 'fan'
-                                            ? claimed || userBalance < reward.tier || isThisButtonLoading
-                                            : userBalance < reward.tier || isThisButtonLoading;
-
+                                    // Login to the app logic
                                     return (
-                                        <div
-                                            key={index}
-                                            className="flex-shrink-0 w-32 bg-white/5 border border-white/10 rounded-lg p-3 text-center hover:bg-white/10 transition"
-                                        >
-                                            <img
-                                                src={reward.image}
-                                                alt={`Reward ${reward.tier}`}
-                                                className="w-full h-20 object-cover mx-auto mb-2 rounded"
-                                            />
-                                            <p className="text-white/70 text-[10px]">Spend {reward.tier}</p>
-                                            <p className="text-emerald-300 font-medium text-xs">{reward.label}</p>
-                                            <p className="text-white/50 text-[9px] mt-1 leading-tight">
-                                                {reward.description}
-                                            </p>
+                                        <div key={task._id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                            <div className='flex items-center justify-between mb-2'>
+                                                <p className='text-white font-medium text-xs sm:text-sm'>{task?.title}</p>
+                                                <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'>
+                                                    <FaGem /> {task?.reward}
+                                                </div>
+                                            </div>
+                                            <div className='flex items-center justify-between mb-2'>
+                                                {isPlayTimeTask && (
+                                                    <span className='text-white/60 text-xs'>{progress}/{goal} min</span>
+                                                )}
+                                                {!isPlayTimeTask && goal > 0 && (
+                                                    <span className='text-white/60 text-xs'>{progress}/{goal}</span>
+                                                )}
+                                                <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
+                                            </div>
+                                            <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
+                                                <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
+                                            </div>
                                             <button
-                                                onClick={async () => {
-                                                    try {
-                                                        if (isDisabled) return;
-
-                                                        if (reward.type === 'fan') {
-                                                            setClaimingTier(reward.tier);
-                                                            await dispatch(claimThresholdTier(reward.tier)).unwrap();
-                                                            dispatch(getUserRewardBalance());
-                                                            dispatch(getThresholdClaims());
-                                                        } else {
-                                                            setScratchingTier(reward.tier);
-                                                            await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
-                                                            dispatch(getScratchCard());
-                                                            dispatch(getUserRewardBalance());
-                                                            enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
-                                                        }
-                                                    } catch (e) {
-                                                        enqueueSnackbar(e?.message || 'Failed to claim reward', {
-                                                            variant: 'error',
-                                                        });
-                                                    } finally {
-                                                        if (reward.type === 'fan') {
-                                                            setClaimingTier(null);
-                                                        } else {
-                                                            setScratchingTier(null);
-                                                        }
-                                                    }
-                                                }}
-                                                disabled={isDisabled}
-                                                className={`mt-2 w-full py-1 rounded text-[10px] font-semibold transition ${reward.type === 'fan'
-                                                    ? claimed
-                                                        ? 'btn-soft cursor-not-allowed opacity-60'
-                                                        : canClaim && !isThisButtonLoading
-                                                            ? 'btn-primary'
-                                                            : 'btn-soft cursor-not-allowed opacity-60'
-                                                    : userBalance < reward.tier || isThisButtonLoading
-                                                        ? 'btn-soft cursor-not-allowed opacity-60'
-                                                        : 'btn-primary'
-                                                    }`}
+                                                onClick={() => completeDailyTask(task)}
+                                                disabled={!canComplete || loadingTaskClaim || isDailyTaskClaimed(task?._id)}
+                                                className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isDailyTaskClaimed(task?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                             >
-                                                {reward.type === 'fan'
-                                                    ? claimed
-                                                        ? 'Claimed'
-                                                        : isThisButtonLoading
-                                                            ? 'Claiming...'
-                                                            : 'Claim'
-                                                    : isThisButtonLoading
-                                                        ? 'Processing...'
-                                                        : 'Purchase'}
+                                                {isDailyTaskClaimed(task?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim') : 'In Progress'}
                                             </button>
                                         </div>
                                     );
@@ -1280,132 +1066,72 @@ const RewardsExperience = () => {
                             </div>
                         </div>
 
-                        {/* Tablet and Desktop: Grid Layout */}
-                        <div className="hidden sm:block">
-                            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
-                                {[
-                                    {
-                                        tier: 100,
-                                        label: '+5 Fan',
-                                        type: 'fan',
-                                        key: 'm100',
-                                        image: redeem1,
-                                        description: 'Boost your fan points instantly.',
-                                    },
-                                    {
-                                        tier: 200,
-                                        label: '+10 Fan',
-                                        type: 'fan',
-                                        key: 'm200',
-                                        image: redeem1,
-                                        description: 'Double the rewards for active fans.',
-                                    },
-                                    {
-                                        tier: 500,
-                                        label: '+25 Fan',
-                                        type: 'fan',
-                                        key: 'm500',
-                                        image: redeem1,
-                                        description: 'Big reward boost for loyal fans.',
-                                    },
-                                    {
-                                        tier: 1000,
-                                        label: '1 Scratch Card',
-                                        type: 'scratch',
-                                        key: 's1000',
-                                        image: redeem2,
-                                        description: 'Try your luck! 🎉 Winning chance: 5%',
-                                    },
-                                    {
-                                        tier: 2000,
-                                        label: '1 Scratch Card',
-                                        type: 'scratch',
-                                        key: 's2000',
-                                        image: redeem2,
-                                        description: 'Premium scratch card 💎 Winning chance: 15%',
-                                    },
-                                ].map((reward, index) => {
-                                    const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
-                                    const canClaim =
-                                        reward.type === 'fan'
-                                            ? !claimed && userBalance >= reward.tier
-                                            : userBalance >= reward.tier;
-
-                                    const isThisButtonLoading =
-                                        reward.type === 'fan'
-                                            ? isClaimingThreshold && claimingTier === reward.tier
-                                            : scratchLoading && scratchingTier === reward.tier;
-
-                                    const isDisabled =
-                                        reward.type === 'fan'
-                                            ? claimed || userBalance < reward.tier || isThisButtonLoading
-                                            : userBalance < reward.tier || isThisButtonLoading;
+                        <div className='glass-card rounded-2xl p-4 sm:p-6 lg:col-span-2 reward-glow'>
+                            <div className='flex items-center justify-between mb-4'>
+                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaRegClock className='text-pink-300' /> Weekly Quests</h3>
+                                <span className='text-white/50 text-xs'>Resets Monday</span>
+                            </div>
+                            <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
+                                {allTasksState?.weeklytask?.map(q => {
+                                    const isPlayTimeTask = /play any game for/i.test(q?.title || '');
+                                    const isLoggingTask = /Login 4 days this week/i.test(q?.title || '')
+                                    const is3DayTask = /Complete 3 daily tasks/i.test(q?.title || '')
+                                    let goal = 0;
+                                    let progress = 0;
+                                    let progressPct = 0;
+                                    let canComplete = false;
+                                    let claimed = false;
+                                    console.log('claimedWeeklyTasks', claimedWeeklyTasks)
+                                    if (isPlayTimeTask) {
+                                        goal = Number(q?.limit || q?.goal || 0);
+                                        progress = isPlayTimeTask ? playedMinutesThisWeek : Number(q?.progress || 0);
+                                        progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                        claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
+                                        console.log("dailyTasksTodaay", claimedWeeklyTasks, claimed, progress, goal);
+                                        canComplete = progress >= goal && !claimed;
+                                    }
+                                    if (isLoggingTask) {
+                                        goal = Number(q?.limit || q?.goal || 0);
+                                        progress = userLogging?.weeklyLogging ? Number(userLogging?.weeklyLogging || 0) : 0;
+                                        progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                        claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
+                                        canComplete = progress >= goal && !claimed;
+                                        console.log('progerss', claimed)
+                                    }
+                                    if (is3DayTask) {
+                                        // Logic for tracking 3 daily tasks for 5 days
+                                        goal = Number(q?.limit || q?.goal || 5);
+                                        progress = taskClaimData?.taskCompletion?.completedDays?.filter(
+                                            day => day.taskCount >= 3
+                                        ).length || 0;
+                                        progressPct = goal > 0 ? Math.min(100, (progress / goal) * 100) : 0;
+                                        claimed = claimedWeeklyTasks.has(String(q?._id || q?.id));
+                                        // Ensure the claim button shows when 5 days with 3+ tasks are completed
+                                        canComplete = progress >= goal && !claimed &&
+                                            taskClaimData?.taskCompletion?.isWeeklyTaskEligible;
+                                    }
 
                                     return (
-                                        <div
-                                            key={index}
-                                            className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 text-center hover:bg-white/10 transition"
-                                        >
-                                            <img
-                                                src={reward.image}
-                                                alt={`Reward ${reward.tier}`}
-                                                className="w-full h-24 sm:h-28 md:h-32 object-cover mx-auto mb-3 rounded"
-                                            />
-                                            <p className="text-white/70 text-xs">Spend {reward.tier}</p>
-                                            <p className="text-emerald-300 font-medium text-sm">{reward.label}</p>
-                                            <p className="text-white/50 text-[11px] mt-1 leading-snug">
-                                                {reward.description}
-                                            </p>
+                                        <div key={q._id || q.id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
+                                            <p className='text-white font-medium text-sm sm:text-base'>{q.title}</p>
+                                            <div className='flex items-center justify-between mt-2'>
+                                                {isPlayTimeTask && (
+                                                    <span className='text-white/60 text-xs'>{progress}/{goal} min</span>
+                                                )}
+                                                {!isPlayTimeTask && goal > 0 && (
+                                                    <span className='text-white/60 text-xs'>{progress}/{goal}</span>
+                                                )}
+                                                <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
+                                            </div>
+                                            <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
+                                                <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
+                                            </div>
                                             <button
-                                                onClick={async () => {
-                                                    try {
-                                                        if (isDisabled) return;
-
-                                                        if (reward.type === 'fan') {
-                                                            setClaimingTier(reward.tier);
-                                                            await dispatch(claimThresholdTier(reward.tier)).unwrap();
-                                                            dispatch(getUserRewardBalance());
-                                                            dispatch(getThresholdClaims());
-                                                        } else {
-                                                            setScratchingTier(reward.tier);
-                                                            await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
-                                                            dispatch(getScratchCard());
-                                                            dispatch(getUserRewardBalance());
-                                                            enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
-                                                        }
-                                                    } catch (e) {
-                                                        enqueueSnackbar(e?.message || 'Failed to claim reward', {
-                                                            variant: 'error',
-                                                        });
-                                                    } finally {
-                                                        if (reward.type === 'fan') {
-                                                            setClaimingTier(null);
-                                                        } else {
-                                                            setScratchingTier(null);
-                                                        }
-                                                    }
-                                                }}
-                                                disabled={isDisabled}
-                                                className={`mt-3 w-full py-1.5 rounded-md text-xs sm:text-sm font-semibold transition ${reward.type === 'fan'
-                                                    ? claimed
-                                                        ? 'btn-soft cursor-not-allowed opacity-60'
-                                                        : canClaim && !isThisButtonLoading
-                                                            ? 'btn-primary'
-                                                            : 'btn-soft cursor-not-allowed opacity-60'
-                                                    : userBalance < reward.tier || isThisButtonLoading
-                                                        ? 'btn-soft cursor-not-allowed opacity-60'
-                                                        : 'btn-primary'
-                                                    }`}
+                                                onClick={() => completeWeeklyTask(q)}
+                                                disabled={!canComplete || loadingTaskClaim || isWeeklyTaskClaimed(q?._id)}
+                                                className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isWeeklyTaskClaimed(q?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                             >
-                                                {reward.type === 'fan'
-                                                    ? claimed
-                                                        ? 'Claimed'
-                                                        : isThisButtonLoading
-                                                            ? 'Claiming...'
-                                                            : 'Claim'
-                                                    : isThisButtonLoading
-                                                        ? 'Processing...'
-                                                        : 'Purchase'}
+                                                {isWeeklyTaskClaimed(q?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim Reward') : 'In Progress'}
                                             </button>
                                         </div>
                                     );
@@ -1413,118 +1139,396 @@ const RewardsExperience = () => {
                             </div>
                         </div>
                     </div>
-                </div>
 
-
-                {/* Leaderboard & Activity */}
-                <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow lg:col-span-2'>
-                        <div className='flex items-center justify-between mb-4'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-purple-300' /> Leaderboard</h3>
-                            <span className='text-white/50 text-xs'>Top this week</span>
+                    {/* Redeem */}
+                    <div className="mt-6 sm:mt-8 lg:mt-10">
+                        {/* Header */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
+                            <h3 className="text-white font-semibold text-base sm:text-lg md:text-xl">Redeem</h3>
+                            <span className="text-white/50 text-xs sm:text-sm">Choose your loot</span>
                         </div>
-                        <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
-                            {leaderboardData.map((u, idx) => (
-                                <div
-                                    key={u.key || u.id || idx}
-                                    className='bg-white/5 rounded-xl p-3 sm:p-4 border flex items-center justify-between'
-                                    style={{
-                                        borderColor:
-                                            idx === 0
-                                                ? '#FFD700'
-                                                : idx === 1
-                                                    ? '#C0C0C0'
-                                                    : idx === 2
-                                                        ? '#CD7F32'
-                                                        : 'rgba(255,255,255,0.06)',
-                                        borderWidth: '1px',
-                                        borderStyle: 'solid'
-                                    }}
-                                >
-                                    <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-                                        {Trophy[idx] ? (
-                                            <img className='w-8 h-8 sm:w-9 sm:h-9 ' src={Trophy[idx]}></img>
-                                        ) : (
-                                            <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>
-                                                {idx + 1}
+
+                        {/* Responsive Rewards Grid */}
+                        <div className="glass-card rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 reward-glow">
+                            {/* Mobile: Horizontal Scroll */}
+                            <div className="block sm:hidden">
+                                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                                    {[
+                                        {
+                                            tier: 100,
+                                            label: '+5 Fan',
+                                            type: 'fan',
+                                            key: 'm100',
+                                            image: redeem1,
+                                            description: 'Boost your fan points instantly.',
+                                        },
+                                        {
+                                            tier: 200,
+                                            label: '+10 Fan',
+                                            type: 'fan',
+                                            key: 'm200',
+                                            image: redeem1,
+                                            description: 'Double the rewards for active fans.',
+                                        },
+                                        {
+                                            tier: 500,
+                                            label: '+25 Fan',
+                                            type: 'fan',
+                                            key: 'm500',
+                                            image: redeem1,
+                                            description: 'Big reward boost for loyal fans.',
+                                        },
+                                        {
+                                            tier: 1000,
+                                            label: '1 Scratch Card',
+                                            type: 'scratch',
+                                            key: 's1000',
+                                            image: redeem2,
+                                            description: 'Try your luck! 🎉 Winning chance: 5%',
+                                        },
+                                        {
+                                            tier: 2000,
+                                            label: '1 Scratch Card',
+                                            type: 'scratch',
+                                            key: 's2000',
+                                            image: redeem2,
+                                            description: 'Premium scratch card 💎 Winning chance: 15%',
+                                        },
+                                    ].map((reward, index) => {
+                                        const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
+                                        const canClaim =
+                                            reward.type === 'fan'
+                                                ? !claimed && userBalance >= reward.tier
+                                                : userBalance >= reward.tier;
+
+                                        const isThisButtonLoading =
+                                            reward.type === 'fan'
+                                                ? isClaimingThreshold && claimingTier === reward.tier
+                                                : scratchLoading && scratchingTier === reward.tier;
+
+                                        const isDisabled =
+                                            reward.type === 'fan'
+                                                ? claimed || userBalance < reward.tier || isThisButtonLoading
+                                                : userBalance < reward.tier || isThisButtonLoading;
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex-shrink-0 w-32 bg-white/5 border border-white/10 rounded-lg p-3 text-center hover:bg-white/10 transition"
+                                            >
+                                                <img
+                                                    src={reward.image}
+                                                    alt={`Reward ${reward.tier}`}
+                                                    className="w-full h-20 object-cover mx-auto mb-2 rounded"
+                                                />
+                                                <p className="text-white/70 text-[10px]">Spend {reward.tier}</p>
+                                                <p className="text-emerald-300 font-medium text-xs">{reward.label}</p>
+                                                <p className="text-white/50 text-[9px] mt-1 leading-tight">
+                                                    {reward.description}
+                                                </p>
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            if (isDisabled) return;
+
+                                                            if (reward.type === 'fan') {
+                                                                setClaimingTier(reward.tier);
+                                                                await dispatch(claimThresholdTier(reward.tier)).unwrap();
+                                                                dispatch(getUserRewardBalance());
+                                                                dispatch(getThresholdClaims());
+                                                            } else {
+                                                                setScratchingTier(reward.tier);
+                                                                await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
+                                                                dispatch(getScratchCard());
+                                                                dispatch(getUserRewardBalance());
+                                                                enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
+                                                            }
+                                                        } catch (e) {
+                                                            enqueueSnackbar(e?.message || 'Failed to claim reward', {
+                                                                variant: 'error',
+                                                            });
+                                                        } finally {
+                                                            if (reward.type === 'fan') {
+                                                                setClaimingTier(null);
+                                                            } else {
+                                                                setScratchingTier(null);
+                                                            }
+                                                        }
+                                                    }}
+                                                    disabled={isDisabled}
+                                                    className={`mt-2 w-full py-1 rounded text-[10px] font-semibold transition ${reward.type === 'fan'
+                                                        ? claimed
+                                                            ? 'btn-soft cursor-not-allowed opacity-60'
+                                                            : canClaim && !isThisButtonLoading
+                                                                ? 'btn-primary'
+                                                                : 'btn-soft cursor-not-allowed opacity-60'
+                                                        : userBalance < reward.tier || isThisButtonLoading
+                                                            ? 'btn-soft cursor-not-allowed opacity-60'
+                                                            : 'btn-primary'
+                                                        }`}
+                                                >
+                                                    {reward.type === 'fan'
+                                                        ? claimed
+                                                            ? 'Claimed'
+                                                            : isThisButtonLoading
+                                                                ? 'Claiming...'
+                                                                : 'Claim'
+                                                        : isThisButtonLoading
+                                                            ? 'Processing...'
+                                                            : 'Purchase'}
+                                                </button>
                                             </div>
-                                        )}
-                                        <div className='min-w-0 flex-1'>
-                                            <p className='text-white font-medium text-sm sm:text-base truncate'>{decryptData(u.name)}</p>
-                                            <span className='text-white/60 text-xs'>Top Player</span>
-                                        </div>
-                                    </div>
-                                    <div className='flex items-center gap-1 sm:gap-2 text-purple-300 text-xs sm:text-sm shrink-0'><FaGem /><span className='font-semibold'>{u.points}</span></div>
+                                        );
+                                    })}
                                 </div>
-                            ))}
+                            </div>
+
+                            {/* Tablet and Desktop: Grid Layout */}
+                            <div className="hidden sm:block">
+                                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
+                                    {[
+                                        {
+                                            tier: 100,
+                                            label: '+5 Fan',
+                                            type: 'fan',
+                                            key: 'm100',
+                                            image: redeem1,
+                                            description: 'Boost your fan points instantly.',
+                                        },
+                                        {
+                                            tier: 200,
+                                            label: '+10 Fan',
+                                            type: 'fan',
+                                            key: 'm200',
+                                            image: redeem1,
+                                            description: 'Double the rewards for active fans.',
+                                        },
+                                        {
+                                            tier: 500,
+                                            label: '+25 Fan',
+                                            type: 'fan',
+                                            key: 'm500',
+                                            image: redeem1,
+                                            description: 'Big reward boost for loyal fans.',
+                                        },
+                                        {
+                                            tier: 1000,
+                                            label: '1 Scratch Card',
+                                            type: 'scratch',
+                                            key: 's1000',
+                                            image: redeem2,
+                                            description: 'Try your luck! 🎉 Winning chance: 5%',
+                                        },
+                                        {
+                                            tier: 2000,
+                                            label: '1 Scratch Card',
+                                            type: 'scratch',
+                                            key: 's2000',
+                                            image: redeem2,
+                                            description: 'Premium scratch card 💎 Winning chance: 15%',
+                                        },
+                                    ].map((reward, index) => {
+                                        const claimed = reward.type === 'fan' ? !!thresholdClaims?.[reward.key] : false;
+                                        const canClaim =
+                                            reward.type === 'fan'
+                                                ? !claimed && userBalance >= reward.tier
+                                                : userBalance >= reward.tier;
+
+                                        const isThisButtonLoading =
+                                            reward.type === 'fan'
+                                                ? isClaimingThreshold && claimingTier === reward.tier
+                                                : scratchLoading && scratchingTier === reward.tier;
+
+                                        const isDisabled =
+                                            reward.type === 'fan'
+                                                ? claimed || userBalance < reward.tier || isThisButtonLoading
+                                                : userBalance < reward.tier || isThisButtonLoading;
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 text-center hover:bg-white/10 transition"
+                                            >
+                                                <img
+                                                    src={reward.image}
+                                                    alt={`Reward ${reward.tier}`}
+                                                    className="w-full h-24 sm:h-28 md:h-32 object-cover mx-auto mb-3 rounded"
+                                                />
+                                                <p className="text-white/70 text-xs">Spend {reward.tier}</p>
+                                                <p className="text-emerald-300 font-medium text-sm">{reward.label}</p>
+                                                <p className="text-white/50 text-[11px] mt-1 leading-snug">
+                                                    {reward.description}
+                                                </p>
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            if (isDisabled) return;
+
+                                                            if (reward.type === 'fan') {
+                                                                setClaimingTier(reward.tier);
+                                                                await dispatch(claimThresholdTier(reward.tier)).unwrap();
+                                                                dispatch(getUserRewardBalance());
+                                                                dispatch(getThresholdClaims());
+                                                            } else {
+                                                                setScratchingTier(reward.tier);
+                                                                await dispatch(createScratchCard({ amount: reward.tier })).unwrap();
+                                                                dispatch(getScratchCard());
+                                                                dispatch(getUserRewardBalance());
+                                                                enqueueSnackbar('Scratch card purchased!', { variant: 'success' });
+                                                            }
+                                                        } catch (e) {
+                                                            enqueueSnackbar(e?.message || 'Failed to claim reward', {
+                                                                variant: 'error',
+                                                            });
+                                                        } finally {
+                                                            if (reward.type === 'fan') {
+                                                                setClaimingTier(null);
+                                                            } else {
+                                                                setScratchingTier(null);
+                                                            }
+                                                        }
+                                                    }}
+                                                    disabled={isDisabled}
+                                                    className={`mt-3 w-full py-1.5 rounded-md text-xs sm:text-sm font-semibold transition ${reward.type === 'fan'
+                                                        ? claimed
+                                                            ? 'btn-soft cursor-not-allowed opacity-60'
+                                                            : canClaim && !isThisButtonLoading
+                                                                ? 'btn-primary'
+                                                                : 'btn-soft cursor-not-allowed opacity-60'
+                                                        : userBalance < reward.tier || isThisButtonLoading
+                                                            ? 'btn-soft cursor-not-allowed opacity-60'
+                                                            : 'btn-primary'
+                                                        }`}
+                                                >
+                                                    {reward.type === 'fan'
+                                                        ? claimed
+                                                            ? 'Claimed'
+                                                            : isThisButtonLoading
+                                                                ? 'Claiming...'
+                                                                : 'Claim'
+                                                        : isThisButtonLoading
+                                                            ? 'Processing...'
+                                                            : 'Purchase'}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
-                        <h3 className='text-white font-semibold text-base md:text-lg mb-4'>Recent Activity</h3>
-                        <div className='space-y-2 sm:space-y-3 max-h-40 sm:max-h-72 overflow-auto pr-1'>
-                            {recentTransactions.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
-                            {recentTransactions.map(it => (
-                                <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>
-                                    <div className='min-w-0 flex-1'>
-                                        <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
-                                        <span className='text-white/50 text-xs'>{it.claimedAt}</span>
-                                    </div>
-                                    <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount.toFixed(2)}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
 
-                {/* Milestones & Badges */}
-                <div className='mt-8 sm:mt-12'>
-                    <div className='flex items-center justify-between mb-3'>
-                        <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-purple-300' /> Milestones & Badges</h3>
-                        <span className='text-white/50 text-xs'>Lifetime progress</span>
-                    </div>
-                    {console.log("allTasksState.milestone", allTasksState)}
-                    <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 gap-4 sm:gap-6'>
-                        {(allTasksState?.milestone || []).map(m => {
-                            const pct = Math.min(100, (totalEarned / m.target) * 100);
-                            const claimed = claimedMilestoneTasks.has(m._id || m.id);
-                            const canClaim = !claimed && totalEarned >= m.target;
 
-                            return (
-                                <div key={m._id} className='glass-card rounded-2xl p-4 sm:p-5 reward-glow'>
-                                    <div className='flex items-center gap-2 sm:gap-3 mb-2'>
-                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${canClaim ? 'bg-purple-300 text-white' : claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
-                                            <FaStar className='text-xs sm:text-sm' />
-                                        </div>
-                                        <div className='min-w-0 flex-1'>
-                                            <p className='text-white font-semibold text-sm sm:text-base'>{m.title}</p>
-                                            <span className='text-white/60 text-xs'>Target: {m.target}</span>
-                                        </div>
-                                    </div>
-                                    <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                        <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${pct}%` }}></div>
-                                    </div>
-                                    <div className='flex items-center justify-between mt-2 sm:mt-3'>
-                                        <span className='text-white/70 text-xs'>Bonus</span>
-                                        <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {m.reward}</div>
-                                    </div>
-                                    <button
-                                        onClick={() => claimMilestone(m)}
-                                        disabled={!canClaim || loadingTaskClaim || isMilestoneTaskClaimed(m._id)}
-                                        className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${isMilestoneTaskClaimed(m._id) ? 'btn-soft cursor-not-allowed opacity-60' : canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                    {/* Leaderboard & Activity */}
+                    <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
+                        <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow lg:col-span-2'>
+                            <div className='flex items-center justify-between mb-4'>
+                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-purple-300' /> Leaderboard</h3>
+                                <span className='text-white/50 text-xs'>Top this week</span>
+                            </div>
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
+                                {leaderboardData.map((u, idx) => (
+                                    <div
+                                        key={u.key || u.id || idx}
+                                        className='bg-white/5 rounded-xl p-3 sm:p-4 border flex items-center justify-between'
+                                        style={{
+                                            borderColor:
+                                                idx === 0
+                                                    ? '#FFD700'
+                                                    : idx === 1
+                                                        ? '#C0C0C0'
+                                                        : idx === 2
+                                                            ? '#CD7F32'
+                                                            : 'rgba(255,255,255,0.06)',
+                                            borderWidth: '1px',
+                                            borderStyle: 'solid'
+                                        }}
                                     >
-                                        {isMilestoneTaskClaimed(m._id) ? 'Claimed' : canClaim ? (loadingTaskClaim ? 'Claiming...' : 'Claim Bonus') : 'In Progress'}
-                                    </button>
-                                </div>
-                            );
-                        })}
+                                        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+                                            {Trophy[idx] ? (
+                                                <img className='w-8 h-8 sm:w-9 sm:h-9 ' src={Trophy[idx]}></img>
+                                            ) : (
+                                                <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>
+                                                    {idx + 1}
+                                                </div>
+                                            )}
+                                            <div className='min-w-0 flex-1'>
+                                                <p className='text-white font-medium text-sm sm:text-base truncate'>{decryptData(u.name)}</p>
+                                                <span className='text-white/60 text-xs'>Top Player</span>
+                                            </div>
+                                        </div>
+                                        <div className='flex items-center gap-1 sm:gap-2 text-purple-300 text-xs sm:text-sm shrink-0'><FaGem /><span className='font-semibold'>{u.points}</span></div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
+                            <h3 className='text-white font-semibold text-base md:text-lg mb-4'>Recent Activity</h3>
+                            <div className='space-y-2 sm:space-y-3 max-h-40 sm:max-h-72 overflow-auto pr-1'>
+                                {recentTransactions.length === 0 && <p className='text-white/60 text-sm'>No activity yet. Start earning points!</p>}
+                                {recentTransactions.map(it => (
+                                    <div key={it.id} className='flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-2 sm:p-3'>
+                                        <div className='min-w-0 flex-1'>
+                                            <p className='text-white text-xs sm:text-sm truncate'>{it.description}</p>
+                                            <span className='text-white/50 text-xs'>{it.claimedAt}</span>
+                                        </div>
+                                        <div className={`${it.type === 'EARN' ? 'text-emerald-300' : 'text-rose-300'} font-semibold text-xs sm:text-sm`}>{it.type === 'EARN' ? '+' : '-'}{it.amount.toFixed(2)}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
-                    <p className='text-white/60 text-xs mt-3'>Total Earned so far: {totalEarned}</p>
-                </div>
 
-                {/* ***** Scratch Card ***** */}
-                <ScratchGame />
-            </div>
-        </section>
+                    {/* Milestones & Badges */}
+                    <div className='mt-8 sm:mt-12'>
+                        <div className='flex items-center justify-between mb-3'>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-purple-300' /> Milestones & Badges</h3>
+                            <span className='text-white/50 text-xs'>Lifetime progress</span>
+                        </div>
+                        {console.log("allTasksState.milestone", allTasksState)}
+                        <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 gap-4 sm:gap-6'>
+                            {(allTasksState?.milestone || []).map(m => {
+                                const pct = Math.min(100, (totalEarned / m.target) * 100);
+                                const claimed = claimedMilestoneTasks.has(m._id || m.id);
+                                const canClaim = !claimed && totalEarned >= m.target;
+
+                                return (
+                                    <div key={m._id} className='glass-card rounded-2xl p-4 sm:p-5 reward-glow'>
+                                        <div className='flex items-center gap-2 sm:gap-3 mb-2'>
+                                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${canClaim ? 'bg-purple-300 text-white' : claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
+                                                <FaStar className='text-xs sm:text-sm' />
+                                            </div>
+                                            <div className='min-w-0 flex-1'>
+                                                <p className='text-white font-semibold text-sm sm:text-base'>{m.title}</p>
+                                                <span className='text-white/60 text-xs'>Target: {m.target}</span>
+                                            </div>
+                                        </div>
+                                        <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
+                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${pct}%` }}></div>
+                                        </div>
+                                        <div className='flex items-center justify-between mt-2 sm:mt-3'>
+                                            <span className='text-white/70 text-xs'>Bonus</span>
+                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {m.reward}</div>
+                                        </div>
+                                        <button
+                                            onClick={() => claimMilestone(m)}
+                                            disabled={!canClaim || loadingTaskClaim || isMilestoneTaskClaimed(m._id)}
+                                            className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${isMilestoneTaskClaimed(m._id) ? 'btn-soft cursor-not-allowed opacity-60' : canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                        >
+                                            {isMilestoneTaskClaimed(m._id) ? 'Claimed' : canClaim ? (loadingTaskClaim ? 'Claiming...' : 'Claim Bonus') : 'In Progress'}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <p className='text-white/60 text-xs mt-3'>Total Earned so far: {totalEarned}</p>
+                    </div>
+
+                    {/* ***** Scratch Card ***** */}
+                    <ScratchGame />
+                </div>
+            </section>
+        </>
     )
 }
 

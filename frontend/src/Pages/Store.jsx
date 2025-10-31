@@ -18,6 +18,7 @@ import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice
 import { allorders } from '../Redux/Slice/Payment.slice';
 import LazyGameCard from '../lazyLoader/LazyGameCard';
 import StoreSlider from '../components/StoreSlider';
+import Advertize from '../components/Advertize';
 
 // Constants
 const SWIPER_CONFIG = {
@@ -176,7 +177,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
   return (
     <div
       onClick={() => onNavigate(`/single/${game?._id}`)}
-      className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
+      className="w-full max-w-[220px] sm:max-w-[260px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] cursor-pointer mx-auto"
     >
       <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
 
@@ -184,7 +185,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
         {/* Image Container */}
-        <div className="relative w-full h-32 ms:h-48  md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
+        <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
           <img
             src={game?.cover_image?.url || game1}
             alt={game?.title}
@@ -217,10 +218,10 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                   : navigate('/login')
               }}
             >
-                 {(isInWishlist && isLoggedIn) ? (
+              {(isInWishlist && isLoggedIn) ? (
                 <FaHeart className="text-white animate-pulse ms:text-sm text-xs" />
               ) : (
-                <FaRegHeart  className="text-slate-300 group-hover:text-red-400 transition-colors ms:text-sm text-xs" />
+                <FaRegHeart className="text-slate-300 group-hover:text-red-400 transition-colors ms:text-sm text-xs" />
               )}
             </button>
 
@@ -281,7 +282,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
                       <span className="text-emerald-600 font-bold text-sm">✓</span>
                     </div>
                   ) : (
-                    <FaShoppingCart  className="text-white md:w-6 ms:h-6 h-4 w-4 " />
+                    <FaShoppingCart className="text-white md:w-6 ms:h-6 h-4 w-4 " />
                   )}
                 </div>
                 <span className="text-white font-bold text-sm tracking-wider uppercase ms:text-sm text-xs">
@@ -307,8 +308,8 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
 
         {/* Decorative Elements */}
         <div className="absolute top-1 left-1 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-                        <div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
-                    </div>
+          <div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-blue-400/30 rounded-lg transform rotate-45"></div>
+        </div>
         <div className="absolute bottom-2 right-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
           <div className="ms:w-12 ms:h-12 h-8 w-8  border-2 border-pink-400/30 rounded-circle" />
         </div>
@@ -575,15 +576,15 @@ const Store = () => {
   return (
     <section>
       <StoreSlider />
-
+      <Advertize limitImages={true}/>
       {/* Featured Games Section */}
       <div className="mx-auto flex flex-col items-center sm:max-w-full">
-        <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[95%] md:w-[85%] mx-auto">
+        <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[95%] md:w-[75%] mx-auto">
           <SwiperSection
             title="All Games"
             games={Array.isArray(games) ? games.slice(0, 12) : []} // Limit initial display
             gameActions={gameActions}
-            onNavigate={handleNavigate} 
+            onNavigate={handleNavigate}
           />
 
           <SwiperNavigation
@@ -633,9 +634,9 @@ const Store = () => {
           </Swiper>
         </div>
       </div>
-
+      <Advertize />
       {/* Game Sections */}
-      <div className="py-0 max-w-[95%] md:max-w-[85%]  mx-auto">
+      <div className="py-0 max-w-[95%] md:max-w-[75%] mx-auto">
 
         <SwiperSection
           title="Trending Games"

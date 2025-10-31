@@ -621,7 +621,7 @@ export default function Profile() {
 
 
     return (
-        <div className="  text-white md:max-w-[85%] max-w-[95%] mx-auto">
+        <div className="  text-white md:max-w-[75%] max-w-[95%] mx-auto">
             {/* Header */}
             <div className="sticky top-0 z-40 border-b border-white/25 ">
                 <div className="flex items-center justify-between  py-3">

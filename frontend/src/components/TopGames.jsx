@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { getAllActiveGames, getHomeTopGame } from '../Redux/Slice/game.slice';
 import { getFreeGames } from '../Redux/Slice/freeGame.slice';
 import TopGamesSkeleton from '../lazyLoader/TopGamesSkeleton';
+import Advertize from './Advertize';
 
 // Constants
 const DEFAULT_ITEMS_COUNT = 6;
@@ -75,7 +76,7 @@ const SECTION_CONFIG = [
       />
     )
   },
-   {
+  {
     title: "New Games",
     dataKey: 'newGames',
     link: '/store',
@@ -249,11 +250,11 @@ const LoadingIndicator = () => (
 const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
-    
+
     <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
-        console.log('data',item),
+          console.log('data', item),
           <GameCard key={item._id || item.id} item={item} />
         ))
       ) : isRefreshing ? (
@@ -283,16 +284,16 @@ GameSection.displayName = 'GameSection';
 function TopGames() {
   const dispatch = useDispatch();
   const [length, setLength] = useState(DEFAULT_ITEMS_COUNT);
-  
+
   const Homegames = useSelector(state => ({
     ...state.game.homeTopGame,
     loading: state.game.topGamesInitialLoading
   }), shallowEqual);
-  
+
   console.log('gamesss', Homegames);
-  
+
   // Extract games and loading states once
-  
+
   // Create gameData object directly
   const gameData = useMemo(() => {
     const topSelling = Array.isArray(Homegames?.topSelling) ? Homegames.topSelling : [];
@@ -324,14 +325,14 @@ function TopGames() {
       ultimate
     };
   }, [Homegames]);
-  
+
   // Compute loading and data availability
   const isLoading = useMemo(() => {
     return Homegames?.loading;
   }, [Homegames?.loading]);
 
   // const hasData = gameData.length > 0;
-  
+
   // Calculate display length when appropriate
   useEffect(() => {
     if (isLoading) return;
@@ -342,12 +343,12 @@ function TopGames() {
       gameData.newGames?.length || 0,
       gameData.ultimate?.length || 0
     );
-  
+
     setLength(minLength < MIN_REQUIRED_ITEMS ? minLength : DEFAULT_ITEMS_COUNT);
   }, [isLoading, gameData]);
   // Fetch data on mount
   useEffect(() => {
-    if(!isLoading){
+    if (!isLoading) {
       dispatch(getHomeTopGame());
     }
   }, [dispatch]);
@@ -358,32 +359,34 @@ function TopGames() {
   // }
 
   return (
-   <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-14 md:pb-16 relative px-4 sm:px-6">
-  {/* Section Header */}
-  <div className="text-center mb-8 sm:mb-12 md:mb-16">
-    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
-      Top Games
-    </h2>
-    <p className="text-gray-400 text-base sm:text-lg md:text-xl max-w-3xl mx-auto">
-      Discover the most popular and trending games across all platforms
-    </p>
-    {/* {isLoading && <LoadingIndicator />} */}
-  </div>
+    <>
+      <Advertize />
+      <div className="relative text-white w-full max-w-[95%] md:max-w-[75%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-14 md:pb-16 relative px-4 sm:px-6">
+        {/* Section Header */}
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
+            Top Games
+          </h2>
+          <p className="text-gray-400 text-base sm:text-lg md:text-xl max-w-3xl mx-auto">
+            Discover the most popular and trending games across all platforms
+          </p>
+          {/* {isLoading && <LoadingIndicator />} */}
+        </div>
 
-  {/* Games Grid */}
-  <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3   2xl:grid-cols-3 3xl:grid-cols-6  gap-5 sm:gap-6 md:gap-6">
-    {SECTION_CONFIG.map((section, i) => (
-      <GameSection
-        key={section.title}
-        section={section}
-        items={gameData[section.dataKey]}
-        length={length}
-        isRefreshing={isLoading}
-      />
-    ))}
-  </div>
-</div>
-
+        {/* Games Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3   2xl:grid-cols-3 3xl:grid-cols-6  gap-5 sm:gap-6 md:gap-6">
+          {SECTION_CONFIG.map((section, i) => (
+            <GameSection
+              key={section.title}
+              section={section}
+              items={gameData[section.dataKey]}
+              length={length}
+              isRefreshing={isLoading}
+            />
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
 

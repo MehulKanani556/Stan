@@ -14,6 +14,7 @@ import { addToCart } from "../Redux/Slice/cart.slice";
 import { allorders } from "../Redux/Slice/Payment.slice";
 import LazyGameCard from "../lazyLoader/LazyGameCard";
 import game1 from "../images/game1.jpg";
+import Advertize from "../components/Advertize";
 
 
 const GAMES_PER_PAGE = 12;
@@ -133,7 +134,7 @@ const parseGameSizeToMB = (sizeString) => {
         b: 1 / (1024 * 1024),
     };
 
-    const multiplier = unitToMb[unit] ?? 1; 
+    const multiplier = unitToMb[unit] ?? 1;
     const result = value * multiplier;
     return Number.isFinite(result) ? result : 0;
 };
@@ -187,13 +188,13 @@ const filterGamesByPrice = (games, priceRange) => {
     });
 };
 
- 
+
 const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wishlistStatus, cartItems }) => {
     const navigate = useNavigate();
     const imageUrl = game?.cover_image?.url || game1;
     const priceValue = getGamePrice(game);
 
-  
+
     const isPurchased = useMemo(() =>
         Array.isArray(orders) && orders.some(order =>
             order?.status === 'paid' &&
@@ -556,8 +557,8 @@ export default function AllGames() {
     const totalGames = pagination?.totalItems || 0;
 
     useEffect(() => {
-        window.scroll({ top: 0,}); // you can remove behavior if you don't want smooth scroll
-      }, []);
+        window.scroll({ top: 0, }); // you can remove behavior if you don't want smooth scroll
+    }, []);
 
     // Callback handlers
     const handleWishlistToggle = useCallback((game, isInWishlist) => {
@@ -673,7 +674,7 @@ export default function AllGames() {
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                     {/* Image Container with Enhanced Effects */}
-                    <div className="relative w-full h-32 ms:h-48  md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl">
+                    <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
                         <img
                             src={imageUrl}
                             alt={game?.title}
@@ -685,10 +686,10 @@ export default function AllGames() {
 
                             {/* Top Badge */}
                             <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
-                <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
-                  <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
-                </div>
-              </div>
+                                <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                                    <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
+                                </div>
+                            </div>
 
                             {/* Wishlist Button */}
                             <button
@@ -716,7 +717,7 @@ export default function AllGames() {
 
                             {/* Game Title */}
                             <div className="absolute bottom-4 left-4 right-4">
-                                <div className="ms:p-4 p-0">
+                                <div className="">
                                     <h3 className="text-white font-bold ms:text-base text-xs md:text-lg lg:text-xl leading-tight">
                                         {game?.title}
                                     </h3>
@@ -731,7 +732,7 @@ export default function AllGames() {
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 gap-4">
                             {/* Price */}
-                            <div className="bg-slate-700/50 rounded-xl relative z-10 px-2 py-2  sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                            <div className="bg-slate-700/50 rounded-xl relative z-10 px-2 py-2  sm:px-4 sm:py-3 md:px-2 md:py-3.5">
                                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                                     <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
                                     <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">Price</span>
@@ -773,7 +774,7 @@ export default function AllGames() {
                                                 <span className="text-white font-bold text-sm">✓</span>
                                             </div>
                                         ) : (
-                                            <FaShoppingCart  className="text-white md:w-6 ms:h-6 h-4 w-" />
+                                            <FaShoppingCart className="text-white md:w-6 ms:h-6 h-4 w-" />
                                         )}
                                     </div>
                                     <span className="text-white font-bold ms:text-sm text-xs tracking-wider uppercase">
@@ -811,105 +812,108 @@ export default function AllGames() {
     };
 
     return (
-        <div className="mx-auto max-w-[95%] md:max-w-[85%] md:pb-10">
-            <style>{SELECT_STYLES}</style>
+        <>
+            <Advertize />
+            <div className="mx-auto max-w-[95%] md:max-w-[75%] md:pb-10">
+                <style>{SELECT_STYLES}</style>
 
-            {/* Header */}
-            <div className="text-center py-12 ms:py-16 py-10">
-                <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
-                    All Games
-                </h1>
-                <p className="text-gray-300 text-base sm:text-lg md:text-xl max-w-2xl mx-auto">
-                    Discover and explore our extensive collection of games
-                </p>
-            </div>
-
-            {/* Filter Section */}
-            <FilterHeader
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                priceRange={priceRange}
-                setPriceRange={setPriceRange}
-                categories={categories}
-                onResetFilters={resetFilters}
-            />
-
-            {/* Main Content */}
-            {hasGames ? (
-                <>
-                    <div className="grid  grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 mb-12 all-games-grid">
-                        {processedGames.map((game, index) => (
-                            <LazyGameCard key={game.id || index}>
-                                <GameCard game={game} orders={orders} isLoggedIn={isLoggedIn} />
-                            </LazyGameCard>
-                        ))}
-                    </div>
-
-                    {/* Pagination */}
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                    />
-                </>
-            ) : (
-                // Empty State
-                <div className="text-center py-20">
-                    <div className="max-w-md mx-auto">
-                        <div className="w-20 h-20 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg
-                                className="w-10 h-10 text-gray-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                            {selectedCategory || debouncedSearchQuery || sortBy || priceRange
-                                ? 'No games found'
-                                : 'No games available'
-                            }
-                        </h3>
-                        <p className="text-gray-400 text-sm sm:text-base mb-4">
-                            {selectedCategory || debouncedSearchQuery || sortBy || priceRange
-                                ? 'Try adjusting your filters to see more results'
-                                : 'Check back later for new releases and updates'
-                            }
-                        </p>
-                        {(selectedCategory || debouncedSearchQuery || sortBy || priceRange) && (
-                            <button
-                                onClick={resetFilters}
-                                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors font-medium"
-                            >
-                                Clear All Filters
-                            </button>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Results Summary */}
-            {hasGames && (
-                <div className="mt-8 text-center">
-                    <p className="text-gray-400 text-sm">
-                        Showing {processedGames.length} of {totalGames} games
-                        {selectedCategory && (
-                            <span> in {categories.find(c => c._id === selectedCategory)?.categoryName}</span>
-                        )}
+                {/* Header */}
+                <div className="text-center py-12 ms:py-16 py-10">
+                    <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
+                        All Games
+                    </h1>
+                    <p className="text-gray-300 text-base sm:text-lg md:text-xl max-w-2xl mx-auto">
+                        Discover and explore our extensive collection of games
                     </p>
                 </div>
-            )}
-        </div>
+
+                {/* Filter Section */}
+                <FilterHeader
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    priceRange={priceRange}
+                    setPriceRange={setPriceRange}
+                    categories={categories}
+                    onResetFilters={resetFilters}
+                />
+
+                {/* Main Content */}
+                {hasGames ? (
+                    <>
+                        <div className="grid  grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-6 mb-12 all-games-grid">
+                            {processedGames.map((game, index) => (
+                                <LazyGameCard key={game.id || index}>
+                                    <GameCard game={game} orders={orders} isLoggedIn={isLoggedIn} />
+                                </LazyGameCard>
+                            ))}
+                        </div>
+
+                        {/* Pagination */}
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </>
+                ) : (
+                    // Empty State
+                    <div className="text-center py-20">
+                        <div className="max-w-md mx-auto">
+                            <div className="w-20 h-20 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg
+                                    className="w-10 h-10 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                                {selectedCategory || debouncedSearchQuery || sortBy || priceRange
+                                    ? 'No games found'
+                                    : 'No games available'
+                                }
+                            </h3>
+                            <p className="text-gray-400 text-sm sm:text-base mb-4">
+                                {selectedCategory || debouncedSearchQuery || sortBy || priceRange
+                                    ? 'Try adjusting your filters to see more results'
+                                    : 'Check back later for new releases and updates'
+                                }
+                            </p>
+                            {(selectedCategory || debouncedSearchQuery || sortBy || priceRange) && (
+                                <button
+                                    onClick={resetFilters}
+                                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors font-medium"
+                                >
+                                    Clear All Filters
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Results Summary */}
+                {hasGames && (
+                    <div className="mt-8 text-center">
+                        <p className="text-gray-400 text-sm">
+                            Showing {processedGames.length} of {totalGames} games
+                            {selectedCategory && (
+                                <span> in {categories.find(c => c._id === selectedCategory)?.categoryName}</span>
+                            )}
+                        </p>
+                    </div>
+                )}
+            </div>
+        </>
     );
 }

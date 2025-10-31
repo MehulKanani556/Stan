@@ -154,7 +154,7 @@ const GameCard = ({
 
         {/* Image Container */}
         {/* {console.log('games image',game?.cover_image?.url)} */}
-        <div className="relative w-full h-32 ms:h-48  md:h-64 lg:h-72 xl:h-64 overflow-hidden rounded-2xl">
+        <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
           <img
             src={game?.cover_image?.url}
             alt={game?.title}
@@ -346,8 +346,6 @@ export default function Home() {
     handleMouseMove
   } = useMouseDragScroll(categorySwiperRef);
 
-
-
   const userId = useMemo(() =>
     authUser?._id || currentUser?._id || localStorage.getItem("userId"),
     [authUser, currentUser]
@@ -375,7 +373,7 @@ export default function Home() {
 
   console.log("Kem Kem", "Hello");
 
-
+  // Added image at line 507
   const handleGameClick = useCallback((gameId) => {
     navigate(`/single/${gameId}`);
   }, [navigate]);
@@ -500,10 +498,17 @@ export default function Home() {
       /> */}
 
       <section className="relative">
+        {/* Responsive Ad Images */}
+        {/* <div className="relative w-full py-4 px-4">
+          <img src={ad1} alt="Advertisement 1" className="absolute w-30 md:w-24 lg:w-28 h-auto md:h-32 lg:h-96 rounded-lg shadow-lg top-4 left-4 md:top-6 md:left-6 lg:top-[784px] lg:left-4" />
+          <img src={ad2} alt="Advertisement 2" className="absolute w-30 md:w-24 lg:w-28 h-auto md:h-32 lg:h-96 rounded-lg shadow-lg top-4 right-4 md:top-6 md:right-6 lg:top-[784px] lg:right-4" />
+          
+        </div> */}
+
         <HomeSlider />
 
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
-          <div className="py-4 sm:py-6 md:py-8 lg:py-10 md:w-[85%] w-[95%] mx-auto">
+          <div className="relative py-4 sm:py-6 md:py-8 lg:py-10 md:w-[75%] w-[95%] mx-auto">
 
             {/* Category Filter */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
@@ -650,7 +655,7 @@ export default function Home() {
               alt="Explore Games Background"
               className="absolute inset-0 w-full h-full object-cover z-0 transform transition-transform duration-500 ease-in-out group-hover:scale-105"
             />
-            <div className="relative z-10 sm:w-full w-[60%] max-w-[95%] md:max-w-[85%] ps-5 sm:ps-0 sm:mx-auto flex flex-col items-start md:items-start md:text-left text-white">
+            <div className="relative z-10 sm:w-full w-[60%] max-w-[95%] md:max-w-[75%] ps-5 sm:ps-0 sm:mx-auto flex flex-col items-start md:items-start md:text-left text-white">
               <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 md:mb-3 leading-tight">
                 100+ games, worlds. Explore them all with Stan
               </h2>

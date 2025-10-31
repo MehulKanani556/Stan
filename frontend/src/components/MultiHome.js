@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import shadow from "../images/shadow.jpg";
 import hd from "../images/hd.png";
 import tap from "../images/tap.jpg";
+import Advertize from "./Advertize";
 
 const MultiHome = () => {
   const containerRef = useRef(null);
@@ -32,19 +33,22 @@ const MultiHome = () => {
   ];
 
   return (
-    <div className="relative w-full max-w-[95%] md:max-w-[85%] my-5 mx-auto">
-      {/* this wrapper is our scroll container */}
-      <div ref={containerRef} className="relative h-[300vh]">
-        {cards.map((card, i) => (
-          <StackingCard
-            key={card.id}
-            card={card}
-            index={i}
-            containerRef={containerRef}
-          />
-        ))}
+    <>
+      <Advertize limitImages={true} />
+      <div className="relative w-full max-w-[95%] md:max-w-[75%] my-5 mx-auto">
+        {/* this wrapper is our scroll container */}
+        <div ref={containerRef} className="relative h-[300vh]">
+          {cards.map((card, i) => (
+            <StackingCard
+              key={card.id}
+              card={card}
+              index={i}
+              containerRef={containerRef}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -55,14 +59,14 @@ const StackingCard = ({ card, index, containerRef }) => {
   });
 
   // Define input and output ranges with consistent lengths
-  const inputRange = index === 0 
+  const inputRange = index === 0
     ? [0, 1]  // For first card, use full range
     : [0 + (index - 1) * 0.2, 0.4 + (index - 1) * 0.2];
-  
-  const yOutputRange = index === 0 
+
+  const yOutputRange = index === 0
     ? [0, 0]  // Stay at 0 for first card
     : [100, 0];  // Slide up for subsequent cards
-  
+
   const opacityOutputRange = index === 0
     ? [1, 1]  // Stay fully opaque for first card
     : [0, 1];  // Fade in for subsequent cards

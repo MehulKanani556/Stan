@@ -99,7 +99,7 @@ import user from '../images/user_img.png'
         Player Reviews
       </h2>
 
-      <div className="mx-auto w-[94%] md:w-[86%]">
+      <div className="mx-auto w-[94%] md:w-[75%]">
         {loader && <ReviewCardSkeleton/>}
         {!loader && <Slider {...settings} className="ds_review_slider">
           {revieData?.map((r) => (
