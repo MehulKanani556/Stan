@@ -508,7 +508,7 @@ export default function Home() {
         <HomeSlider />
 
         <div className="mx-auto flex flex-col items-center sm:max-w-full">
-          <div className="relative py-4 sm:py-6 md:py-8 lg:py-10 md:w-[75%] w-[95%] mx-auto">
+          <div className="relative py-4 sm:py-6 md:py-8 lg:py-10 md:w-[73%] w-[95%] mx-auto">
 
             {/* Category Filter */}
             <div className="flex flex-wrap justify-center mb-6 sm:mb-8 md:mb-10 max-w-[95%] md:max-w-[85%] mx-auto gap-2 sm:gap-3 md:gap-4 px-4 sm:px-0">
