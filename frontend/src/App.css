@@ -766,7 +766,7 @@ header { width: 100%; max-width: 100%; padding-left: 100px; height: 50px; displa
   top: 80%;
   left: 70%;
   transform: translatex(-100%);
-  z-index: 100;
+  /* z-index: 100; */
   max-width: 30%;
   display: flex;
   gap: 10px;
