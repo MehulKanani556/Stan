@@ -4,12 +4,10 @@ import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendNot
 import Reward from '../models/Rewards.model.js';
 import UserReward from '../models/UserRewards.model.js';
 import User from '../models/userModel.js';
-import cloudinaryHelper from '../helper/cloudinary.js';
+import  { fileupload, deleteFile } from '../helper/cloudinary.js';
 import fs from 'fs';
 import UserTaskClaim from '../models/UserDailyTaskClaim.model.js';
 import { DailyTask, WeeklyTask, Milestone } from '../models/Task.model.js';
-
-const { fileupload, deleteFile } = cloudinaryHelper;
 
 // ==================== REWARD MANAGEMENT (ADMIN) ====================
 

@@ -43,7 +43,7 @@ export const createGame = function (req, res) {
           for (const public_id of uploadedCloudFiles) {
             try {
               await deleteFile(public_id);
-            } catch { }
+            } catch {}
           }
           if (fs.existsSync(coverFilePath)) {
             fs.unlinkSync(coverFilePath);
@@ -71,7 +71,7 @@ export const createGame = function (req, res) {
           for (const public_id of uploadedCloudFiles) {
             try {
               await deleteFile(public_id);
-            } catch { }
+            } catch {}
           }
           if (fs.existsSync(videoFilePath)) {
             fs.unlinkSync(videoFilePath);
@@ -133,7 +133,7 @@ export const createGame = function (req, res) {
             for (const public_id of uploadedCloudFiles) {
               try {
                 await deleteFile(public_id);
-              } catch { }
+              } catch {}
             }
             if (fs.existsSync(platformFilePath)) {
               fs.unlinkSync(platformFilePath);
@@ -162,7 +162,7 @@ export const createGame = function (req, res) {
             for (const public_id of uploadedCloudFiles) {
               try {
                 await deleteFile(public_id);
-              } catch { }
+              } catch {}
             }
             if (fs.existsSync(imgPath)) {
               fs.unlinkSync(imgPath);
@@ -192,7 +192,7 @@ export const createGame = function (req, res) {
         for (const public_id of uploadedCloudFiles) {
           try {
             await deleteFile(public_id);
-          } catch { }
+          } catch {}
         }
         return ThrowError(res, 404, "Game not created");
       }
@@ -210,9 +210,10 @@ export const createGame = function (req, res) {
       const body = `
         <h2>Exciting News!</h2>
         <p>We have added a new game: <b>${gameName}</b></p>
-        ${coverImageUrl
-          ? `<img src="${coverImageUrl}" alt="${gameName}" style="max-width:400px;" />`
-          : ""
+        ${
+          coverImageUrl
+            ? `<img src="${coverImageUrl}" alt="${gameName}" style="max-width:400px;" />`
+            : ""
         }
         <p>Check it out on our platform now!</p>
       `;
@@ -228,7 +229,7 @@ export const createGame = function (req, res) {
         for (const public_id of uploadedCloudFiles) {
           try {
             await deleteFile(public_id);
-          } catch { }
+          } catch {}
         }
       }
       // Clean up all local files if error occurs
@@ -240,13 +241,13 @@ export const createGame = function (req, res) {
               if (file.path && fs.existsSync(file.path)) {
                 try {
                   fs.unlinkSync(file.path);
-                } catch { }
+                } catch {}
               }
             });
           } else if (fileArr && fileArr.path && fs.existsSync(fileArr.path)) {
             try {
               fs.unlinkSync(fileArr.path);
-            } catch { }
+            } catch {}
           }
         });
       }
@@ -268,13 +269,13 @@ export const updateGame = function (req, res) {
               if (file.path && fs.existsSync(file.path)) {
                 try {
                   fs.unlinkSync(file.path);
-                } catch { }
+                } catch {}
               }
             });
           } else if (fileArr && fileArr.path && fs.existsSync(fileArr.path)) {
             try {
               fs.unlinkSync(fileArr.path);
-            } catch { }
+            } catch {}
           }
         });
       }
@@ -286,7 +287,7 @@ export const updateGame = function (req, res) {
         for (const public_id of publicIds) {
           try {
             await deleteFile(public_id);
-          } catch { }
+          } catch {}
         }
       }
     };
@@ -311,7 +312,7 @@ export const updateGame = function (req, res) {
         if (game.cover_image && game.cover_image.public_id) {
           try {
             await deleteFile(game.cover_image.public_id);
-          } catch { }
+          } catch {}
         }
 
         const coverFiledata = await fileupload(
@@ -339,7 +340,7 @@ export const updateGame = function (req, res) {
         if (game.video && game.video.public_id) {
           try {
             await deleteFile(game.video.public_id);
-          } catch { }
+          } catch {}
         }
 
         const videoFiledata = await fileupload(
@@ -406,7 +407,7 @@ export const updateGame = function (req, res) {
           imagesToKeepUrls.includes(img.url)
         );
       } else {
-        game.images = []
+        game.images = [];
       }
 
       // Handle new images upload
@@ -489,7 +490,7 @@ export const updateGame = function (req, res) {
           await cleanupCloudFiles(
             typeof uploadedCloudFiles !== "undefined" ? uploadedCloudFiles : []
           );
-        } catch { }
+        } catch {}
         cleanupLocalFiles();
       })();
       return ThrowError(res, 500, error.message);
@@ -525,8 +526,8 @@ export const getAllGames = function (req, res) {
         .populate("category")
         .select(
           "-platforms.windows.download_link -platforms.windows.public_id " +
-          "-platforms.ios.download_link -platforms.ios.public_id " +
-          "-platforms.android.download_link -platforms.android.public_id"
+            "-platforms.ios.download_link -platforms.ios.public_id " +
+            "-platforms.android.download_link -platforms.android.public_id"
         );
       if (!games || games.length === 0)
         return ThrowError(res, 404, "No games found");
@@ -546,8 +547,8 @@ export const getNew10Games = function (req, res) {
         .populate("category")
         .select(
           "-platforms.windows.download_link -platforms.windows.public_id " +
-          "-platforms.ios.download_link -platforms.ios.public_id " +
-          "-platforms.android.download_link -platforms.android.public_id"
+            "-platforms.ios.download_link -platforms.ios.public_id " +
+            "-platforms.android.download_link -platforms.android.public_id"
         );
       if (!games || games.length === 0) {
         return ThrowError(res, 404, "No new games found");
@@ -810,4 +811,357 @@ export const getGamesByCategory = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
+};
+
+export const HomeTopGames = async (req, res) => {
+  try {
+    const topSelling = await Order.aggregate([
+      { $unwind: "$items" },
+
+      {
+        $group: {
+          _id: "$items.game",
+
+          totalSales: { $sum: 1 },
+        },
+      },
+
+      { $sort: { totalSales: -1 } },
+
+      { $limit: 20 },
+    ]);
+
+    const gameIds = topSelling.map((item) => item._id);
+
+    const games = await Game.find({ _id: { $in: gameIds } });
+
+    const topGamesWithSales = topSelling.map((item) => {
+      const game = games.find((g) => g._id.toString() === item._id.toString());
+
+      return { ...game?._doc };
+    });
+
+    // --- Free games ---
+
+    const freegames = await FreeGame.find().sort({ createdAt: -1 }).limit(20);
+
+    // --- New games ---
+
+    const newGames = await Game.find().sort({ createdAt: -1 }).limit(20);
+
+    res.status(200).json({
+      topSelling: topGamesWithSales,
+
+      freegames,
+
+      newGames,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getPopularGames = function (req, res) {
+  (async function () {
+    try {
+      const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+      const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1);
+      // Always sort by downloads (most downloaded). Allow optional order param.
+      const orderParam = (req.query.order || "desc").toLowerCase();
+      const sortOrder = orderParam === "asc" ? 1 : -1;
+
+      const filter = { isActive: true };
+
+      const sort = { downloads: sortOrder, createdAt: -1 };
+      let findQuery = Game.find(filter)
+        .sort(sort)
+        .skip((page - 1) * limit)
+        .limit(limit);
+      if (mongoose.modelNames().includes("category")) {
+        findQuery = findQuery.populate("category");
+      }
+      const [games, total] = await Promise.all([
+        findQuery.exec(),
+        Game.countDocuments(filter),
+      ]);
+
+      if (!games || games.length === 0) {
+        return ThrowError(res, 404, "No popular games found");
+      }
+      return res.status(200).json({
+        data: games,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      });
+    } catch (error) {
+      return ThrowError(res, 500, error.message);
+    }
+  })();
+};
+
+
+export const getTopGames = function (req, res) {
+    (async function () {
+        try {
+            const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+            const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1);
+            const sortBy = (req.query.sortBy || "rating").toLowerCase();
+            const orderParam = (req.query.order || "desc").toLowerCase();
+            const sortOrder = orderParam === "asc" ? 1 : -1;
+            const category = req.query.category; // Optional category filter
+ 
+            console.log("getTopGames called with:", { page, limit, sortBy, orderParam, category });
+ 
+ 
+            const filter = { isActive: true };
+   // Add category filter if provided
+            if (category && mongoose.Types.ObjectId.isValid(category)) {
+                filter.category = category;
+            }
+ 
+            // Define sorting criteria based on sortBy parameter
+            let sort = {};
+            switch (sortBy) {
+                case "rating":
+                    sort = { "reviews.averageRating": sortOrder, "reviews.count": -1, createdAt: -1 };
+                    break;
+                case "reviews":
+                    sort = { "reviews.count": sortOrder, "reviews.averageRating": -1, createdAt: -1 };
+                    break;
+                default:
+                    sort = { "reviews.averageRating": sortOrder, "reviews.count": -1, createdAt: -1 };
+            }
+ 
+            let findQuery = Game.find(filter)
+                .sort(sort)
+                .skip((page - 1) * limit)
+                .limit(limit);
+// Populate category information if available
+            if (mongoose.modelNames().includes("category")) {
+                findQuery = findQuery.populate("category");
+            }
+ 
+            const [games, total] = await Promise.all([
+                findQuery.exec(),
+                Game.countDocuments(filter),
+            ]);
+ 
+ 
+            if (!games || games.length === 0) {
+                return ThrowError(res, 404, "No top games found");
+            }
+ 
+ 
+ 
+            // No additional metrics (downloads/views/trending) are calculated
+            const gamesWithMetrics = games.map(game => game.toObject());
+ 
+            return res.status(200).json({
+                success: true,
+                data: gamesWithMetrics,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit),
+                },
+                sorting: {
+                    sortBy,
+                    order: orderParam,
+                },
+                filters: {
+                    category: category || null,
+                }
+            });
+        } catch (error) {
+            return ThrowError(res, 500, error.message);
+        }
+    })();
+};
+
+export const getTrendingGames = function (req, res) {
+    (async function () {
+        try {
+            const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+            const limit = Math.max(parseInt(req.query.limit, 10) || 10, 1);
+            const days = Math.max(parseInt(req.query.days, 10) || 30, 1); // Default to last 30 days
+ 
+            console.log("getTrendingGames called with:", { page, limit, days });
+ 
+            // Calculate date range for recent purchases
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - days);
+ 
+            // Import Order model
+            const Order = mongoose.model("OrderStan");
+ 
+            // Aggregate to get games with most purchases in the specified time period
+            const trendingGames = await Order.aggregate([
+                // Match orders from the specified time period with paid status
+                {
+                    $match: {
+                        status: "paid",
+                        createdAt: { $gte: startDate }
+                    }
+                },
+                // Unwind the items array to get individual game purchases
+                {
+                    $unwind: "$items"
+                },
+                // Group by game ID and count purchases
+                {
+                    $group: {
+                        _id: "$items.game",
+                        purchaseCount: { $sum: 1 },
+                        totalRevenue: { $sum: "$items.price" },
+                        lastPurchaseDate: { $max: "$createdAt" }
+                    }
+                },
+                // Sort by purchase count (descending) and then by last purchase date
+                {
+                    $sort: {
+                        purchaseCount: -1,
+                        lastPurchaseDate: -1
+                    }
+                },
+                // Skip and limit for pagination
+                {
+                    $skip: (page - 1) * limit
+                },
+                {
+                    $limit: limit
+                },
+                // Lookup game details
+                {
+                    $lookup: {
+                        from: "games",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "game"
+                    }
+                },
+                // Unwind the game array
+                {
+                    $unwind: "$game"
+                },
+                // Match only active games
+                {
+                    $match: {
+                        "game.isActive": true
+                    }
+                },
+                // Lookup category information
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "game.category",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                // Project the final structure
+                {
+                    $project: {
+                        _id: "$game._id",
+                        title: "$game.title",
+                        description: "$game.description",
+                        cover_image: "$game.cover_image",
+                        video: "$game.video",
+                        images: "$game.images",
+                        platforms: "$game.platforms",
+                        tags: "$game.tags",
+                        instructions: "$game.instructions",
+                        views: "$game.views",
+                        downloads: "$game.downloads",
+                        reviews: "$game.reviews",
+                        isActive: "$game.isActive",
+                        createdAt: "$game.createdAt",
+                        updatedAt: "$game.updatedAt",
+                        category: { $arrayElemAt: ["$category", 0] },
+                        trendingMetrics: {
+                            purchaseCount: "$purchaseCount",
+                            totalRevenue: "$totalRevenue",
+                            lastPurchaseDate: "$lastPurchaseDate"
+                        }
+                    }
+                }
+            ]);
+ 
+            // Get total count for pagination
+            const totalCount = await Order.aggregate([
+                {
+                    $match: {
+                        status: "paid",
+                        createdAt: { $gte: startDate }
+                    }
+                },
+                {
+                    $unwind: "$items"
+                },
+                {
+                    $group: {
+                        _id: "$items.game"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "games",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "game"
+                    }
+                },
+                {
+                    $unwind: "$game"
+                },
+                {
+                    $match: {
+                        "game.isActive": true
+                    }
+                },
+                {
+                    $count: "total"
+                }
+            ]);
+ 
+            const total = totalCount.length > 0 ? totalCount[0].total : 0;
+ 
+            if (!trendingGames || trendingGames.length === 0) {
+                return res.status(200).json({
+                    success: true,
+                    data: [],
+                    pagination: {
+                        page,
+                        limit,
+                        total: 0,
+                        totalPages: 0
+                    },
+                    message: "No trending games found for the specified period"
+                });
+            }
+ 
+            return res.status(200).json({
+                success: true,
+                data: trendingGames,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit)
+                },
+                filters: {
+                    days,
+                    startDate,
+                    endDate: new Date()
+                }
+            });
+        } catch (error) {
+            console.error("getTrendingGames error:", error);
+            return ThrowError(res, 500, error.message);
+        }
+    })();
 };

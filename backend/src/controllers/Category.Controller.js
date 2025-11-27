@@ -3,8 +3,7 @@ import { ThrowError } from '../utils/ErrorUtils.js';
 import fs from "fs";
 import Category from "../models/Category.model.js";
 
-import cloudinaryHelper from '../helper/cloudinary.js';
-const { fileupload, deleteFile } = cloudinaryHelper;
+import { fileupload,deleteFile } from "../helper/cloudinary.js";
 
 
 export const createCategory = function (req, res) {
