@@ -524,6 +524,9 @@ const SingleGame = () => {
                       muted
                       loop
                       controls
+                      preload="metadata"
+                      poster={single?.cover_image?.url}
+                      loading="lazy"
                       className="w-full xl:h-[660px] lg:h-[600px] ms:h-[500px] sm:h-[400px] h-[350px] object-cover object-center rounded-lg bg-black shadow-lg"
                     />
                   </div>
@@ -547,6 +550,7 @@ const SingleGame = () => {
                       <video
                         src={single.video.url}
                         muted
+                      
                         className="lg:h-[100px] sm:h-[90px] h-[70px] w-full object-cover rounded-lg cursor-pointer"
                       />
                       <FaPlay className="absolute inset-0 m-auto text-white sm:text-4xl text-[20px] transition" />
