@@ -1,15 +1,14 @@
-const mongoose = require("mongoose");
-const { ThrowError } = require("../utils/ErrorUtils.js");
-const fs = require("fs");
-const Game = require("../models/Games.model.js");
-const Subscribe = require("../models/Subscribe.model");
-const sendMail = require("../utils/sendMail");
-
-const { fileupload, deleteFile } = require("../helper/cloudinary.js");
-const CategoryModel = require("../models/Category.model.js");
+import mongoose from "mongoose";
+import { ThrowError } from "../utils/ErrorUtils.js";
+import fs from "fs";
+import Game from "../models/Games.model.js";
+import Subscribe from "../models/Subscribe.model.js";
+import sendMail from "../utils/sendMail.js";
+import { fileupload, deleteFile } from "../helper/cloudinary.js";
+import CategoryModel from "../models/Category.model.js";
 
 // Create a new game
-exports.createGame = function (req, res) {
+export const createGame = function (req, res) {
   (async function () {
     const uploadedCloudFiles = [];
 
@@ -257,7 +256,7 @@ exports.createGame = function (req, res) {
 };
 
 // Update a game by ID
-exports.updateGame = function (req, res) {
+export const updateGame = function (req, res) {
   (async function () {
     // Helper to clean up all local files in req.files
     const cleanupLocalFiles = () => {
@@ -499,7 +498,7 @@ exports.updateGame = function (req, res) {
 };
 
 // Get a single game by ID
-exports.getGameById = function (req, res) {
+export const getGameById = function (req, res) {
   (async function () {
     try {
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -519,7 +518,7 @@ exports.getGameById = function (req, res) {
 };
 
 // Get all games
-exports.getAllGames = function (req, res) {
+export const getAllGames = function (req, res) {
   (async function () {
     try {
       const games = await Game.find()
@@ -538,7 +537,7 @@ exports.getAllGames = function (req, res) {
   })();
 };
 // Get the 10 newest games
-exports.getNew10Games = function (req, res) {
+export const getNew10Games = function (req, res) {
   (async function () {
     try {
       const games = await Game.find({ isActive: true })
@@ -565,7 +564,7 @@ exports.getNew10Games = function (req, res) {
 };
 
 // Get all games
-exports.getAllActiveGames = function (req, res) {
+export const getAllActiveGames = function (req, res) {
   (async function () {
     try {
       const games = await Game.find({ isActive: true }).populate("category");
@@ -579,7 +578,7 @@ exports.getAllActiveGames = function (req, res) {
 };
 
 // Get all active games with pagination, category filter, and search
-exports.getAllActiveGamesWithPagination = function (req, res) {
+export const getAllActiveGamesWithPagination = function (req, res) {
   (async function () {
     try {
       // Parse query params
@@ -631,7 +630,7 @@ exports.getAllActiveGamesWithPagination = function (req, res) {
 };
 
 // Get games by platform
-exports.getGamesByPlatform = function (req, res) {
+export const getGamesByPlatform = function (req, res) {
   (async function () {
     try {
       const { platform } = req.params; // windows, ios, android
@@ -660,7 +659,7 @@ exports.getGamesByPlatform = function (req, res) {
 };
 
 // Delete a game by ID and remove all files from the cloud
-exports.deleteGame = function (req, res) {
+export const deleteGame = function (req, res) {
   (async function () {
     try {
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -717,7 +716,7 @@ exports.deleteGame = function (req, res) {
   })();
 };
 
-exports.getLatestGamesByCategory = async function (req, res) {
+export const getLatestGamesByCategory = async function (req, res) {
   try {
     const latestGameIds = await Game.aggregate([
       { $sort: { category: 1, createdAt: -1 } },
@@ -773,7 +772,7 @@ exports.getLatestGamesByCategory = async function (req, res) {
   }
 };
 
-exports.getGamesByCategory = async (req, res) => {
+export const getGamesByCategory = async (req, res) => {
   try {
     const { category } = req.params;
 
