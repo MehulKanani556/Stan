@@ -10,11 +10,12 @@ import { MdArrowForwardIos, MdArrowBackIos } from "react-icons/md";
 import { getAllGames } from "../Redux/Slice/game.slice";
 import { getAllCategories } from "../Redux/Slice/category.slice";
 import { addToWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
-import { addToCart } from "../Redux/Slice/cart.slice";
 import { allorders } from "../Redux/Slice/Payment.slice";
 import LazyGameCard from "../lazyLoader/LazyGameCard";
 import game1 from "../images/game1.jpg";
 import Advertize from "../components/Advertize";
+import PlatformSelectionModal from "../components/PlatformSelectionModal";
+import usePlatformSelection from "../hooks/usePlatformSelection";
 
 
 const GAMES_PER_PAGE = 12;
@@ -542,6 +543,16 @@ export default function AllGames() {
     const { user: authUser } = useSelector((state) => state.auth);
 
     const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
+    const {
+        openPlatformModal,
+        closePlatformModal,
+        handlePlatformToggle,
+        handleConfirmPlatforms: confirmPlatformSelection,
+        selectedPlatforms,
+        isSubmittingPlatforms,
+        platformModalGame,
+        selectedGamePlatforms
+    } = usePlatformSelection();
     // Local state
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
@@ -570,8 +581,12 @@ export default function AllGames() {
     }, [dispatch]);
 
     const handleAddToCart = useCallback((game) => {
-        dispatch(addToCart({ gameId: game._id, platform: "windows", qty: 1 }));
-    }, [dispatch]);
+        if (!isLoggedIn) {
+            navigate('/login');
+            return;
+        }
+        openPlatformModal(game);
+    }, [isLoggedIn, navigate, openPlatformModal]);
 
     const handlePageChange = useCallback((pageNumber) => {
         setCurrentPage(pageNumber);
@@ -662,6 +677,8 @@ export default function AllGames() {
             ),
             [orders, game?._id]
         )
+
+        const isInCart = cartItems.some(item => item.game?._id === game?._id);
 
         return (
             <div
@@ -755,13 +772,15 @@ export default function AllGames() {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                isLoggedIn ?
-                                    !isPurchased && handleAddToCart(game)
-                                    :
-                                    navigate('/login')
+                                if (!isLoggedIn) {
+                                    navigate('/login');
+                                    return;
+                                }
+                                if (isPurchased || cartItems.some(item => item.game?._id === game?._id)) return;
+                                handleAddToCart(game);
                             }}
-                            disabled={cartItems.some(item => item.game?._id === game?._id) || isPurchased}
-                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(cartItems.some(item => item.game?._id === game?._id) || isPurchased) && isLoggedIn
+                            disabled={isPurchased || cartItems.some(item => item.game?._id === game?._id)}
+                            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isPurchased || cartItems.some(item => item.game?._id === game?._id))
                                 ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
                                 : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
                                 }`}
@@ -769,7 +788,7 @@ export default function AllGames() {
                             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
                                 {isLoggedIn ? <>
                                     <div>
-                                        {cartItems.some(item => item.game?._id === game?._id) || isPurchased ? (
+                                        {(isPurchased || cartItems.some(item => item.game?._id === game?._id)) ? (
                                             <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w- rounded-full">
                                                 <span className="text-white font-bold text-sm">✓</span>
                                             </div>
@@ -778,9 +797,9 @@ export default function AllGames() {
                                         )}
                                     </div>
                                     <span className="text-white font-bold ms:text-sm text-xs tracking-wider uppercase">
-                                        {cartItems.some(item => item.game?._id === game?._id)
-                                            ? (isPurchased ? "Purchased" : "Added to Cart")
-                                            : (isPurchased ? "Purchased" : "Add to Cart")}
+                                        {isPurchased
+                                            ? "Purchased"
+                                            : (cartItems.some(item => item.game?._id === game?._id) ? "Added to Cart" : "Add to Cart")}
                                     </span>
                                 </> : <span className="text-white font-bold ms:text-sm text-xs tracking-wider uppercase">
                                     Login to add
@@ -914,6 +933,16 @@ export default function AllGames() {
                     </div>
                 )}
             </div>
+            <PlatformSelectionModal
+                open={Boolean(platformModalGame)}
+                gameTitle={platformModalGame?.title}
+                onClose={closePlatformModal}
+                selectedPlatforms={selectedPlatforms}
+                onPlatformToggle={handlePlatformToggle}
+                onConfirm={confirmPlatformSelection}
+                addedPlatforms={selectedGamePlatforms}
+                isSubmitting={isSubmittingPlatforms}
+            />
         </>
     );
 }

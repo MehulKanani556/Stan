@@ -15,10 +15,12 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { getAllCategories, getAllGames, getAllActiveGames } from '../Redux/Slice/game.slice';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice';
-import { addToCart, fetchCart } from '../Redux/Slice/cart.slice';
+import { fetchCart } from '../Redux/Slice/cart.slice';
 import HomeSlider from '../components/HomeSlider';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { allorders } from '../Redux/Slice/Payment.slice';
+import PlatformSelectionModal from '../components/PlatformSelectionModal';
+import usePlatformSelection from '../hooks/usePlatformSelection';
 
 // Constants
 const SWIPER_BREAKPOINTS = {
@@ -129,7 +131,8 @@ const GameCard = ({
   isInWishlist,
   isInCart,
   orders,
-  isLoggedIn
+  isLoggedIn,
+  addedPlatforms = []
 }) => {
   const navigate = useNavigate();
   const ordersList = Array.isArray(orders) ? orders : [];
@@ -140,6 +143,8 @@ const GameCard = ({
     ),
     [orders, game?._id]
   )
+
+  const disableCartAction = isLoggedIn && (isPurchased || isInCart);
 
   return (
     <div
@@ -232,7 +237,7 @@ const GameCard = ({
             </div>
           </div>
 
-          {/* Action Button */}
+        {/* Action Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -241,16 +246,16 @@ const GameCard = ({
                 :
                 navigate('/login')
             }}
-            disabled={isInCart || isPurchased}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isInCart || isPurchased) && isLoggedIn
-              ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
-              : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
-              }`}
+          disabled={disableCartAction}
+          className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${disableCartAction
+            ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
+            : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
+            }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
               {isLoggedIn ? <>
                 <div >
-                  {isInCart || isPurchased ? (
+                {(isPurchased || isInCart) ? (
                     <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w-4 rounded-full">
                       <span className="text-white font-bold text-sm">✓</span>
                     </div>
@@ -259,9 +264,9 @@ const GameCard = ({
                   )}
                 </div>
                 <span className="text-white font-bold  tracking-wider uppercase ms:text-sm text-xs" >
-                  {isInCart
-                    ? (isPurchased ? "Purchased" : "Added to Cart")
-                    : (isPurchased ? "Purchased" : "Add to Cart")}
+                {isPurchased
+                  ? "Purchased"
+                  : (isInCart ? "Added to Cart" : "Add to Cart")}
                 </span>
               </> : <span className="text-white font-bold ms:text-sm text-xs tracking-wider uppercase">
                 Login to add
@@ -269,7 +274,7 @@ const GameCard = ({
             </div>
 
             {/* Button Effects */}
-            {!isInCart && !isPurchased && (
+          {!disableCartAction && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -331,7 +336,24 @@ export default function Home() {
     shallowEqual
   );
   const { wishlistStatus } = useSelector((state) => state.wishlist);
-  const cartItems = useSelector((state) => state.cart.cart);
+
+  const {
+    openPlatformModal,
+    closePlatformModal,
+    handlePlatformToggle,
+    handleConfirmPlatforms: confirmPlatformSelection,
+    selectedPlatforms,
+    isSubmittingPlatforms,
+    platformModalGame,
+    selectedGamePlatforms,
+    cartPlatformsByGame
+  } = usePlatformSelection({
+    onSuccess: (game) => {
+      setAddedGameTitle(game.title);
+      setShowAddedToCart(true);
+      setTimeout(() => setShowAddedToCart(false), 3000);
+    }
+  });
 
   // Add pagination state from Redux
   const pagination = useSelector((state) => state.game.pagination);
@@ -388,11 +410,8 @@ export default function Home() {
   }, [dispatch, wishlistStatus]);
 
   const handleAddToCart = useCallback((game) => {
-    dispatch(addToCart({ gameId: game._id, platform: "windows", qty: 1 }));
-    setAddedGameTitle(game.title);
-    setShowAddedToCart(true);
-    setTimeout(() => setShowAddedToCart(false), 3000);
-  }, [dispatch]);
+    openPlatformModal(game);
+  }, [openPlatformModal]);
 
   const updateSwiperStates = useCallback((swiper) => {
     if (swiper) {
@@ -492,10 +511,10 @@ export default function Home() {
 
   return (
     <>
-      {/* <NotificationToast
+      <NotificationToast
         show={showAddedToCart}
         message={`${addedGameTitle} added to cart!`}
-      /> */}
+      />
 
       <section className="relative">
         {/* Responsive Ad Images */}
@@ -602,22 +621,24 @@ export default function Home() {
                   onSlideChange={updateSwiperStates}
                   onResize={updateSwiperStates}
                 >
-                  {filteredGames.map((game) => (
-                    <SwiperSlide key={game._id}>
-                      <GameCard
-                        game={game}
-                        onGameClick={handleGameClick}
-                        onWishlistToggle={handleWishlistToggle}
-                        onAddToCart={handleAddToCart}
-                        isInWishlist={wishlistStatus[game._id]}
-                        isInCart={cartItems.some(
-                          (item) => item.game?._id === game._id
-                        )}
-                        orders={orders}
-                        isLoggedIn={isLoggedIn}
-                      />
-                    </SwiperSlide>
-                  ))}
+                  {filteredGames.map((game) => {
+                    const platformsForGame = cartPlatformsByGame[game._id] || [];
+                    return (
+                      <SwiperSlide key={game._id}>
+                        <GameCard
+                          game={game}
+                          onGameClick={handleGameClick}
+                          onWishlistToggle={handleWishlistToggle}
+                          onAddToCart={handleAddToCart}
+                          isInWishlist={wishlistStatus[game._id]}
+                          isInCart={platformsForGame.length > 0}
+                          addedPlatforms={platformsForGame}
+                          orders={orders}
+                          isLoggedIn={isLoggedIn}
+                        />
+                      </SwiperSlide>
+                    );
+                  })}
                 </Swiper>
               ) : (
                 <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
@@ -678,6 +699,17 @@ export default function Home() {
       <MultiHome />
       <Trailer />
       <ReviewHome />
+
+      <PlatformSelectionModal
+        open={Boolean(platformModalGame)}
+        gameTitle={platformModalGame?.title}
+        onClose={closePlatformModal}
+        selectedPlatforms={selectedPlatforms}
+        onPlatformToggle={handlePlatformToggle}
+        onConfirm={confirmPlatformSelection}
+        addedPlatforms={selectedGamePlatforms}
+        isSubmitting={isSubmittingPlatforms}
+      />
     </>
   );
 }

@@ -4,16 +4,29 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
 import { useNavigate } from "react-router-dom";
-import { addToCart, fetchCart, removeFromCart } from "../Redux/Slice/cart.slice";
+import { fetchCart } from "../Redux/Slice/cart.slice";
 
 import { WishlistSkeletonCard, WishlistSkeletonSummary } from "../lazyLoader/WishlistSkeleton";
 import Advertize from "../components/Advertize";
+import PlatformSelectionModal from "../components/PlatformSelectionModal";
+import usePlatformSelection from "../hooks/usePlatformSelection";
 
 const Wishlist = () => {
   const { items, loading } = useSelector((state) => state.wishlist);
   const cartItems = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const {
+    openPlatformModal,
+    closePlatformModal,
+    handlePlatformToggle,
+    handleConfirmPlatforms: confirmPlatformSelection,
+    selectedPlatforms,
+    isSubmittingPlatforms,
+    platformModalGame,
+    selectedGamePlatforms
+  } = usePlatformSelection();
 
   useEffect(() => {
     dispatch(fetchWishlist());
@@ -24,10 +37,9 @@ const Wishlist = () => {
     dispatch(removeFromWishlist({ gameId: id }));
   };
 
-  const handleAddToCart = (ele) => {
-
-    dispatch(addToCart({ gameId: ele.game._id, platform: "windows", qty: 1 }));
-  }
+  const handleAddToCart = (game) => {
+    openPlatformModal(game);
+  };
   // const handleRemoveFromCart = (gameId) => {
   //   dispatch(removeFromCart({ gameId: gameId._id, platform: "windows" }));
   // };
@@ -102,22 +114,20 @@ const Wishlist = () => {
                         {/* ADD TO CART */}
                         {(() => {
                           const isInCart = cartItems.some(cartItem => cartItem?.game?._id === item.game?._id);
+                          const buttonLabel = isInCart ? "Add more platforms" : "Add to cart";
+                          const buttonStyles = isInCart
+                            ? "bg-purple-900/40 text-purple-200 hover:bg-purple-900/60"
+                            : "bg-gradient-to-r from-purple-600 to-indigo-500 text-white hover:scale-105";
                           return (
                             <button
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                handleAddToCart(item)
+                                handleAddToCart(item.game);
                               }}
-                              className={`px-5 py-2 rounded-lg text-sm shadow-md font-semibold transition
-                              ${isInCart
-                                  ? "bg-gray-500 text-gray-300 cursor-not-allowed"
-                                  : "bg-gradient-to-r from-purple-600 to-indigo-500 text-white hover:scale-105"
-                                }`
-                              }
-                              disabled={isInCart}
+                              className={`px-5 py-2 rounded-lg text-sm shadow-md font-semibold transition ${buttonStyles}`}
                             >
-                              {isInCart ? "Added in cart" : "Add to cart"}
+                              {buttonLabel}
                             </button>
                           );
                         })()}
@@ -166,6 +176,16 @@ const Wishlist = () => {
           )}
         </div>
       </div>
+      <PlatformSelectionModal
+        open={Boolean(platformModalGame)}
+        gameTitle={platformModalGame?.title}
+        onClose={closePlatformModal}
+        selectedPlatforms={selectedPlatforms}
+        onPlatformToggle={handlePlatformToggle}
+        onConfirm={confirmPlatformSelection}
+        addedPlatforms={selectedGamePlatforms}
+        isSubmitting={isSubmittingPlatforms}
+      />
     </>
   );
 };
