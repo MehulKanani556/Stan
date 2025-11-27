@@ -3,7 +3,7 @@ import { ThrowError } from "../utils/ErrorUtils.js";
 import fs from "fs";
 import Game from "../models/Games.model.js";
 import Subscribe from "../models/Subscribe.model.js";
-import sendMail from "../utils/sendMail.js";
+import sendMail from "../helper/sendMail.js";
 import { fileupload, deleteFile } from "../helper/cloudinary.js";
 import CategoryModel from "../models/Category.model.js";
 
