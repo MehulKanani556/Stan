@@ -19,6 +19,8 @@ import { allorders } from '../Redux/Slice/Payment.slice';
 import LazyGameCard from '../lazyLoader/LazyGameCard';
 import StoreSlider from '../components/StoreSlider';
 import Advertize from '../components/Advertize';
+import PlatformSelectionModal from '../components/PlatformSelectionModal';
+import usePlatformSelection from '../hooks/usePlatformSelection';
 
 // Constants
 const SWIPER_CONFIG = {
@@ -150,8 +152,15 @@ const useGameActions = () => {
 };
 
 // Game Card Component - Memoized for better performance
-const GameCard = ({ game, onNavigate, gameActions }) => {
-  const { handleAddToCart, handleAddWishlist, handleRemoveFromWishlist, isInCart, isInWishlist, isPurchased } = gameActions;
+const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
+  const {
+    handleAddToCart,
+    handleAddWishlist,
+    handleRemoveFromWishlist,
+    isInCart,
+    isInWishlist,
+    isPurchased
+  } = gameActions || {};
   const navigate = useNavigate();
 
   const isNewGame = useMemo(() => {
@@ -173,6 +182,9 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
   const { user: authUser } = useSelector((state) => state.auth);
 
   const isLoggedIn = Boolean(authUser?._id || currentUser?._id || localStorage.getItem("userId"));
+
+  const addToCartHandler = onAddToCart || handleAddToCart;
+  const disableCartAction = isLoggedIn && (purchased || inCart);
 
   return (
     <div
@@ -264,12 +276,14 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              isLoggedIn ?
-                handleAddToCart(game)
-                : navigate('/login')
+              if (!isLoggedIn) {
+                navigate('/login');
+                return;
+              }
+              addToCartHandler?.(game);
             }}
-            disabled={inCart}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(inCart || purchased) && isLoggedIn
+            disabled={disableCartAction}
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${disableCartAction
               ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
               : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
               }`}
@@ -277,18 +291,18 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
               {isLoggedIn ? <>
                 <div>
-                  {inCart ? (
-                    <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w-4  bg-white rounded-full">
-                      <span className="text-emerald-600 font-bold text-sm">✓</span>
+                  {(purchased || inCart) ? (
+                    <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w-4 rounded-full">
+                      <span className="text-white font-bold text-sm">✓</span>
                     </div>
                   ) : (
                     <FaShoppingCart className="text-white md:w-6 ms:h-6 h-4 w-4 " />
                   )}
                 </div>
                 <span className="text-white font-bold text-sm tracking-wider uppercase ms:text-sm text-xs">
-                  {inCart
-                    ? (purchased ? "Purchased" : "Added to Cart")
-                    : (purchased ? "Purchased" : "Add to Cart")}
+                  {purchased
+                    ? "Purchased"
+                    : (inCart ? "Added to Cart" : "Add to Cart")}
                 </span>
               </> : <span className="text-white font-bold text-sm tracking-wider uppercase ms:text-sm text-xs">
                 Login to add
@@ -297,7 +311,7 @@ const GameCard = ({ game, onNavigate, gameActions }) => {
             </div>
 
             {/* Button Effects */}
-            {!(inCart || purchased) && (
+            {!disableCartAction && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -357,7 +371,7 @@ const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning,
 );
 
 // Main Swiper Section Component
-const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
+const SwiperSection = ({ title, games = [], gameActions, onNavigate, onAddToCart }) => {
   const { isBeginning, isEnd, swiperRef, swiperEvents } = useSwiperNavigation();
   const navigate = useNavigate();
 
@@ -422,6 +436,7 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate }) => {
               game={game}
               onNavigate={onNavigate}
               gameActions={gameActions}
+              onAddToCart={onAddToCart}
             />
             {/* </LazyGameCard> */}
           </SwiperSlide>
@@ -442,6 +457,16 @@ const Store = () => {
   // Custom hooks
   const gameActions = useGameActions();
   const featuredNavigation = useSwiperNavigation();
+  const {
+    openPlatformModal,
+    closePlatformModal,
+    handlePlatformToggle,
+    handleConfirmPlatforms: confirmPlatformSelection,
+    selectedPlatforms,
+    isSubmittingPlatforms,
+    platformModalGame,
+    selectedGamePlatforms
+  } = usePlatformSelection();
 
   // Memoized filtered games - Optimized version
   const actionGames = useMemo(() => {
@@ -574,6 +599,7 @@ const Store = () => {
   }
 
   return (
+    <>
     <section>
       <StoreSlider />
       <Advertize limitImages={true}/>
@@ -585,6 +611,7 @@ const Store = () => {
             games={Array.isArray(games) ? games.slice(0, 12) : []} // Limit initial display
             gameActions={gameActions}
             onNavigate={handleNavigate}
+            onAddToCart={openPlatformModal}
           />
 
           <SwiperNavigation
@@ -622,6 +649,7 @@ const Store = () => {
                     game={game}
                     onNavigate={handleNavigate}
                     gameActions={gameActions}
+                    onAddToCart={openPlatformModal}
                   />
                   {/* </LazyGameCard> */}
                 </SwiperSlide>
@@ -643,6 +671,7 @@ const Store = () => {
           games={Array.isArray(trendingGames) ? trendingGames : []}
           gameActions={gameActions}
           onNavigate={handleNavigate}
+          onAddToCart={openPlatformModal}
         />
 
         <SwiperSection
@@ -650,6 +679,7 @@ const Store = () => {
           games={Array.isArray(popularGames) ? popularGames : []}
           gameActions={gameActions}
           onNavigate={handleNavigate}
+          onAddToCart={openPlatformModal}
         />
 
         <SwiperSection
@@ -657,6 +687,7 @@ const Store = () => {
           games={Array.isArray(actionGames) && actionGames.length > 0 ? actionGames : (Array.isArray(games) ? games.slice(0, 8) : [])}
           gameActions={gameActions}
           onNavigate={handleNavigate}
+          onAddToCart={openPlatformModal}
         />
 
         <SwiperSection
@@ -664,9 +695,21 @@ const Store = () => {
           games={Array.isArray(topGames) ? topGames : []}
           gameActions={gameActions}
           onNavigate={handleNavigate}
+          onAddToCart={openPlatformModal}
         />
       </div>
     </section>
+    <PlatformSelectionModal
+      open={Boolean(platformModalGame)}
+      gameTitle={platformModalGame?.title}
+      onClose={closePlatformModal}
+      selectedPlatforms={selectedPlatforms}
+      onPlatformToggle={handlePlatformToggle}
+      onConfirm={confirmPlatformSelection}
+      addedPlatforms={selectedGamePlatforms}
+      isSubmitting={isSubmittingPlatforms}
+    />
+    </>
   );
 };
 

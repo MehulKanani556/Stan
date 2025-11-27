@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { FaWindows } from "react-icons/fa";
+import { FaWindows, FaPlaystation, FaXbox, FaApple, FaSteamSymbol } from "react-icons/fa";
+import { SiOculus, SiNintendoswitch } from "react-icons/si";
 import { MdWorkspacePremium } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
@@ -21,6 +22,19 @@ import { fanCoinsuse, getUserById } from '../Redux/Slice/user.slice';
 import Advertize from "../components/Advertize";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
+const PLATFORM_META = {
+    visionPro: { label: 'Vision Pro', icon: FaApple },
+    windows: { label: 'PC', icon: FaWindows },
+    ps5: { label: 'PS 5', icon: FaPlaystation },
+    xbox: { label: 'X Box', icon: FaXbox },
+    quest: { label: 'Quest', icon: SiOculus },
+    switch1: { label: 'Nintendo Switch 1', icon: SiNintendoswitch },
+    switch2: { label: 'Nintendo Switch 2', icon: SiNintendoswitch },
+    default: { label: 'Platform', icon: FaSteamSymbol }
+};
+
+const getPlatformMeta = (platform) => PLATFORM_META[platform] || PLATFORM_META.default;
 
 const Cart = () => {
     const dispatch = useDispatch();
@@ -93,7 +107,7 @@ const Cart = () => {
         // alert(id)
         // console.log("aaa", item);
 
-        dispatch(removeFromCart({ gameId: item.game._id, platform: "windows" }));
+        dispatch(removeFromCart({ gameId: item.game._id, platform: item?.platform || "windows" }));
     };
 
     const handleClearCart = () => {
@@ -222,9 +236,12 @@ const Cart = () => {
                                 ))}
                             </>
                         ) : cartItems.length > 0 ? (
-                            cartItems.map((item) => (
+                            cartItems.map((item) => {
+                                const platformMeta = getPlatformMeta(item?.platform);
+                                const PlatformIcon = platformMeta.icon;
+                                return (
                                 <div
-                                    key={item.game._id}
+                                    key={`${item.game?._id || item._id}-${item.platform}`}
                                     onClick={() => navigate(`/single/${item.game._id}`)}
                                     className="bg-black/15 border border-white/10 p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6"
                                 >
@@ -244,8 +261,9 @@ const Cart = () => {
 
                                             <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">{item.game.title}</h2>
 
-                                            <span className="text-gray-400 flex items-center gap-2 text-sm">
-                                                <FaWindows /> Playable on PC
+                                            <span className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full w-fit mt-2">
+                                                <PlatformIcon className="text-purple-300" />
+                                                <span className="font-semibold">{platformMeta.label}</span>
                                             </span>
 
                                         </div>
@@ -259,7 +277,7 @@ const Cart = () => {
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
-                                                        handleRemove(item);
+                                                    handleRemove(item);
                                                     }}
                                                     className="text-red-400 hover:text-red-500 transition text-xl lg:mr-4"
                                                 >
@@ -272,8 +290,7 @@ const Cart = () => {
                                         </div>
                                     </div>
                                 </div>
-
-                            ))
+                            );})
                         ) : (
                             <div className="flex flex-col items-center justify-center text-center py-20 bg-black/15 rounded-2xl">
                                 <p className="text-2xl font-semibold text-gray-300 mb-4">🛒 Your cart is empty</p>

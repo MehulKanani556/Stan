@@ -44,8 +44,42 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import SingleGameSkeleton from "../lazyLoader/SingleGameSkeleton";
 import { fanCoinsuse } from "../Redux/Slice/user.slice";
 import { getUserById } from "../Redux/Slice/user.slice";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
+import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt, FaWindows } from 'react-icons/fa'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+import Slider from 'react-slick'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { getGameById, getGameRating } from '../Redux/Slice/game.slice'
+import { GoDotFill } from "react-icons/go"
+import { fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
+import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
+import { allorders, createOrder } from '../Redux/Slice/Payment.slice'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements } from '@stripe/react-stripe-js'
+import PaymentForm from './PaymentForm'
+import ReviewForm from './ReviewForm'
+import { MdDateRange } from "react-icons/md"
+import { decryptData } from "../Utils/encryption"
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
+import SingleGameSkeleton from '../lazyLoader/SingleGameSkeleton'
+import { fanCoinsuse } from '../Redux/Slice/user.slice'
+import { getUserById } from '../Redux/Slice/user.slice'
+import PlatformSelectionModal from './PlatformSelectionModal'
+import usePlatformSelection from '../hooks/usePlatformSelection'
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
+const PLATFORM_LABELS = {
+  visionPro: 'Vision Pro',
+  windows: 'PC',
+  ps5: 'PS 5',
+  xbox: 'X Box',
+  quest: 'Quest',
+  switch1: 'Nintendo Switch 1',
+  switch2: 'Nintendo Switch 2'
+}
 
 // Custom hooks
 const useResponsiveSlides = () => {
@@ -292,6 +326,9 @@ const SingleGame = () => {
   const [useFanCoinsChecked, setUseFanCoinsChecked] = useState(false);
   const [fanCoinsToUse, setFanCoinsToUse] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
+  const [isBuyPlatformModalOpen, setIsBuyPlatformModalOpen] = useState(false)
+  const [buySelectedPlatforms, setBuySelectedPlatforms] = useState([])
+  const [selectedPurchasePlatform, setSelectedPurchasePlatform] = useState(null)
 
   const { currentUser } = useSelector((state) => state.user);
   const { user: authUser } = useSelector((state) => state.auth);
@@ -301,6 +338,29 @@ const SingleGame = () => {
     authUser?._id || currentUser?._id || localStorage.getItem("userId")
   );
 
+
+    // Selectors
+    const single = useSelector((state) => state?.game?.singleGame)
+    const { loading: gameLoading } = useSelector((state) => state?.game)
+    const cartItems = useSelector((state) => state.cart.cart)
+    const { wishlistStatus } = useSelector((state) => state.wishlist)
+    const gameRating = useSelector((state) => state?.game?.singleGameReview?.data)
+    const { orders, loading: ordersLoading } = useSelector((state) => state.payment)
+
+    
+  const {
+    openPlatformModal,
+    closePlatformModal,
+    handlePlatformToggle,
+    handleConfirmPlatforms: confirmPlatformSelection,
+    selectedPlatforms,
+    isSubmittingPlatforms,
+    platformModalGame,
+    selectedGamePlatforms,
+    cartPlatformsByGame
+  } = usePlatformSelection();
+  const singleGameCartPlatforms = cartPlatformsByGame[single?._id] || [];
+
   // Custom hooks
   const slidesToShow = useResponsiveSlides();
 
@@ -309,16 +369,7 @@ const SingleGame = () => {
   const dispatch = useDispatch();
 
   // Selectors
-  const single = useSelector((state) => state?.game?.singleGame);
-  const { loading: gameLoading } = useSelector((state) => state?.game);
-  const cartItems = useSelector((state) => state.cart.cart);
-  const { wishlistStatus } = useSelector((state) => state.wishlist);
-  const gameRating = useSelector(
-    (state) => state?.game?.singleGameReview?.data
-  );
-  const { orders, loading: ordersLoading } = useSelector(
-    (state) => state.payment
-  );
+
 
   // Computed values
   const ratings = useMemo(() => single?.reviews || [], [single?.reviews]);
@@ -344,11 +395,42 @@ const SingleGame = () => {
   );
 
   // Reset states when game price changes
+  const getPlatformPrice = useCallback((platformKey) => {
+    if (!single?.platforms) return 0
+    if (platformKey && single.platforms[platformKey]?.price != null) {
+      return single.platforms[platformKey].price
+    }
+    if (single.platforms.windows?.price != null) {
+      return single.platforms.windows.price
+    }
+    return 0
+  }, [single])
+
+  const getPlatformLabel = useCallback((platformKey) => {
+    if (!platformKey) return 'PC'
+    return PLATFORM_LABELS[platformKey] || platformKey
+  }, [])
+
   useEffect(() => {
-    setUseFanCoinsChecked(false);
-    setFanCoinsToUse(0);
-    setFinalAmount(single?.platforms?.windows?.price || 0);
-  }, [single?.platforms?.windows?.price]);
+    setSelectedPurchasePlatform('windows')
+  }, [single?._id])
+
+  useEffect(() => {
+    const price = getPlatformPrice(selectedPurchasePlatform)
+    setUseFanCoinsChecked(false)
+    setFanCoinsToUse(0)
+    setFinalAmount(price)
+  }, [getPlatformPrice, selectedPurchasePlatform])
+
+  const selectedPlatformLabel = useMemo(
+    () => getPlatformLabel(selectedPurchasePlatform || 'windows'),
+    [getPlatformLabel, selectedPurchasePlatform]
+  )
+
+  const selectedPlatformPrice = useMemo(
+    () => getPlatformPrice(selectedPurchasePlatform || 'windows'),
+    [getPlatformPrice, selectedPurchasePlatform]
+  )
 
   // Handle fan coin checkbox change
   const handleFanCoinCheckboxChange = useCallback(
@@ -368,21 +450,19 @@ const SingleGame = () => {
 
       setUseFanCoinsChecked(checked);
 
-      const gamePrice = single?.platforms?.windows?.price || 0;
+    const gamePrice = getPlatformPrice(selectedPurchasePlatform)
 
       if (checked) {
         // Calculate maximum applicable Fan Coins
         const maxApplicableCoins = Math.min(fanCoins, gamePrice);
 
-        setFanCoinsToUse(maxApplicableCoins);
-        setFinalAmount(Math.max(0, gamePrice - maxApplicableCoins));
-      } else {
-        setFanCoinsToUse(0);
-        setFinalAmount(gamePrice);
-      }
-    },
-    [authUser, fanCoins, single?.platforms?.windows?.price]
-  );
+      setFanCoinsToUse(maxApplicableCoins)
+      setFinalAmount(Math.max(0, gamePrice - maxApplicableCoins))
+    } else {
+      setFanCoinsToUse(0)
+      setFinalAmount(gamePrice)
+    }
+  }, [authUser, fanCoins, getPlatformPrice, selectedPurchasePlatform, isLoggedIn])
 
   // Effects
   useEffect(() => {
@@ -435,12 +515,35 @@ const SingleGame = () => {
     });
   }, []);
 
-  const handleAddToCart = useCallback(
-    (game) => {
-      dispatch(addToCart({ gameId: game._id, platform: "windows", qty: 1 }));
-    },
-    [dispatch]
-  );
+  const handleAddToCart = useCallback((game) => {
+    if (!isLoggedIn) {
+      navigate('/login')
+      return
+    }
+    openPlatformModal(game)
+  }, [isLoggedIn, navigate, openPlatformModal])
+
+  const handleOpenBuyPlatformModal = useCallback(() => {
+    if (!isLoggedIn) {
+      navigate('/login')
+      return
+    }
+    setShowOrderSummary(false)
+    setBuySelectedPlatforms(selectedPurchasePlatform ? [selectedPurchasePlatform] : [])
+    setIsBuyPlatformModalOpen(true)
+  }, [isLoggedIn, navigate, selectedPurchasePlatform])
+
+  const handleConfirmBuyPlatform = useCallback(() => {
+    if (!buySelectedPlatforms.length) return
+    const chosenPlatform = buySelectedPlatforms[0]
+    setSelectedPurchasePlatform(chosenPlatform)
+    const price = getPlatformPrice(chosenPlatform)
+    setUseFanCoinsChecked(false)
+    setFanCoinsToUse(0)
+    setFinalAmount(price)
+    setIsBuyPlatformModalOpen(false)
+    setShowOrderSummary(true)
+  }, [buySelectedPlatforms, getPlatformPrice])
 
   const handleAddWishlist = useCallback(
     (game) => {
@@ -456,54 +559,16 @@ const SingleGame = () => {
     [dispatch]
   );
 
-  const handleCheckout = useCallback(async () => {
-    if (!single || !single._id) {
-      console.error("Game data is not available for checkout.");
-      return;
-    }
-
-    try {
-      const resultAction = await dispatch(
-        createOrder({
-          items: [
-            {
-              game: single._id,
-              name: single.title,
-              platform: "windows",
-              price: Number(single.platforms?.windows?.price || 0),
-            },
-          ],
-          amount: finalAmount, // Use final amount after fan coins
-          fanCoinsUsed: fanCoinsToUse || 0,
-          fanCoinDiscount: fanCoinsToUse || 0,
-        })
-      );
-
-      if (createOrder.fulfilled.match(resultAction)) {
-        const { order } = resultAction.payload;
-
-        setCurrentOrderId(order._id);
-        setAmountToPay(finalAmount);
-        // setShowOrderSummary(true)
-        handleProceedToPayment();
-      }
-    } catch (error) {
-      console.error("Checkout failed:", error);
-    }
-  }, [dispatch, single, finalAmount, fanCoinsToUse]);
-
   const handleProceedToPayment = useCallback(async () => {
     // If fan coins are selected, apply them
 
     if (useFanCoinsChecked && fanCoinsToUse > 0 && currentUser?._id) {
       try {
-        const fanCoinResult = await dispatch(
-          fanCoinsuse({
-            userId: currentUser._id,
-            gamePrice: single?.platforms?.windows?.price || 0,
-            fanCoinsToUse: fanCoinsToUse,
-          })
-        );
+        const fanCoinResult = await dispatch(fanCoinsuse({
+          userId: currentUser._id,
+          gamePrice: getPlatformPrice(selectedPurchasePlatform),
+          fanCoinsToUse: fanCoinsToUse
+        }))
 
         if (fanCoinResult.type === "user/fanCoinsuse/fulfilled") {
           console.log("Fan coins applied successfully:", fanCoinResult.payload);
@@ -515,43 +580,70 @@ const SingleGame = () => {
           console.error("Failed to apply Fan Coins", fanCoinResult);
           alert("Failed to apply Fan Coins. Proceeding with original amount.");
           // Reset fan coin states on failure
-          setUseFanCoinsChecked(false);
-          setFanCoinsToUse(0);
-          setFinalAmount(single?.platforms?.windows?.price || 0);
+          setUseFanCoinsChecked(false)
+          setFanCoinsToUse(0)
+          setFinalAmount(getPlatformPrice(selectedPurchasePlatform))
         }
       } catch (error) {
         console.error("Failed to use fan coins:", error);
         alert("Failed to apply Fan Coins. Proceeding with original amount.");
         // Reset fan coin states on error
-        setUseFanCoinsChecked(false);
-        setFanCoinsToUse(0);
-        setFinalAmount(single?.platforms?.windows?.price || 0);
+        setUseFanCoinsChecked(false)
+        setFanCoinsToUse(0)
+        setFinalAmount(getPlatformPrice(selectedPurchasePlatform))
       }
     }
 
-    setShowOrderSummary(false);
-    setShowPaymentForm(true);
-  }, [
-    dispatch,
-    authUser,
-    single,
-    useFanCoinsChecked,
-    fanCoinsToUse,
-    finalAmount,
-  ]);
+    setShowOrderSummary(false)
+    setShowPaymentForm(true)
+  }, [dispatch, currentUser, useFanCoinsChecked, fanCoinsToUse, selectedPurchasePlatform, getPlatformPrice])
+
+  const handleCheckout = useCallback(async () => {
+    if (!single || !single._id) {
+      console.error("Game data is not available for checkout.")
+      return
+    }
+
+    const platformKey = selectedPurchasePlatform || 'windows'
+    const basePrice = Number(getPlatformPrice(platformKey) || 0)
+
+    try {
+      const resultAction = await dispatch(createOrder({
+        items: [{
+          game: single._id,
+          name: single.title,
+          platform: platformKey,
+          price: basePrice,
+        }],
+        amount: finalAmount, // Use final amount after fan coins
+        fanCoinsUsed: fanCoinsToUse || 0,
+        fanCoinDiscount: fanCoinsToUse || 0
+      }))
+
+      if (createOrder.fulfilled.match(resultAction)) {
+        const {  order } = resultAction.payload
+  
+        setCurrentOrderId(order._id)
+        setAmountToPay(finalAmount)
+        handleProceedToPayment()
+      }
+    } catch (error) {
+      console.error("Checkout failed:", error)
+    }
+  }, [dispatch, single, finalAmount, fanCoinsToUse, selectedPurchasePlatform, getPlatformPrice, handleProceedToPayment])
 
   const handlePaymentSuccess = useCallback(() => {
-    setShowPaymentForm(false);
-    setClientSecret("");
-    setCurrentOrderId(null);
-    setAmountToPay(0);
-    setUseFanCoinsChecked(false);
-    setFanCoinsToUse(0);
-    setFinalAmount(0);
-    if (isInCart) {
-      dispatch(removeFromCart({ gameId: id, platform: "windows" }));
+    setShowPaymentForm(false)
+    setClientSecret("")
+    setCurrentOrderId(null)
+    setAmountToPay(0)
+    setUseFanCoinsChecked(false)
+    setFanCoinsToUse(0)
+    setFinalAmount(getPlatformPrice(selectedPurchasePlatform))
+    if(isInCart){
+      dispatch(removeFromCart({gameId:id,platform:selectedPurchasePlatform || "windows"}))
     }
-  }, []);
+  }, [dispatch, id, isInCart, selectedPurchasePlatform, getPlatformPrice])
 
   // Slider settings
   const mainSettings = useMemo(
@@ -757,12 +849,12 @@ const SingleGame = () => {
 
               {/* Price */}
               <div className="flex mb-6">
-                <p className="text-xs font-bold text-white">
-                  Price{" "}
-                  <strong className="text-xl font-bold text-white">
-                    ${single?.platforms?.windows?.price}
-                  </strong>
-                </p>
+                <div>
+                  <p className="text-xs font-bold text-gray-300">Selected Platform</p>
+                  <p className="text-sm font-semibold text-white">
+                    {selectedPlatformLabel} • ${selectedPlatformPrice?.toFixed(2)}
+                  </p>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -801,37 +893,23 @@ const SingleGame = () => {
                     )}
 
                     {/* Cart Button */}
-                    {!isBuyed ? (
-                      isInCart ? (
-                        <button
-                          disabled
-                          className="w-full flex items-center justify-center gap-2 
+                    {!isBuyed && (
+                      <button
+                        onClick={() => handleAddToCart(single)}
+                        disabled={isInCart}
+                        className={`w-full flex items-center justify-center gap-2 
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
                     active:scale-95 focus-visible:outline-none 
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                        >
-                          <FaShoppingCart size={16} />
-                          <span className="text-xs">Added to cart</span>
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleAddToCart(single)}
-                          className="w-full flex items-center justify-center gap-2 
-                                font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-                        >
-                          <FaShoppingCart size={16} />
-                          <span className="text-xs">Add To Cart</span>
-                        </button>
-                      )
-                    ) : null}
+                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${isInCart ? 'opacity-70 cursor-not-allowed' : ''}`}
+                      >
+                        <FaShoppingCart size={16} />
+                        <span className="text-xs">{isInCart ? 'Added to cart' : 'Add To Cart'}</span>
+                      </button>
+                    )}
+               
                   </div>
 
                   {/* Purchase/Review Buttons */}
@@ -867,7 +945,7 @@ const SingleGame = () => {
                     </>
                   ) : (
                     <button
-                      onClick={() => setShowOrderSummary(true)}
+                      onClick={handleOpenBuyPlatformModal}
                       className="w-full cursor-pointer 
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
@@ -948,12 +1026,8 @@ const SingleGame = () => {
                             className="w-16 h-16 object-cover rounded"
                           />
                           <div>
-                            <h4 className="text-white font-semibold">
-                              {single?.title}
-                            </h4>
-                            <p className="text-gray-400 text-sm">
-                              Windows Platform
-                            </p>
+                            <h4 className="text-white font-semibold">{single?.title}</h4>
+                            <p className="text-gray-400 text-sm">{selectedPlatformLabel}</p>
                           </div>
                         </div>
                         <p className="text-white font-bold">
@@ -963,9 +1037,7 @@ const SingleGame = () => {
                       <div className="border-t border-gray-700 pt-4">
                         <div className="flex justify-between text-gray-400">
                           <span>Subtotal</span>
-                          <span>
-                            ${single?.platforms?.windows?.price?.toFixed(2)}
-                          </span>
+                          <span>${selectedPlatformPrice?.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-gray-400 mt-2">
                           <span>Tax</span>
@@ -1026,14 +1098,9 @@ const SingleGame = () => {
                                 type="number"
                                 value={fanCoinsToUse}
                                 onChange={(e) => {
-                                  const inputValue =
-                                    parseFloat(e.target.value) || 0;
-                                  const gamePrice =
-                                    single?.platforms?.windows?.price || 0;
-                                  const maxApplicableCoins = Math.min(
-                                    fanCoins,
-                                    gamePrice
-                                  );
+                                  const inputValue = parseFloat(e.target.value) || 0;
+                                  const gamePrice = getPlatformPrice(selectedPurchasePlatform);
+                                  const maxApplicableCoins = Math.min(fanCoins, gamePrice);
 
                                   // Validate input: cannot exceed available fan coins or game price
                                   const validatedCoins = Math.max(
@@ -1049,18 +1116,10 @@ const SingleGame = () => {
                                 }}
                                 onBlur={(e) => {
                                   // On blur, ensure the input field shows the validated value
-                                  const inputValue =
-                                    parseFloat(e.target.value) || 0;
-                                  const gamePrice =
-                                    single?.platforms?.windows?.price || 0;
-                                  const maxApplicableCoins = Math.min(
-                                    fanCoins,
-                                    gamePrice
-                                  );
-                                  const validatedCoins = Math.max(
-                                    0,
-                                    Math.min(inputValue, maxApplicableCoins)
-                                  );
+                                  const inputValue = parseFloat(e.target.value) || 0;
+                                  const gamePrice = getPlatformPrice(selectedPurchasePlatform);
+                                  const maxApplicableCoins = Math.min(fanCoins, gamePrice);
+                                  const validatedCoins = Math.max(0, Math.min(inputValue, maxApplicableCoins));
 
                                   // Force update the input value to match the validated state
                                   if (validatedCoins !== inputValue) {
@@ -1072,24 +1131,13 @@ const SingleGame = () => {
                                   }
                                 }}
                                 min="0"
-                                max={Math.min(
-                                  fanCoins,
-                                  single?.platforms?.windows?.price || 0
-                                )}
+                                max={Math.min(fanCoins, getPlatformPrice(selectedPurchasePlatform))}
                                 step="1"
                                 className="w-full p-2 rounded-xl bg-gray-700/20 text-white border border-gray-600 focus:border-purple-400 focus:ring-purple-500"
-                                placeholder={`Max: ${Math.min(
-                                  fanCoins,
-                                  single?.platforms?.windows?.price || 0
-                                )}`}
+                                placeholder={`Max: ${Math.min(fanCoins, getPlatformPrice(selectedPurchasePlatform))}`}
                               />
                               <div className="text-xs text-gray-400 mt-1">
-                                Available: {fanCoins} Fan Coins | Max
-                                Applicable:{" "}
-                                {Math.min(
-                                  fanCoins,
-                                  single?.platforms?.windows?.price || 0
-                                )}
+                                Available: {fanCoins} Fan Coins | Max Applicable: {Math.min(fanCoins, getPlatformPrice(selectedPurchasePlatform))}
                                 {fanCoinsToUse > 0 && (
                                   <span className="text-green-400 ml-2">
                                     Discount: ${fanCoinsToUse} | Final: $
@@ -1257,6 +1305,29 @@ const SingleGame = () => {
       {open && (
         <ReviewForm open={open} onClose={() => setOpen(false)} game={id} />
       )}
+      <PlatformSelectionModal
+        open={Boolean(platformModalGame)}
+        gameTitle={platformModalGame?.title}
+        onClose={closePlatformModal}
+        selectedPlatforms={selectedPlatforms}
+        onPlatformToggle={handlePlatformToggle}
+        onConfirm={confirmPlatformSelection}
+        addedPlatforms={selectedGamePlatforms}
+        isSubmitting={isSubmittingPlatforms}
+      />
+      <PlatformSelectionModal
+        open={isBuyPlatformModalOpen}
+        gameTitle={single?.title}
+        onClose={() => setIsBuyPlatformModalOpen(false)}
+        selectedPlatforms={buySelectedPlatforms}
+        onPlatformToggle={(platform) =>
+          setBuySelectedPlatforms((prev) => (prev[0] === platform ? [] : [platform]))
+        }
+        onConfirm={handleConfirmBuyPlatform}
+        addedPlatforms={singleGameCartPlatforms}
+        isSubmitting={false}
+        confirmLabel="Continue"
+      />
     </div>
   );
 };
