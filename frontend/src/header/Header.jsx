@@ -30,6 +30,8 @@ import { BASE_URL } from '../Utils/baseUrl';
 import axios from 'axios';
 import { handleMyToggle } from '../Redux/Slice/game.slice';
 import { fetchCart } from '../Redux/Slice/cart.slice';
+import playstoreLogo from "../images/images/playstore.png"
+import appstoreLogo from "../images/images/appstore.png"
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -48,11 +50,11 @@ export default function Header() {
     const location = useLocation()
 
     // user looging task manage code ----------------------------------------------------------------
-    useEffect(()=>{
-if(isLoggedIn){
-    dispatch(updateLoginTask());
-}
-    },[])
+    useEffect(() => {
+        if (isLoggedIn) {
+            dispatch(updateLoginTask());
+        }
+    }, [])
     // user looging task manage code over here ------------------------------------------------------ 
 
     const name = useSelector((state) => state?.user?.name);
@@ -162,21 +164,21 @@ if(isLoggedIn){
                                         }>Games</NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to={isLoggedIn ? "/rewards" : "/login"}  className={({ isActive }) =>
+                                        <NavLink to={isLoggedIn ? "/rewards" : "/login"} className={({ isActive }) =>
                                             isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
                                         }>Rewards</NavLink>
                                     </li>
                                     <li>
-                                    <NavLink to="/store" end={false} className={({ isActive }) => {
-                                        const path = location.pathname;
-                                        const isCustomActive =
-                                          path.startsWith("/single/") || path.startsWith("/store");
-                              
-                                        return isActive || isCustomActive
-                                          ? "text-[var(--color-change)] md:px-2 lg:px-3"
-                                          : "hover:text-[var(--color-change)] md:px-2 lg:px-3";
-                                      }}
-                                    >Store</NavLink>
+                                        <NavLink to="/store" end={false} className={({ isActive }) => {
+                                            const path = location.pathname;
+                                            const isCustomActive =
+                                                path.startsWith("/single/") || path.startsWith("/store");
+
+                                            return isActive || isCustomActive
+                                                ? "text-[var(--color-change)] md:px-2 lg:px-3"
+                                                : "hover:text-[var(--color-change)] md:px-2 lg:px-3";
+                                        }}
+                                        >Store</NavLink>
                                     </li>
                                 </ul>
                             </div>
@@ -188,55 +190,64 @@ if(isLoggedIn){
                                     <div className='flex gap-2 items-center'>
                                         {
                                             isLoggedIn ?
-                                            <>
-                                        <NavLink to="/wishlist" className="me-2 relative">
-                                           {({ isActive }) => (
-                                             <>
-                                               <div
-                                                 className={`p-2 border-2 rounded-full transition-colors ${
-                                                   isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
-                                                 }`}
-                                               >
-                                                 <FaHeart
-                                                   className={`text-[18px] cursor-pointer transition-colors ${
-                                                     isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
-                                                   }`}
-                                                 />
-                                               </div>
-                                         
-                                               {(items?.length > 0 && myManage) && (
-                                                 <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                                                   {items?.length}
-                                                 </span>
-                                               )}
-                                             </>
-                                           )}
-                                         </NavLink>
- 
-                                         <NavLink to="/cart" className="me-2 relative">
-                                             {({ isActive }) => (
-                                               <>
-                                                 <div
-                                                   className={`p-2 border-2 rounded-full transition-colors ${
-                                                     isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
-                                                   }`}
-                                                 >
-                                                   <FaShoppingCart
-                                                     className={`text-[18px] cursor-pointer transition-colors ${
-                                                       isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
-                                                     }`}
-                                                   />
-                                                 </div>
-                                           
-                                                 {(cartItems?.length > 0 && myManage) && (
-                                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                                                     {cartItems?.length}
-                                                   </span>
-                                                 )}
-                                               </>
-                                             )}
-                                         </NavLink>
-                                         </> : null
+                                                <>
+
+                                                    <NavLink to="https://play.google.com/store/games?device=windows" target="_blank" className="me-2 relative">
+
+                                                        <img src={playstoreLogo} className='w-7' />
+
+                                                    </NavLink>
+
+                                                    <NavLink to="https://apps.apple.com/in/developer/apple/id284417353?mt=12" target="_blank" className="me-2 relative">
+
+                                                        <img src={appstoreLogo} className='w-7' />
+
+                                                    </NavLink>
+
+                                                    <NavLink to="/wishlist" className="me-2 relative">
+                                                        {({ isActive }) => (
+                                                            <>
+                                                                <div
+                                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                                        }`}
+                                                                >
+                                                                    <FaHeart
+                                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
+                                                                            }`}
+                                                                    />
+                                                                </div>
+
+                                                                {(items?.length > 0 && myManage) && (
+                                                                    <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                                                                        {items?.length}
+                                                                    </span>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </NavLink>
+
+                                                    <NavLink to="/cart" className="me-2 relative">
+                                                        {({ isActive }) => (
+                                                            <>
+                                                                <div
+                                                                    className={`p-2 border-2 rounded-full transition-colors ${isActive ? "border-[var(--color-change)]" : "border-[#d1d5db] hover:border-[#9ca3af]"
+                                                                        }`}
+                                                                >
+                                                                    <FaShoppingCart
+                                                                        className={`text-[18px] cursor-pointer transition-colors ${isActive ? "text-[var(--color-change)]" : "text-[#d1d5db] hover:text-[var(--color-change)]"
+                                                                            }`}
+                                                                    />
+                                                                </div>
+
+                                                                {(cartItems?.length > 0 && myManage) && (
+                                                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                                                        {cartItems?.length}
+                                                                    </span>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </NavLink>
+                                                </> : null
                                         }
 
 
@@ -313,8 +324,21 @@ if(isLoggedIn){
                                         </div>
                                     )}
                                 </div>
-                                {isLoggedIn ?<div className='flex gap-2 items-center md:hidden'>
-                                    
+                                {isLoggedIn ? <div className='flex gap-2 items-center md:hidden'>
+
+                                    <NavLink to="https://play.google.com/store/games?device=windows" target="_blank" className="me-1.5 relative">
+
+                                        <img src={playstoreLogo} className='w-7' />
+
+                                    </NavLink>
+
+                                    <NavLink to="https://apps.apple.com/in/developer/apple/id284417353?mt=12" target="_blank" className="me-2 relative">
+
+                                        <img src={appstoreLogo} className='w-7' />
+
+
+                                    </NavLink>
+
                                     <NavLink to="/wishlist" className="me-2 relative">
                                         {({ isActive }) => (
                                             <>
@@ -357,8 +381,8 @@ if(isLoggedIn){
                                             </>
                                         )}
                                     </NavLink>
-                                </div> : null }
-                                
+                                </div> : null}
+
                                 <label
                                     htmlFor="my-drawer-3"
                                     aria-label="open sidebar"
@@ -530,20 +554,21 @@ if(isLoggedIn){
 
 
                     <li>
-                      <NavLink to="/games" end={false} className="flex items-center justify-center flex-col gap-1 text-xs">
-                        {({ isActive }) =>{ 
-                          const active = location.pathname.startsWith("/game") || location.pathname.startsWith("/games/");
-                          return(
-                          <>
-                            {active ? (
-                              <IoGameController className="size-5 text-[var(--color-change)]" />
-                            ) : (
-                              <IoGameControllerOutline className="size-5 text-gray-400" />
-                            )}
-                            <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Games</p>
-                          </>
-                        )}}
-                       </NavLink>
+                        <NavLink to="/games" end={false} className="flex items-center justify-center flex-col gap-1 text-xs">
+                            {({ isActive }) => {
+                                const active = location.pathname.startsWith("/game") || location.pathname.startsWith("/games/");
+                                return (
+                                    <>
+                                        {active ? (
+                                            <IoGameController className="size-5 text-[var(--color-change)]" />
+                                        ) : (
+                                            <IoGameControllerOutline className="size-5 text-gray-400" />
+                                        )}
+                                        <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Games</p>
+                                    </>
+                                )
+                            }}
+                        </NavLink>
 
                     </li>
 
@@ -565,17 +590,18 @@ if(isLoggedIn){
                     <li>
                         <NavLink to="/store" className="flex items-center justify-center flex-col gap-1 text-xs">
                             {({ isActive }) => {
-                             const active = location.pathname.startsWith("/store") || location.pathname.startsWith("/single/");
-                            return(
-                                <>
-                                    {active ? (
-                                        <IoBag className="size-5 text-[var(--color-change)]" />
-                                    ) : (
-                                        <IoBagOutline className="size-5 text-gray-400" />
-                                    )}
-                                    <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Store</p>
-                                </>
-                            )}}
+                                const active = location.pathname.startsWith("/store") || location.pathname.startsWith("/single/");
+                                return (
+                                    <>
+                                        {active ? (
+                                            <IoBag className="size-5 text-[var(--color-change)]" />
+                                        ) : (
+                                            <IoBagOutline className="size-5 text-gray-400" />
+                                        )}
+                                        <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Store</p>
+                                    </>
+                                )
+                            }}
                         </NavLink>
                     </li>
                 </ul>
