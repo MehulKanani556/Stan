@@ -14,7 +14,7 @@ import HeroSliderSkeleton2 from "../lazyLoader/HeroSkeleton2";
 
  function HomeSlider() {
     const dispatch = useDispatch()
-    const games = useSelector((state) => state.game.SliderData).slice(0,10) || [];
+    const games = useSelector((state) => state.game.SliderData)?.slice(0,10) || [];
 
     const listRef = useRef(null);
     const carouselRef = useRef(null);

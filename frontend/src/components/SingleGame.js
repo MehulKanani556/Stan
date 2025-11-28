@@ -1,21 +1,5 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
-import {
-  FaChevronLeft,
-  FaChevronRight,
-  FaHeart,
-  FaPlay,
-  FaRegStar,
-  FaShoppingCart,
-  FaStar,
-  FaStarHalfAlt,
-  FaWindows,
-} from "react-icons/fa";
+import React, { useEffect, useRef, useState, useMemo, useCallback, } from "react";
+import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt, FaWindows, } from "react-icons/fa";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -23,16 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById, getGameRating } from "../Redux/Slice/game.slice";
 import { GoDotFill } from "react-icons/go";
-import {
-  addToCart,
-  fetchCart,
-  removeFromCart,
-} from "../Redux/Slice/cart.slice";
-import {
-  addToWishlist,
-  fetchWishlist,
-  removeFromWishlist,
-} from "../Redux/Slice/wishlist.slice";
+import { addToCart, fetchCart, removeFromCart, } from "../Redux/Slice/cart.slice";
+import { addToWishlist, fetchWishlist, removeFromWishlist, } from "../Redux/Slice/wishlist.slice";
 import { allorders, createOrder } from "../Redux/Slice/Payment.slice";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -317,15 +293,15 @@ const SingleGame = () => {
   );
 
 
-    // Selectors
-    const single = useSelector((state) => state?.game?.singleGame)
-    const { loading: gameLoading } = useSelector((state) => state?.game)
-    const cartItems = useSelector((state) => state.cart.cart)
-    const { wishlistStatus } = useSelector((state) => state.wishlist)
-    const gameRating = useSelector((state) => state?.game?.singleGameReview?.data)
-    const { orders, loading: ordersLoading } = useSelector((state) => state.payment)
+  // Selectors
+  const single = useSelector((state) => state?.game?.singleGame)
+  const { loading: gameLoading } = useSelector((state) => state?.game)
+  const cartItems = useSelector((state) => state.cart.cart)
+  const { wishlistStatus } = useSelector((state) => state.wishlist)
+  const gameRating = useSelector((state) => state?.game?.singleGameReview?.data)
+  const { orders, loading: ordersLoading } = useSelector((state) => state.payment)
 
-    
+
   const {
     openPlatformModal,
     closePlatformModal,
@@ -428,19 +404,19 @@ const SingleGame = () => {
 
       setUseFanCoinsChecked(checked);
 
-    const gamePrice = getPlatformPrice(selectedPurchasePlatform)
+      const gamePrice = getPlatformPrice(selectedPurchasePlatform)
 
       if (checked) {
         // Calculate maximum applicable Fan Coins
         const maxApplicableCoins = Math.min(fanCoins, gamePrice);
 
-      setFanCoinsToUse(maxApplicableCoins)
-      setFinalAmount(Math.max(0, gamePrice - maxApplicableCoins))
-    } else {
-      setFanCoinsToUse(0)
-      setFinalAmount(gamePrice)
-    }
-  }, [authUser, fanCoins, getPlatformPrice, selectedPurchasePlatform, isLoggedIn])
+        setFanCoinsToUse(maxApplicableCoins)
+        setFinalAmount(Math.max(0, gamePrice - maxApplicableCoins))
+      } else {
+        setFanCoinsToUse(0)
+        setFinalAmount(gamePrice)
+      }
+    }, [authUser, fanCoins, getPlatformPrice, selectedPurchasePlatform, isLoggedIn])
 
   // Effects
   useEffect(() => {
@@ -599,8 +575,8 @@ const SingleGame = () => {
       }))
 
       if (createOrder.fulfilled.match(resultAction)) {
-        const {  order } = resultAction.payload
-  
+        const { order } = resultAction.payload
+
         setCurrentOrderId(order._id)
         setAmountToPay(finalAmount)
         handleProceedToPayment()
@@ -618,8 +594,8 @@ const SingleGame = () => {
     setUseFanCoinsChecked(false)
     setFanCoinsToUse(0)
     setFinalAmount(getPlatformPrice(selectedPurchasePlatform))
-    if(isInCart){
-      dispatch(removeFromCart({gameId:id,platform:selectedPurchasePlatform || "windows"}))
+    if (isInCart) {
+      dispatch(removeFromCart({ gameId: id, platform: selectedPurchasePlatform || "windows" }))
     }
   }, [dispatch, id, isInCart, selectedPurchasePlatform, getPlatformPrice])
 
@@ -887,7 +863,7 @@ const SingleGame = () => {
                         <span className="text-xs">{isInCart ? 'Added to cart' : 'Add To Cart'}</span>
                       </button>
                     )}
-               
+
                   </div>
 
                   {/* Purchase/Review Buttons */}
@@ -1033,11 +1009,10 @@ const SingleGame = () => {
                             <div className="flex flex-col">
                               <label
                                 htmlFor="useFanCoins"
-                                className={`text-white flex items-center ${
-                                  !isLoggedIn || !fanCoins || fanCoins <= 0
-                                    ? "text-gray-500"
-                                    : ""
-                                }`}
+                                className={`text-white flex items-center ${!isLoggedIn || !fanCoins || fanCoins <= 0
+                                  ? "text-gray-500"
+                                  : ""
+                                  }`}
                               >
                                 <input
                                   type="checkbox"
@@ -1059,8 +1034,8 @@ const SingleGame = () => {
                                 {!isLoggedIn
                                   ? "(Login to use Fan Coins)"
                                   : !fanCoins || fanCoins <= 0
-                                  ? "(No Fan Coins available)"
-                                  : `(Available: ${fanCoins.toFixed(2)})`}
+                                    ? "(No Fan Coins available)"
+                                    : `(Available: ${fanCoins.toFixed(2)})`}
                               </span>
                             </div>
                             {useFanCoinsChecked && (
