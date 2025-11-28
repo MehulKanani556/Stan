@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
         referralCode: { type: String, unique: true, index: true },
         referralHistory: [
             {
-                user: { type: mongoose.Schema.Types.ObjectId, ref: "UserStan" },
+                user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
                 referredAt: { type: Date, default: Date.now }
             }
         ],
@@ -136,4 +136,4 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
     }
 };
 
-export default mongoose.model("UserStan", userSchema);
+export default mongoose.model("User", userSchema);

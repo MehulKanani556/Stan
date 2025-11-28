@@ -52,6 +52,8 @@ import { getUserLogging, loggingHistory } from "../controllers/LoggingHistroyCon
 import { getUserGamePlayTime } from "../controllers/userGameplay.controller.js";
 import { createDailyTask, createEarnTask, createMilestone, createWeeklyTask, getAllTask } from "../controllers/task.controller.js";
 import { createScratchCard, getUserScratchCards, revealScratchCard } from "../controllers/scratchCard.controller.js";
+import { getRecentTransactions, getTopGamesDashboard, getDashboardStats, getTopCategories, getCategoryByGame, getPlatformWiseOrders } from "../controllers/dashBoard.controller.js";
+
 // import {
 //     createQuiz,
 //     getAllQuizzes,
@@ -321,5 +323,15 @@ indexRoutes.post('/scratch-card/reveal', UserAuth, revealScratchCard);
 // // User quiz history and leaderboard
 // indexRoutes.get('/user/quiz/history', UserAuth, getUserQuizHistory);
 // indexRoutes.get('/quiz/leaderboard', getQuizLeaderboard);
+
+
+// Dashboard
+indexRoutes.get("/getDashboardStats", getDashboardStats)
+indexRoutes.get("/getRecentTransactions", getRecentTransactions)
+indexRoutes.get("/getCategoryByGame", getCategoryByGame)
+indexRoutes.get("/getTopGamesDashboard", getTopGamesDashboard)
+indexRoutes.get("/getTopCategories", getTopCategories)
+indexRoutes.get("/getPlatformWiseOrders", getPlatformWiseOrders)
+
 
 export default indexRoutes;

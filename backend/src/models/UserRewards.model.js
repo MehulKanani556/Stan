@@ -4,7 +4,7 @@ const userRewardsSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "UserStan",
+            ref: "User",
             required: true
         },
         reward: {

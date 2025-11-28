@@ -4,7 +4,7 @@ const ConversationSchema = mongoose.Schema({
     participants: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "UserStan",
+            ref: "User",
         },
     ],
     messages: [

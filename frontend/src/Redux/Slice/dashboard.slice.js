@@ -43,11 +43,11 @@ export const getCategoryByGame = createAsyncThunk(
     }
 );
 
-export const getTopGames = createAsyncThunk(
-    "TotalRevenue/getTopGames",
+export const getTopGamesDashboard = createAsyncThunk(
+    "TotalRevenue/getTopGamesDashboard",
     async (period = 'all', { dispatch, rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get(`/getTopGames?period=${period}`);
+            const response = await axiosInstance.get(`/getTopGamesDashboard?period=${period}`);
             return response.data.data;
         } catch (error) {
             return handleErrors(error, dispatch, rejectWithValue);
@@ -127,17 +127,17 @@ const dashboardSlice = createSlice({
                 state.success = false;
                 state.message = action.payload?.message || 'Failed to fetch Top Category';
             })
-            .addCase(getTopGames.pending, (state) => {
+            .addCase(getTopGamesDashboard.pending, (state) => {
                 state.loading = true;
                 state.message = 'Fetching Total Revenue...';
             })
-            .addCase(getTopGames.fulfilled, (state, action) => {
+            .addCase(getTopGamesDashboard.fulfilled, (state, action) => {
                 state.loading = false;
                 state.success = true;
                 state.message = 'Total Revenue fetched successfully';
                 state.topGames = action.payload || {};
             })
-            .addCase(getTopGames.rejected, (state, action) => {
+            .addCase(getTopGamesDashboard.rejected, (state, action) => {
                 state.loading = false;
                 state.success = false;
                 state.message = action.payload?.message || 'Failed to fetch Total Revenue';

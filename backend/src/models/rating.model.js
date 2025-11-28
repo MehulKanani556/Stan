@@ -4,7 +4,7 @@ const ratingSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "UserStan",
+            ref: "User",
             required: true,
         },
         game: {
@@ -35,7 +35,7 @@ const ratingSchema = new mongoose.Schema(
         // Helpful marks from other users
         helpful: [
             {
-                user: { type: mongoose.Schema.Types.ObjectId, ref: "UserStan", required: true },
+                user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
                 isHelpful: { type: Boolean, default: true },
                 createdAt: { type: Date, default: Date.now },
             },

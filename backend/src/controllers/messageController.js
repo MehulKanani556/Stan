@@ -188,7 +188,7 @@ export const getAllMessageUsers = async (req, res) => {
             },
             {
                 $lookup: {
-                    from: "userstans",
+                    from: "users",
                     localField: "_id",
                     foreignField: "_id",
                     as: "userData",

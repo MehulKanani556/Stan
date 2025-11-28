@@ -15,7 +15,7 @@ import {
   Filler
 } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCategoryByGame, getDashboardStats, getRecentTransactions, getTopCategories, getTopGames, getTopPlatform } from '../Redux/Slice/dashboard.slice';
+import { getCategoryByGame, getDashboardStats, getRecentTransactions, getTopCategories, getTopGamesDashboard, getTopPlatform } from '../Redux/Slice/dashboard.slice';
 import { useNavigate } from 'react-router-dom';
 
 ChartJS.register(
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     dispatch(getDashboardStats(filter));
     dispatch(getCategoryByGame(filter));
-    dispatch(getTopGames(filter));
+    dispatch(getTopGamesDashboard(filter));
     dispatch(getRecentTransactions(filter));
     dispatch(getTopCategories(filter));
     dispatch(getTopPlatform(filter));

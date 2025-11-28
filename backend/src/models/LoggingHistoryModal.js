@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const loggingHistorySchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "UserStan",  // Make sure this matches your user collection name
+        ref: "User",  // Make sure this matches your user collection name
         required: true
     },
     lastLoggingDate: {

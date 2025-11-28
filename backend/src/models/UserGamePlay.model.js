@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const UserGamePlaySchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'UserStan',
+    ref: 'User',
     required: true
   }, 
   time:[
