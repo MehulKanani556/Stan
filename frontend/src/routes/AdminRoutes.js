@@ -39,15 +39,15 @@ const AdminRoutes = () => {
         <Route path="/" element={<AdminDashboard />} />
         <Route path="/category" element={<Category />} />
         <Route path="/games" element={<Game />} />
-        <Route path="/blog" element={<Blog />} />
+        {/* <Route path="/blog" element={<Blog />} /> */}
         <Route path="/user" element={<User />} />
         <Route path="/profile" element={<AdminProfile />} />
-        <Route path="/faq" element={<Faq />} />
+        {/* <Route path="/faq" element={<Faq />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/contact" element={<Contact />} /> */}
         <Route path="/order" element={<Transaction />} />
-        <Route path="/subscriber" element={<Subscriber />} />
+        {/* <Route path="/subscriber" element={<Subscriber />} /> */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

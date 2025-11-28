@@ -7,18 +7,21 @@ import { decryptData } from "../Utils/encryption";
 export default function User() {
     const [searchValue, setSearchValue] = useState('');
     const dispatch = useDispatch();
-    const users = useSelector((state) => state.user.allusers);
+    const users = useSelector((state) => state.user.allUsers) || [];
+    const users1 = useSelector((state) => state.user) || [];
     const isSmallScreen = useMediaQuery("(max-width:425px)");
 
+    console.log(users1)
+
+    
     useEffect(() => {
         dispatch(getAllUsers())
     }, [dispatch])
 
     // Search functionality
-    const filteredData = users.filter(data =>
-        decryptData(data?.userName)?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        decryptData(data?.fullName)?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        decryptData(data?.email)?.toLowerCase().includes(searchValue.toLowerCase()) ||
+    const filteredData = users?.filter(data =>
+        (data?.name)?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        (data?.email)?.toLowerCase().includes(searchValue.toLowerCase()) ||
         new Date(data?.createdAt).toLocaleDateString().includes(searchValue)
     );
 
@@ -27,12 +30,12 @@ export default function User() {
     const itemsPerPage = 10;
 
     // Calculate total pages
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
 
     // Get current items
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = filteredData?.slice(indexOfFirstItem, indexOfLastItem);
 
     // Handle page change
     const handlePageChange = (pageNumber) => {
@@ -64,7 +67,6 @@ export default function User() {
                 <table className="w-full bg-white/5">
                     <thead>
                         <tr className="text-brown font-bold border-slate-700/50 border-b">
-                            <td className="py-2 px-5 whitespace-nowrap">User Name</td>
                             <td className="py-2 px-5 whitespace-nowrap">Full Name</td>
                             <td className="py-2 px-5">Email</td>
                             <td className="py-2 px-5 whitespace-nowrap">Created At</td>
@@ -73,17 +75,13 @@ export default function User() {
                     <tbody>
                         {currentItems.map((user, index) => (
                             <tr key={user._id} className="border-t border-gray-950">
-                                <td className="py-2 px-5">
-                                    {decryptData(user.userName)}
-                                </td>
-
                                 <td className="py-2 px-5 whitespace-nowrap">
-                                    {decryptData(user.fullName)}
+                                    {(user.name)}
                                 </td>
 
                                 <td className="py-2 px-5 whitespace-nowrap">
                                     <span className="truncate block max-w-xs">
-                                        {decryptData(user.email)}
+                                        {(user.email)}
                                     </span>
                                 </td>
 
