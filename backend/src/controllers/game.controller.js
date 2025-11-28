@@ -10,12 +10,66 @@ import Order from "../models/Order.model.js";
 import User from "../models/userModel.js";
 import FreeGame from "../models/freeGamesModel.js";
 
+const unlinkIfExists = (filePath) => {
+  if (filePath && fs.existsSync(filePath)) {
+    try {
+      fs.unlinkSync(filePath);
+    } catch {}
+  }
+};
+
+const prepareUploadedFile = async (
+  fileObj,
+  folderName,
+  uploadedCloudFiles = []
+) => {
+  if (!fileObj) return null;
+
+  const registerCleanupId = (public_id) => {
+    if (public_id) {
+      uploadedCloudFiles.push(public_id);
+    }
+  };
+
+  if (fileObj.path) {
+    const uploadRes = await fileupload(fileObj.path, folderName);
+    if (uploadRes?.message) {
+      unlinkIfExists(fileObj.path);
+      throw new Error(uploadRes.message);
+    }
+    unlinkIfExists(fileObj.path);
+    const public_id = uploadRes.public_id || uploadRes.Key;
+    registerCleanupId(public_id);
+    return {
+      url: uploadRes.Location || uploadRes.url,
+      public_id,
+    };
+  }
+
+  if (fileObj.location || fileObj.Location) {
+    const url = fileObj.location || fileObj.Location;
+    const public_id = fileObj.key || fileObj.Key;
+    if (!url || !public_id) {
+      throw new Error("Uploaded file is missing S3 metadata");
+    }
+    registerCleanupId(public_id);
+    return { url, public_id };
+  }
+
+  throw new Error("Unsupported file object received from multer");
+};
+
 // Create a new game
 export const createGame = function (req, res) {
   (async function () {
     const uploadedCloudFiles = [];
-
-    const uploadedLocalFiles = [];
+    const cleanupUploadedCloudFiles = async () => {
+      for (const public_id of uploadedCloudFiles) {
+        try {
+          await deleteFile(public_id);
+        } catch {}
+      }
+    };
     try {
       const {
         title,
@@ -30,27 +84,14 @@ export const createGame = function (req, res) {
       // Handle cover image upload
       let coverImageData = null;
       if (req.files && req.files.cover_image) {
-        const coverFilePath = req.files.cover_image[0].path;
-        const coverFiledata = await fileupload(coverFilePath, "GameCoverImage");
-        if (!coverFiledata.message) {
-          coverImageData = {
-            url: coverFiledata.Location,
-            public_id: coverFiledata.public_id,
-          };
-          uploadedCloudFiles.push(coverImageData.public_id);
-          if (fs.existsSync(coverFilePath)) {
-            fs.unlinkSync(coverFilePath);
-          }
-        } else {
-          // Remove all uploaded cloud files and local files before error out
-          for (const public_id of uploadedCloudFiles) {
-            try {
-              await deleteFile(public_id);
-            } catch {}
-          }
-          if (fs.existsSync(coverFilePath)) {
-            fs.unlinkSync(coverFilePath);
-          }
+        try {
+          coverImageData = await prepareUploadedFile(
+            req.files.cover_image[0],
+            "GameCoverImage",
+            uploadedCloudFiles
+          );
+        } catch (error) {
+          await cleanupUploadedCloudFiles();
           return ThrowError(res, 400, "Cover image upload failed");
         }
       }
@@ -58,27 +99,14 @@ export const createGame = function (req, res) {
       // Handle video upload
       let videoData = null;
       if (req.files && req.files.video) {
-        const videoFilePath = req.files.video[0].path;
-        const videoFiledata = await fileupload(videoFilePath, "GameVideo");
-
-        if (!videoFiledata.message) {
-          videoData = {
-            url: videoFiledata.Location,
-            public_id: videoFiledata.public_id,
-          };
-          uploadedCloudFiles.push(videoData.public_id);
-          if (fs.existsSync(videoFilePath)) {
-            fs.unlinkSync(videoFilePath);
-          }
-        } else {
-          for (const public_id of uploadedCloudFiles) {
-            try {
-              await deleteFile(public_id);
-            } catch {}
-          }
-          if (fs.existsSync(videoFilePath)) {
-            fs.unlinkSync(videoFilePath);
-          }
+        try {
+          videoData = await prepareUploadedFile(
+            req.files.video[0],
+            "GameVideo",
+            uploadedCloudFiles
+          );
+        } catch (error) {
+          await cleanupUploadedCloudFiles();
           return ThrowError(res, 400, "Video upload failed");
         }
       }
@@ -98,12 +126,14 @@ export const createGame = function (req, res) {
           req.files[`${platform}_file`] // e.g. req.files.windows_file
         ) {
           const platformFileObj = req.files[`${platform}_file`][0];
-          const platformFilePath = platformFileObj.path;
-          const fileData = await fileupload(
-            platformFilePath,
-            `Game${platform.charAt(0).toUpperCase() + platform.slice(1)}File`
-          );
-          if (!fileData.message) {
+          try {
+            const fileData = await prepareUploadedFile(
+              platformFileObj,
+              `Game${
+                platform.charAt(0).toUpperCase() + platform.slice(1)
+              }File`,
+              uploadedCloudFiles
+            );
             if (!platformsData[platform]) platformsData[platform] = {};
             platformsData[platform].download_link = fileData.url;
             platformsData[platform].public_id = fileData.public_id;
@@ -118,29 +148,20 @@ export const createGame = function (req, res) {
                 platformsData[platform].size =
                   (platformFileObj.size / (1024 * 1024)).toFixed(2) + " MB";
               }
-            } else {
+            } else if (platformFileObj.path) {
               // fallback: try to get file size from fs if not present
               try {
-                const stats = fs.statSync(platformFilePath);
+                const stats = fs.statSync(platformFileObj.path);
                 platformsData[platform].size =
                   (stats.size / (1024 * 1024)).toFixed(2) + " MB";
               } catch (e) {
                 platformsData[platform].size = "";
               }
+            } else {
+              platformsData[platform].size = "";
             }
-            uploadedCloudFiles.push(platformsData[platform].public_id);
-            if (fs.existsSync(platformFilePath)) {
-              fs.unlinkSync(platformFilePath);
-            }
-          } else {
-            for (const public_id of uploadedCloudFiles) {
-              try {
-                await deleteFile(public_id);
-              } catch {}
-            }
-            if (fs.existsSync(platformFilePath)) {
-              fs.unlinkSync(platformFilePath);
-            }
+          } catch (error) {
+            await cleanupUploadedCloudFiles();
             return ThrowError(res, 400, `${platform} file upload failed`);
           }
         }
@@ -149,27 +170,19 @@ export const createGame = function (req, res) {
       let imagesData = [];
       if (req.files && req.files.images) {
         for (const img of req.files.images) {
-          const imgPath = img.path;
-          const imgData = await fileupload(imgPath, "GameImages");
-          if (!imgData.message) {
+          try {
+            const imgData = await prepareUploadedFile(
+              img,
+              "GameImages",
+              uploadedCloudFiles
+            );
             const imgObj = {
-              url: imgData.Location,
+              url: imgData.url,
               public_id: imgData.public_id,
             };
             imagesData.push(imgObj);
-            uploadedCloudFiles.push(imgObj.public_id);
-            if (fs.existsSync(imgPath)) {
-              fs.unlinkSync(imgPath);
-            }
-          } else {
-            for (const public_id of uploadedCloudFiles) {
-              try {
-                await deleteFile(public_id);
-              } catch {}
-            }
-            if (fs.existsSync(imgPath)) {
-              fs.unlinkSync(imgPath);
-            }
+          } catch (error) {
+            await cleanupUploadedCloudFiles();
             return ThrowError(res, 400, "One of the images upload failed");
           }
         }
@@ -192,11 +205,7 @@ export const createGame = function (req, res) {
 
       const savedGame = await game.save();
       if (!savedGame) {
-        for (const public_id of uploadedCloudFiles) {
-          try {
-            await deleteFile(public_id);
-          } catch {}
-        }
+        await cleanupUploadedCloudFiles();
         return ThrowError(res, 404, "Game not created");
       }
 
@@ -229,11 +238,7 @@ export const createGame = function (req, res) {
     } catch (error) {
       // Clean up all uploaded cloud files if error occurs
       if (typeof uploadedCloudFiles !== "undefined") {
-        for (const public_id of uploadedCloudFiles) {
-          try {
-            await deleteFile(public_id);
-          } catch {}
-        }
+        await cleanupUploadedCloudFiles();
       }
       // Clean up all local files if error occurs
       if (req.files) {
@@ -318,20 +323,17 @@ export const updateGame = function (req, res) {
           } catch {}
         }
 
-        const coverFiledata = await fileupload(
-          req.files.cover_image[0].path,
-          "GameCoverImage"
-        );
-        if (!coverFiledata.message) {
+        try {
+          const coverFiledata = await prepareUploadedFile(
+            req.files.cover_image[0],
+            "GameCoverImage",
+            uploadedCloudFiles
+          );
           game.cover_image = {
-            url: coverFiledata.Location,
+            url: coverFiledata.url,
             public_id: coverFiledata.public_id,
           };
-          uploadedCloudFiles.push(game.cover_image.public_id);
-          if (fs.existsSync(req.files.cover_image[0].path)) {
-            fs.unlinkSync(req.files.cover_image[0].path);
-          }
-        } else {
+        } catch (error) {
           cleanupLocalFiles();
           await cleanupCloudFiles(uploadedCloudFiles);
           return ThrowError(res, 400, "Cover image upload failed");
@@ -346,20 +348,17 @@ export const updateGame = function (req, res) {
           } catch {}
         }
 
-        const videoFiledata = await fileupload(
-          req.files.video[0].path,
-          "GameVideo"
-        );
-        if (!videoFiledata.message) {
+        try {
+          const videoFiledata = await prepareUploadedFile(
+            req.files.video[0],
+            "GameVideo",
+            uploadedCloudFiles
+          );
           game.video = {
-            url: videoFiledata.Location,
+            url: videoFiledata.url,
             public_id: videoFiledata.public_id,
           };
-          uploadedCloudFiles.push(game.video.public_id);
-          if (fs.existsSync(req.files.video[0].path)) {
-            fs.unlinkSync(req.files.video[0].path);
-          }
-        } else {
+        } catch (error) {
           cleanupLocalFiles();
           await cleanupCloudFiles(uploadedCloudFiles);
           return ThrowError(res, 400, "Video upload failed");
@@ -416,18 +415,18 @@ export const updateGame = function (req, res) {
       // Handle new images upload
       if (req.files && req.files.images) {
         for (const img of req.files.images) {
-          const imgData = await fileupload(img.path, "GameImages");
-          if (!imgData.message) {
+          try {
+            const imgData = await prepareUploadedFile(
+              img,
+              "GameImages",
+              uploadedCloudFiles
+            );
             const imgObj = {
-              url: imgData.Location,
+              url: imgData.url,
               public_id: imgData.public_id,
             };
             game.images.push(imgObj);
-            uploadedCloudFiles.push(imgObj.public_id);
-            if (fs.existsSync(img.path)) {
-              fs.unlinkSync(img.path);
-            }
-          } else {
+          } catch (error) {
             cleanupLocalFiles();
             await cleanupCloudFiles(uploadedCloudFiles);
             return ThrowError(res, 400, "One of the images upload failed");
@@ -439,19 +438,18 @@ export const updateGame = function (req, res) {
        const platformNames = ["windows", "nintendo_switch_2", "nintendo_switch_1", "ps5", "xbox", "vision_pro","quest"];
       for (const platform of platformNames) {
         if (req.files && req.files[`${platform}_file`]) {
-          const fileData = await fileupload(
-            req.files[`${platform}_file`][0].path,
-            `Game${platform.charAt(0).toUpperCase() + platform.slice(1)}File`
-          );
-          if (!fileData.message) {
+          try {
+            const fileData = await prepareUploadedFile(
+              req.files[`${platform}_file`][0],
+              `Game${
+                platform.charAt(0).toUpperCase() + platform.slice(1)
+              }File`,
+              uploadedCloudFiles
+            );
             if (!game.platforms[platform]) game.platforms[platform] = {};
             game.platforms[platform].download_link = fileData.url;
             game.platforms[platform].public_id = fileData.public_id;
-            uploadedCloudFiles.push(game.platforms[platform].public_id);
-            if (fs.existsSync(req.files[`${platform}_file`][0].path)) {
-              fs.unlinkSync(req.files[`${platform}_file`][0].path);
-            }
-          } else {
+          } catch (error) {
             cleanupLocalFiles();
             await cleanupCloudFiles(uploadedCloudFiles);
             return ThrowError(res, 400, `${platform} file upload failed`);

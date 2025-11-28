@@ -158,29 +158,28 @@ indexRoutes.get("/getTopGames", getTopGames);
 indexRoutes.get("/getTrendingGames", getTrendingGames);
 indexRoutes.get("/games-by-category", getTopGames);
 indexRoutes.get("/homeTopGame", HomeTopGames);
+const gameFileFields = [
+  { name: "cover_image", maxCount: 1 },
+  { name: "video", maxCount: 1 },
+  { name: "windows_file", maxCount: 1 },
+  { name: "nintendo_switch_1_file", maxCount: 1 },
+  { name: "nintendo_switch_2_file", maxCount: 1 },
+  { name: "ps5_file", maxCount: 1 },
+  { name: "xbox_file", maxCount: 1 },
+  { name: "vision_pro_file", maxCount: 1 },
+  { name: "quest_file", maxCount: 1 },
+  { name: "images", maxCount: 10 },
+];
+
 indexRoutes.post(
   "/createGame",
-  upload.fields([
-    { name: "cover_image", maxCount: 1 },
-    { name: "video", maxCount: 1 },
-    { name: "windows_file", maxCount: 1 },
-    { name: "ios_file", maxCount: 1 },
-    { name: "android_file", maxCount: 1 },
-    { name: "images", maxCount: 10 },
-  ]),
+  upload.fields(gameFileFields),
   createGame
 );
 
 indexRoutes.put(
   "/updateGame/:id",
-  upload.fields([
-    { name: "cover_image", maxCount: 1 },
-    { name: "video", maxCount: 1 },
-    { name: "windows_file", maxCount: 1 },
-    { name: "ios_file", maxCount: 1 },
-    { name: "android_file", maxCount: 1 },
-    { name: "images", maxCount: 10 },
-  ]),
+  upload.fields(gameFileFields),
   updateGame
 );
 indexRoutes.delete("/deleteGame/:id", deleteGame);

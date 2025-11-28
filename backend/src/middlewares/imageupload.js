@@ -16,6 +16,18 @@ const s3 = new S3Client({
 
   console.log(process.env.S3_ACCESS_KEY?.trim(), process.env.S3_SECRET_KEY?.trim());
 
+const platformFolders = {
+    windows_file: 'games/windows',
+    ios_file: 'games/ios',
+    android_file: 'games/android',
+    ps5_file: 'games/ps5',
+    xbox_file: 'games/xbox',
+    vision_pro_file: 'games/vision-pro',
+    quest_file: 'games/quest',
+    nintendo_switch_1_file: 'games/nintendo-switch-1',
+    nintendo_switch_2_file: 'games/nintendo-switch-2',
+};
+
 const storage = multerS3({
     s3: s3,
     bucket: process.env.S3_BUCKET_NAME,
@@ -37,21 +49,42 @@ const storage = multerS3({
             folder = 'videos';
         } else if (file.fieldname === 'cover_image' || file.fieldname === 'images') {
             folder = 'games/images';
-        } else if (file.fieldname === 'windows_file') {
-            folder = 'games/windows';
-        } else if (file.fieldname === 'ios_file') {
-            folder = 'games/ios';
-        } else if (file.fieldname === 'android_file') {
-            folder = 'games/android';
-        }
-        else if(file.fieldname === 'trailer' ){
+        } else if (file.fieldname === 'trailer') {
             folder = 'trailer';
+        } else if (platformFolders[file.fieldname]) {
+            folder = platformFolders[file.fieldname];
         }
         
         const finalName = `${folder}/${timestamp}-${sanitizedName}`;
         cb(null, finalName);
     }
 });
+
+const imageFields = new Set([
+    'profilePic',
+    'thumbnail',
+    'image',
+    'starring_image',
+    'category_image',
+    'bg_image',
+    'messageImage',
+    'cover_image',
+    'images',
+]);
+
+const videoFields = new Set(['video', 'trailer']);
+
+const platformExecutableFields = new Set([
+    'windows_file',
+    'ios_file',
+    'android_file',
+    'ps5_file',
+    'xbox_file',
+    'vision_pro_file',
+    'quest_file',
+    'nintendo_switch_1_file',
+    'nintendo_switch_2_file',
+]);
 
 const fileFilter = (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -78,50 +111,59 @@ const fileFilter = (req, file, cb) => {
     ];
 
     // Executable file types for game files
-    const allowedExecutableExts = ['.exe', '.apk', '.ipa', '.dmg', '.pkg', '.deb', '.rpm', '.zip', '.rar', '.7z'];
-    const allowedExecutableMimeTypes = [
+const allowedExecutableExts = [
+    '.exe',
+    '.msi',
+    '.apk',
+    '.obb',
+    '.ipa',
+    '.dmg',
+    '.pkg',
+    '.app',
+    '.appx',
+    '.deb',
+    '.rpm',
+    '.zip',
+    '.rar',
+    '.7z',
+    '.tar',
+    '.gz',
+    '.tgz',
+    '.bz2',
+    '.unitypackage',
+    '.bin',
+];
+const allowedExecutableMimeTypes = [
         'application/vnd.android.package-archive',
         'application/octet-stream',
+        'application/x-octet-stream',
+        'application/x-msdownload',
         'application/zip',
+        'application/x-zip-compressed',
         'application/x-rar-compressed',
-        'application/x-7z-compressed'
+        'application/x-7z-compressed',
+        'application/x-tar',
+        'application/gzip',
     ];
 
-    // Check if it's an image file
-    if (
-        file.fieldname === 'profilePic' ||
-        file.fieldname === 'thumbnail' ||
-        file.fieldname === 'image' ||
-        file.fieldname === 'starring_image' ||
-        file.fieldname === 'category_image' ||
-        file.fieldname === 'bg_image' ||
-        file.fieldname === 'messageImage' ||
-        file.fieldname === 'cover_image' ||
-        file.fieldname === 'images' ||
-        file.fieldName === 'trailer'
-    ) {
+    if (imageFields.has(file.fieldname)) {
         if (!allowedImageExts.includes(ext) || !allowedImageMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid image format. Allowed formats: ${allowedImageExts.join(', ')}`));
         }
-    } 
-    // Check if it's a video file
-    else if (file.fieldname === 'video') {
+    } else if (videoFields.has(file.fieldname)) {
         if (!allowedVideoExts.includes(ext) || !allowedVideoMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
         }
-    }
-    else if (file.fieldname === 'trailer') {
-        if (!allowedVideoExts.includes(ext) || !allowedVideoMimeTypes.includes(file.mimetype)) {
-            return cb(new Error(`Invalid trailer video format. Allowed formats: ${allowedVideoExts.join(', ')}`));
-        }
-    }
-    // Check if it's a platform executable file
-    else if (file.fieldname === 'windows_file' || file.fieldname === 'ios_file' || file.fieldname === 'android_file') {
+    } else if (platformExecutableFields.has(file.fieldname)) {
         if (!allowedExecutableExts.includes(ext) || !allowedExecutableMimeTypes.includes(file.mimetype)) {
             return cb(new Error(`Invalid executable format. Allowed formats: ${allowedExecutableExts.join(', ')}`));
         }
     } else {
-        return cb(new Error(`Invalid field name: ${file.fieldname}. Expected 'profilePic', 'thumbnail', 'messageImage', 'starring_image', 'category_image', 'bg_image', 'cover_image', 'images', 'video', 'windows_file', 'ios_file', or 'android_file'`));
+        return cb(new Error(`Invalid field name: ${file.fieldname}. Expected one of: ${[
+            ...imageFields,
+            ...videoFields,
+            ...platformExecutableFields,
+        ].join(', ')}`));
     }
 
     cb(null, true);
