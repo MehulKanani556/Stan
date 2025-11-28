@@ -246,7 +246,7 @@ const RewardsExperience = () => {
 
                 // console.log("dailyTasksToday", weeklyTasksThisWeek,dailyTasksToday);
 
-                console.log('weeklyTasksThisWeek', weeklyTasksThisWeek);
+                // console.log('weeklyTasksThisWeek', weeklyTasksThisWeek);
 
                 setClaimedDailyTasks(new Set(dailyTasksToday));
                 setClaimedWeeklyTasks(new Set(weeklyTasksThisWeek));

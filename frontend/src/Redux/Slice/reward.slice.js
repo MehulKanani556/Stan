@@ -79,7 +79,7 @@ export const getUserGamePlayTime = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.get(`/getUserGamePlayTime`);
-            console.log(response.data);            
+            // console.log(response.data);            
             return response.data;
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to fetch reward";
@@ -300,7 +300,7 @@ export const claimCompleteTask = createAsyncThunk(
     "reward/claimCompleteTask",
     async (values, { rejectWithValue }) => {  
         try {
-        console.log('daily task value',values) 
+        // console.log('daily task value',values) 
             const response = await axiosInstance.post('/user/task-claim', { taskId: values?.taskId, type: values?.type, rewards: values.rewards });
             // enqueueSnackbar(response?.data?.message, { variant: "success" });
             return response.data;
@@ -317,7 +317,7 @@ export const referralBonus =  createAsyncThunk(
     "/fan-coins/referral-bonus",
     async (values, { rejectWithValue }) => {  
         try {
-        console.log('daily task value',values) 
+        // console.log('daily task value',values) 
             const response = await axiosInstance.post('/fan-coins/referral-bonus');
             // enqueueSnackbar(response?.data?.message, { variant: "success" });
             return response.data;
@@ -515,7 +515,7 @@ const rewardSlice = createSlice({
             return { ...initialState };
         },
         testAction: (state) => {
-            console.log("Test action dispatched - reward slice is working!");
+            // console.log("Test action dispatched - reward slice is working!");
             state.message = "Test action successful";
         }
     },
@@ -591,7 +591,7 @@ const rewardSlice = createSlice({
             })
             .addCase(getUserGamePlayTime.fulfilled, (state, action) => {
                 state.loading.userGamePlayTime = false;
-                console.log(action.payload);
+                // console.log(action.payload);
                 
                 state.userGamePlayTime = action.payload;
                 state.error = null;
@@ -731,8 +731,8 @@ const rewardSlice = createSlice({
                 state.loading.completeTask = false;
                 state.message = action.payload.message;
                 state.userBalance = action.payload.result?.newBalance || state.userBalance;
-                console.log("action.payload.result?.newBalance", action.payload.result?.newBalance);
-                console.log("state.userBalance", state.userBalance);
+                // console.log("action.payload.result?.newBalance", action.payload.result?.newBalance);
+                // console.log("state.userBalance", state.userBalance);
                 state.error = null;
                 // Refresh user balance after successful task completion
                 if (action.payload.result?.newBalance !== undefined) {

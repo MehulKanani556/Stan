@@ -209,14 +209,14 @@ export const getTrendingGames = createAsyncThunk(
   "game/getTrendingGames",
   async ({ page = 1, limit = 10, days = 30 } = {}, { rejectWithValue }) => {
     try {
-      console.log("Calling getTrendingGames API...");
+      // console.log("Calling getTrendingGames API...");
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
         days: days.toString()
       });
       const res = await axiosInstance.get(`/getTrendingGames?${params}`);
-      console.log("getTrendingGames API response:", res.data);
+      // console.log("getTrendingGames API response:", res.data);
       return res.data;
     } catch (err) {
       console.error("getTrendingGames API error:", err);
@@ -254,7 +254,7 @@ export const createWishlist = createAsyncThunk(
         }
       );
 
-      console.log("Create Wishlist Response:", response);
+      // console.log("Create Wishlist Response:", response);
       return response?.data;
     } catch (error) {
       console.error("Create Wishlist Error:", error.message);
@@ -299,6 +299,7 @@ export const getHomeTopGame = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get("/homeTopGame");
+
       return res.data || [];
     } catch (err) {
       console.error("getHomeTopGame API error:", err);
@@ -372,7 +373,7 @@ const gameSlice = createSlice({
       })
       .addCase(getAllGames.fulfilled, (state, action) => {
         state.loading = false;
-        state.games = action.payload.data || [];
+        state.games = action.payload || [];
         state.pagination = action.payload.pagination || null;
         state.sorting = action.payload.sorting || null;
         state.filters = action.payload.filters || null;
@@ -410,8 +411,8 @@ const gameSlice = createSlice({
       .addCase(getAllActiveGames.fulfilled, (state, action) => {
         state.loading = false;
         state.topGamesInitialLoading = false;
-        console.log("getAllActiveGames fulfilled - payload:", action.payload);
-        console.log("getAllActiveGames fulfilled - payload length:", action.payload?.length);
+        // console.log("getAllActiveGames fulfilled - payload:", action.payload);
+        // console.log("getAllActiveGames fulfilled - payload length:", action.payload?.length);
         state.games = action.payload;
         state.lastFetchTimes.games = Date.now(); // Update cache timestamp
       })
@@ -602,6 +603,7 @@ const gameSlice = createSlice({
         state.loading = false;
         state.topGamesInitialLoading = false;
         state.homeTopGame = action.payload;
+        // console.log("getHomeTopGame fulfilled - payload:", action.payload);
       })
       .addCase(getHomeTopGame.rejected, (state, action) => {
         state.loading = false;

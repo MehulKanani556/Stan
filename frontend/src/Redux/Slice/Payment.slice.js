@@ -47,14 +47,14 @@ export const getPaymentUser = createAsyncThunk(
 export const createpayment = createAsyncThunk(
   "payment/createpayment",
   async (data, { dispatch, rejectWithValue }) => {
-    console.log("rest", data);
+    // console.log("rest", data);
 
     try {
       const response = await axiosInstance.post(`/create-payment`, data);
       enqueueSnackbar(response.data.message || "Payment Successful !", {
         variant: "success",
       });
-      console.log("response", response.data);
+      // console.log("response", response.data);
       return response.data;
     } catch (error) {
       enqueueSnackbar(

@@ -248,6 +248,7 @@ const LoadingIndicator = () => (
 
 // Game Section Component
 const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
+  
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
 

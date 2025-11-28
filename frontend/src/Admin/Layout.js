@@ -18,43 +18,28 @@ import {
   FaUser,
   FaQuestion,
   FaExchangeAlt,
-  FaAd,
   FaBlog,
 } from "react-icons/fa";
-import { BiCameraMovie, BiSolidCategory, BiSolidVideo } from "react-icons/bi";
-import { FaList } from "react-icons/fa6";
-import { BsFillBoxSeamFill } from "react-icons/bs";
-import { CgArrowsShrinkH } from "react-icons/cg";
-import { BsBoxFill } from "react-icons/bs";
+import {  BiSolidCategory,  } from "react-icons/bi";
+
 import {
-  LuBoxes,
   LuContact,
-  LuCookie,
   LuEye,
   LuEyeClosed,
 } from "react-icons/lu";
 import { RiFileTextLine } from "react-icons/ri";
-import { TbMessageStar, TbPremiumRights } from "react-icons/tb";
-import { BiSolidOffer } from "react-icons/bi";
-import { FaArrowsRotate } from "react-icons/fa6";
-import { FaReceipt } from "react-icons/fa6";
-import { MdRecentActors } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
 import { Modal } from "@mui/material";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Formik, Field, ErrorMessage } from "formik";
+import { Formik,  } from "formik";
 import * as Yup from "yup";
 import { changePassword, getUserById } from "../Redux/Slice/user.slice";
 import { HiOutlineShieldCheck } from "react-icons/hi2";
-import { IMAGE_URL } from "../Utils/baseUrl";
-import { resetPassword } from "../Redux/Slice/user.slice";
 import { logoutUser } from "../Redux/Slice/auth.slice";
 import { decryptData } from "../Utils/encryption";
 import { IoGameControllerOutline } from "react-icons/io5";
-import BackgroundColor from "../components/BackgroundColor";
 // import { logout } from '../reduxe/slice/auth.slice';
 // import { setSearchValue } from '../reduxe/slice/search.slice';
 

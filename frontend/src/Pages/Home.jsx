@@ -335,6 +335,7 @@ export default function Home() {
     (state) => state.game,
     shallowEqual
   );
+
   const { wishlistStatus } = useSelector((state) => state.wishlist);
 
   const {
