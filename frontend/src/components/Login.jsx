@@ -366,10 +366,15 @@ const Login = () => {
       try {
         if (!pendingCreds) return;
         const res = await dispatch(login(pendingCreds));
+        
         if (res.meta.requestStatus === "fulfilled" && res.payload?.id) {
           setShowCaptchaModal(false);
-          navigate("/");
-          dispatch(handleMyToggle(true));
+         if(res.payload?.role === "admin" ){
+              navigate('/admin');
+            }else{
+              navigate('/');
+              dispatch(handleMyToggle(true));
+            }
           if (pendingUserName) {
             dispatch(setUser({ name: pendingUserName }));
           }
@@ -931,7 +936,7 @@ const Login = () => {
   // google login
   const googleLoginn = useGoogleLogin({
     onSuccess: async (credentialResponse) => {
-      console.log(credentialResponse);
+      // console.log(credentialResponse);
       try {
         const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
           headers: {
@@ -939,12 +944,18 @@ const Login = () => {
           }
         });
         const data = await res.json();
-        console.log(data);
+        // console.log(data);
         const { name, email, sub, picture } = data;
         dispatch(googleLogin({ name, email, uid: sub, picture })).then((res) => {
-          console.log("aa", res);
           if (res.meta.requestStatus === 'fulfilled') {
-            navigate('/');
+            // console.log(res.payload?.role);
+            
+            if(res.payload?.role === "admin" ){
+              navigate('/admin');
+            }else{
+              navigate('/');
+               dispatch(handleMyToggle(true));
+            }
           }
         });
       } catch (error) {

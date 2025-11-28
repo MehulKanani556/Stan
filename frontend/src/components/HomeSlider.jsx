@@ -39,7 +39,7 @@ import HeroSliderSkeleton2 from "../lazyLoader/HeroSkeleton2";
     const displayIntervalRef = useRef(null);
 
     
-    console.log(games,leftGames);
+    // console.log(games,leftGames);
     
 
    

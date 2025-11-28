@@ -195,9 +195,9 @@ export const getTopGames = createAsyncThunk(
   "game/getTopGames",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("Calling getTopGames API...");
+      // console.log("Calling getTopGames API...");
       const res = await axiosInstance.get("/getTopGames");
-      console.log("getTopGames API response:", res.data);
+      // console.log("getTopGames API response:", res.data);
       return res.data;
     } catch (err) {
       console.error("getTopGames API error:", err);

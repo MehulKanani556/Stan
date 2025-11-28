@@ -30,7 +30,7 @@ export default function GGTalks() {
     useEffect(() => {
         if (socket) {
             socket.on('connect', () => {
-                console.log('Connected to server');
+                // console.log('Connected to server');
                 setConnectionStatus('connected');
                 
                 // Rejoin user room after reconnection

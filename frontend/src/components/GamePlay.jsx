@@ -24,7 +24,7 @@ const GamePlay = () => {
 
         getServerTime()
             .then(time => {
-                console.log("Server time received:", time);
+                // console.log("Server time received:", time);
                 
                 if (isMounted) setServerTime(time);
             })
@@ -117,7 +117,7 @@ const GamePlay = () => {
                 if (durationMinutes > 0) {
                     storeGamePlayTime(slug, durationMinutes);
                     safeLocalStorage.set(`gameplay_time_${slug}`, 0);
-                    console.log(`Storing ${durationMinutes} minutes of playtime for game: ${slug}`);
+                    // console.log(`Storing ${durationMinutes} minutes of playtime for game: ${slug}`);
                 }
             }
 

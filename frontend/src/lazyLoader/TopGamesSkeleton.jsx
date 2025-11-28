@@ -1,7 +1,7 @@
 import React from 'react';
 
 const TopGamesSkeleton = () => {
-  console.log('is called')
+  // console.log('is called')
   return (
     <div className="text-white w-full max-w-[95%] md:max-w-[85%] bg-base-600 rounded-box mx-auto pb-12 sm:pb-16 md:pb-20">
       <div className="">

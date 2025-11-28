@@ -51,7 +51,7 @@ export const SocketProvider = ({ children }) => {
       };
 
       socketRef.current.on("user-playtime", (data => {
-        console.log("Data from server:", data);
+        // console.log("Data from server:", data);
 
 
         resolve(data?.time || null);

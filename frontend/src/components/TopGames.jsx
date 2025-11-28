@@ -254,7 +254,7 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
     <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
-          console.log('data', item),
+          // console.log('data', item),
           <GameCard key={item._id || item.id} item={item} />
         ))
       ) : isRefreshing ? (
@@ -290,7 +290,7 @@ function TopGames() {
     loading: state.game.topGamesInitialLoading
   }), shallowEqual);
 
-  console.log('gamesss', Homegames);
+  // console.log('gamesss', Homegames);
 
   // Extract games and loading states once
 

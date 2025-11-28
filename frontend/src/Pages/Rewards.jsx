@@ -121,7 +121,7 @@ const RewardsExperience = () => {
     const allTasksState = useSelector((state) => state.reward.allTasks);
     const scratchLoading = useSelector((state) => state.reward.loading.scratchCard);
 
-    console.log(allTasksState, "allTasksStateeeeee");
+    // console.log(allTasksState, "allTasksStateeeeee");
 
     const userGamePlayTime = useSelector((state) => state.reward.userGamePlayTime);
     const userLogging = useSelector((state) => state.user.userLogging)
@@ -174,7 +174,7 @@ const RewardsExperience = () => {
         .reduce((total, transaction) => total + (transaction.amount || 0), 0);
 
     // Calculate earn balance (sum of all EARN transactions)
-    console.log('recentTransactions', recentTransactions)
+    // console.log('recentTransactions', recentTransactions)
     const earnBalance = recentTransactions
         .filter(transaction => (transaction.type || '').toUpperCase() === 'EARN')
         .reduce((total, transaction) => total + (transaction.amount || 0), 0);
@@ -210,7 +210,7 @@ const RewardsExperience = () => {
     }, [])
     useEffect(() => {
         const fetchClaimed = async () => {
-            console.log('taskClaim', taskClaim)
+            // console.log('taskClaim', taskClaim)
             setLoadingTaskClaim(true);
             try {
                 const today = new Date().toISOString().split('T')[0];

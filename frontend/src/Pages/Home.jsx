@@ -393,8 +393,6 @@ export default function Home() {
     }
   }, []);
 
-  console.log("Kem Kem", "Hello");
-
   // Added image at line 507
   const handleGameClick = useCallback((gameId) => {
     navigate(`/single/${gameId}`);
@@ -611,11 +609,11 @@ export default function Home() {
                   style={{ padding: "20px 0px" }}
                   className="game-swiper"
                   onSwiper={(swiper) => {
-                    console.log('Swiper initialized:', swiper);
+                    // console.log('Swiper initialized:', swiper);
                     gameSwiperRef.current = swiper;
                     setTimeout(() => {
                       updateSwiperStates(swiper);
-                      console.log('Swiper states updated:', { isBeginning: swiper.isBeginning, isEnd: swiper.isEnd });
+                      // console.log('Swiper states updated:', { isBeginning: swiper.isBeginning, isEnd: swiper.isEnd });
                     }, 100);
                   }}
                   onSlideChange={updateSwiperStates}

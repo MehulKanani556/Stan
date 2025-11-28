@@ -203,7 +203,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
         ),
         [orders, game?._id]
     )
-    console.log(game?.name, isPurchased);
+    // console.log(game?.name, isPurchased);
     const isInCart = useMemo(() =>
         cartItems.some(item => item.game?._id === game?._id),
         [cartItems, game?._id]);

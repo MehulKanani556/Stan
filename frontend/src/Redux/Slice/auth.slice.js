@@ -34,7 +34,7 @@ export const login = createAsyncThunk(
       const response = await axios.post(`${BASE_URL}/userLogin`, data, {
         withCredentials: true,
       });
-      console.log(response.data);
+      // console.log(response.data);
       localStorage.setItem("token", response.data.result.token);
       localStorage.setItem("userId", response.data.result.id);
       localStorage.setItem("refreshToken", response.data.result?.refreshToken);
@@ -85,7 +85,7 @@ export const register = createAsyncThunk(
       const response = await axios.post(`${BASE_URL}/register`, registrationData, {
         withCredentials: true,
       });
-      console.log("response", response.data);
+      // console.log("response", response.data);
       localStorage.setItem('token', response.data.result.token)
       localStorage.setItem('userId', response.data.result.id);
       localStorage.setItem('refreshToken', response.data.result?.refreshToken)
@@ -337,7 +337,7 @@ const authSlice = createSlice({
         state.message = action.payload?.message || "Logout Failed";
       })
       .addCase(googleLogin.fulfilled, (state, action) => {
-       console.log(action.payload);
+      //  console.log(action.payload);
           if (!action.payload.role) {
             action.payload.role = "user";
           }

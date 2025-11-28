@@ -384,7 +384,7 @@ export default function Support() {
                   <button
                     onClick={() => {
                       
-                      console.log('Delete requested with reason:', deleteReason, otherReasonText)
+                      // console.log('Delete requested with reason:', deleteReason, otherReasonText)
                       setIsDeleteModalOpen(false)
                     }}
                     disabled={!deleteReason}

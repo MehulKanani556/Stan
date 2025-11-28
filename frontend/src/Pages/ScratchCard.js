@@ -12,7 +12,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [revealed, setRevealed] = useState(prize.isRevealed);
   const navigate = useNavigate();
-  console.log(prize.isRevealed);
+  // console.log(prize.isRevealed);
 
   useEffect(() => {
     setRevealed(prize.isRevealed);

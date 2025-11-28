@@ -44,7 +44,7 @@ const ChatWidget = () => {
   const scrollRef = useRef(null);
   const myManage = useLocation()
 
-  console.log("NNNNNNNNNNNNN", myManage);
+  // console.log("NNNNNNNNNNNNN", myManage);
 
 
 

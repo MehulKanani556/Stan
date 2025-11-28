@@ -525,7 +525,7 @@ const SingleGame = () => {
         }))
 
         if (fanCoinResult.type === "user/fanCoinsuse/fulfilled") {
-          console.log("Fan coins applied successfully:", fanCoinResult.payload);
+          // console.log("Fan coins applied successfully:", fanCoinResult.payload);
           setAmountToPay(fanCoinResult.payload.discountedPrice || finalAmount);
 
           // Update user data to reflect the new fan coin balance
