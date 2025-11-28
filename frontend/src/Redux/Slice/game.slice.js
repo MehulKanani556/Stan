@@ -445,6 +445,7 @@ const gameSlice = createSlice({
         state.loading = false;
         state.success = "Game created successfully";
         state.games.unshift(action.payload); // add new game to top
+        state.paginatedGames.unshift(action.payload); // add new game to top
       })
       .addCase(createGame.rejected, (state, action) => {
         state.loading = false;
@@ -461,6 +462,8 @@ const gameSlice = createSlice({
         state.success = "Game updated successfully";
         const idx = state.games.findIndex((g) => g._id === action.payload._id);
         if (idx !== -1) state.games[idx] = action.payload;
+        const idxPaginated = state.paginatedGames.findIndex((g) => g._id === action.payload._id);
+        if (idxPaginated !== -1) state.paginatedGames[idxPaginated] = action.payload;
       })
       .addCase(updateGame.rejected, (state, action) => {
         state.loading = false;

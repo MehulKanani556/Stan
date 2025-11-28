@@ -23,15 +23,12 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { getAllCategories } from "../Redux/Slice/category.slice";
 import {
-  FaApple,
-  FaChevronLeft,
-  FaChevronRight,
   FaWindows,
   FaXbox,
 } from "react-icons/fa";
-import { DiAndroid } from "react-icons/di";
 import { SiNintendo, SiOculus, SiPlaystation } from "react-icons/si";
 import { TbDeviceVisionPro } from "react-icons/tb";
+import { BsNintendoSwitch } from "react-icons/bs";
 
 export default function Game() {
   const dispatch = useDispatch();
@@ -917,10 +914,10 @@ export default function Game() {
                         />
                       ),
                       nintendo_switch_1: (
-                        <SiNintendo title="Nintendo Switch" className="inline-block mr-1" />
+                        <BsNintendoSwitch title="Nintendo Switch" className="inline-block mr-1" />
                       ),
                       nintendo_switch_2: (
-                        <SiNintendo title="Nintendo Switch" className="inline-block mr-1" />
+                        <BsNintendoSwitch title="Nintendo Switch" className="inline-block mr-1" />
                       ),
                     };
                     const color = {
