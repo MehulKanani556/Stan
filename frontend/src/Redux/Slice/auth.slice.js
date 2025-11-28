@@ -337,16 +337,15 @@ const authSlice = createSlice({
         state.message = action.payload?.message || "Logout Failed";
       })
       .addCase(googleLogin.fulfilled, (state, action) => {
-        if (action.payload && action.payload.user) {
-          if (!action.payload.user.role) {
-            action.payload.user.role = "user";
+       console.log(action.payload);
+          if (!action.payload.role) {
+            action.payload.role = "user";
           }
-          state.user = action.payload.user;
+          state.user = action.payload;
           state.isAuthenticated = true;
           state.loading = false;
           state.error = null;
           state.message = action.payload?.message || "Google Login successful";
-        }
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;

@@ -5,8 +5,11 @@ import { useSelector } from "react-redux";
 const ProtectedRoute = ({ children, requiredRole = "admin" }) => {
   // Adjust this selector to your auth slice
   const user = useSelector((state) => state.auth.user);
-  const token = localStorage.getItem("yoyoToken");
-  const userId = localStorage.getItem("yoyouserId");
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  console.log(user);
+  
 
   if (!token && !userId) {
     return (
