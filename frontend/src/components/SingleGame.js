@@ -44,28 +44,6 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import SingleGameSkeleton from "../lazyLoader/SingleGameSkeleton";
 import { fanCoinsuse } from "../Redux/Slice/user.slice";
 import { getUserById } from "../Redux/Slice/user.slice";
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt, FaWindows } from 'react-icons/fa'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
-import Slider from 'react-slick'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { getGameById, getGameRating } from '../Redux/Slice/game.slice'
-import { GoDotFill } from "react-icons/go"
-import { fetchCart, removeFromCart } from '../Redux/Slice/cart.slice'
-import { addToWishlist, fetchWishlist, removeFromWishlist } from '../Redux/Slice/wishlist.slice'
-import { allorders, createOrder } from '../Redux/Slice/Payment.slice'
-import { loadStripe } from '@stripe/stripe-js'
-import { Elements } from '@stripe/react-stripe-js'
-import PaymentForm from './PaymentForm'
-import ReviewForm from './ReviewForm'
-import { MdDateRange } from "react-icons/md"
-import { decryptData } from "../Utils/encryption"
-import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
-import SingleGameSkeleton from '../lazyLoader/SingleGameSkeleton'
-import { fanCoinsuse } from '../Redux/Slice/user.slice'
-import { getUserById } from '../Redux/Slice/user.slice'
 import PlatformSelectionModal from './PlatformSelectionModal'
 import usePlatformSelection from '../hooks/usePlatformSelection'
 
