@@ -373,7 +373,7 @@ const gameSlice = createSlice({
       })
       .addCase(getAllGames.fulfilled, (state, action) => {
         state.loading = false;
-        state.games = action.payload || [];
+        state.games = action.payload?.data || [];
         state.pagination = action.payload.pagination || null;
         state.sorting = action.payload.sorting || null;
         state.filters = action.payload.filters || null;
