@@ -122,6 +122,19 @@ export const updateGame = createAsyncThunk(
     }
   }
 );
+export const getAllActiveGamesWithPagination = createAsyncThunk(
+  "game/getAllActiveGamesWithPagination",
+  async ({ page = 1, limit = 15, category = "all", search = "" }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(
+        `/getAllActiveGamesWithPagination?page=${page}&limit=${limit}&category=${category}&search=${search}`
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
 
 // DELETE GAME
 export const deleteGame = createAsyncThunk(
@@ -360,6 +373,26 @@ const gameSlice = createSlice({
       .addCase(getAllGames.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+       // Get All Active Games with Pagination
+       .addCase(getAllActiveGamesWithPagination.pending, (state) => {
+        state.loadingStates.getAllActiveGamesWithPagination = true;
+        state.error = null;
+      })
+      .addCase(getAllActiveGamesWithPagination.fulfilled, (state, action) => {
+        state.loadingStates.getAllActiveGamesWithPagination = false;
+        state.paginatedGames = action.payload.data;
+        state.totalGames = action.payload.total;
+        state.currentPage = action.payload.page;
+        state.totalPages = action.payload.totalPages;
+      })
+      .addCase(getAllActiveGamesWithPagination.rejected, (state, action) => {
+        state.loadingStates.getAllActiveGamesWithPagination = false;
+        state.error = action.payload;
+        state.paginatedGames = [];
+        state.totalGames = 0;
+        state.currentPage = 1;
+        state.totalPages = 1;
       })
       // GET ALL ACTIVE
       .addCase(getAllActiveGames.pending, (state) => {

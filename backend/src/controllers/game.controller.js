@@ -6,6 +6,9 @@ import Subscribe from "../models/Subscribe.model.js";
 import sendMail from "../helper/sendMail.js";
 import { fileupload, deleteFile } from "../helper/cloudinary.js";
 import CategoryModel from "../models/Category.model.js";
+import Order from "../models/Order.model.js";
+import User from "../models/userModel.js";
+import FreeGame from "../models/freeGamesModel.js";
 
 // Create a new game
 export const createGame = function (req, res) {

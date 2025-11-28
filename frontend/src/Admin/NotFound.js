@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-import BackgroundColor from '../component/BackgroundColor';
+import BackgroundColor from '../components/BackgroundColor';
 
 export default function NotFound() {
     const navigate = useNavigate();

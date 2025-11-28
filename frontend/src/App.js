@@ -34,6 +34,8 @@ import BackgroundColor from './components/BackgroundColor';
 import HomeSlider from './components/HomeSlider.jsx';
 import LoaderWrapper from './components/LoaderWrapper.jsx';
 import ScratchGame from './Pages/ScratchGame.js';
+import ProtectedRoute from './routes/ProtectedRoute.js';
+import AdminRoutes from './routes/AdminRoutes.js';
 // Component to conditionally render Header and Footer
 function App() {
   const location = useLocation();
@@ -42,20 +44,20 @@ function App() {
   const chatwidegt = location.pathname == "/GGTalks" || location.pathname === "/ggtalks";
   return (
     <>
-    <BackgroundColor>
-      {!isAuthPage && <Header />}
-      <SnackbarProvider
-        maxSnack={3}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
+      <BackgroundColor>
+        {!isAuthPage && <Header />}
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
 
-        autoHideDuration={3000}
-      >
-        <SocketProvider>
-          <LoaderProvider>
-            <LoaderWrapper>
+          autoHideDuration={3000}
+        >
+          <SocketProvider>
+            <LoaderProvider>
+              <LoaderWrapper>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/loader" element={<Loader />} />
@@ -83,17 +85,27 @@ function App() {
                   <Route path="/allGames" element={<AllGames />} />
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/quizRewards" element={<QuizGame />} />
-                </Routes>
-              {!chatwidegt && <ChatWidget />}
-            </LoaderWrapper>
-          </LoaderProvider>
-        </SocketProvider>
-      </SnackbarProvider>
 
-      {(!showFooter) && <Footer />}
+                  <Route
+                    path="/admin/*"
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        {" "}
+                        <AdminRoutes />{" "}
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+                {!chatwidegt && <ChatWidget />}
+              </LoaderWrapper>
+            </LoaderProvider>
+          </SocketProvider>
+        </SnackbarProvider>
+
+        {(!showFooter) && <Footer />}
       </BackgroundColor>
     </>
-  
+
   );
 }
 export default App;

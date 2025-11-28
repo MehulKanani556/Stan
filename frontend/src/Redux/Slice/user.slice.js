@@ -359,6 +359,30 @@ export const leaveGroup = createAsyncThunk(
 //     }
 //   }
 // );
+export const changePassword = createAsyncThunk(
+  "users/changePassword",
+  async (
+    { email, oldPassword, newPassword },
+    { dispatch, rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post(`/changePassword`, {
+        email,
+        currentPassword:oldPassword,
+        newPassword:newPassword,
+      });
+      // dispatch(setAlert({ text: response.data.message, color: 'success' }));
+      enqueueSnackbar(response.data.message || "Old password is incorrect", { variant: "success" });
+      return response.data;
+    } catch (error) {
+      // console.log(error.response.data.message);
+      
+      enqueueSnackbar(error.response.data.message || "Old password is incorrect", { variant: "error" });
+      return handleErrors(error, dispatch, rejectWithValue);
+    }
+  }
+);
+
 
 export const archiveUser = createAsyncThunk(
   "user/archiveUser",
@@ -651,7 +675,21 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
+    .addCase(changePassword.pending, (state) => {
+      state.loading = true;
+      state.message = "Resetting password...";
+    })
+    .addCase(changePassword.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = true;
+      state.message =
+        action.payload?.message || "Password reset successfully";
+    })
+    .addCase(changePassword.rejected, (state, action) => {
+      state.loading = false;
+      state.success = false;
+      state.message = action.payload?.message || "Failed to reset password";
+    })
       .addCase(getUser.fulfilled, (state, action) => {
         state.user = action.payload.users; // Assuming the API returns the user data
         state.loading = false;

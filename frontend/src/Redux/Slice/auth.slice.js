@@ -188,6 +188,30 @@ export const googleLogin = createAsyncThunk(
   }
 );
 
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (id, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/logout/${id}`);
+      if (response.data.success) {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("refreshToken");
+        document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        if (window.persistor) {
+          window.persistor.purge();
+        }
+        // dispatch(setAlert({ text: response.data.message, color: 'success' }));
+        enqueueSnackbar(response.data.message || "Logged out successfully", { variant: "success" });
+        return response.data;
+      }
+    } catch (error) {
+      // return handleErrors(error, dispatch, rejectWithValue);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -300,7 +324,18 @@ const authSlice = createSlice({
         state.error = action.payload.message;
         state.message = action.payload?.message || "Reset Password Failed";
       })
-     
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loggedIn = false;
+        state.isLoggedOut = true;
+        window.sessionStorage.clear();
+        state.message = action.payload?.message || "Logged out successfully";
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.error = action.payload.message;
+        state.message = action.payload?.message || "Logout Failed";
+      })
       .addCase(googleLogin.fulfilled, (state, action) => {
         if (action.payload && action.payload.user) {
           if (!action.payload.user.role) {

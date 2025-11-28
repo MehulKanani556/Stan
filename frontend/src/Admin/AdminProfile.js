@@ -109,14 +109,14 @@ export default function AdminProfile() {
     };
 
     const avatars = [
-        require("../Asset/images/1.png"),
-        require("../Asset/images/2.png"),
-        require("../Asset/images/3.png"),
-        require("../Asset/images/4.png"),
-        require("../Asset/images/5.png"),
-        require("../Asset/images/6.png"),
-        require("../Asset/images/7.png"),
-        require("../Asset/images/8.png"),
+        require("../images/1.png"),
+        require("../images/2.png"),
+        require("../images/3.png"),
+        require("../images/4.png"),
+        require("../images/5.png"),
+        require("../images/6.png"),
+        require("../images/7.png"),
+        require("../images/8.png"),
     ];
 
     const handleAvatarSelect = async (avatar) => {

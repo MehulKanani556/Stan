@@ -54,7 +54,7 @@ import { resetPassword } from "../Redux/Slice/user.slice";
 import { logoutUser } from "../Redux/Slice/auth.slice";
 import { decryptData } from "../Utils/encryption";
 import { IoGameControllerOutline } from "react-icons/io5";
-import BackgroundColor from "../component/BackgroundColor";
+import BackgroundColor from "../components/BackgroundColor";
 // import { logout } from '../reduxe/slice/auth.slice';
 // import { setSearchValue } from '../reduxe/slice/search.slice';
 
