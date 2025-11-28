@@ -482,10 +482,29 @@ const SingleGame = () => {
       navigate('/login')
       return
     }
+
+    // If game is already in cart with platforms selected, use them directly
+    if (isInCart && singleGameCartPlatforms.length > 0) {
+      // Use the first platform from cart, or selectedPurchasePlatform if it's in cart platforms
+      const platformToUse = singleGameCartPlatforms.includes(selectedPurchasePlatform)
+        ? selectedPurchasePlatform
+        : singleGameCartPlatforms[0]
+
+      setSelectedPurchasePlatform(platformToUse)
+      const price = getPlatformPrice(platformToUse)
+      setUseFanCoinsChecked(false)
+      setFanCoinsToUse(0)
+      setFinalAmount(price)
+      setShowOrderSummary(true)
+      return
+    }
+
+    // Otherwise, show platform selection modal
     setShowOrderSummary(false)
     setBuySelectedPlatforms(selectedPurchasePlatform ? [selectedPurchasePlatform] : [])
     setIsBuyPlatformModalOpen(true)
-  }, [isLoggedIn, navigate, selectedPurchasePlatform])
+  }, [isLoggedIn, navigate, selectedPurchasePlatform, isInCart, singleGameCartPlatforms, getPlatformPrice])
+
 
   const handleConfirmBuyPlatform = useCallback(() => {
     if (!buySelectedPlatforms.length) return
