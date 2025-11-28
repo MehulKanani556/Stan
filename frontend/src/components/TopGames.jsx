@@ -251,7 +251,6 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
   
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
-
     <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
         items.slice(0, length).map((item) => (
@@ -268,7 +267,6 @@ const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
         </div>
       )}
     </div>
-
     <Link to={section.link}>
       <div className="mt-6 sm:mt-8 pt-6 border-t border-purple-500/30">
         <button className="w-full sm:py-3 py-2 sm:px-4 px-3 sm:text-base text-sm rounded-xl bg-gradient-to-r from-[#ab99e1]/20 to-[#b8a8e6]/20 hover:from-[#ab99e1]/30 hover:to-[#b8a8e6]/30 border border-[#ab99e1]/30 text-[#ab99e1] font-semibold transition-all duration-300 hover:shadow-lg">
@@ -297,9 +295,12 @@ function TopGames() {
 
   // Create gameData object directly
   const gameData = useMemo(() => {
-    const topSelling = Array.isArray(Homegames?.topSelling) ? Homegames.topSelling : [];
-    const freegames = Array.isArray(Homegames?.freegames) ? Homegames.freegames : [];
-    const newGames = Array.isArray(Homegames?.newGames) ? Homegames.newGames : [];
+    // Handle case where Homegames might be an array or object
+    const homeGamesData = Array.isArray(Homegames) ? {} : Homegames;
+    
+    const topSelling = Array.isArray(homeGamesData?.topSelling) ? homeGamesData.topSelling : [];
+    const freegames = Array.isArray(homeGamesData?.freegames) ? homeGamesData.freegames : [];
+    const newGames = Array.isArray(homeGamesData?.newGames) ? homeGamesData.newGames : [];
 
     const isPaid = (g) => {
       const price = g?.platforms?.windows?.price;
@@ -337,21 +338,27 @@ function TopGames() {
   // Calculate display length when appropriate
   useEffect(() => {
     if (isLoading) return;
-    // console.log('gameData', gameData , isLoading)
-    const minLength = Math.min(
+    // Filter out zero lengths to avoid setting length to 0 when some sections have data
+    const lengths = [
       gameData.game?.length || 0,
       gameData.freeGame?.length || 0,
       gameData.newGames?.length || 0,
       gameData.ultimate?.length || 0
-    );
-
+    ].filter(length => length > 0);
+    
+    // If all sections are empty, use default length
+    if (lengths.length === 0) {
+      setLength(DEFAULT_ITEMS_COUNT);
+      return;
+    }
+    
+    const minLength = Math.min(...lengths);
     setLength(minLength < MIN_REQUIRED_ITEMS ? minLength : DEFAULT_ITEMS_COUNT);
   }, [isLoading, gameData]);
+  
   // Fetch data on mount
   useEffect(() => {
-    if (!isLoading) {
-      dispatch(getHomeTopGame());
-    }
+    dispatch(getHomeTopGame());
   }, [dispatch]);
 
   // Show skeleton while loading or no data
@@ -376,15 +383,18 @@ function TopGames() {
 
         {/* Games Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3   2xl:grid-cols-3 3xl:grid-cols-6  gap-5 sm:gap-6 md:gap-6">
-          {SECTION_CONFIG.map((section, i) => (
-            <GameSection
-              key={section.title}
-              section={section}
-              items={gameData[section.dataKey]}
-              length={length}
-              isRefreshing={isLoading}
-            />
-          ))}
+          {SECTION_CONFIG.map((section, i) => {
+            const sectionData = gameData[section.dataKey];
+            return (
+              <GameSection
+                key={section.title}
+                section={section}
+                items={sectionData}
+                length={length}
+                isRefreshing={isLoading}
+              />
+            );
+          })}
         </div>
       </div>
     </>

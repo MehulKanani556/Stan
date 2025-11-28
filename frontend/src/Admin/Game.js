@@ -1044,7 +1044,7 @@ export default function Game() {
                   value={formik.values.category}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-white/5 rounded w-full p-2 mt-1"
+                  className="bg-[#202020] rounded w-full p-2 mt-1"
                 >
                   <option value="">Select Category</option>
                   {categories.map((cat) => (
