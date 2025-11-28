@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../Utils/axiosInstance";
 import { enqueueSnackbar } from "notistack";
-import axios from "axios";
 
 // GET ALL GAMES
 // GET ALL GAMES - Optimized version
@@ -317,8 +316,10 @@ const gameSlice = createSlice({
     homeTopGame:[],
     popularGames: [],
     topGames: [],
+    totalGames:[],
     trendingGames: [],
     singleGame: null,
+    totalPages: null,
     loading: false,
     topGamesLoading: false,
     popularGamesLoading: false,
@@ -336,6 +337,11 @@ const gameSlice = createSlice({
     reviewData:[],
     singleGameReview:{},
     // Cache timestamps to prevent unnecessary API calls
+    loadingStates: {
+      getAllActiveGamesWithPagination: false,
+    },
+    paginatedGames: [],
+    currentPage: 1, 
     lastFetchTimes: {
       games: 0,
       popularGames: 0,

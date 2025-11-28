@@ -150,7 +150,7 @@ indexRoutes.put(
 indexRoutes.delete("/free-games/:id", UserAuth, isAdmin, deleteFreeGame);
 
 //Game
-
+indexRoutes.get("/getAllActiveGamesWithPagination", getAllActiveGamesWithPagination)
 indexRoutes.get("/getAllGames", getAllGames);
 indexRoutes.get("/getAllActiveGames", getAllActiveGames);
 indexRoutes.get("/getPopularGames", getPopularGames);

@@ -91,7 +91,7 @@ export const createGame = function (req, res) {
       }
 
       // For each platform, if a file is uploaded, upload it and set download_link (one-time, expiring)
-      const platformNames = ["windows", "ios", "android"];
+      const platformNames = ["windows", "nintendo_switch_2", "nintendo_switch_1", "ps5", "xbox", "vision_pro","quest"];
       for (const platform of platformNames) {
         if (
           req.files &&
@@ -436,7 +436,7 @@ export const updateGame = function (req, res) {
       }
 
       // For each platform, if a file is uploaded, upload it and set download_link (one-time, expiring)
-      const platformNames = ["windows", "ios", "android"];
+       const platformNames = ["windows", "nintendo_switch_2", "nintendo_switch_1", "ps5", "xbox", "vision_pro","quest"];
       for (const platform of platformNames) {
         if (req.files && req.files[`${platform}_file`]) {
           const fileData = await fileupload(

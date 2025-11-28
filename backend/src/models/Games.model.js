@@ -49,26 +49,58 @@ const gameSchema = new mongoose.Schema(
                 },
                 public_id: { type: String },
             },
-            ios: {
+            vision_pro: {
                 available: { type: Boolean, default: false },
                 price: { type: Number },
                 download_link: { type: String },
                 size: { type: String },
                 system_requirements: {
-                    ios_version: { type: String },
+                    storage: { type: String },
+                },
+                public_id: { type: String },
+            },
+            ps5: {
+                available: { type: Boolean, default: false },
+                price: { type: Number },
+                download_link: { type: String },
+                size: { type: String },
+                public_id: { type: String },
+            },
+            xbox: {
+                available: { type: Boolean, default: false },
+                price: { type: Number },
+                download_link: { type: String },
+                size: { type: String },
+                system_requirements: {
                     device_compatibility: { type: String },
                 },
                 public_id: { type: String },
             },
-            android: {
+            quest: {
                 available: { type: Boolean, default: false },
                 price: { type: Number },
                 download_link: { type: String },
                 size: { type: String },
                 system_requirements: {
-                    android_version: { type: String },
-                    device_compatibility: { type: String },
+                    supported_Platforms: { type: String },
+                    storage: { type: String },
                 },
+                public_id: { type: String },
+            },
+            nintendo_switch_1: {
+                available: { type: Boolean, default: false },
+                price: { type: Number },
+                download_link: { type: String },
+                size: { type: String },
+                Supported_play_modes:{type: String},
+                public_id: { type: String },
+            },
+            nintendo_switch_2: {
+                available: { type: Boolean, default: false },
+                price: { type: Number },
+                download_link: { type: String },
+                size: { type: String },
+                Supported_play_modes:{type: String},
                 public_id: { type: String },
             },
         },
