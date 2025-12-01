@@ -236,18 +236,14 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.fulfilled, (state, action) => {
-        if (action.payload && action.payload.user) {
-          // Ensure user has a role property
-          if (!action.payload.user.role) {
-            action.payload.user.role = "user";
-          }
-          state.user = action.payload.user;
-          state.isAuthenticated = true;
-          state.loading = false;
-          state.error = null;
-          state.loginLoadin = false;
-          state.message = action.payload?.message || "Login successfully";
+        if (!action.payload.role) {
+          action.payload.role = "user";
         }
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.loading = false;
+        state.error = null;
+        state.message = action.payload?.message || "Google Login successful";
       })
 
       .addCase(login.pending, (state) => {
