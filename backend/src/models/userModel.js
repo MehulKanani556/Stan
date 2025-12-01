@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema(
         // Cart field to store cart items
         cart: [{
             game: { type: mongoose.Schema.Types.ObjectId, ref: "game" },
-            platform: { type: String, enum: ["windows", "ios", "android"] },
+            platform: { type: String, enum: ["windows", "vision_pro", "ps5","xbox","quest","nintendo_switch_1","nintendo_switch_2"] },
             qty: { type: Number, default: 1, min: 1 },
             price: { type: Number, required: true },
             name: { type: String },
