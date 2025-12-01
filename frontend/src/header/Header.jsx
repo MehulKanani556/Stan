@@ -48,6 +48,7 @@ export default function Header() {
     //     return stored ? JSON.parse(stored) : "";
     // });
     const location = useLocation()
+    const isAdminRoute = location.pathname.startsWith("/admin");
 
     // user looging task manage code ----------------------------------------------------------------
     useEffect(() => {
@@ -132,56 +133,58 @@ export default function Header() {
     return (
         <>
             <header className='bg-black/30 backdrop-blur-xl sticky w-full top-0 z-50 '>
-                <div className="drawer max-w-[95%] md:max-w-[85%] m-auto w-full  ">
+                <div className={`drawer w-full ${isAdminRoute ? "" : "max-w-[95%] md:max-w-[85%] m-auto"}`}>
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={(e) => setIsDrawerOpen(e.target.checked)} />
                     <div className="drawer-content flex flex-col">
 
 
-                        <div className="navbar  w-full px-0 justify-between">
+                        <div className="navbar w-[97%] m-auto px-0 justify-between">
 
-                            <NavLink to="/" className="flex items-center gap-2 flex-none">
+                            <NavLink to={isAdminRoute ? "/admin" : "/"} className="flex items-center gap-2 flex-none">
                                 <YOYO_LOGO className="svg-current-color h-12 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
                                 {/* <span className='text-[var(--color-change)] font-semibold text-4xl'>YOYO</span> */}
                             </NavLink>
 
 
-                            <div className=" hidden md:flex justify-center">
-                                <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg px-0">
-                                    <li>
-                                        <NavLink to="/" className={({ isActive }) =>
-                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
-                                        }>Home</NavLink>
-                                    </li>
-                                    <li>
-                                        <NavLink to={isLoggedIn ? "/ggtalks" : "/login"} className={({ isActive }) =>
-                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
-                                        }>GGTalks</NavLink>
-                                    </li>
+                            {!isAdminRoute && (
+                                <div className=" hidden md:flex justify-center">
+                                    <ul className="menu menu-horizontal text-gray-300 lg:text-xl text-lg px-0">
+                                        <li>
+                                            <NavLink to="/" className={({ isActive }) =>
+                                                isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
+                                            }>Home</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to={isLoggedIn ? "/ggtalks" : "/login"} className={({ isActive }) =>
+                                                isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
+                                            }>GGTalks</NavLink>
+                                        </li>
 
-                                    <li>
-                                        <NavLink to="/games" className={({ isActive }) =>
-                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
-                                        }>Games</NavLink>
-                                    </li>
-                                    <li>
-                                        <NavLink to={isLoggedIn ? "/rewards" : "/login"} className={({ isActive }) =>
-                                            isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
-                                        }>Rewards</NavLink>
-                                    </li>
-                                    <li>
-                                        <NavLink to="/store" end={false} className={({ isActive }) => {
-                                            const path = location.pathname;
-                                            const isCustomActive =
-                                                path.startsWith("/single/") || path.startsWith("/store");
+                                        <li>
+                                            <NavLink to="/games" className={({ isActive }) =>
+                                                isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
+                                            }>Games</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to={isLoggedIn ? "/rewards" : "/login"} className={({ isActive }) =>
+                                                isActive ? "text-[var(--color-change)] md:px-2 lg:px-3" : "hover:text-[var(--color-change)] md:px-2 lg:px-3"
+                                            }>Rewards</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/store" end={false} className={({ isActive }) => {
+                                                const path = location.pathname;
+                                                const isCustomActive =
+                                                    path.startsWith("/single/") || path.startsWith("/store");
 
-                                            return isActive || isCustomActive
-                                                ? "text-[var(--color-change)] md:px-2 lg:px-3"
-                                                : "hover:text-[var(--color-change)] md:px-2 lg:px-3";
-                                        }}
-                                        >Store</NavLink>
-                                    </li>
-                                </ul>
-                            </div>
+                                                return isActive || isCustomActive
+                                                    ? "text-[var(--color-change)] md:px-2 lg:px-3"
+                                                    : "hover:text-[var(--color-change)] md:px-2 lg:px-3";
+                                            }}
+                                            >Store</NavLink>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
 
 
                             <div className="flex items-center gap-5">
@@ -189,7 +192,7 @@ export default function Header() {
 
                                     <div className='flex gap-2 items-center'>
                                         {
-                                            isLoggedIn ?
+                                            !isAdminRoute && isLoggedIn ?
                                                 <>
 
                                                     <NavLink to="https://play.google.com/store/games?device=windows" target="_blank" className="me-2 relative">
@@ -324,7 +327,7 @@ export default function Header() {
                                         </div>
                                     )}
                                 </div>
-                                {isLoggedIn ? <div className='flex gap-2 items-center md:hidden'>
+                                {!isAdminRoute && isLoggedIn ? <div className='flex gap-2 items-center md:hidden'>
 
                                     <NavLink to="https://play.google.com/store/games?device=windows" target="_blank" className="me-1.5 relative">
 
@@ -519,93 +522,95 @@ export default function Header() {
                 </div>
             </header>
 
-            <footer className="bg-black/30 backdrop-blur-xl text-white  py-2 rounded-t-2xl fixed bottom-0 w-full md:hidden block z-50">
-                <ul className="flex  items-center justify-evenly">
-                    <li>
-                        <NavLink to="/" className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => (
-                                <>
-                                    {isActive ? (
-                                        <RiHome4Fill className="size-5 text-[var(--color-change)]" />
-                                    ) : (
-                                        <RiHome4Line className="size-5 text-gray-400" />
-                                    )}
-                                    <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>Home</p>
-                                </>
-                            )}
-                        </NavLink>
-                    </li>
-
-                    <li>
-                        <NavLink to={isLoggedIn ? "/ggtalks" : "/login"} className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => (
-                                <>
-                                    {isActive ? (
-                                        <BsChatHeartFill className="size-5 text-[var(--color-change)] fill-current" />
-                                    ) : (
-                                        <BsChatHeart className="size-5 text-gray-400" />
-                                    )}
-                                    <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>GG Talks</p>
-                                </>
-                            )}
-                        </NavLink>
-                    </li>
-
-
-
-                    <li>
-                        <NavLink to="/games" end={false} className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => {
-                                const active = location.pathname.startsWith("/game") || location.pathname.startsWith("/games/");
-                                return (
+            {!isAdminRoute && (
+                <footer className="bg-black/30 backdrop-blur-xl text-white  py-2 rounded-t-2xl fixed bottom-0 w-full md:hidden block z-50">
+                    <ul className="flex  items-center justify-evenly">
+                        <li>
+                            <NavLink to="/" className="flex items-center justify-center flex-col gap-1 text-xs">
+                                {({ isActive }) => (
                                     <>
-                                        {active ? (
-                                            <IoGameController className="size-5 text-[var(--color-change)]" />
+                                        {isActive ? (
+                                            <RiHome4Fill className="size-5 text-[var(--color-change)]" />
                                         ) : (
-                                            <IoGameControllerOutline className="size-5 text-gray-400" />
+                                            <RiHome4Line className="size-5 text-gray-400" />
                                         )}
-                                        <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Games</p>
+                                        <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>Home</p>
                                     </>
-                                )
-                            }}
-                        </NavLink>
+                                )}
+                            </NavLink>
+                        </li>
 
-                    </li>
-
-                    <li>
-                        <NavLink to="/rewards" className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => (
-                                <>
-                                    {isActive ? (
-                                        <IoGift className="size-5 text-[var(--color-change)]" />
-                                    ) : (
-                                        <IoGiftOutline className="size-5 text-gray-400" />
-                                    )}
-                                    <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>Rewards</p>
-                                </>
-                            )}
-                        </NavLink>
-                    </li>
-
-                    <li>
-                        <NavLink to="/store" className="flex items-center justify-center flex-col gap-1 text-xs">
-                            {({ isActive }) => {
-                                const active = location.pathname.startsWith("/store") || location.pathname.startsWith("/single/");
-                                return (
+                        <li>
+                            <NavLink to={isLoggedIn ? "/ggtalks" : "/login"} className="flex items-center justify-center flex-col gap-1 text-xs">
+                                {({ isActive }) => (
                                     <>
-                                        {active ? (
-                                            <IoBag className="size-5 text-[var(--color-change)]" />
+                                        {isActive ? (
+                                            <BsChatHeartFill className="size-5 text-[var(--color-change)] fill-current" />
                                         ) : (
-                                            <IoBagOutline className="size-5 text-gray-400" />
+                                            <BsChatHeart className="size-5 text-gray-400" />
                                         )}
-                                        <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Store</p>
+                                        <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>GG Talks</p>
                                     </>
-                                )
-                            }}
-                        </NavLink>
-                    </li>
-                </ul>
-            </footer>
+                                )}
+                            </NavLink>
+                        </li>
+
+
+
+                        <li>
+                            <NavLink to="/games" end={false} className="flex items-center justify-center flex-col gap-1 text-xs">
+                                {({ isActive }) => {
+                                    const active = location.pathname.startsWith("/game") || location.pathname.startsWith("/games/");
+                                    return (
+                                        <>
+                                            {active ? (
+                                                <IoGameController className="size-5 text-[var(--color-change)]" />
+                                            ) : (
+                                                <IoGameControllerOutline className="size-5 text-gray-400" />
+                                            )}
+                                            <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Games</p>
+                                        </>
+                                    )
+                                }}
+                            </NavLink>
+
+                        </li>
+
+                        <li>
+                            <NavLink to="/rewards" className="flex items-center justify-center flex-col gap-1 text-xs">
+                                {({ isActive }) => (
+                                    <>
+                                        {isActive ? (
+                                            <IoGift className="size-5 text-[var(--color-change)]" />
+                                        ) : (
+                                            <IoGiftOutline className="size-5 text-gray-400" />
+                                        )}
+                                        <p className={isActive ? "text-[var(--color-change)]" : "text-gray-400"}>Rewards</p>
+                                    </>
+                                )}
+                            </NavLink>
+                        </li>
+
+                        <li>
+                            <NavLink to="/store" className="flex items-center justify-center flex-col gap-1 text-xs">
+                                {({ isActive }) => {
+                                    const active = location.pathname.startsWith("/store") || location.pathname.startsWith("/single/");
+                                    return (
+                                        <>
+                                            {active ? (
+                                                <IoBag className="size-5 text-[var(--color-change)]" />
+                                            ) : (
+                                                <IoBagOutline className="size-5 text-gray-400" />
+                                            )}
+                                            <p className={active ? "text-[var(--color-change)]" : "text-gray-400"}>Store</p>
+                                        </>
+                                    )
+                                }}
+                            </NavLink>
+                        </li>
+                    </ul>
+                </footer>
+            )}
 
 
         </>
