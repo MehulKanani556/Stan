@@ -702,6 +702,7 @@ const Store = () => {
     <PlatformSelectionModal
       open={Boolean(platformModalGame)}
       gameTitle={platformModalGame?.title}
+      game={platformModalGame}
       onClose={closePlatformModal}
       selectedPlatforms={selectedPlatforms}
       onPlatformToggle={handlePlatformToggle}

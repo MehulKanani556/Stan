@@ -936,6 +936,7 @@ export default function AllGames() {
             <PlatformSelectionModal
                 open={Boolean(platformModalGame)}
                 gameTitle={platformModalGame?.title}
+                game={platformModalGame}
                 onClose={closePlatformModal}
                 selectedPlatforms={selectedPlatforms}
                 onPlatformToggle={handlePlatformToggle}

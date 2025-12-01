@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export const PLATFORM_OPTIONS = [
-  { label: 'Vision Pro', value: 'visionPro' },
+  { label: 'Vision Pro', value: 'vision_pro' },
   { label: 'PC', value: 'windows' },
   { label: 'PS 5', value: 'ps5' },
   { label: 'X Box', value: 'xbox' },
   { label: 'Quest', value: 'quest' },
-  { label: 'Nintendo Switch 1', value: 'switch1' },
-  { label: 'Nintendo Switch 2', value: 'switch2' }
+  { label: 'Nintendo Switch 1', value: 'nintendo_switch_1' },
+  { label: 'Nintendo Switch 2', value: 'nintendo_switch_2' }
 ];
 
 const PlatformSelectionModal = ({
   open,
   gameTitle,
+  game,
   onClose,
   selectedPlatforms = [],
   onPlatformToggle,
@@ -21,11 +22,32 @@ const PlatformSelectionModal = ({
   isSubmitting,
   confirmLabel = 'Add Selected'
 }) => {
-  if (!open) return null;
+  // Filter platforms to only show available ones from game data
+  const availablePlatforms = useMemo(() => {
+    if (!game?.platforms) return PLATFORM_OPTIONS;
+    
+    return PLATFORM_OPTIONS.filter(option => {
+      const platformData = game.platforms[option.value];
+      return platformData?.available === true;
+    });
+  }, [game]);
 
-  const allPlatformsAdded = PLATFORM_OPTIONS.every(option =>
+  // Calculate total price for selected platforms
+  const totalPrice = useMemo(() => {
+    if (!game?.platforms || selectedPlatforms.length === 0) return 0;
+    
+    return selectedPlatforms.reduce((total, platformValue) => {
+      const platformData = game.platforms[platformValue];
+      const price = platformData?.price || 0;
+      return total + price;
+    }, 0);
+  }, [selectedPlatforms, game]);
+
+  const allPlatformsAdded = availablePlatforms.every(option =>
     addedPlatforms.includes(option.value)
   );
+
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 px-4">
@@ -46,9 +68,11 @@ const PlatformSelectionModal = ({
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-          {PLATFORM_OPTIONS.map((option) => {
+          {availablePlatforms.map((option) => {
             const isSelected = selectedPlatforms.includes(option.value);
             const alreadyAdded = addedPlatforms.includes(option.value);
+            const platformData = game?.platforms?.[option.value];
+            const price = platformData?.price || 0;
 
             return (
               <button
@@ -63,7 +87,12 @@ const PlatformSelectionModal = ({
                     : 'border-slate-700 bg-slate-800/80 text-slate-200 hover:border-purple-400 hover:text-white'
                   }`}
               >
-                <span className="font-semibold">{option.label}</span>
+                <div className="flex flex-col">
+                  <span className="font-semibold">{option.label}</span>
+                  {price > 0 && (
+                    <span className="text-sm text-slate-400 mt-0.5">${price.toFixed(2)}</span>
+                  )}
+                </div>
                 {alreadyAdded ? (
                   <span className="text-xs uppercase tracking-wide text-emerald-400">Added</span>
                 ) : (
@@ -78,6 +107,20 @@ const PlatformSelectionModal = ({
           <p className="text-center text-slate-400 text-sm mb-4">
             All available platforms for this game are already in your cart.
           </p>
+        )}
+
+        {selectedPlatforms.length > 0 && totalPrice > 0 && (
+          <div className="mb-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-300 font-medium">Total Price:</span>
+              <span className="text-2xl font-bold text-white">${totalPrice.toFixed(2)}</span>
+            </div>
+            {selectedPlatforms.length > 1 && (
+              <p className="text-xs text-slate-400 mt-1">
+                {selectedPlatforms.length} platform{selectedPlatforms.length > 1 ? 's' : ''} selected
+              </p>
+            )}
+          </div>
         )}
 
         <div className="flex flex-col sm:flex-row gap-3">
