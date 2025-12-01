@@ -41,7 +41,7 @@ export const addToCart = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(gameId)) {
             return sendError(res, 400, 'Invalid game id');
         }
-        if (!['windows', 'ios', 'android'].includes(platform)) {
+        if (!['windows', 'vision_pro', 'ps5', 'xbox', 'quest', 'nintendo_switch_1', 'nintendo_switch_2'].includes(platform)) {
             return sendError(res, 400, 'Invalid platform');
         }
         const game = await Game.findById(gameId);
@@ -67,6 +67,7 @@ export const addToCart = async (req, res) => {
                 message: `This game is already in your cart for ${platform} platform. You can only add one instance per platform.`
             });
         }
+        console.log(game.platforms);
 
         // Add new item to cart
         user.cart.push({ game: gameId, platform, qty: quantity, price, name: game.title });

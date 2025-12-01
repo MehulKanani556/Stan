@@ -697,7 +697,7 @@ export const deleteGame = function (req, res) {
 
       // Delete all platform files (windows, ios, android)
       if (game.platforms && typeof game.platforms === "object") {
-        for (const platformKey of ["windows", "ios", "android"]) {
+        for (const platformKey of ["windows", "vision_pro", "ps5", "xbox", "quest", "nintendo_switch_1", "nintendo_switch_2"]) {
           const platform = game.platforms[platformKey];
           if (platform && platform.public_id) {
             await deleteCloudFile(platform);
