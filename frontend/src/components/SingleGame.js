@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt, FaWindows } from 'react-icons/fa'
+import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt, FaWindows, FaPlaystation, FaXbox, FaApple, FaSteamSymbol } from 'react-icons/fa'
+import { SiOculus, SiNintendoswitch } from 'react-icons/si'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
@@ -26,13 +27,24 @@ import usePlatformSelection from '../hooks/usePlatformSelection'
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const PLATFORM_LABELS = {
-  visionPro: 'Vision Pro',
+  vision_pro: 'Vision Pro',
   windows: 'PC',
   ps5: 'PS 5',
   xbox: 'X Box',
   quest: 'Quest',
-  switch1: 'Nintendo Switch 1',
-  switch2: 'Nintendo Switch 2'
+  nintendo_switch_1: 'Nintendo Switch 1',
+  nintendo_switch_2: 'Nintendo Switch 2'
+}
+
+const PLATFORM_META = {
+  vision_pro: { label: PLATFORM_LABELS.vision_pro, icon: FaApple },
+  windows: { label: PLATFORM_LABELS.windows, icon: FaWindows },
+  ps5: { label: PLATFORM_LABELS.ps5, icon: FaPlaystation },
+  xbox: { label: PLATFORM_LABELS.xbox, icon: FaXbox },
+  quest: { label: PLATFORM_LABELS.quest, icon: SiOculus },
+  nintendo_switch_1: { label: PLATFORM_LABELS.nintendo_switch_1, icon: SiNintendoswitch },
+  nintendo_switch_2: { label: PLATFORM_LABELS.nintendo_switch_2, icon: SiNintendoswitch },
+  default: { label: 'Platform', icon: FaSteamSymbol }
 }
 
 // Custom hooks
@@ -386,6 +398,13 @@ const SingleGame = () => {
     [getPlatformPrice, selectedPurchasePlatform]
   )
 
+  const availablePlatforms = useMemo(() => {
+    if (!single?.platforms) return []
+    return Object.entries(single.platforms)
+      .filter(([, platformData]) => platformData?.available)
+      .map(([platformKey]) => platformKey)
+  }, [single?.platforms])
+
   // Handle fan coin checkbox change
   const handleFanCoinCheckboxChange = useCallback(
     (checked) => {
@@ -667,15 +686,16 @@ const SingleGame = () => {
 
   return (
     <div className="">
-      <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
-        <div>
-          <h2 className="md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize">
-            {single?.title}
-          </h2>
-        </div>
+    <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
+      <div>
+        <h2 className="md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize">
+          {single?.title}
+        </h2>
+      </div>
 
-        <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
-          <div className="3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5 order-2 lg:order-1">
+      <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
+        <div className="3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5 order-2 lg:order-1">
+
             <div>
               <Slider
                 {...mainSettings}
@@ -809,17 +829,17 @@ const SingleGame = () => {
             </div>
           </div>
 
-          {/* right side copntent */}
-          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 order-1 lg:order-2">
+            {/* right side copntent */}
+            <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 order-1 lg:order-2">
             <div className="p-6 sticky top-24 bg-black/30 ">
               <div className="flex justify-center mb-6">
                 <img
                   src={single?.cover_image?.url}
                   alt="Game Cover"
-                  className="w-[330px] h-auto"
+                  className="w-[330px] h-[200px] object-cover "
                 />
               </div>
-
+ 
               {/* Price */}
               <div className="flex mb-6">
                 <div>
@@ -829,21 +849,23 @@ const SingleGame = () => {
                   </p>
                 </div>
               </div>
+ 
+ 
 
-              {/* Action Buttons */}
-              {isLoggedIn ? (
+             {/* Action Buttons */}
+             {isLoggedIn ? (
                 <div className="space-y-4">
                   <div className="flex sx:gap-4 gap-2">
                     {/* Wishlist Button */}
                     {isInWishlist ? (
                       <button
                         onClick={() => handleRemoveFromWishlist(single._id)}
-                        className="w-full flex items-center justify-center gap-2 
+                        className="w-full flex items-center justify-center gap-2
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
+                    active:scale-95 focus-visible:outline-none
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         <FaHeart size={16} />
@@ -852,50 +874,51 @@ const SingleGame = () => {
                     ) : (
                       <button
                         onClick={() => handleAddWishlist(single)}
-                        className="w-full flex items-center justify-center gap-2 
+                        className="w-full flex items-center justify-center gap-2
                                 font-bold py-3 sm:px-4 px-1 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
+                    active:scale-95 focus-visible:outline-none
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         <FaHeart size={16} />
                         <span className="text-xs">Add To WishList</span>
                       </button>
                     )}
-
+ 
                     {/* Cart Button */}
                     {!isBuyed && (
+                      
                       <button
                         onClick={() => handleAddToCart(single)}
                         disabled={isInCart}
-                        className={`w-full flex items-center justify-center gap-2 
+                        className={`w-full flex items-center justify-center gap-2
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
+                    active:scale-95 focus-visible:outline-none
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${isInCart ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
                         <FaShoppingCart size={16} />
                         <span className="text-xs">{isInCart ? 'Added to cart' : 'Add To Cart'}</span>
                       </button>
                     )}
-
+ 
                   </div>
-
+ 
                   {/* Purchase/Review Buttons */}
-
+ 
                   {isBuyed ? (
                     <>
                       <button
-                        className="w-full cursor-not-allowed 
+                        className="w-full cursor-not-allowed
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
+                    active:scale-95 focus-visible:outline-none
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         <span className="text-white font-bold text-sm me-2">
@@ -905,12 +928,12 @@ const SingleGame = () => {
                       </button>
                       <button
                         onClick={() => setOpen(true)}
-                        className="w-full cursor-pointer 
+                        className="w-full cursor-pointer
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
+                    active:scale-95 focus-visible:outline-none
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         Review
@@ -919,12 +942,12 @@ const SingleGame = () => {
                   ) : (
                     <button
                       onClick={handleOpenBuyPlatformModal}
-                      className="w-full cursor-pointer 
+                      className="w-full cursor-pointer
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
                                 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
                     text-white shadow-lg shadow-fuchsia-500/30
                     hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
+                    active:scale-95 focus-visible:outline-none
                     focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       Buy Now
@@ -939,12 +962,13 @@ const SingleGame = () => {
                         bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
             text-white shadow-lg shadow-fuchsia-500/30
             hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
-            active:scale-95 focus-visible:outline-none 
+            active:scale-95 focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   login to Buy
                 </button>
               )}
+ 
 
               {/* Payment Modal */}
               <Dialog
@@ -1144,9 +1168,29 @@ const SingleGame = () => {
               <div className="divide-y divide-gray-700/60 rounded-xl overflow-hidden bg-black/30 mt-6">
                 <AccordionItem title="Platform">
                   <div className="flex flex-wrap gap-3">
-                    <span className="bg-gray-900 text-white px-3 py-1 rounded flex items-center">
-                      <FaWindows className="me-2" /> Windows
-                    </span>
+                    {availablePlatforms.length > 0 ? (
+                      availablePlatforms.map((platformKey) => {
+                        const meta = PLATFORM_META[platformKey] || {
+                          label: getPlatformLabel(platformKey),
+                          icon: PLATFORM_META.default.icon
+                        }
+                        const IconComponent = meta.icon || PLATFORM_META.default.icon
+
+                        return (
+                          <span
+                            key={platformKey}
+                            className="bg-gray-900/70 text-white px-4 py-2 rounded-xl border border-gray-700 flex items-center gap-2 text-sm font-medium"
+                          >
+                            {IconComponent && <IconComponent className="me-2" />}
+                            {meta.label || getPlatformLabel(platformKey)}
+                          </span>
+                        )
+                      })
+                    ) : (
+                      <span className="text-gray-400 text-sm">
+                        Platform details coming soon.
+                      </span>
+                    )}
                   </div>
                 </AccordionItem>
 
@@ -1280,6 +1324,7 @@ const SingleGame = () => {
       <PlatformSelectionModal
         open={Boolean(platformModalGame)}
         gameTitle={platformModalGame?.title}
+        game={platformModalGame}
         onClose={closePlatformModal}
         selectedPlatforms={selectedPlatforms}
         onPlatformToggle={handlePlatformToggle}
@@ -1290,6 +1335,7 @@ const SingleGame = () => {
       <PlatformSelectionModal
         open={isBuyPlatformModalOpen}
         gameTitle={single?.title}
+        game={single}
         onClose={() => setIsBuyPlatformModalOpen(false)}
         selectedPlatforms={buySelectedPlatforms}
         onPlatformToggle={(platform) =>

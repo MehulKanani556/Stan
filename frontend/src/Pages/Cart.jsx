@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { FaWindows, FaPlaystation, FaXbox, FaApple, FaSteamSymbol } from "react-icons/fa";
 import { SiOculus, SiNintendoswitch } from "react-icons/si";
 import { MdWorkspacePremium } from "react-icons/md";
@@ -24,13 +24,13 @@ import Advertize from "../components/Advertize";
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const PLATFORM_META = {
-    visionPro: { label: 'Vision Pro', icon: FaApple },
+    vision_pro: { label: 'Vision Pro', icon: FaApple },
     windows: { label: 'PC', icon: FaWindows },
     ps5: { label: 'PS 5', icon: FaPlaystation },
     xbox: { label: 'X Box', icon: FaXbox },
     quest: { label: 'Quest', icon: SiOculus },
-    switch1: { label: 'Nintendo Switch 1', icon: SiNintendoswitch },
-    switch2: { label: 'Nintendo Switch 2', icon: SiNintendoswitch },
+    nintendo_switch_1: { label: 'Nintendo Switch 1', icon: SiNintendoswitch },
+    nintendo_switch_2: { label: 'Nintendo Switch 2', icon: SiNintendoswitch },
     default: { label: 'Platform', icon: FaSteamSymbol }
 };
 
@@ -58,6 +58,34 @@ const Cart = () => {
         dispatch(fetchCart());
         dispatch(getUserById(userId))
     }, [dispatch])
+
+    // Group cart items by game ID
+    const groupedCartItems = useMemo(() => {
+        if (!Array.isArray(cartItems)) return [];
+        
+        const grouped = {};
+        cartItems.forEach((item) => {
+            const gameId = item?.game?._id || item?.game;
+            if (!gameId) return;
+            
+            if (!grouped[gameId]) {
+                grouped[gameId] = {
+                    game: item.game,
+                    platforms: [],
+                    totalPrice: 0
+                };
+            }
+            
+            grouped[gameId].platforms.push({
+                platform: item.platform,
+                price: item.price,
+                item: item // Keep reference to original item for removal
+            });
+            grouped[gameId].totalPrice += item.price;
+        });
+        
+        return Object.values(grouped);
+    }, [cartItems]);
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
     const totalDiscount = cartItems.reduce(
@@ -235,20 +263,19 @@ const Cart = () => {
                                     <CartSkeletonCard key={index} />
                                 ))}
                             </>
-                        ) : cartItems.length > 0 ? (
-                            cartItems.map((item) => {
-                                const platformMeta = getPlatformMeta(item?.platform);
-                                const PlatformIcon = platformMeta.icon;
+                        ) : groupedCartItems.length > 0 ? (
+                            groupedCartItems.map((groupedItem) => {
+                                const game = groupedItem.game;
                                 return (
                                 <div
-                                    key={`${item.game?._id || item._id}-${item.platform}`}
-                                    onClick={() => navigate(`/single/${item.game._id}`)}
+                                    key={game?._id}
+                                    onClick={() => navigate(`/single/${game._id}`)}
                                     className="bg-black/15 border border-white/10 p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6"
                                 >
                                     <div className="w-full lg:w-40 h-36 sm:h-44 lg:h-40 shrink-0">
                                         <img
-                                            src={item.game.cover_image.url}
-                                            alt={item.game.title}
+                                            src={game.cover_image.url}
+                                            alt={game.title}
                                             className="w-full h-full object-cover rounded-lg"
                                         />
                                     </div>
@@ -256,37 +283,50 @@ const Cart = () => {
                                     <div className="flex-1 flex flex-col justify-between">
                                         <div>
                                             <span className="text-xs bg-[#525050] px-2 py-1 rounded tracking-wide">
-                                                {item.game.category.categoryName}
+                                                {game.category.categoryName}
                                             </span>
 
-                                            <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">{item.game.title}</h2>
+                                            <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">{game.title}</h2>
 
-                                            <span className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full w-fit mt-2">
-                                                <PlatformIcon className="text-purple-300" />
-                                                <span className="font-semibold">{platformMeta.label}</span>
-                                            </span>
+                                            {/* Display all platforms */}
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                {groupedItem.platforms.map((platformItem) => {
+                                                    const platformMeta = getPlatformMeta(platformItem.platform);
+                                                    const PlatformIcon = platformMeta.icon;
+                                                    return (
+                                                        <div
+                                                            key={platformItem.platform}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full relative group"
+                                                        >
+                                                            <PlatformIcon className="text-purple-300" />
+                                                            <span className="font-semibold">{platformMeta.label}</span>
+                                                            <span className="text-xs text-slate-400 ml-1">${platformItem.price.toFixed(2)}</span>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    handleRemove(platformItem.item);
+                                                                }}
+                                                                className="ml-1 text-red-400 hover:text-red-500 transition opacity-0 group-hover:opacity-100"
+                                                                title="Remove platform"
+                                                            >
+                                                                <RiDeleteBin6Line className="text-sm" />
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
 
                                         </div>
 
                                         <div className="flex justify-between items-center mt-3">
-                                            <p className="text-lg sm:text-xl font-bold text-white">
-                                                ${item.price.toLocaleString()}
-                                            </p>
-                                            <div className="text-white text-xs px-3 py-1 rounded-full">
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                    handleRemove(item);
-                                                    }}
-                                                    className="text-red-400 hover:text-red-500 transition text-xl lg:mr-4"
-                                                >
-                                                    <RiDeleteBin6Line />
-                                                </button>
+                                            <div>
+                                                <p className="text-sm text-gray-400">Total for {groupedItem.platforms.length} platform{groupedItem.platforms.length > 1 ? 's' : ''}</p>
+                                                <p className="text-lg sm:text-xl font-bold text-white">
+                                                    ${groupedItem.totalPrice.toFixed(2)}
+                                                </p>
                                             </div>
-                                        </div>
-                                        <div className="flex flex-col justify-between items-start lg:items-end min-w-0 lg:min-w-[120px]">
-
                                         </div>
                                     </div>
                                 </div>
