@@ -479,6 +479,7 @@ const gameSlice = createSlice({
         state.loading = false;
         state.success = "Game deleted successfully";
         state.games = state.games.filter((g) => g._id !== action.payload._id);
+        state.paginatedGames = state.paginatedGames.filter((g) => g._id !== action.payload._id);
       })
       .addCase(deleteGame.rejected, (state, action) => {
         state.loading = false;

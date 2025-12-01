@@ -1925,7 +1925,7 @@ export default function Game() {
                         type="text"
                         placeholder="Supported Platforms"
                         value={
-                          formik.values.platforms.quest.system_requirements
+                          formik.values.platforms?.quest?.system_requirements
                             .supported_Platforms
                         }
                         onChange={(e) =>
@@ -1944,10 +1944,10 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched.platforms?.quest?.system_requirements?.supported_Platforms &&
-                          formik.errors?.platforms.quest?.system_requirements?.supported_Platforms && (
+                          formik.errors?.platforms?.quest?.system_requirements?.supported_Platforms && (
                             <p className="text-red-500 text-sm">
                               {
-                                formik.errors.platforms.quest.system_requirements.supported_Platforms
+                                formik.errors.platforms?.quest.system_requirements?.supported_Platforms
 
                               }
                             </p>
@@ -1956,7 +1956,7 @@ export default function Game() {
                         type="text"
                         placeholder="Storage"
                         value={
-                          formik.values.platforms.quest.system_requirements
+                          formik.values?.platforms?.quest?.system_requirements
                             .storage
                         }
                         onChange={(e) =>
