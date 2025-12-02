@@ -47,6 +47,59 @@ const PLATFORM_META = {
   default: { label: 'Platform', icon: FaSteamSymbol }
 }
 
+// Which system_requirement fields to show per platform
+const PLATFORM_SYSTEM_FIELDS = {
+  windows: {
+    left: [
+      { label: "Memory", key: "memory" },
+      { label: "Storage", key: "storage" },
+      { label: "Graphics", key: "graphics" },
+    ],
+    right: [
+      { label: "OS Version", key: "os", capitalize: true },
+      { label: "Processor", key: "processor", capitalize: true },
+    ],
+  },
+  vision_pro: {
+    left: [{ label: "Storage", key: "storage" }],
+    right: [],
+  },
+  ps5: {
+    left: [], // only price for PS5, handled outside system requirements
+    right: [],
+  },
+  xbox: {
+    left: [{ label: "Device compatibility", key: "device_compatibility" }],
+    right: [],
+  },
+  quest: {
+    left: [
+      { label: "Supported Platforms", key: "supported_Platforms" },
+      { label: "Storage", key: "storage" },
+    ],
+    right: [],
+  },
+  nintendo_switch_1: {
+    left: [{ label: "Supported play modes", key: "Supported_play_modes" }],
+    right: [],
+  },
+  nintendo_switch_2: {
+    left: [{ label: "Supported play modes", key: "Supported_play_modes" }],
+    right: [],
+  },
+  default: {
+    left: [
+      { label: "Memory", key: "memory" },
+      { label: "Storage", key: "storage" },
+      { label: "Graphics", key: "graphics" },
+    ],
+    right: [
+      { label: "OS", key: "os", capitalize: true },
+      { label: "Processor", key: "processor", capitalize: true },
+    ],
+  },
+};
+
 // Custom hooks
 const useResponsiveSlides = () => {
   const [slidesToShow, setSlidesToShow] = useState(5);
@@ -152,36 +205,39 @@ const ThumbArrow = ({ direction, onClick }) => {
   );
 };
 
-const GameInfo = ({ single }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <div className="space-y-5">
-      <InfoItem
-        label="Memory"
-        value={single?.platforms?.windows?.system_requirements?.memory}
-      />
-      <InfoItem
-        label="Storage"
-        value={single?.platforms?.windows?.system_requirements?.storage}
-      />
-      <InfoItem
-        label="Graphics"
-        value={`(${single?.platforms?.windows?.system_requirements?.graphics})`}
-      />
+const GameInfo = ({ requirements, platformKey }) => {
+  const specs = requirements || {};
+
+  const config = PLATFORM_SYSTEM_FIELDS[platformKey] || PLATFORM_SYSTEM_FIELDS.default;
+
+  const leftItems = (config.left || []).filter((item) => specs[item.key]);
+  const rightItems = (config.right || []).filter((item) => specs[item.key]);
+
+  // If no fields have values, don't render anything
+  if (!leftItems.length && !rightItems.length) {
+    return null;
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="space-y-5">
+        {leftItems.map(({ label, key }) => (
+          <InfoItem key={key} label={label} value={specs[key]} />
+        ))}
+      </div>
+      <div className="space-y-5">
+        {rightItems.map(({ label, key, capitalize }) => (
+          <InfoItem
+            key={key}
+            label={label}
+            value={specs[key]}
+            capitalize={capitalize}
+          />
+        ))}
+      </div>
     </div>
-    <div className="space-y-5">
-      <InfoItem
-        label="OS"
-        value={single?.platforms?.windows?.system_requirements?.os}
-        capitalize
-      />
-      <InfoItem
-        label="Processor"
-        value={single?.platforms?.windows?.system_requirements?.processor}
-        capitalize
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 const InfoItem = ({ label, value, capitalize = false }) => (
   <div>
@@ -295,6 +351,7 @@ const SingleGame = () => {
   const [isBuyPlatformModalOpen, setIsBuyPlatformModalOpen] = useState(false)
   const [buySelectedPlatforms, setBuySelectedPlatforms] = useState([])
   const [selectedPurchasePlatform, setSelectedPurchasePlatform] = useState(null)
+  const [activePlatformTab, setActivePlatformTab] = useState('windows')
 
   const { currentUser } = useSelector((state) => state.user);
   const { user: authUser } = useSelector((state) => state.auth);
@@ -377,9 +434,36 @@ const SingleGame = () => {
     return PLATFORM_LABELS[platformKey] || platformKey
   }, [])
 
+  const availablePlatforms = useMemo(() => {
+    if (!single?.platforms) return []
+    return Object.entries(single.platforms)
+      .filter(([, data]) => Boolean(data && data.available))
+      .map(([key]) => key)
+  }, [single?.platforms])
+
   useEffect(() => {
-    setSelectedPurchasePlatform('windows')
-  }, [single?._id])
+    if (!availablePlatforms.length) {
+      setActivePlatformTab(null)
+      return
+    }
+    setActivePlatformTab((prev) => {
+      if (prev && availablePlatforms.includes(prev)) {
+        return prev
+      }
+      return availablePlatforms[0]
+    })
+  }, [availablePlatforms])
+
+  useEffect(() => {
+    if (!availablePlatforms.length) {
+      setSelectedPurchasePlatform(null)
+      return
+    }
+    const preferredPlatform = availablePlatforms.includes('windows')
+      ? 'windows'
+      : availablePlatforms[0]
+    setSelectedPurchasePlatform(preferredPlatform)
+  }, [single?._id, availablePlatforms])
 
   useEffect(() => {
     const price = getPlatformPrice(selectedPurchasePlatform)
@@ -398,12 +482,15 @@ const SingleGame = () => {
     [getPlatformPrice, selectedPurchasePlatform]
   )
 
-  const availablePlatforms = useMemo(() => {
-    if (!single?.platforms) return []
-    return Object.entries(single.platforms)
-      .filter(([, platformData]) => platformData?.available)
-      .map(([platformKey]) => platformKey)
-  }, [single?.platforms])
+  const activePlatformLabel = useMemo(
+    () => getPlatformLabel(activePlatformTab || 'windows'),
+    [activePlatformTab, getPlatformLabel]
+  )
+
+  const activePlatformData = useMemo(
+    () => single?.platforms?.[activePlatformTab] || null,
+    [activePlatformTab, single?.platforms]
+  )
 
   // Handle fan coin checkbox change
   const handleFanCoinCheckboxChange = useCallback(
@@ -799,14 +886,64 @@ const SingleGame = () => {
                 </div>
 
                 {/* System Requirements */}
-                <div className="bg-black/20 p-8 rounded-lg shadow-lg w-full">
-                  <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#ab99e1]">
-                    Windows
-                  </h3>
-                  <h4 className="text-base font-semibold mb-6">
-                    System Requirements
-                  </h4>
-                  <GameInfo single={single} />
+                <div className="bg-black/20 p-6 sm:p-8 rounded-lg shadow-lg w-full">
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-4 border-b border-gray-700 text-[#ab99e1]">
+                        Platforms
+                      </h3>
+                      <div
+                        className="flex flex-wrap gap-3 overflow-x-auto pb-2"
+                        role="tablist"
+                        aria-label="Available platforms"
+                      >
+                        {availablePlatforms.map((platformKey) => {
+                          const Icon = PLATFORM_META[platformKey]?.icon || PLATFORM_META.default.icon
+                          const label = getPlatformLabel(platformKey)
+                          const isActive = platformKey === activePlatformTab
+                          return (
+                            <button
+                              key={platformKey}
+                              onClick={() => setActivePlatformTab(platformKey)}
+                              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
+                                isActive
+                                  ? 'bg-[#ab99e1]/20 border-[#ab99e1] text-white'
+                                  : 'border-gray-700 text-gray-300 hover:border-[#ab99e1]/60 hover:text-white'
+                              }`}
+                              role="tab"
+                              aria-selected={isActive}
+                            >
+                              <Icon size={16} />
+                              {label}
+                            </button>
+                          )
+                        })}
+                        {!availablePlatforms.length && (
+                          <span className="text-gray-400 text-sm">
+                            Platform data unavailable
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-semibold mb-6 flex flex-col">
+                      
+                        <span className="text-sm text-gray-400">
+                          System Requirements
+                        </span>
+                      </h4>
+                      {activePlatformData?.system_requirements ? (
+                        <GameInfo
+                          requirements={activePlatformData.system_requirements}
+                          platformKey={activePlatformTab}
+                        />
+                      ) : (
+                        <p className="text-gray-400 text-sm">
+                          System requirements are not available for this platform yet.
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Instructions */}
