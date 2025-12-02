@@ -50,6 +50,8 @@ export const getDashboardStats = async (req, res) => {
         // Game Count
         const totalGames = await Game.countDocuments(userQuery);
 
+        const totalOrders = await Order.countDocuments(userQuery);
+
 
         // Revenue Aggregation from Orders
         let matchQuery = { status: "paid" }; // ✅ only paid orders
@@ -107,6 +109,7 @@ export const getDashboardStats = async (req, res) => {
                 totalUsers,
                 totalGames,
                 totalRevenue: overall.totalRevenue,
+                totalOrders,
             },
         });
     } catch (error) {
@@ -285,12 +288,28 @@ export const getTopGamesDashboard = async (req, res) => {
                     _id: "$items.game",
                     totalOrders: { $sum: 1 },
                     totalRevenue: { $sum: "$items.price" },
+
+                    // Per-platform counts/revenue for allowed platforms only
                     windowsCount: { $sum: { $cond: [{ $eq: ["$items.platform", "windows"] }, 1, 0] } },
                     windowsRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "windows"] }, "$items.price", 0] } },
-                    iosCount: { $sum: { $cond: [{ $eq: ["$items.platform", "ios"] }, 1, 0] } },
-                    iosRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "ios"] }, "$items.price", 0] } },
-                    androidCount: { $sum: { $cond: [{ $eq: ["$items.platform", "android"] }, 1, 0] } },
-                    androidRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "android"] }, "$items.price", 0] } },
+
+                    visionProCount: { $sum: { $cond: [{ $eq: ["$items.platform", "vision_pro"] }, 1, 0] } },
+                    visionProRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "vision_pro"] }, "$items.price", 0] } },
+
+                    ps5Count: { $sum: { $cond: [{ $eq: ["$items.platform", "ps5"] }, 1, 0] } },
+                    ps5Revenue: { $sum: { $cond: [{ $eq: ["$items.platform", "ps5"] }, "$items.price", 0] } },
+
+                    xboxCount: { $sum: { $cond: [{ $eq: ["$items.platform", "xbox"] }, 1, 0] } },
+                    xboxRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "xbox"] }, "$items.price", 0] } },
+
+                    questCount: { $sum: { $cond: [{ $eq: ["$items.platform", "quest"] }, 1, 0] } },
+                    questRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "quest"] }, "$items.price", 0] } },
+
+                    ns1Count: { $sum: { $cond: [{ $eq: ["$items.platform", "nintendo_switch_1"] }, 1, 0] } },
+                    ns1Revenue: { $sum: { $cond: [{ $eq: ["$items.platform", "nintendo_switch_1"] }, "$items.price", 0] } },
+
+                    ns2Count: { $sum: { $cond: [{ $eq: ["$items.platform", "nintendo_switch_2"] }, 1, 0] } },
+                    ns2Revenue: { $sum: { $cond: [{ $eq: ["$items.platform", "nintendo_switch_2"] }, "$items.price", 0] } },
                 }
             },
 
@@ -319,8 +338,12 @@ export const getTopGamesDashboard = async (req, res) => {
                     },
                     platforms: {
                         windows: { count: "$windowsCount", revenue: "$windowsRevenue" },
-                        ios: { count: "$iosCount", revenue: "$iosRevenue" },
-                        android: { count: "$androidCount", revenue: "$androidRevenue" }
+                        vision_pro: { count: "$visionProCount", revenue: "$visionProRevenue" },
+                        ps5: { count: "$ps5Count", revenue: "$ps5Revenue" },
+                        xbox: { count: "$xboxCount", revenue: "$xboxRevenue" },
+                        quest: { count: "$questCount", revenue: "$questRevenue" },
+                        nintendo_switch_1: { count: "$ns1Count", revenue: "$ns1Revenue" },
+                        nintendo_switch_2: { count: "$ns2Count", revenue: "$ns2Revenue" }
                     }
                 }
             }
@@ -470,7 +493,8 @@ export const getPlatformWiseOrders = async (req, res) => {
             }
         ]);
 
-        const staticPlatforms = ['windows', 'android', 'ios'];
+        // Allowed platforms (no ios/android)
+        const staticPlatforms = ['windows','vision_pro','ps5','xbox','quest','nintendo_switch_1','nintendo_switch_2'];
         const platformMap = new Map();
         aggregatedResult.forEach(item => {
             platformMap.set(item.platform, item); // item.platform is already lowercase from aggregation

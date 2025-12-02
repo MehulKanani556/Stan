@@ -19,6 +19,8 @@ export const getAllGames = createAsyncThunk(
       if (search) params.append('search', search);
 
       const res = await axiosInstance.get(`/getAllGames?${params}`);
+      console.log(res.data);
+      
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
@@ -621,7 +623,7 @@ const gameSlice = createSlice({
       .addCase(getHomeSliderData.fulfilled, (state, action) => {
         state.loading = false;
         state.topGamesInitialLoading = false;
-        state.SliderData = action.payload;
+        state.SliderData = action.payload.data;
       })
       .addCase(getHomeSliderData.rejected, (state, action) => {
         state.loading = false;

@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from 'swiper/modules';
-import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart, FaWindows, FaXbox } from "react-icons/fa";
 import LazyGameCard from '../lazyLoader/LazyGameCard';
 import TopGames from '../components/TopGames';
 import ExploreGames from '../images/ExploreGames.webp';
@@ -21,6 +21,9 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { allorders } from '../Redux/Slice/Payment.slice';
 import PlatformSelectionModal from '../components/PlatformSelectionModal';
 import usePlatformSelection from '../hooks/usePlatformSelection';
+import { SiOculus, SiPlaystation } from 'react-icons/si';
+import { TbDeviceVisionPro } from 'react-icons/tb';
+import { BsNintendoSwitch } from 'react-icons/bs';
 
 // Constants
 const SWIPER_BREAKPOINTS = {
@@ -151,11 +154,10 @@ const GameCard = ({
       onClick={() => onGameClick(game._id)}
       className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
     >
-      { }
-      <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70" >
-
+      {}
+      <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
         {/* Enhanced Glow Effect */}
-        < div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
         {/* Image Container */}
         {/* {console.log('games image',game?.cover_image?.url)} */}
@@ -169,12 +171,13 @@ const GameCard = ({
 
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
-
             {/* New Badge */}
             {isNewGame(game?.createdAt) && (
               <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
                 <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
-                  <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
+                  <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center">
+                    <p>NEW</p>
+                  </div>
                 </div>
               </div>
             )}
@@ -182,20 +185,17 @@ const GameCard = ({
             {/* Wishlist Button */}
 
             <button
-              className={`absolute ms:top-4 ms:right-4 top-2 right-2 ms:p-2.5 p-2 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${(isInWishlist && isLoggedIn)
-                ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
-                : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
-                }`}
+              className={`absolute ms:top-4 ms:right-4 top-2 right-2 ms:p-2.5 p-2 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${
+                isInWishlist && isLoggedIn
+                  ? "bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30"
+                  : "bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50"
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
-                isLoggedIn ?
-                  onWishlistToggle(game)
-                  :
-                  navigate('/login')
-
+                isLoggedIn ? onWishlistToggle(game) : navigate("/login");
               }}
             >
-              {(isInWishlist && isLoggedIn) ? (
+              {isInWishlist && isLoggedIn ? (
                 <FaHeart className="text-white animate-pulse ms:text-sm text-xs" />
               ) : (
                 <FaRegHeart className="text-slate-300 group-hover:text-red-400 transition-colors ms:text-sm text-xs" />
@@ -215,66 +215,106 @@ const GameCard = ({
 
         {/* Content Section */}
         <div className="ms:p-4 p-2  md:p-6 ms:space-y-4 space-y-2 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
-
           {/* Stats Grid */}
           <div className="grid grid-cols-1 gap-4">
-            <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 sm:px-4 sm:py-3 py-2 md:px-6 md:py-3.5">
+            <div className="bg-slate-700/50 rounded-xl relative z-10 px-2 sm:px-3 sm:py-2 py-2 md:px-4 md:py-3">
               <div className="flex flex-wrap items-center space-x-2 mb-2">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">Price</span>
-                <span className="ms:text-lg text-xs font-black text-white">
-                  ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
+                {/* <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" /> */}
+                <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">
+                  Price :
                 </span>
-                <span className="ms:text-xs text-[10px] text-slate-400 font-medium">USD</span>
+                <span className="ms:text-lg text-xs font-black text-white">
+                  ${game?.platforms?.windows?.price?.toLocaleString("en-IN")}
+                </span>
+                <span className="ms:text-xs text-[10px] text-slate-400 font-medium">
+                  USD
+                </span>
               </div>
               <div className="flex flex-wrap items-center space-x-2 mb-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                {console.log(game?.platforms)}
+
+                {/* {game?.platforms?.windows && <} */}
+                {game?.platforms?.windows?.available && (
+                  <span className=" text-blue-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaWindows className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.xbox?.available && (
+                  <span className=" text-green-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaXbox className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.ps5?.available && (
+                  <span className=" text-blue-600 rounded font-semibold whitespace-nowrap flex items-center">
+                    <SiPlaystation className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.quest?.available && (
+                  <span className=" text-indigo-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <SiOculus className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.vision_pro?.available && (
+                  <span className=" text-gray-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <TbDeviceVisionPro className="text-base" />
+                  </span>
+                )}
+                {(game?.platforms?.nintendo_switch_1?.available ||
+                  game?.platforms?.nintendo_switch_2?.available) && (
+                  <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <BsNintendoSwitch className="text-base" />
+                  </span>
+                )}
+                {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
                 <span className="ms:text-lg text-xs font-black text-white">
                   {game?.platforms?.windows?.size || 'N/A'}
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
 
-        {/* Action Button */}
+          {/* Action Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
-              isLoggedIn ?
-                onAddToCart(game)
-                :
-                navigate('/login')
+              isLoggedIn ? onAddToCart(game) : navigate("/login");
             }}
-          disabled={disableCartAction}
-          className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${disableCartAction
-            ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
-            : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
+            disabled={disableCartAction}
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${
+              disableCartAction
+                ? "bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30"
+                : "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
             }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
-              {isLoggedIn ? <>
-                <div >
-                {(isPurchased || isInCart) ? (
-                    <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w-4 rounded-full">
-                      <span className="text-white font-bold text-sm">✓</span>
-                    </div>
-                  ) : (
-                    <FaShoppingCart className="text-white  md:w-6 ms:h-6 h-4 w-4 " />
-                  )}
-                </div>
-                <span className="text-white font-bold  tracking-wider uppercase ms:text-sm text-xs" >
-                {isPurchased
-                  ? "Purchased"
-                  : (isInCart ? "Added to Cart" : "Add to Cart")}
+              {isLoggedIn ? (
+                <>
+                  <div>
+                    {isPurchased || isInCart ? (
+                      <div className="flex items-center justify-center md:w-6 ms:h-6 h-4 w-4 rounded-full">
+                        <span className="text-white font-bold text-sm">✓</span>
+                      </div>
+                    ) : (
+                      <FaShoppingCart className="text-white  md:w-6 ms:h-6 h-4 w-4 " />
+                    )}
+                  </div>
+                  <span className="text-white font-bold  tracking-wider uppercase ms:text-sm text-xs">
+                    {isPurchased
+                      ? "Purchased"
+                      : isInCart
+                      ? "Added to Cart"
+                      : "Add to Cart"}
+                  </span>
+                </>
+              ) : (
+                <span className="text-white font-bold ms:text-sm text-xs tracking-wider uppercase">
+                  Login to add
                 </span>
-              </> : <span className="text-white font-bold ms:text-sm text-xs tracking-wider uppercase">
-                Login to add
-              </span>}
+              )}
             </div>
 
             {/* Button Effects */}
-          {!disableCartAction && (
+            {!disableCartAction && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -290,9 +330,9 @@ const GameCard = ({
         <div className="absolute bottom-2 right-2 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
           <div className="ms:w-12 ms:h-12 border-2 border-pink-400/30 rounded-circle" />
         </div>
-      </div >
+      </div>
     </div>
-  )
+  );
 };
 
 const NotificationToast = ({ show, message }) => (
@@ -373,6 +413,9 @@ export default function Home() {
     authUser?._id || currentUser?._id || localStorage.getItem("userId"),
     [authUser, currentUser]
   );
+
+  console.log(gameData,"gameData");
+  
 
   const filteredGames = useMemo(() => {
     if (!gameData) return [];

@@ -26,7 +26,7 @@ import {
   FaWindows,
   FaXbox,
 } from "react-icons/fa";
-import { SiNintendo, SiOculus, SiPlaystation } from "react-icons/si";
+import { SiOculus, SiPlaystation } from "react-icons/si";
 import { TbDeviceVisionPro } from "react-icons/tb";
 import { BsNintendoSwitch } from "react-icons/bs";
 
