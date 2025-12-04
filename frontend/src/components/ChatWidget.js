@@ -19,7 +19,7 @@ const ChatWidget = () => {
   const toggle = useSelector((state) => state?.user?.chatToggle);
   const dispatch = useDispatch()
 
-  
+
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -230,7 +230,7 @@ const ChatWidget = () => {
           💬
         </button>
       )}
-       {(showGoUp && !isContactModalOpen) && (
+      {(showGoUp && !isContactModalOpen) && (
         <button
           onClick={scrollToTop}
           className="fixed bottom-28 right-6 md:bottom-6 md:right-20 z-50 p-3  rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
@@ -245,7 +245,7 @@ const ChatWidget = () => {
         <>
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-            onClick={() => {setIsContactModalOpen(false);dispatch(chatToggleFunc(false))}}
+            onClick={() => { setIsContactModalOpen(false); dispatch(chatToggleFunc(false)) }}
           />
 
           <div className="fixed bottom-0 left-0 right-0 z-50 w-full sm:bottom-6 sm:right-6 sm:left-auto sm:w-full sm:max-w-sm">
@@ -258,7 +258,7 @@ const ChatWidget = () => {
               <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0">
                 <button
                   className="text-white hover:scale-110 transition"
-                  onClick={() => {setIsContactModalOpen(false); dispatch(chatToggleFunc(false))}}
+                  onClick={() => { setIsContactModalOpen(false); dispatch(chatToggleFunc(false)) }}
                 >
                   <IoArrowBack className="w-6 h-6" />
                 </button>
