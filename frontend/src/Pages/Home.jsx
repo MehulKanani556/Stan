@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from 'swiper/modules';
-import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart, FaWindows, FaXbox } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart, FaWindows, FaXbox } from "react-icons/fa";
 import LazyGameCard from '../lazyLoader/LazyGameCard';
 import TopGames from '../components/TopGames';
 import ExploreGames from '../images/ExploreGames.webp';
@@ -335,17 +335,6 @@ const GameCard = ({
   );
 };
 
-const NotificationToast = ({ show, message }) => (
-  show && (
-    <div className="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 animate-slide-in">
-      <div className="flex items-center gap-2">
-        <FaShoppingCart />
-        <span>{message}</span>
-      </div>
-    </div>
-  )
-);
-
 export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -363,8 +352,6 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
-  const [showAddedToCart, setShowAddedToCart] = useState(false);
-  const [addedGameTitle, setAddedGameTitle] = useState("");
   const orders = useSelector((state) => state.payment.orders || null);
   // Add state for pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -388,13 +375,7 @@ export default function Home() {
     platformModalGame,
     selectedGamePlatforms,
     cartPlatformsByGame
-  } = usePlatformSelection({
-    onSuccess: (game) => {
-      setAddedGameTitle(game.title);
-      setShowAddedToCart(true);
-      setTimeout(() => setShowAddedToCart(false), 3000);
-    }
-  });
+  } = usePlatformSelection();
 
   // Add pagination state from Redux
   const pagination = useSelector((state) => state.game.pagination);
@@ -553,11 +534,6 @@ export default function Home() {
 
   return (
     <>
-      <NotificationToast
-        show={showAddedToCart}
-        message={`${addedGameTitle} added to cart!`}
-      />
-
       <section className="relative">
         {/* Responsive Ad Images */}
         {/* <div className="relative w-full py-4 px-4">

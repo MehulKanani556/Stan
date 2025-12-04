@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { FaHeart, FaShoppingCart, FaWallet } from "react-icons/fa";
@@ -97,6 +97,17 @@ export default function Header() {
     }, [dispatch, authUser?._id, currentUser, currentUser?.name]);
 
 
+
+    const cartGamesCount = useMemo(() => {
+        if (!Array.isArray(cartItems)) return 0;
+        const uniqueIds = new Set(
+            cartItems
+                .map((item) => item?.game?._id || item?.game)
+                .filter(Boolean)
+                .map((id) => String(id))
+        );
+        return uniqueIds.size;
+    }, [cartItems]);
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
@@ -242,9 +253,9 @@ export default function Header() {
                                                                     />
                                                                 </div>
 
-                                                                {(cartItems?.length > 0 && myManage) && (
+                                                                {(cartGamesCount > 0 && myManage) && (
                                                                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                                                                        {cartItems?.length}
+                                                                        {cartGamesCount}
                                                                     </span>
                                                                 )}
                                                             </>
@@ -376,9 +387,9 @@ export default function Header() {
                                                     />
                                                 </div>
 
-                                                {(cartItems?.length > 0 && myManage) && (
+                                                {(cartGamesCount > 0 && myManage) && (
                                                     <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center ">
-                                                        {cartItems?.length}
+                                                        {cartGamesCount}
                                                     </span>
                                                 )}
                                             </>

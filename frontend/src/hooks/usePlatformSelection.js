@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { enqueueSnackbar } from 'notistack';
 import { addToCart } from '../Redux/Slice/cart.slice';
 
 const usePlatformSelection = ({ onSuccess } = {}) => {
@@ -64,15 +65,26 @@ const usePlatformSelection = ({ onSuccess } = {}) => {
     if (!platformModalGame || selectedPlatforms.length === 0) return;
     try {
       setIsSubmittingPlatforms(true);
+
+      // Add one cart item per selected platform, but suppress the per-item
+      // success toast. We'll show a single combined toast afterwards.
       const results = await Promise.all(
         selectedPlatforms.map((platform) =>
-          dispatch(addToCart({ gameId: platformModalGame._id, platform, qty: 1 }))
+          dispatch(
+            addToCart({
+              gameId: platformModalGame._id,
+              platform,
+              qty: 1,
+              showSuccessToast: false
+            })
+          )
         )
       );
 
       const isAnySuccess = results.some((action) => addToCart.fulfilled.match(action));
 
       if (isAnySuccess) {
+        enqueueSnackbar("Added to cart", { variant: "success" });
         onSuccess?.(platformModalGame);
         closePlatformModal();
       }

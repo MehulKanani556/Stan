@@ -5,10 +5,9 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import '../css/Store.css';
-
+import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart, FaWindows, FaXbox } from "react-icons/fa";
 import { Navigation } from "swiper/modules";
 import game1 from '../images/game1.jpg';
-import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import { getAllGames, getAllActiveGames, getPopularGames, getTopGames, getTrendingGames } from '../Redux/Slice/game.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../Redux/Slice/category.slice';
@@ -21,6 +20,10 @@ import StoreSlider from '../components/StoreSlider';
 import Advertize from '../components/Advertize';
 import PlatformSelectionModal from '../components/PlatformSelectionModal';
 import usePlatformSelection from '../hooks/usePlatformSelection';
+import { SiOculus, SiPlaystation } from 'react-icons/si';
+import { TbDeviceVisionPro } from 'react-icons/tb';
+import { BsNintendoSwitch } from 'react-icons/bs';
+
 
 // Constants
 const SWIPER_CONFIG = {
@@ -263,11 +266,44 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
                 <span className="ms:text-xs text-[10px] text-slate-400 font-medium">USD</span>
               </div>
               <div className="flex flex-wrap items-center space-x-2 mb-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                {console.log(game?.platforms)}
+
+                {/* {game?.platforms?.windows && <} */}
+                {game?.platforms?.windows?.available && (
+                  <span className=" text-blue-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaWindows className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.xbox?.available && (
+                  <span className=" text-green-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaXbox className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.ps5?.available && (
+                  <span className=" text-blue-600 rounded font-semibold whitespace-nowrap flex items-center">
+                    <SiPlaystation className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.quest?.available && (
+                  <span className=" text-indigo-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <SiOculus className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.vision_pro?.available && (
+                  <span className=" text-gray-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <TbDeviceVisionPro className="text-base" />
+                  </span>
+                )}
+                {(game?.platforms?.nintendo_switch_1?.available ||
+                  game?.platforms?.nintendo_switch_2?.available) && (
+                  <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
+                    <BsNintendoSwitch className="text-base" />
+                  </span>
+                )}
+                {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
                 <span className="ms:text-lg text-xs font-black text-white">
                   {game?.platforms?.windows?.size || 'N/A'}
-                </span>
+                </span> */}
               </div>
             </div>
           </div>

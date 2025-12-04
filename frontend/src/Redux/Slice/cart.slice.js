@@ -17,11 +17,22 @@ export const fetchCart = createAsyncThunk(
 
 export const addToCart = createAsyncThunk(
     "cart/add",
-    async ({ gameId, platform, qty }, { rejectWithValue }) => {
+    /**
+     * Payload:
+     * - gameId: string
+     * - platform?: string
+     * - qty: number
+     * - showSuccessToast?: boolean (default: true)
+     *
+     * The optional `showSuccessToast` flag lets callers suppress the built-in
+     * "Added to cart" toast when performing batched operations (e.g. multiple
+     * platforms at once) so they can show a single combined message instead.
+     */
+    async ({ gameId, platform, qty, showSuccessToast = true }, { rejectWithValue }) => {
         try {
             const res = await axiosInstance.post("/cart/add", { gameId, platform, qty });
          
-            if(res.data.success){                
+            if (res.data.success && showSuccessToast) {                
                 enqueueSnackbar("Added to cart", { variant: "success" });
             }
             return res.data.cart || [];
@@ -53,10 +64,21 @@ export const updateCartItem = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
     "cart/remove",
-    async ({ gameId, platform }, { rejectWithValue }) => {
+    /**
+     * Payload:
+     * - gameId: string
+     * - platform: string
+     * - showSuccessToast?: boolean (default: true)
+     *
+     * Use `showSuccessToast: false` when you want a silent removal (e.g. removing a single platform pill
+     * inside the cart UI without showing a toast).
+     */
+    async ({ gameId, platform, showSuccessToast = true }, { rejectWithValue }) => {
         try {
             const res = await axiosInstance.post("/cart/remove", { gameId, platform });
-            enqueueSnackbar("Removed from cart", { variant: "success" });
+            if (res.data.success && showSuccessToast) {
+                enqueueSnackbar("Removed from cart", { variant: "success" });
+            }
             return res.data.cart || [];
         } catch (err) {
             enqueueSnackbar(err.response?.data?.message || "Failed to remove from cart", { variant: "error" });

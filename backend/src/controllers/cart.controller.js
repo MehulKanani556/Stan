@@ -135,12 +135,22 @@ export const removeFromCart = async (req, res) => {
         }
         const user = await User.findById(userId);
         if (!user) return sendError(res, 404, 'User not found');
-        user.cart = (user.cart || []).filter(
-            (c) => !(String(c.game) === String(gameId) && c.platform === platform)
-        );
+
+        // If platform provided → remove only that specific game+platform combo
+        // If platform NOT provided → remove all cart entries for that game
+        user.cart = (user.cart || []).filter((c) => {
+            const isSameGame = String(c.game) === String(gameId);
+            if (!isSameGame) return true;
+
+            // No platform specified: drop all entries for this game
+            if (!platform) return false;
+
+            // Platform specified: drop only matching platform, keep others
+            return c.platform !== platform;
+        });
+
         await user.save();
-        console.log(user.cart,gameId,platform);
-        
+
         const populated = await User.findById(userId).populate({
             path: 'cart.game',
             populate: {
