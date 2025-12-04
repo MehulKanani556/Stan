@@ -320,7 +320,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
                             }`}
                         aria-label={isInCart ? "Already in cart" : isPurchased ? "Already purchased" : "Add to cart"}
                     >
-                        <div className={`relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 ${isPurchased ? 'px-2' : 'px-3'}  py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5`}>
+                        <div className={`relative z-10 flex items-center justify-center space-x-2 ${isPurchased ? 'px-2' : 'px-3'}  py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5`}>
                             <div>
                                 {isInCart || isPurchased ? (
                                     <div className="flex items-center justify-center w-6 h-6 rounded-full">
@@ -824,7 +824,7 @@ export default function AllGames() {
                                 : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
                                 }`}
                         >
-                            <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                            <div className="relative z-10 flex items-center justify-center space-x-2   px-2 py-2.5 sm:px-4 sm:py-3 md:px-4 md:py-3.5">
                                 {isLoggedIn ? <>
                                     <div>
                                         {(isPurchased || cartItems.some(item => item.game?._id === game?._id)) ? (
@@ -902,7 +902,7 @@ export default function AllGames() {
                 {/* Main Content */}
                 {hasGames ? (
                     <>
-                        <div className="grid  grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-6 mb-12 all-games-grid">
+                        <div className="grid  grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 mb-12 all-games-grid">
                             {processedGames.map((game, index) => (
                                 <LazyGameCard key={game.id || index}>
                                     <GameCard game={game} orders={orders} isLoggedIn={isLoggedIn} />

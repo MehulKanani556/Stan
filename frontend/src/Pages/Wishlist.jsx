@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { FaShoppingCart, FaWindows } from "react-icons/fa";
+import React, { useEffect, useCallback } from "react";
+import { FaShoppingCart, FaWindows, FaXbox } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
@@ -10,12 +10,22 @@ import { WishlistSkeletonCard, WishlistSkeletonSummary } from "../lazyLoader/Wis
 import Advertize from "../components/Advertize";
 import PlatformSelectionModal from "../components/PlatformSelectionModal";
 import usePlatformSelection from "../hooks/usePlatformSelection";
+import { SiOculus, SiPlaystation } from 'react-icons/si';
+import { TbDeviceVisionPro } from 'react-icons/tb';
+import { BsNintendoSwitch } from 'react-icons/bs';
+
 
 const Wishlist = () => {
   const { items, loading } = useSelector((state) => state.wishlist);
   const cartItems = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleWishlistAddSuccess = useCallback((game) => {
+    if (game?._id) {
+      dispatch(removeFromWishlist({ gameId: game._id }));
+    }
+  }, [dispatch]);
 
   const {
     openPlatformModal,
@@ -26,7 +36,7 @@ const Wishlist = () => {
     isSubmittingPlatforms,
     platformModalGame,
     selectedGamePlatforms
-  } = usePlatformSelection();
+  } = usePlatformSelection({ onSuccess: handleWishlistAddSuccess });
 
   useEffect(() => {
     dispatch(fetchWishlist());
@@ -99,11 +109,46 @@ const Wishlist = () => {
 
                       <h2 className="text-xl font-semibold mt-3">{item.game?.title}</h2>
 
-                      {item.game?.platforms?.windows?.available && (
-                        <p className="text-gray-400 text-sm mt-1 flex items-center gap-2">
-                          <FaWindows className="text-gray-300" /> Playable on PC
-                        </p>
-                      )}
+                      <div className="flex flex-wrap items-center space-x-2 mt-3">
+                        {console.log(item.game?.platforms)}
+
+                        {/* {game?.platforms?.windows && <} */}
+                        {item.game?.platforms?.windows?.available && (
+                          <span className=" text-blue-400 rounded font-semibold whitespace-nowrap flex items-center">
+                            <FaWindows className="text-base" />
+                          </span>
+                        )}
+                        {item.game?.platforms?.xbox?.available && (
+                          <span className=" text-green-400 rounded font-semibold whitespace-nowrap flex items-center">
+                            <FaXbox className="text-base" />
+                          </span>
+                        )}
+                        {item.game?.platforms?.ps5?.available && (
+                          <span className=" text-blue-600 rounded font-semibold whitespace-nowrap flex items-center">
+                            <SiPlaystation className="text-base" />
+                          </span>
+                        )}
+                        {item.game?.platforms?.quest?.available && (
+                          <span className=" text-indigo-400 rounded font-semibold whitespace-nowrap flex items-center">
+                            <SiOculus className="text-base" />
+                          </span>
+                        )}
+                        {item.game?.platforms?.vision_pro?.available && (
+                          <span className=" text-gray-400 rounded font-semibold whitespace-nowrap flex items-center">
+                            <TbDeviceVisionPro className="text-base" />
+                          </span>
+                        )}
+                        {(item.game?.platforms?.nintendo_switch_1?.available ||
+                          item.game?.platforms?.nintendo_switch_2?.available) && (
+                            <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
+                              <BsNintendoSwitch className="text-base" />
+                            </span>
+                          )}
+                        {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                <span className="ms:text-lg text-xs font-black text-white">
+                  {item.game?.platforms?.windows?.size || 'N/A'}
+                </span> */}
+                      </div>
 
                       <div className="flex items-center justify-between mt-5">
                         {/* PRICE */}

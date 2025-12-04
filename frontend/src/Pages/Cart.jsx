@@ -20,6 +20,9 @@ import PaymentForm from '../components/PaymentForm';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { fanCoinsuse, getUserById } from '../Redux/Slice/user.slice';
 import Advertize from "../components/Advertize";
+import PlatformSelectionModal from "../components/PlatformSelectionModal";
+import usePlatformSelection from "../hooks/usePlatformSelection";
+import { IoClose } from "react-icons/io5";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -53,6 +56,20 @@ const Cart = () => {
     const [useFanCoinsChecked, setUseFanCoinsChecked] = useState(false);
     const [fanCoinsToUse, setFanCoinsToUse] = useState(0);
     const [finalAmount, setFinalAmount] = useState(0);
+
+    // Platform selection modal (add)
+    const {
+        openPlatformModal,
+        closePlatformModal,
+        handlePlatformToggle,
+        handleConfirmPlatforms: handleConfirmPlatformAdds,
+        selectedPlatforms,
+        isSubmittingPlatforms,
+        platformModalGame,
+        selectedGamePlatforms,
+        cartPlatformsByGame
+    } = usePlatformSelection();
+
 
     useEffect(() => {
         dispatch(fetchCart());
@@ -132,10 +149,22 @@ const Cart = () => {
     }, [authUser, fanCoins, totalPrice]);
 
     const handleRemove = (item) => {
-        // alert(id)
-        // console.log("aaa", item);
+        dispatch(
+            removeFromCart({
+                gameId: item.game._id,
+                platform: item?.platform || "windows",
+                showSuccessToast: false, // silent removal for single platform pill
+            })
+        );
+    };
 
-        dispatch(removeFromCart({ gameId: item.game._id, platform: item?.platform || "windows" }));
+    // Remove entire game (all platforms of that game) from cart
+    const handleRemoveGame = (game) => {
+        const gameId = game?._id || game;
+        if (!gameId) return;
+
+        // Backend will remove all cart entries for this game when platform is not sent
+        dispatch(removeFromCart({ gameId }));
     };
 
     const handleClearCart = () => {
@@ -266,6 +295,14 @@ const Cart = () => {
                         ) : groupedCartItems.length > 0 ? (
                             groupedCartItems.map((groupedItem) => {
                                 const game = groupedItem.game;
+                                const addedPlatformsForGame = cartPlatformsByGame[game?._id] || [];
+                                const availablePlatformKeys = Object.entries(game?.platforms || {})
+                                    .filter(([, data]) => data?.available)
+                                    .map(([key]) => key);
+                                const canAddMorePlatforms = availablePlatformKeys.some(
+                                    (platformKey) => !addedPlatformsForGame.includes(platformKey)
+                                );
+
                                 return (
                                 <div
                                     key={game?._id}
@@ -282,37 +319,56 @@ const Cart = () => {
 
                                     <div className="flex-1 flex flex-col justify-between">
                                         <div>
-                                            <span className="text-xs bg-[#525050] px-2 py-1 rounded tracking-wide">
-                                                {game.category.categoryName}
-                                            </span>
+                                            <div className="flex items-start justify-between">
+                                                <span className="text-xs bg-[#525050] px-2 py-1 rounded tracking-wide">
+                                                    {game.category.categoryName}
+                                                </span>
 
-                                            <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">{game.title}</h2>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleRemoveGame(game);
+                                                    }}
+                                                    className="text-red-400 hover:text-red-500 transition text-lg relative z-[50]"
+                                                    title="Remove game from cart"
+                                                >
+                                                    <RiDeleteBin6Line />
+                                                </button>
+                                            </div>
+
+                                            <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">
+                                                {game.title}
+                                            </h2>
 
                                             {/* Display all platforms */}
                                             <div className="flex flex-wrap gap-2 mt-2">
                                                 {groupedItem.platforms.map((platformItem) => {
                                                     const platformMeta = getPlatformMeta(platformItem.platform);
                                                     const PlatformIcon = platformMeta.icon;
+                                                    const isSinglePlatform = groupedItem.platforms.length === 1;
                                                     return (
                                                         <div
                                                             key={platformItem.platform}
                                                             onClick={(e) => e.stopPropagation()}
-                                                            className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full relative group"
+                                                        className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full relative group"
                                                         >
                                                             <PlatformIcon className="text-purple-300" />
                                                             <span className="font-semibold">{platformMeta.label}</span>
-                                                            <span className="text-xs text-slate-400 ml-1">${platformItem.price.toFixed(2)}</span>
+                                                        <span className="text-xs text-slate-400 ml-1">${platformItem.price.toFixed(2)}</span>
+                                                        {!isSinglePlatform && (
                                                             <button
                                                                 onClick={(e) => {
                                                                     e.preventDefault();
                                                                     e.stopPropagation();
                                                                     handleRemove(platformItem.item);
                                                                 }}
-                                                                className="ml-1 text-red-400 hover:text-red-500 transition opacity-0 group-hover:opacity-100"
+                                                                className="ml-1 text-red-400 hover:text-red-500 transition "
                                                                 title="Remove platform"
                                                             >
-                                                                <RiDeleteBin6Line className="text-sm" />
+                                                                <IoClose size={16}  />
                                                             </button>
+                                                        )}
                                                         </div>
                                                     );
                                                 })}
@@ -320,13 +376,22 @@ const Cart = () => {
 
                                         </div>
 
-                                        <div className="flex justify-between items-center mt-3">
-                                            <div>
-                                                <p className="text-sm text-gray-400">Total for {groupedItem.platforms.length} platform{groupedItem.platforms.length > 1 ? 's' : ''}</p>
-                                                <p className="text-lg sm:text-xl font-bold text-white">
-                                                    ${groupedItem.totalPrice.toFixed(2)}
-                                                </p>
-                                            </div>
+                                        <div className="flex justify-between items-center mt-3 gap-3">
+                                            <p className="text-lg sm:text-xl font-bold text-white">
+                                                ${groupedItem.totalPrice.toFixed(2)}
+                                            </p>
+                                            {canAddMorePlatforms && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        openPlatformModal(game);
+                                                    }}
+                                                    className="text-xs sm:text-sm font-semibold text-purple-300 hover:text-white transition bg-white/5 px-3 py-1 rounded-full"
+                                                >
+                                                    Add platform
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -354,7 +419,7 @@ const Cart = () => {
                             ) : (
                                 <>
                                     <h2 className="font-bold text-xl">Order Summary</h2>
-                                    <span className="text-xl font-bold text-purple-400">{cartItems.length}</span>
+                                    <span className="text-xl font-bold text-purple-400">{groupedCartItems.length}</span>
                                 </>
                             )}
 
@@ -492,6 +557,19 @@ const Cart = () => {
                         )}
                     </div>
                 </div>
+
+                <PlatformSelectionModal
+                    open={!!platformModalGame}
+                    gameTitle={platformModalGame?.title}
+                    game={platformModalGame}
+                    onClose={closePlatformModal}
+                    selectedPlatforms={selectedPlatforms}
+                    onPlatformToggle={handlePlatformToggle}
+                    onConfirm={handleConfirmPlatformAdds}
+                    addedPlatforms={selectedGamePlatforms}
+                    isSubmitting={isSubmittingPlatforms}
+                    confirmLabel="Add to cart"
+                />
 
                 {/* {showPaymentForm && clientSecret && currentOrderId && ( */}
 
