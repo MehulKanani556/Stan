@@ -42,10 +42,11 @@ function App() {
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
   const showFooter = isAuthPage || location.pathname === "/GGTalks" || location.pathname === "/ggtalks";
   const chatwidegt = location.pathname == "/GGTalks" || location.pathname === "/ggtalks";
+  const isAdminRoute = location.pathname.startsWith("/admin");
   return (
     <>
       <BackgroundColor>
-        {!isAuthPage && <Header />}
+        {!isAuthPage && !isAdminRoute && <Header />}
         <SnackbarProvider
           maxSnack={3}
           anchorOrigin={{

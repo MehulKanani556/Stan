@@ -3,16 +3,18 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { decryptData, encryptData } from '../Utils/encryption';
-import { updateUser } from '../Redux/Slice/user.slice';
+import { editUserProfile, getUserById } from '../Redux/Slice/user.slice';
 import { FaCamera, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 import { IMAGE_URL } from '../Utils/baseUrl';
 import { Divider, Modal } from '@mui/material';
 
 export default function AdminProfile() {
     const userId = localStorage.getItem("yoyouserId");
+    // const userId = localStorage.getItem("userId");
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const currentUser = useSelector((state) => state.user.currUser);
+    // const currentUser = useSelector((state) => state.user.currentUser);
 
     const [isEditing, setIsEditing] = useState(false);
     const [originalValues, setOriginalValues] = useState({});
@@ -29,6 +31,9 @@ export default function AdminProfile() {
             photo: "",
         },
         onSubmit: (values) => {
+            // Log the field values
+            console.log("Field values:", values);
+            
             const encryptedValues = {
                 userName: values.userName ? encryptData(values.userName) : "",
                 fullName: values.fullName ? encryptData(values.fullName) : "",
@@ -37,16 +42,18 @@ export default function AdminProfile() {
             };
 
             dispatch(
-                updateUser({
-                    id: userId,
-                    values: encryptedValues,
-                    file: selectedFile,
+                editUserProfile({
+                    userId: userId,
+                    userData: {
+                        ...encryptedValues,
+                        photo: selectedFile,
+                    }
                 })
             ).then((response) => {
                 if (response.payload?.success) {
                     setIsEditing(false);
                     setOriginalValues(values);
-                    navigate("/admin/profile");
+                    // navigate("/admin/profile");
                     setSelectedFile(null);
                     setPreviewUrl(null);
                     setImageRemoved(false);
@@ -71,6 +78,12 @@ export default function AdminProfile() {
             imageRemoved
         );
     }, [values, originalValues, selectedFile, imageRemoved]);
+
+    useEffect(() => {
+        if (userId) {
+            dispatch(getUserById(userId));
+        }
+    }, [userId, dispatch]);
 
     useEffect(() => {
         if (currentUser) {
@@ -305,7 +318,7 @@ export default function AdminProfile() {
                                 placeholder="Full name"
                                 className="w-full bg-[#232323] text-[13px] text-white p-2 rounded"
                                 onChange={handleChange}
-                                value={values.fullName}
+                                value={values.fullName || ''}
                                 disabled={!isEditing}
                             />
                         </div>
@@ -321,8 +334,8 @@ export default function AdminProfile() {
                                 placeholder="User name"
                                 className="w-full bg-[#232323] text-[13px] text-white p-2 rounded"
                                 onChange={handleChange}
-                                value={values.userName}
-                                disabled
+                                value={values.userName || ''}
+                                disabled={!isEditing}
                             />
                         </div>
 
