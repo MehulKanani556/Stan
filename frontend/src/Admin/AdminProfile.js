@@ -9,11 +9,13 @@ import { IMAGE_URL } from '../Utils/baseUrl';
 import { Divider, Modal } from '@mui/material';
 
 export default function AdminProfile() {
-    const userId = localStorage.getItem("yoyouserId");
-    // const userId = localStorage.getItem("userId");
+    // const userId = localStorage.getItem("yoyouserId");
+    const userId = localStorage.getItem("userId");
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const currentUser = useSelector((state) => state.user.currUser);
+    const currentUser = useSelector((state) => state.user.currentUser);
+    console.log(currentUser);
+
     // const currentUser = useSelector((state) => state.user.currentUser);
 
     const [isEditing, setIsEditing] = useState(false);
@@ -26,19 +28,19 @@ export default function AdminProfile() {
     const formik = useFormik({
         initialValues: {
             userName: "",
-            fullName: "",
+            name: "",
             email: "",
-            photo: "",
+            profilePic: "",
         },
         onSubmit: (values) => {
             // Log the field values
             console.log("Field values:", values);
-            
+
             const encryptedValues = {
-                userName: values.userName ? encryptData(values.userName) : "",
-                fullName: values.fullName ? encryptData(values.fullName) : "",
-                email: values.email ? encryptData(values.email) : "",
-                photo: values.photo || "",
+                userName: values.userName,
+                name: values.name,
+                email: values.email,
+                profilePic: values.profilePic,
             };
 
             dispatch(
@@ -46,7 +48,7 @@ export default function AdminProfile() {
                     userId: userId,
                     userData: {
                         ...encryptedValues,
-                        photo: selectedFile,
+                        profilePic: selectedFile,
                     }
                 })
             ).then((response) => {
@@ -89,13 +91,15 @@ export default function AdminProfile() {
         if (currentUser) {
             const userData = {
                 userName: decryptData(currentUser.userName) || "",
-                fullName: decryptData(currentUser.fullName) || "",
+                name: decryptData(currentUser.name) || "",
                 email: decryptData(currentUser.email) || "",
-                photo: currentUser.photo || "",
+                profilePic: currentUser.profilePic || "",
             };
             setValues(userData);
             setOriginalValues(userData);
+            console.log(userData);
         }
+
     }, [currentUser, setValues]);
 
     const handleImageUpload = (e) => {
@@ -108,7 +112,7 @@ export default function AdminProfile() {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreviewUrl(reader.result);
-                setFieldValue("photo", reader.result);
+                setFieldValue("profilePic", reader.result);
             };
             reader.readAsDataURL(file);
         }
@@ -118,7 +122,7 @@ export default function AdminProfile() {
         setSelectedFile(null);
         setPreviewUrl(null);
         setImageRemoved(true);
-        setFieldValue("photo", "null");
+        setFieldValue("profilePic", "null");
     };
 
     const avatars = [
@@ -142,7 +146,7 @@ export default function AdminProfile() {
             setIsEditing(true);
             setPreviewUrl(avatar);
             setSelectedFile(file);
-            setFieldValue("photo", file);
+            setFieldValue("profilePic", file);
             setImageRemoved(false);
             setIsModalOpen(false);
         } catch (error) {
@@ -190,14 +194,14 @@ export default function AdminProfile() {
                                 </button>
                             </>
                         ) : !imageRemoved &&
-                            currentUser?.photo &&
-                            currentUser?.photo !== "null" ? (
+                            currentUser?.profilePic &&
+                            currentUser?.profilePic !== "null" ? (
                             <>
                                 <img
                                     src={
-                                        currentUser.photo.startsWith("/uploads/")
-                                            ? `${IMAGE_URL}${currentUser.photo}`
-                                            : currentUser.photo
+                                        currentUser?.profilePic?.startsWith("/uploads/")
+                                            ? `${IMAGE_URL}${currentUser.profilePic}`
+                                            : currentUser.profilePic
                                     }
                                     alt="Profile"
                                     className="cursor-pointer object-cover w-full h-full rounded-full"
@@ -213,7 +217,7 @@ export default function AdminProfile() {
                         ) : (
                             <div className="text-black text-lg font-bold flex w-24 h-24 justify-center items-center">
                                 <span className="text-black font-bold text-3xl uppercase">
-                                    {decryptData(currentUser?.fullName)?.[0] ||
+                                    {decryptData(currentUser?.name)?.[0] ||
                                         decryptData(currentUser?.userName)?.[0]}
                                 </span>
                             </div>
@@ -313,18 +317,18 @@ export default function AdminProfile() {
                                 Full Name
                             </label>
                             <input
-                                name="fullName"
+                                name="name"
                                 type="text"
                                 placeholder="Full name"
                                 className="w-full bg-[#232323] text-[13px] text-white p-2 rounded"
                                 onChange={handleChange}
-                                value={values.fullName || ''}
+                                value={values.name || ''}
                                 disabled={!isEditing}
                             />
                         </div>
 
                         {/* User Name */}
-                        <div>
+                        {/* <div>
                             <label className="text-[13px] font-normal text-white/80 mb-[5px]">
                                 User Name
                             </label>
@@ -337,7 +341,7 @@ export default function AdminProfile() {
                                 value={values.userName || ''}
                                 disabled={!isEditing}
                             />
-                        </div>
+                        </div> */}
 
 
 
@@ -351,8 +355,8 @@ export default function AdminProfile() {
                                 type="email"
                                 placeholder="Email"
                                 className="w-full bg-[#232323] text-[13px] text-white p-2 rounded"
-                                readOnly
-                                disabled
+                                // readOnly
+                                // disabled
                                 value={values.email}
                             />
                         </div>

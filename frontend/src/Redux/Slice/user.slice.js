@@ -25,12 +25,13 @@ const initialState = {
   loading: false,
   error: null,
   loggedIn: false,
+  currentUser: null,
   isLoggedOut: false,
   message: null,
   name: localStorage.getItem("userName")
     ? JSON.parse(localStorage.getItem("userName"))
     : "",
-    chatToggle:false
+  chatToggle: false
 };
 
 
@@ -368,15 +369,15 @@ export const changePassword = createAsyncThunk(
     try {
       const response = await axiosInstance.post(`/changePassword`, {
         email,
-        currentPassword:oldPassword,
-        newPassword:newPassword,
+        currentPassword: oldPassword,
+        newPassword: newPassword,
       });
       // dispatch(setAlert({ text: response.data.message, color: 'success' }));
       enqueueSnackbar(response.data.message || "Old password is incorrect", { variant: "success" });
       return response.data;
     } catch (error) {
       // console.log(error.response.data.message);
-      
+
       enqueueSnackbar(error.response.data.message || "Old password is incorrect", { variant: "error" });
       return handleErrors(error, dispatch, rejectWithValue);
     }
@@ -457,7 +458,7 @@ export const deleteChat = createAsyncThunk(
   "user/deleteChat",
   async ({ selectedUserId }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/deleteChat", { selectedId:selectedUserId });
+      const response = await axiosInstance.post("/deleteChat", { selectedId: selectedUserId });
       return response.data;
     } catch (error) {
       return handleErrors(error, null, rejectWithValue);
@@ -507,27 +508,27 @@ export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { dispatch, rejectWithValue }) => {
 
-    
-      try {
-        const response = await axiosInstance.post(`${BASE_URL}/logout`);
-        if (response.data.success) {
-          localStorage.removeItem("userId");
-          localStorage.removeItem("token");
-          localStorage.removeItem("role");
-          localStorage.removeItem("userName");
-          if (window.persistor) {
-            window.persistor.purge();
-          }
-          // dispatch(setAlert({ text: response.data.message, color: 'success' }));
-          enqueueSnackbar(response.data.message || "Logged out successfully", { variant: "success" });
-          return response.data;
+
+    try {
+      const response = await axiosInstance.post(`${BASE_URL}/logout`);
+      if (response.data.success) {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userName");
+        if (window.persistor) {
+          window.persistor.purge();
         }
-      } catch (error) {
-        // return handleErrors(error, dispatch, rejectWithValue);
+        // dispatch(setAlert({ text: response.data.message, color: 'success' }));
+        enqueueSnackbar(response.data.message || "Logged out successfully", { variant: "success" });
+        return response.data;
       }
+    } catch (error) {
+      // return handleErrors(error, dispatch, rejectWithValue);
     }
-    
-  
+  }
+
+
 );
 
 // Add fan coins after purchase
@@ -548,10 +549,10 @@ export const fanCoinsuse = createAsyncThunk(
   "user/fanCoinsuse",
   async ({ userId, gamePrice, fanCoinsToUse }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/fan-coins/use', { 
-        userId, 
-        gamePrice, 
-        fanCoinsToUse 
+      const response = await axiosInstance.post('/fan-coins/use', {
+        userId,
+        gamePrice,
+        fanCoinsToUse
       });
       return response.data;
     } catch (error) {
@@ -576,7 +577,7 @@ export const getFanCoinDetails = createAsyncThunk(
 //  updateLoginTask 
 export const updateLoginTask = createAsyncThunk(
   "auth/updateLoginTask",
-  async(_,{rejectWithValue})=>{
+  async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(`/user/LogginHistory`);
       return response.data; // Assuming the API returns the user data
@@ -606,7 +607,7 @@ const userSlice = createSlice({
     fanCoinTransactions: [],
     fanCoinLoading: false,
     fanCoinError: null,
-    userLogging : null, 
+    userLogging: null,
   },
   reducers: {
     logout: (state, action) => {
@@ -636,22 +637,22 @@ const userSlice = createSlice({
       state.currentUser = action.payload;
     },
     setUser: (state, action) => {
-      state.name = typeof action.payload === "string" 
-        ? action.payload 
+      state.name = typeof action.payload === "string"
+        ? action.payload
         : action.payload?.name || "";
-        
+
       localStorage.setItem("userName", JSON.stringify(state.name));
     },
-    
+
     clearUser: (state) => {
       state.user = null;
       state.name = "";
     },
-    chatToggleFunc : (state , action) => {
+    chatToggleFunc: (state, action) => {
       if (typeof action.payload === "boolean") {
         state.chatToggle = action.payload;
-      } 
-       
+      }
+
     },
     clearError: (state) => {
       state.error = null;
@@ -675,21 +676,21 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(changePassword.pending, (state) => {
-      state.loading = true;
-      state.message = "Resetting password...";
-    })
-    .addCase(changePassword.fulfilled, (state, action) => {
-      state.loading = false;
-      state.success = true;
-      state.message =
-        action.payload?.message || "Password reset successfully";
-    })
-    .addCase(changePassword.rejected, (state, action) => {
-      state.loading = false;
-      state.success = false;
-      state.message = action.payload?.message || "Failed to reset password";
-    })
+      .addCase(changePassword.pending, (state) => {
+        state.loading = true;
+        state.message = "Resetting password...";
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.message =
+          action.payload?.message || "Password reset successfully";
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.success = false;
+        state.message = action.payload?.message || "Failed to reset password";
+      })
       .addCase(getUser.fulfilled, (state, action) => {
         state.user = action.payload.users; // Assuming the API returns the user data
         state.loading = false;
@@ -925,7 +926,7 @@ const userSlice = createSlice({
         state.error = action.payload.message;
         state.message = action.payload?.message || "Failed to muteChat chat";
       })
-    
+
       .addCase(markMessagesAsRead.fulfilled, (state, action) => {
         const { senderId } = action.payload;
         // Reset unread count for the sender
@@ -949,7 +950,7 @@ const userSlice = createSlice({
         state.error = action.payload?.message || action.error?.message || "Something went wrong";
         state.message = action.payload?.message || action.error?.message || "Logout Failed";
       })
-      
+
       // GetUserById cases
       .addCase(getUserById.pending, (state) => {
         state.loading = true;
@@ -957,7 +958,7 @@ const userSlice = createSlice({
       })
       .addCase(getUserById.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentUser = action.payload.result;        
+        state.currentUser = action.payload.result;
         state.fanCoins = action.payload.result?.fanCoins;
         state.message = action.payload.message;
         state.error = null;
@@ -991,43 +992,43 @@ const userSlice = createSlice({
       state.fanCoinLoading = true;
       state.fanCoinError = null;
     })
-    .addCase(addFanCoins.fulfilled, (state, action) => {
-      state.fanCoinLoading = false;
-      state.fanCoins = action.payload.fanCoins;
-    })
-    .addCase(addFanCoins.rejected, (state, action) => {
-      state.fanCoinLoading = false;
-      state.fanCoinError = action.payload;
-    })
+      .addCase(addFanCoins.fulfilled, (state, action) => {
+        state.fanCoinLoading = false;
+        state.fanCoins = action.payload.fanCoins;
+      })
+      .addCase(addFanCoins.rejected, (state, action) => {
+        state.fanCoinLoading = false;
+        state.fanCoinError = action.payload;
+      })
 
-    // Use fan coins reducer
-    .addCase(fanCoinsuse.pending, (state) => {
-      state.fanCoinLoading = true;
-      state.fanCoinError = null;
-    })
-    .addCase(fanCoinsuse.fulfilled, (state, action) => {
-      state.fanCoinLoading = false;
-      state.fanCoins = action.payload.fanCoins;
-    })
-    .addCase(fanCoinsuse.rejected, (state, action) => {
-      state.fanCoinLoading = false;
-      state.fanCoinError = action.payload;
-    })
+      // Use fan coins reducer
+      .addCase(fanCoinsuse.pending, (state) => {
+        state.fanCoinLoading = true;
+        state.fanCoinError = null;
+      })
+      .addCase(fanCoinsuse.fulfilled, (state, action) => {
+        state.fanCoinLoading = false;
+        state.fanCoins = action.payload.fanCoins;
+      })
+      .addCase(fanCoinsuse.rejected, (state, action) => {
+        state.fanCoinLoading = false;
+        state.fanCoinError = action.payload;
+      })
 
-   
-     // Get user logging history
-     .addCase(getFanCoinDetails.pending, (state) => {
-      state.loading = false;
-    })
-    .addCase(getFanCoinDetails.fulfilled, (state, action) => {
-      state.loading = false;
-      state.userLogging = action.payload.data;
-    })
-    .addCase(getFanCoinDetails.rejected, (state, action) => {
-      state.loading = false;
-    });
+
+      // Get user logging history
+      .addCase(getFanCoinDetails.pending, (state) => {
+        state.loading = false;
+      })
+      .addCase(getFanCoinDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userLogging = action.payload.data;
+      })
+      .addCase(getFanCoinDetails.rejected, (state, action) => {
+        state.loading = false;
+      });
   }
 });
 
-export const { logout, clearUsers, clearCurrentUser, setCurrentUser  , clearUser , setUser , chatToggleFunc , clearError , updateUnreadCount , resetUnreadCount} = userSlice.actions;
+export const { logout, clearUsers, clearCurrentUser, setCurrentUser, clearUser, setUser, chatToggleFunc, clearError, updateUnreadCount, resetUnreadCount } = userSlice.actions;
 export default userSlice.reducer;
