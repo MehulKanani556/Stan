@@ -753,7 +753,12 @@ export const deleteGame = function (req, res) {
       // Helper to delete a file from cloudinary if public_id exists
       const deleteCloudFile = async (file) => {
         if (file && file.public_id) {
-          await deleteFile(file.public_id);
+          try {
+            await deleteFile(file.public_id);
+          } catch (error) {
+            console.error(`Failed to delete file with public_id ${file.public_id}:`, error);
+            // Continue with deletion even if file deletion fails
+          }
         }
       };
 

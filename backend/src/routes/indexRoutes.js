@@ -182,7 +182,7 @@ indexRoutes.put(
   upload.fields(gameFileFields),
   updateGame
 );
-indexRoutes.delete("/deleteGame/:id", deleteGame);
+indexRoutes.delete("/deleteGame/:id", UserAuth, isAdmin, deleteGame);
 indexRoutes.get("/getGameById/:id", getGameById);
 
 // hometrailers routes

@@ -36,7 +36,9 @@ export const createCategory = createAsyncThunk(
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            enqueueSnackbar(response.data.message || "Category Add successful", { variant: "success" });
+            enqueueSnackbar("Category Add successful", { variant: "success" });
+            // Refetch categories after successful creation
+            dispatch(getAllCategories());
             return response.data;
         } catch (error) {
             enqueueSnackbar(error.response?.data?.message || error.message || "Category not successful", { variant: "error" });
@@ -55,6 +57,8 @@ export const updateCategory = createAsyncThunk(
                 },
             });
             enqueueSnackbar(response.data.message || "Category Update successful", { variant: "success" });
+            // Refetch categories after successful update
+            dispatch(getAllCategories());
             return response.data.data; // Return the updated category data
         } catch (error) {
             enqueueSnackbar(error.response?.data?.message || error.message || "Category not Updated", { variant: "error" });
@@ -71,9 +75,14 @@ export const deleteCategory = createAsyncThunk(
             // console.log(response.data);
 
             if (response.data.success) {
+                enqueueSnackbar(response.data.message || "Category Delete successful", { variant: "success" });
+                // Refetch categories after successful deletion
+                dispatch(getAllCategories());
                 return data._id;
             }
             enqueueSnackbar(response.data.message || "Category Delete successful", { variant: "success" });
+            dispatch(getAllCategories());
+            return data._id;
         } catch (error) {
             enqueueSnackbar(error.response?.data?.message || error.message || "Category not Deleted", { variant: "error" });
             return handleErrors(error, dispatch, rejectWithValue);
@@ -111,7 +120,7 @@ const categorySlice = createSlice({
                 state.loading = false;
                 state.success = true;
                 state.message = 'Category created successfully';
-                state.categories.push(action.payload);
+                // Categories will be updated by getAllCategories refetch
             })
             .addCase(createCategory.rejected, (state, action) => {
                 state.loading = false;
@@ -126,7 +135,7 @@ const categorySlice = createSlice({
                 state.loading = false;
                 state.success = true;
                 state.message = 'Category update successfully';
-                state.categories = state.categories.map((v) => v._id === action.payload._id ? action.payload : v);
+                // Categories will be updated by getAllCategories refetch
             })
             .addCase(updateCategory.rejected, (state, action) => {
                 state.loading = false;

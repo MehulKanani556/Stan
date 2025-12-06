@@ -45,6 +45,8 @@ const storage = multerS3({
             folder = 'profilePic';
         } else if (file.fieldname === 'thumbnail' || file.fieldname === 'image') {
             folder = 'images';
+        } else if (file.fieldname === 'category_image') {
+            folder = 'CategoryImage';
         } else if (file.fieldname === 'video') {
             folder = 'videos';
         } else if (file.fieldname === 'cover_image' || file.fieldname === 'images') {

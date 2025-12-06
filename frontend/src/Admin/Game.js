@@ -792,10 +792,25 @@ export default function Game() {
     setDelOpen(false);
     setGameData("");
   };
-  const handleDeleteGame = () => {
-    dispatch(deleteGame({ _id: gameData._id }));
-    setDelOpen(false);
-    setGameData("");
+  const handleDeleteGame = async () => {
+    try {
+      const result = await dispatch(deleteGame({ _id: gameData._id }));
+      if (deleteGame.fulfilled.match(result)) {
+        // Refresh the games list after successful deletion
+        dispatch(
+          getAllActiveGamesWithPagination({
+            page: currentPage,
+            limit: gamesPerPage,
+            category: selectedCategoryQ,
+            search: searchValue?.trim()?.toLowerCase(),
+          })
+        );
+        setDelOpen(false);
+        setGameData("");
+      }
+    } catch (error) {
+      console.error("Error deleting game:", error);
+    }
   };
 
   return (
