@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
 import { useNavigate } from "react-router-dom";
 import { fetchCart } from "../Redux/Slice/cart.slice";
+import { allorders } from "../Redux/Slice/Payment.slice";
 
 import { WishlistSkeletonCard, WishlistSkeletonSummary } from "../lazyLoader/WishlistSkeleton";
 import Advertize from "../components/Advertize";
@@ -18,6 +19,7 @@ import { BsNintendoSwitch } from 'react-icons/bs';
 const Wishlist = () => {
   const { items, loading } = useSelector((state) => state.wishlist);
   const cartItems = useSelector((state) => state.cart.cart);
+  const orders = useSelector((state) => state.payment.orders);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -41,7 +43,18 @@ const Wishlist = () => {
   useEffect(() => {
     dispatch(fetchWishlist());
     dispatch(fetchCart());
+    dispatch(allorders());
   }, [dispatch]);
+
+  // Check if a game is purchased
+  const isPurchased = useCallback((gameId) => {
+    if (!gameId) return false;
+    return Array.isArray(orders) && orders.some(order =>
+      order?.status === 'paid' && 
+      Array.isArray(order?.items) && 
+      order.items.some(item => item?.game?._id === gameId)
+    );
+  }, [orders]);
 
   const handleRemove = (id) => {
     dispatch(removeFromWishlist({ gameId: id }));
@@ -110,9 +123,6 @@ const Wishlist = () => {
                       <h2 className="text-xl font-semibold mt-3">{item.game?.title}</h2>
 
                       <div className="flex flex-wrap items-center space-x-2 mt-3">
-                        {console.log(item.game?.platforms)}
-
-                        {/* {game?.platforms?.windows && <} */}
                         {item.game?.platforms?.windows?.available && (
                           <span className=" text-blue-400 rounded font-semibold whitespace-nowrap flex items-center">
                             <FaWindows className="text-base" />
@@ -156,8 +166,8 @@ const Wishlist = () => {
                           ${item.game?.platforms?.windows?.price?.toLocaleString() || 0}
                         </p>
 
-                        {/* ADD TO CART */}
-                        {(() => {
+                        {/* ADD TO CART - Hide if game is purchased */}
+                        {!isPurchased(item.game?._id) && (() => {
                           const isInCart = cartItems.some(cartItem => cartItem?.game?._id === item.game?._id);
                           const buttonLabel = isInCart ? "Add more platforms" : "Add to cart";
                           const buttonStyles = isInCart
@@ -176,6 +186,11 @@ const Wishlist = () => {
                             </button>
                           );
                         })()}
+                        {isPurchased(item.game?._id) && (
+                          <span className="px-5 py-2 rounded-lg text-sm shadow-md font-semibold bg-green-600/40 text-green-200">
+                            Purchased
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
