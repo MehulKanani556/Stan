@@ -1,33 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  PiUser,
-  PiUsersThree,
-  PiHourglass,
-  PiMoneyLight,
-} from "react-icons/pi";
+import { PiUser, PiUsersThree, PiHourglass, PiMoneyLight, } from "react-icons/pi";
 import { Line, Bar, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Filler,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Filler, } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getCategoryByGame,
-  getDashboardStats,
-  getRecentTransactions,
-  getTopCategories,
-  getTopGamesDashboard,
-  getTopPlatform,
-} from "../Redux/Slice/dashboard.slice";
+import { getCategoryByGame, getDashboardStats, getRecentTransactions, getTopCategories, getTopGamesDashboard, getTopPlatform, } from "../Redux/Slice/dashboard.slice";
 import { useNavigate } from "react-router-dom";
 import { BsCartCheck } from "react-icons/bs";
 import { FaWindows, FaXbox } from "react-icons/fa";
@@ -35,18 +11,7 @@ import { SiOculus, SiPlaystation } from "react-icons/si";
 import { TbDeviceVisionPro } from "react-icons/tb";
 import { BsNintendoSwitch } from "react-icons/bs";
 
-ChartJS.register(
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
+ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 export default function AdminDashboard() {
   const [filter, setFilter] = useState("all");
@@ -490,7 +455,7 @@ export default function AdminDashboard() {
               <PiUser className="w-6 h-6 text-white" />
             </div>
             <div className="text-end">
-              <div className="text-xl md:text-3xl font-bold text-white mb-2">
+               <div className="text-2xl md:text-3xl xl:text-2xl 2xl:text-3xl font-bold text-white mb-2">
                 {DashboardStats?.totalUsers}
               </div>
               <div className="text-white text-sm">Total Users</div>
@@ -514,7 +479,7 @@ export default function AdminDashboard() {
               <BsCartCheck className="w-6 h-6 text-white" />
             </div>
             <div className="text-end">
-              <div className="text-xl md:text-3xl font-bold text-white mb-2">
+               <div className="text-2xl md:text-3xl xl:text-2xl 2xl:text-3xl font-bold text-white mb-2">
                 {DashboardStats?.totalOrders}
               </div>
               <div className="text-white text-sm">Total Orders</div>
@@ -538,7 +503,7 @@ export default function AdminDashboard() {
               <PiHourglass className="w-6 h-6 text-white" />
             </div>
             <div className="text-end">
-              <div className="text-xl md:text-3xl font-bold text-white mb-2">
+               <div className="text-2xl md:text-3xl xl:text-2xl 2xl:text-3xl font-bold text-white mb-2">
                 {DashboardStats?.totalGames}
               </div>
               <div className="text-white text-sm">Total Games</div>
@@ -562,7 +527,7 @@ export default function AdminDashboard() {
               <PiMoneyLight className="w-6 h-6 text-white" />
             </div>
             <div className="text-end">
-              <div className="text-xl md:text-3xl font-bold text-white mb-2">
+              <div className="text-2xl md:text-3xl xl:text-2xl 2xl:text-3xl font-bold text-white mb-2">
                 {DashboardStats?.totalRevenue}
               </div>
               <div className="text-white text-sm">Total Revenue</div>
@@ -658,7 +623,7 @@ export default function AdminDashboard() {
 
             <div className="h-[250px] overflow-auto scrollbar-hide">
               <table className="w-full">
-                <thead className="sticky top-0 bg-[#202020]">
+                <thead className="sticky top-0 bg-[#202020] z-50">
                   <tr>
                     <th className="text-left text-gray-400 font-medium text-sm py-2 px-4">
                       Name
@@ -691,39 +656,39 @@ export default function AdminDashboard() {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex gap-2">
-                           {game.platforms.windows.count>0 && (
-                          <span className="bg-blue-600/20 text-blue-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
-                            <FaWindows className="text-base" />: {game.platforms.windows.count}
-                          </span>
-                           )}
-                          {game.platforms.xbox.count>0 && (
-                          <span className="bg-green-600/20 text-green-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
-                            <FaXbox className="text-base"/>: {game.platforms.xbox.count}
-                          </span>
+                          {game.platforms.windows.count > 0 && (
+                            <span className="bg-blue-600/20 text-blue-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <FaWindows className="text-base" />: {game.platforms.windows.count}
+                            </span>
                           )}
-                           {game.platforms.ps5.count>0 && (
-                          <span className="bg-blue-800/20 text-blue-600 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
-                            <SiPlaystation className="text-base"/>: {game.platforms.ps5.count}
-                          </span>
-                           )}
-                            {game.platforms.quest.count>0 && (
-                          <span className="bg-indigo-600/20 text-indigo-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
-                            <SiOculus className="text-base"/>: {game.platforms.quest.count}
-                          </span>
-                            )}
-                             {game.platforms.vision_pro.count>0 && (
-                          <span className="bg-gray-700/20 text-gray-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
-                            <TbDeviceVisionPro className="text-base"/>:{" "}
-                            {game.platforms.vision_pro.count}
-                          </span>
-                             )}
-                              {(game.platforms.nintendo_switch_1.count > 0 ||  game.platforms.nintendo_switch_2.count>0)   && (
-                          <span className="bg-red-600/20 text-red-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
-                            <BsNintendoSwitch className="text-base"/>:{" "}
-                            {game.platforms.nintendo_switch_1.count +
-                              game.platforms.nintendo_switch_2.count}
-                          </span>
-                              )}
+                          {game.platforms.xbox.count > 0 && (
+                            <span className="bg-green-600/20 text-green-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <FaXbox className="text-base" />: {game.platforms.xbox.count}
+                            </span>
+                          )}
+                          {game.platforms.ps5.count > 0 && (
+                            <span className="bg-blue-800/20 text-blue-600 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <SiPlaystation className="text-base" />: {game.platforms.ps5.count}
+                            </span>
+                          )}
+                          {game.platforms.quest.count > 0 && (
+                            <span className="bg-indigo-600/20 text-indigo-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <SiOculus className="text-base" />: {game.platforms.quest.count}
+                            </span>
+                          )}
+                          {game.platforms.vision_pro.count > 0 && (
+                            <span className="bg-gray-700/20 text-gray-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <TbDeviceVisionPro className="text-base" />:{" "}
+                              {game.platforms.vision_pro.count}
+                            </span>
+                          )}
+                          {(game.platforms.nintendo_switch_1.count > 0 || game.platforms.nintendo_switch_2.count > 0) && (
+                            <span className="bg-red-600/20 text-red-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <BsNintendoSwitch className="text-base" />:{" "}
+                              {game.platforms.nintendo_switch_1.count +
+                                game.platforms.nintendo_switch_2.count}
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="py-3 px-4 text-gray-300 text-sm text-center">
@@ -765,7 +730,7 @@ export default function AdminDashboard() {
               </h2>
               <button
                 onClick={() => {
-                  navigate("/admin/transaction");
+                  navigate("/admin/order");
                 }}
                 className="text-gray-400 hover:text-white transition-colors duration-300 ease-in-out text-sm font-medium"
               >
@@ -775,7 +740,7 @@ export default function AdminDashboard() {
 
             <div className="h-[250px] overflow-auto scrollbar-hide">
               <table className="w-full">
-                <thead className="sticky top-0 bg-[#202020]">
+                <thead className="sticky top-0 bg-[#202020] z-50">
                   <tr>
                     <th className="text-left text-gray-400 font-medium text-sm py-2 px-4">
                       Order ID
@@ -820,18 +785,17 @@ export default function AdminDashboard() {
                             ).map((item, idx) => (
                               <div
                                 key={idx}
-                                className={`flex items-center justify-between gap-2 ${
-                                  idx !== transaction.items.length - 1
+                                className={`flex items-center justify-between gap-2 ${idx !== transaction.items.length - 1
                                     ? "mb-2"
                                     : "mb-0"
-                                }`}
+                                  }`}
                               >
                                 <div className="flex gap-2">
                                   {item.gameImage ? (
                                     <img
                                       src={item.gameImage}
                                       alt={item.gameTitle}
-                                      className="w-8 h-8 rounded-full object-cover"
+                                      className="w-8 h-8 rounded-full object-cover z-0"
                                     />
                                   ) : (
                                     <div className="w-8 h-8 rounded-full bg-white/10 uppercase text-xs flex items-center justify-center whitespace-nowrap">
@@ -880,11 +844,10 @@ export default function AdminDashboard() {
                       </td>
                       <td className="py-3 px-4 text-gray-300 text-sm text-center">
                         <span
-                          className={`${
-                            transaction.status == "paid"
+                          className={`${transaction.status == "paid"
                               ? "bg-green-600/20 text-green-400"
                               : ""
-                          } text-xs px-2 py-1 rounded font-semibold`}
+                            } text-xs px-2 py-1 rounded font-semibold`}
                         >
                           {transaction.status}
                         </span>
