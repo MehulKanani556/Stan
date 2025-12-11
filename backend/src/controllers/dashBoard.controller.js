@@ -133,7 +133,7 @@ export const getRecentTransactions = async (req, res) => {
         }
 
         const transactions = await Order.find(matchQuery)
-            .populate('user', "fullName userName email profilePic") // ✅ matches schema (user not userId)
+            .populate('user', "name userName email profilePic") // ✅ matches schema (user not userId)
             .populate('items.game', 'title cover_image.url') // ✅ populate game title and cover image
             .sort({ createdAt: -1 });
 
@@ -155,10 +155,10 @@ export const getRecentTransactions = async (req, res) => {
                     `${hours} hr${hours !== 1 ? 's' : ''} ` +
                     `${minutes} min${minutes !== 1 ? 's' : ''} ago`;
             }
+           
 
-            let decryptedFullName = detail.user?.fullName ? decryptData(detail.user.fullName) : "";
-            let decryptedUserName = detail.user?.userName ? decryptData(detail.user.userName) : "";
-
+            let decryptedFullName = detail.user?.name ? decryptData(detail.user.name) : "";
+            let decryptedUserName = detail.user?.name ? decryptData(detail.user.name) : "";
             return {
                 orderId: detail._id,
                 userName: decryptedUserName?.trim() ? decryptedUserName : decryptedUserName?.trim() ? decryptedUserName : "Unknown User",
