@@ -32,6 +32,6 @@ const ScratchCardSchema = new mongoose.Schema({
   price: {
     type: Number,
   },
-});
+}, { timestamps: true });
 
 export default mongoose.model("ScratchCard", ScratchCardSchema);

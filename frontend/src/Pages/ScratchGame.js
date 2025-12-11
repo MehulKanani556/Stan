@@ -382,7 +382,15 @@ const ScratchGame = () => {
       {Array.isArray(scratchCards) && scratchCards.length > 0 ? (
         <div className="grid ms:grid-cols-2 2xl:grid-cols-4 lg:grid-cols-3 gap-4">
           {[...scratchCards]
-            .reverse().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .sort((a, b) => {
+              const getTs = (card) => {
+                if (!card) return 0;
+                if (card.createdAt) return new Date(card.createdAt).getTime();
+                if (card._id) return parseInt(card._id.substring(0, 8), 16) * 1000;
+                return 0;
+              };
+              return getTs(b) - getTs(a);
+            })
             .slice(0, showAll ? undefined : 8)
             .map((prize, index) => (
               <ScratchCard

@@ -3,6 +3,18 @@ import axiosInstance from "../../Utils/axiosInstance";
 import { enqueueSnackbar } from "notistack";
 import ScratchCard from "../../Pages/ScratchCard";
 
+// Helper: derive a sortable timestamp from createdAt or Mongo ObjectId fallback
+const getCardTimestamp = (card) => {
+    if (!card) return 0;
+    if (card.createdAt) return new Date(card.createdAt).getTime();
+    if (card._id) {
+        // Mongo ObjectId first 4 bytes are a timestamp (seconds)
+        const tsSeconds = parseInt(card._id.substring(0, 8), 16);
+        return tsSeconds * 1000;
+    }
+    return 0;
+};
+
 // ==================== REWARD MANAGEMENT (ADMIN) ====================
 
 // Create a new reward
@@ -799,9 +811,12 @@ const rewardSlice = createSlice({
                 state.loading.scratchCard = false;
                 state.message = action.payload.message;
                 state.error = null;
-                // Add new reward to the beginning of the list
+                // Add new reward to the beginning of the list and ensure it stays at top
                 if (action.payload.result) {
+                    // Add new card to the beginning
                     state.scratchCard.unshift(action.payload.result);
+                    // Sort to ensure newest cards are always at top (in case createdAt is missing on older data)
+                    state.scratchCard = [...state.scratchCard].sort((a, b) => getCardTimestamp(b) - getCardTimestamp(a));
                 }
                 // Update user balance from backend response
                 if (action.payload.result?.newBalance !== undefined) {
@@ -829,9 +844,11 @@ const rewardSlice = createSlice({
                 state.loading.scratchCard = false;
                 state.message = action.payload.message;
                 state.error = null;
-                // Add new reward to the beginning of the list
+                // Sort cards by createdAt descending (newest first) to ensure newest cards appear at top
                 if (action.payload.result) {
-                    state.scratchCard=action.payload.result;
+                    state.scratchCard = Array.isArray(action.payload.result) 
+                        ? [...action.payload.result].sort((a, b) => getCardTimestamp(b) - getCardTimestamp(a))
+                        : action.payload.result;
                 }
             })
             .addCase(getScratchCard.rejected, (state, action) => {
