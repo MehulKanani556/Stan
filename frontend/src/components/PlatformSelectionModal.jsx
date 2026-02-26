@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FaApple, FaDesktop, FaPlaystation, FaXbox, FaGamepad } from 'react-icons/fa';
+import { FaApple, FaDesktop, FaPlaystation, FaXbox, FaGamepad, FaAndroid } from 'react-icons/fa';
 import { SiOculus, SiNintendoswitch } from 'react-icons/si'
 export const PLATFORM_OPTIONS = [
   { label: 'Vision Pro', value: 'vision_pro' },
@@ -8,7 +8,9 @@ export const PLATFORM_OPTIONS = [
   { label: 'X Box', value: 'xbox' },
   { label: 'Quest', value: 'quest' },
   { label: 'Nintendo Switch 1', value: 'nintendo_switch_1' },
-  { label: 'Nintendo Switch 2', value: 'nintendo_switch_2' }
+  { label: 'Nintendo Switch 2', value: 'nintendo_switch_2' },
+  { label: 'Android', value: 'android' },
+  { label: 'iOS', value: 'ios' }
 ];
 
 const PLATFORM_DETAILS = {
@@ -18,7 +20,9 @@ const PLATFORM_DETAILS = {
   xbox: { icon: FaXbox, fallbackPrice: 499 },
   quest: { icon: SiOculus, fallbackPrice: 499 },
   nintendo_switch_1: { icon: SiNintendoswitch, fallbackPrice: 449 },
-  nintendo_switch_2: { icon: SiNintendoswitch, fallbackPrice: 549 }
+  nintendo_switch_2: { icon: SiNintendoswitch, fallbackPrice: 549 },
+  android: { icon: FaAndroid, fallbackPrice: 9.99 },
+  ios: { icon: FaApple, fallbackPrice: 9.99 }
 };
 
 const PlatformSelectionModal = ({
@@ -105,13 +109,12 @@ const PlatformSelectionModal = ({
                 type="button"
                 disabled={alreadyAdded}
                 onClick={() => onPlatformToggle(option.value)}
-                className={`flex items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-all duration-150 ${
-                  alreadyAdded
+                className={`flex items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-all duration-150 ${alreadyAdded
                     ? 'border-slate-800 bg-slate-900/70 text-slate-500 cursor-not-allowed'
                     : isSelected
-                    ? 'border-purple-400 bg-purple-500/15 text-white shadow-md shadow-purple-500/25'
-                    : 'border-slate-700 bg-slate-800/80 text-slate-200 hover:border-purple-400 hover:text-white'
-                }`}
+                      ? 'border-purple-400 bg-purple-500/15 text-white shadow-md shadow-purple-500/25'
+                      : 'border-slate-700 bg-slate-800/80 text-slate-200 hover:border-purple-400 hover:text-white'
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`flex h-9 w-9 items-center justify-center rounded-full text-base ${isSelected ? 'bg-purple-600/70 text-white' : 'bg-slate-900/70 text-slate-200'}`}>
@@ -131,11 +134,10 @@ const PlatformSelectionModal = ({
                   </span>
                 ) : (
                   <span
-                    className={`flex h-4 w-4 items-center justify-center rounded-full border text-[11px] font-bold ${
-                      isSelected
+                    className={`flex h-4 w-4 items-center justify-center rounded-full border text-[11px] font-bold ${isSelected
                         ? 'bg-purple-500 border-purple-300 text-white'
                         : 'border-slate-600 text-transparent'
-                    }`}
+                      }`}
                     aria-hidden="true"
                   >
                     {isSelected && '✓'}
@@ -176,11 +178,10 @@ const PlatformSelectionModal = ({
           <button
             onClick={onConfirm}
             disabled={selectedPlatforms.length === 0 || isSubmitting}
-            className={`w-full rounded-xl py-3 font-semibold transition-all ${
-              selectedPlatforms.length === 0 || isSubmitting
+            className={`w-full rounded-xl py-3 font-semibold transition-all ${selectedPlatforms.length === 0 || isSubmitting
                 ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-purple-500/30'
-            }`}
+              }`}
           >
             {isSubmitting ? 'Processing...' : confirmLabel}
           </button>

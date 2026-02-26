@@ -17,7 +17,7 @@ export const createOrder = async (req, res) => {
     const userId = req.user._id; // assuming you use auth middleware
 
     console.log(req.body);
-    
+
     // Save order in DB
     const order = await Order.create({
       user: userId,
@@ -43,7 +43,7 @@ export const verifyPayment = async (req, res) => {
       paymentIntentId,
       orderId,
       fanCoinsUsed,
-      fanCoinDiscount 
+      fanCoinDiscount
     } = req.body;
 
     // Special handling for zero-amount (fully fan coin covered) payments
@@ -121,10 +121,10 @@ export const verifyPayment = async (req, res) => {
       }
 
       if (mailError) {
-        return res.status(200).json({ 
-          success: true, 
-          order, 
-          warning: mailError 
+        return res.status(200).json({
+          success: true,
+          order,
+          warning: mailError
         });
       } else {
         return res.json({ success: true, order });
@@ -194,9 +194,9 @@ export const verifyPayment = async (req, res) => {
                 Below are your download links for the games you just bought. Each link is unique and can be used only once, so please download your games at your earliest convenience.
 
                 ${order.items
-                  .map(
-                    (item, idx) =>
-                      `${idx + 1}. ${item.name} (${item.platform})
+              .map(
+                (item, idx) =>
+                  `${idx + 1}. ${item.name} (${item.platform})
                     Download Link: http://localhost:8000/api/download/${item.downloadToken}
                 `).join("\n")}
 
@@ -220,10 +220,10 @@ export const verifyPayment = async (req, res) => {
     }
 
     if (mailError) {
-      return res.status(200).json({ 
-        success: true, 
-        order, 
-        warning: mailError 
+      return res.status(200).json({
+        success: true,
+        order,
+        warning: mailError
       });
     } else {
       return res.json({ success: true, order });
@@ -357,7 +357,7 @@ export const createPaymentIntent = async (req, res) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: 'usd',
-      metadata: { 
+      metadata: {
         items: JSON.stringify(items),
         orderId,
         ...metadata
@@ -369,9 +369,9 @@ export const createPaymentIntent = async (req, res) => {
     });
   } catch (error) {
     console.error('Payment Intent Creation Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to create payment intent', 
-      details: error.message 
+    res.status(500).json({
+      error: 'Failed to create payment intent',
+      details: error.message
     });
   }
 };

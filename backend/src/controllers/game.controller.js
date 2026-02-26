@@ -119,7 +119,7 @@ export const createGame = function (req, res) {
       }
 
       // For each platform, if a file is uploaded, upload it and set download_link (one-time, expiring)
-      const platformNames = ["windows", "nintendo_switch_2", "nintendo_switch_1", "ps5", "xbox", "vision_pro","quest"];
+      const platformNames = ["windows", "nintendo_switch_2", "nintendo_switch_1", "ps5", "xbox", "vision_pro","quest", "ios", "android"];
       for (const platform of platformNames) {
         if (
           req.files &&
@@ -435,7 +435,7 @@ export const updateGame = function (req, res) {
       }
 
       // For each platform, if a file is uploaded, upload it and set download_link (one-time, expiring)
-       const platformNames = ["windows", "nintendo_switch_2", "nintendo_switch_1", "ps5", "xbox", "vision_pro","quest"];
+       const platformNames = ["windows", "nintendo_switch_2", "nintendo_switch_1", "ps5", "xbox", "vision_pro","quest", "ios", "android"];
       for (const platform of platformNames) {
         if (req.files && req.files[`${platform}_file`]) {
           try {
@@ -628,7 +628,13 @@ export const getNew10Games = function (req, res) {
         .select(
           "-platforms.windows.download_link -platforms.windows.public_id " +
             "-platforms.ios.download_link -platforms.ios.public_id " +
-            "-platforms.android.download_link -platforms.android.public_id"
+            "-platforms.android.download_link -platforms.android.public_id " +
+            "-platforms.vision_pro.download_link -platforms.vision_pro.public_id " +
+            "-platforms.ps5.download_link -platforms.ps5.public_id " +
+            "-platforms.xbox.download_link -platforms.xbox.public_id " +
+            "-platforms.quest.download_link -platforms.quest.public_id " +
+            "-platforms.nintendo_switch_1.download_link -platforms.nintendo_switch_1.public_id " +
+            "-platforms.nintendo_switch_2.download_link -platforms.nintendo_switch_2.public_id "
         );
       if (!games || games.length === 0) {
         return ThrowError(res, 404, "No new games found");
@@ -716,11 +722,11 @@ export const getGamesByPlatform = function (req, res) {
     try {
       const { platform } = req.params; // windows, ios, android
 
-      if (!["windows", "ios", "android"].includes(platform)) {
+      if (!["windows", "ios", "android", "vision_pro", "ps5", "xbox", "quest", "nintendo_switch_1", "nintendo_switch_2"].includes(platform)) {
         return ThrowError(
           res,
           400,
-          "Invalid platform. Must be windows, ios, or android"
+          "Invalid platform. Must be windows, ios, android, vision_pro, ps5, xbox, quest, nintendo_switch_1, or nintendo_switch_2"
         );
       }
 
@@ -781,7 +787,7 @@ export const deleteGame = function (req, res) {
 
       // Delete all platform files (windows, ios, android)
       if (game.platforms && typeof game.platforms === "object") {
-        for (const platformKey of ["windows", "vision_pro", "ps5", "xbox", "quest", "nintendo_switch_1", "nintendo_switch_2"]) {
+        for (const platformKey of ["windows", "vision_pro", "ps5", "xbox", "quest", "nintendo_switch_1", "nintendo_switch_2", "ios", "android"]) {
           const platform = game.platforms[platformKey];
           if (platform && platform.public_id) {
             await deleteCloudFile(platform);

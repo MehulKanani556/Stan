@@ -310,6 +310,12 @@ export const getTopGamesDashboard = async (req, res) => {
 
                     ns2Count: { $sum: { $cond: [{ $eq: ["$items.platform", "nintendo_switch_2"] }, 1, 0] } },
                     ns2Revenue: { $sum: { $cond: [{ $eq: ["$items.platform", "nintendo_switch_2"] }, "$items.price", 0] } },
+
+                    iosCount: { $sum: { $cond: [{ $eq: ["$items.platform", "ios"] }, 1, 0] } },
+                    iosRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "ios"] }, "$items.price", 0] } },
+
+                    androidCount: { $sum: { $cond: [{ $eq: ["$items.platform", "android"] }, 1, 0] } },
+                    androidRevenue: { $sum: { $cond: [{ $eq: ["$items.platform", "android"] }, "$items.price", 0] } },
                 }
             },
 
@@ -343,7 +349,9 @@ export const getTopGamesDashboard = async (req, res) => {
                         xbox: { count: "$xboxCount", revenue: "$xboxRevenue" },
                         quest: { count: "$questCount", revenue: "$questRevenue" },
                         nintendo_switch_1: { count: "$ns1Count", revenue: "$ns1Revenue" },
-                        nintendo_switch_2: { count: "$ns2Count", revenue: "$ns2Revenue" }
+                        nintendo_switch_2: { count: "$ns2Count", revenue: "$ns2Revenue" },
+                        ios: { count: "$iosCount", revenue: "$iosRevenue" },
+                        android: { count: "$androidCount", revenue: "$androidRevenue" }
                     }
                 }
             }
@@ -494,7 +502,7 @@ export const getPlatformWiseOrders = async (req, res) => {
         ]);
 
         // Allowed platforms (no ios/android)
-        const staticPlatforms = ['windows','vision_pro','ps5','xbox','quest','nintendo_switch_1','nintendo_switch_2'];
+        const staticPlatforms = ['windows','vision_pro','ps5','xbox','quest','nintendo_switch_1','nintendo_switch_2','ios','android'];
         const platformMap = new Map();
         aggregatedResult.forEach(item => {
             platformMap.set(item.platform, item); // item.platform is already lowercase from aggregation

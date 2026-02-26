@@ -26,6 +26,7 @@ const platformFolders = {
     quest_file: 'games/quest',
     nintendo_switch_1_file: 'games/nintendo-switch-1',
     nintendo_switch_2_file: 'games/nintendo-switch-2',
+    
 };
 
 const storage = multerS3({

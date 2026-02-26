@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCategoryByGame, getDashboardStats, getRecentTransactions, getTopCategories, getTopGamesDashboard, getTopPlatform, } from "../Redux/Slice/dashboard.slice";
 import { useNavigate } from "react-router-dom";
 import { BsCartCheck } from "react-icons/bs";
-import { FaWindows, FaXbox } from "react-icons/fa";
+import { FaWindows, FaXbox, FaAndroid, FaApple } from "react-icons/fa";
 import { SiOculus, SiPlaystation } from "react-icons/si";
 import { TbDeviceVisionPro } from "react-icons/tb";
 import { BsNintendoSwitch } from "react-icons/bs";
@@ -687,6 +687,16 @@ export default function AdminDashboard() {
                               <BsNintendoSwitch className="text-base" />:{" "}
                               {game.platforms.nintendo_switch_1.count +
                                 game.platforms.nintendo_switch_2.count}
+                            </span>
+                          )}
+                          {game.platforms.android.count > 0 && (
+                            <span className="bg-green-600/20 text-green-400 text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <FaAndroid className="text-base" />: {game.platforms.android.count}
+                            </span>
+                          )}
+                          {game.platforms.ios.count > 0 && (
+                            <span className="bg-white/20 text-white text-xs px-2 py-1 rounded font-semibold whitespace-nowrap flex items-center gap-1">
+                              <FaApple className="text-base" />: {game.platforms.ios.count}
                             </span>
                           )}
                         </div>

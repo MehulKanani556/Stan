@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import { FaShoppingCart, FaWindows, FaXbox } from "react-icons/fa";
+import { FaShoppingCart, FaWindows, FaXbox, FaAndroid, FaApple } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlist, removeFromWishlist } from "../Redux/Slice/wishlist.slice";
@@ -154,6 +154,16 @@ const Wishlist = () => {
                               <BsNintendoSwitch className="text-base" />
                             </span>
                           )}
+                        {item.game?.platforms?.android?.available && (
+                          <span className=" text-green-500 rounded font-semibold whitespace-nowrap flex items-center">
+                            <FaAndroid className="text-base" />
+                          </span>
+                        )}
+                        {item.game?.platforms?.ios?.available && (
+                          <span className=" text-white rounded font-semibold whitespace-nowrap flex items-center">
+                            <FaApple className="text-base" />
+                          </span>
+                        )}
                         {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
                 <span className="ms:text-lg text-xs font-black text-white">
                   {item.game?.platforms?.windows?.size || 'N/A'}

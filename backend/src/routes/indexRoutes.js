@@ -1,5 +1,5 @@
 import express from "express";
-import { 
+import {
   upload,
   convertJfifToWebp,
   handleMulterError,
@@ -9,7 +9,7 @@ import { deleteUser, editProfile, editUser, followOrUnfollow, getAllUsers, getUs
 import { changePassword, forgotPassword, generateNewToken, googleLogin, logoutUser, resetPassword, userLogin, VerifyOtp, VerifyPhone } from "../controllers/loginController.js";
 import { getMessage, sendMessage, getAllMessageUsers, deleteChat, markMessagesAsRead } from "../controllers/messageController.js";
 import { createFreeGame, getFreeGames, getFreeGameBySlug, updateFreeGame, deleteFreeGame } from "../controllers/freeGamesController.js";
-import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames, getTrendingGames ,HomeTopGames, getAllActiveGamesWithPagination } from "../controllers/game.controller.js";
+import { createGame, deleteGame, getAllActiveGames, getAllGames, getGameById, updateGame, getPopularGames, getTopGames, getTrendingGames, HomeTopGames, getAllActiveGamesWithPagination } from "../controllers/game.controller.js";
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/Category.Controller.js";
 import { chatWidGetController } from "../controllers/chatWidGet.controller.js";
 import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateTrailer } from "../controllers/HomeTrailerController.js";
@@ -18,32 +18,32 @@ import { addToWishlist, checkWishlistStatus, getWishlist, removeFromWishlist } f
 import websiteInfoRoutes from "./websiteInfo.routes.js";
 import { createOrder, createPaymentIntent, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
 // import { createOrUpdateRating, deleteRating, getAllRatings, getGameRatings, getGameRatingStats, getUserGameRating, getUserRatings, markReviewHelpful, updateRating } from "../controllers/rating.controller.js";
-import { createOrUpdateRating,getAllRatingByGame,getAllRatings } from "../controllers/rating.controller.js";
-import { 
-    addFanCoinsAfterPurchase, 
-    useFanCoinsForPurchase, 
-    getFanCoinDetails,
-    claimDailyLoginBonus,
-    rewardGameReview,
-    redeemFanCoinsForReward,
-    getReferralBonus
+import { createOrUpdateRating, getAllRatingByGame, getAllRatings } from "../controllers/rating.controller.js";
+import {
+  addFanCoinsAfterPurchase,
+  useFanCoinsForPurchase,
+  getFanCoinDetails,
+  claimDailyLoginBonus,
+  rewardGameReview,
+  redeemFanCoinsForReward,
+  getReferralBonus
 } from '../controllers/fanCoinController.js';
 import {
-    createReward,
-    getAllRewards,
-    getRewardById,
-    updateReward,
-    deleteReward,
-    getUserRewardBalance,
-    redeemReward,
-    getUserRedemptionHistory,
-    completeTask,
-    getAvailableTasks,
-    getRewardsLeaderboard,
-    getRewardsStatistics,
-    updateLoginTask,
-    getRewardThresholdStatus,
-    claimRewardThreshold
+  createReward,
+  getAllRewards,
+  getRewardById,
+  updateReward,
+  deleteReward,
+  getUserRewardBalance,
+  redeemReward,
+  getUserRedemptionHistory,
+  completeTask,
+  getAvailableTasks,
+  getRewardsLeaderboard,
+  getRewardsStatistics,
+  updateLoginTask,
+  getRewardThresholdStatus,
+  claimRewardThreshold
 } from '../controllers/rewards.controller.js';
 import { getTaskClaimState, claimTask } from '../controllers/userDailyTaskClaim.controller.js';
 
@@ -107,7 +107,7 @@ indexRoutes.post("/resetPassword", resetPassword);
 indexRoutes.post("/changePassword", UserAuth, changePassword);
 
 indexRoutes.post("/generateNewTokens", generateNewToken);
-indexRoutes.post("/logout",UserAuth,logoutUser)
+indexRoutes.post("/logout", UserAuth, logoutUser)
 
 indexRoutes.get("/searchUsers", UserAuth, searchUsers);
 indexRoutes.get("/suggestedUsers", UserAuth, isUser, suggestedUsers);
@@ -168,6 +168,8 @@ const gameFileFields = [
   { name: "xbox_file", maxCount: 1 },
   { name: "vision_pro_file", maxCount: 1 },
   { name: "quest_file", maxCount: 1 },
+  { name: "android_file", maxCount: 1 },
+  { name: "ios_file", maxCount: 1 },
   { name: "images", maxCount: 10 },
 ];
 
@@ -225,7 +227,7 @@ indexRoutes.put(
 );
 indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
-indexRoutes.get("/chatWidget", chatWidGetController); 
+indexRoutes.get("/chatWidget", chatWidGetController);
 indexRoutes.use('/website', websiteInfoRoutes);
 
 
@@ -237,7 +239,7 @@ indexRoutes.post("/order/retry-payment", UserAuth, retryOrderPayment);
 indexRoutes.get("/allorders", UserAuth, getUserOrders);
 indexRoutes.get("/getorders", getAllOrders);
 indexRoutes.get('/download/:token', downloadGame);
-indexRoutes.post("/payment/create-intent",UserAuth,createPaymentIntent);
+indexRoutes.post("/payment/create-intent", UserAuth, createPaymentIntent);
 
 // Rating and Review Routes
 indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
@@ -248,8 +250,8 @@ indexRoutes.post("/ratings/:gameId", UserAuth, createOrUpdateRating);
 // indexRoutes.put("/ratings/:ratingId", UserAuth, updateRating);
 // indexRoutes.delete("/ratings/:ratingId", UserAuth, deleteRating);
 // indexRoutes.get("/ratings/:gameId/stats", getGameRatingStats);
-indexRoutes.get("/admin/ratings",  getAllRatings);
-indexRoutes.get("/gamerating/:gameId",getAllRatingByGame)
+indexRoutes.get("/admin/ratings", getAllRatings);
+indexRoutes.get("/gamerating/:gameId", getAllRatingByGame)
 
 // Fan Coin Routes
 indexRoutes.post('/fan-coins/add', addFanCoinsAfterPurchase);
@@ -270,7 +272,7 @@ indexRoutes.get('/rewards/:id', getRewardById);
 indexRoutes.put('/rewards/:id', UserAuth, isAdmin, upload.single('image'), handleMulterError, convertJfifToWebp, updateReward);
 indexRoutes.delete('/rewards/:id', UserAuth, isAdmin, deleteReward);
 
-indexRoutes.get('/getUserGamePlayTime', UserAuth,getUserGamePlayTime);
+indexRoutes.get('/getUserGamePlayTime', UserAuth, getUserGamePlayTime);
 
 // User routes for rewards
 indexRoutes.get('/user/rewards/balance', UserAuth, getUserRewardBalance);
@@ -279,11 +281,11 @@ indexRoutes.get('/user/rewards/history', UserAuth, getUserRedemptionHistory);
 // Threshold claim routes
 indexRoutes.get('/user/rewards/thresholds/status', UserAuth, getRewardThresholdStatus);
 indexRoutes.post('/user/rewards/thresholds/:tier/claim', UserAuth, claimRewardThreshold);
-indexRoutes.post('/user/LogginHistory',UserAuth,loggingHistory);
+indexRoutes.post('/user/LogginHistory', UserAuth, loggingHistory);
 // Task and quest routes
 indexRoutes.get('/rewards/tasks', getAvailableTasks);
 indexRoutes.post('/rewards/tasks/complete', UserAuth, completeTask);
-indexRoutes.post('/updateLoginTask',UserAuth, updateLoginTask)
+indexRoutes.post('/updateLoginTask', UserAuth, updateLoginTask)
 // Leaderboard and statistics
 indexRoutes.get('/admin/rewards/statistics', UserAuth, isAdmin, getRewardsStatistics);
 
@@ -291,12 +293,12 @@ indexRoutes.post('/mark-read', UserAuth, markMessagesAsRead);
 
 
 // task 
-indexRoutes.post("/dailytask",UserAuth,isAdmin,createDailyTask);
-indexRoutes.post("/weeklytask",UserAuth,isAdmin,createWeeklyTask);
-indexRoutes.post("/earntask",UserAuth,isAdmin,createEarnTask);
-indexRoutes.post("/milestone",UserAuth,isAdmin,createMilestone);
-indexRoutes.get("/getAllTask",getAllTask);
-indexRoutes.get("/getuserLogging",UserAuth,getUserLogging);
+indexRoutes.post("/dailytask", UserAuth, isAdmin, createDailyTask);
+indexRoutes.post("/weeklytask", UserAuth, isAdmin, createWeeklyTask);
+indexRoutes.post("/earntask", UserAuth, isAdmin, createEarnTask);
+indexRoutes.post("/milestone", UserAuth, isAdmin, createMilestone);
+indexRoutes.get("/getAllTask", getAllTask);
+indexRoutes.get("/getuserLogging", UserAuth, getUserLogging);
 
 
 // scratch card routes

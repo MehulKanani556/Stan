@@ -25,6 +25,8 @@ import { getAllCategories } from "../Redux/Slice/category.slice";
 import {
   FaWindows,
   FaXbox,
+  FaAndroid,
+  FaApple,
 } from "react-icons/fa";
 import { SiOculus, SiPlaystation } from "react-icons/si";
 import { TbDeviceVisionPro } from "react-icons/tb";
@@ -198,7 +200,7 @@ export default function Game() {
           return hasExisting || hasFile;
         }
       ),
-      // New platform file validations
+    // New platform file validations
     vision_pro_file: Yup.mixed().nullable().test(
       "vision-file-required",
       "Vision Pro file is required when Vision Pro platform is available",
@@ -283,6 +285,34 @@ export default function Game() {
       }
     ),
 
+    android_file: Yup.mixed().nullable().test(
+      "android-file-required",
+      "Android file is required when Android platform is available",
+      function (value) {
+        const android = this.parent?.platforms?.android;
+        if (!android?.available) return true;
+        const hasExisting = !!(
+          android?.download_link && String(android.download_link).trim()
+        );
+        const hasFile = !!value && value !== "";
+        return hasExisting || hasFile;
+      }
+    ),
+
+    ios_file: Yup.mixed().nullable().test(
+      "ios-file-required",
+      "iOS file is required when iOS platform is available",
+      function (value) {
+        const ios = this.parent?.platforms?.ios;
+        if (!ios?.available) return true;
+        const hasExisting = !!(
+          ios?.download_link && String(ios.download_link).trim()
+        );
+        const hasFile = !!value && value !== "";
+        return hasExisting || hasFile;
+      }
+    ),
+
     platforms: Yup.object()
       .test(
         "at-least-one-platform",
@@ -295,6 +325,8 @@ export default function Game() {
           const isQuest = value?.quest?.available;
           const isSwitch1 = value?.nintendo_switch_1?.available;
           const isSwitch2 = value?.nintendo_switch_2?.available;
+          const isAndroid = value?.android?.available;
+          const isIos = value?.ios?.available;
 
           return (
             isWindowsAvailable ||
@@ -303,7 +335,9 @@ export default function Game() {
             isXbox ||
             isQuest ||
             isSwitch1 ||
-            isSwitch2
+            isSwitch2 ||
+            isAndroid ||
+            isIos
           );
         }
       )
@@ -451,7 +485,7 @@ export default function Game() {
           }),
           download_link: Yup.string(),
           size: Yup.string(),
-           supported_play_modes: Yup.string().when("available", {
+          supported_play_modes: Yup.string().when("available", {
             is: true,
             then: (schema) =>
               schema.required("supported_play_modes required"),
@@ -471,12 +505,38 @@ export default function Game() {
           }),
           download_link: Yup.string(),
           size: Yup.string(),
-         supported_play_modes: Yup.string().when("available", {
+          supported_play_modes: Yup.string().when("available", {
             is: true,
             then: (schema) =>
               schema.required("supported_play_modes required"),
             otherwise: (schema) => schema.notRequired(),
           }),
+        }),
+
+        android: Yup.object().shape({
+          available: Yup.boolean(),
+          price: Yup.string().when("available", {
+            is: true,
+            then: (schema) =>
+              schema.required("Price is required when Android is available"),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+          download_link: Yup.string(),
+          size: Yup.string(),
+         
+        }),
+
+        ios: Yup.object().shape({
+          available: Yup.boolean(),
+          price: Yup.string().when("available", {
+            is: true,
+            then: (schema) =>
+              schema.required("Price is required when iOS is available"),
+            otherwise: (schema) => schema.notRequired(),
+          }),
+          download_link: Yup.string(),
+          size: Yup.string(),
+         
         }),
       }),
   });
@@ -556,14 +616,30 @@ export default function Game() {
           size: "",
           supported_play_modes: "",
         },
+        android: {
+          available: false,
+          price: "",
+          download_link: "",
+          size: "",
+          
+        },
+        ios: {
+          available: false,
+          price: "",
+          download_link: "",
+          size: "",
+          
+        },
       },
       windows_file: null,
-       vision_pro_file: null,
+      vision_pro_file: null,
       ps5_file: null,
       xbox_file: null,
       quest_file: null,
       nintendo_switch_1_file: null,
       nintendo_switch_2_file: null,
+      android_file: null,
+      ios_file: null,
     },
 
     validationSchema,
@@ -589,7 +665,7 @@ export default function Game() {
       if (values.windows_file && typeof values.windows_file !== "string") {
         formData.append("windows_file", values.windows_file);
       }
-       if (values.vision_pro_file && typeof values.vision_pro_file !== "string") {
+      if (values.vision_pro_file && typeof values.vision_pro_file !== "string") {
         formData.append("vision_pro_file", values.vision_pro_file);
       }
       if (values.ps5_file && typeof values.ps5_file !== "string") {
@@ -612,6 +688,12 @@ export default function Game() {
         typeof values.nintendo_switch_2_file !== "string"
       ) {
         formData.append("nintendo_switch_2_file", values.nintendo_switch_2_file);
+      }
+      if (values.android_file && typeof values.android_file !== "string") {
+        formData.append("android_file", values.android_file);
+      }
+      if (values.ios_file && typeof values.ios_file !== "string") {
+        formData.append("ios_file", values.ios_file);
       }
       if (values.images && Array.isArray(values.images)) {
         values.images.forEach((img) => {
@@ -654,20 +736,20 @@ export default function Game() {
   // Search and pagination
   const filteredData = Array.isArray(paginatedGames)
     ? paginatedGames.filter((data) => {
-        const search = searchValue?.trim()?.toLowerCase();
-        // Title match
-        const titleMatch = data?.title?.toLowerCase().includes(search);
-        // Category match (if category is an object with categoryName)
-        const categoryMatch =
-          typeof data?.category === "object"
-            ? data?.category?.categoryName?.toLowerCase().includes(search)
-            : false;
-        // Tags match (if tags is an array)
-        const tagsMatch = Array.isArray(data?.tags)
-          ? data.tags.some((tag) => tag?.toLowerCase().includes(search))
+      const search = searchValue?.trim()?.toLowerCase();
+      // Title match
+      const titleMatch = data?.title?.toLowerCase().includes(search);
+      // Category match (if category is an object with categoryName)
+      const categoryMatch =
+        typeof data?.category === "object"
+          ? data?.category?.categoryName?.toLowerCase().includes(search)
           : false;
-        return titleMatch || categoryMatch || tagsMatch;
-      })
+      // Tags match (if tags is an array)
+      const tagsMatch = Array.isArray(data?.tags)
+        ? data.tags.some((tag) => tag?.toLowerCase().includes(search))
+        : false;
+      return titleMatch || categoryMatch || tagsMatch;
+    })
     : [];
 
   // Handlers
@@ -689,7 +771,7 @@ export default function Game() {
           ? data.images.map((img) => (typeof img === "string" ? img : img.url))
           : [],
         windows_file: data.platforms?.windows?.download_link,
-         vision_pro_file: data.platforms?.vision_pro?.download_link,
+        vision_pro_file: data.platforms?.vision_pro?.download_link,
         ps5_file: data.platforms?.ps5?.download_link,
         xbox_file: data.platforms?.xbox?.download_link,
         quest_file: data.platforms?.quest?.download_link,
@@ -697,6 +779,8 @@ export default function Game() {
           data.platforms?.nintendo_switch_1?.download_link,
         nintendo_switch_2_file:
           data.platforms?.nintendo_switch_2?.download_link,
+        android_file: data.platforms?.android?.download_link,
+        ios_file: data.platforms?.ios?.download_link,
         platforms: {
           windows: {
             available: data.platforms?.windows?.available || false,
@@ -718,7 +802,7 @@ export default function Game() {
           // New platforms mapping
           vision_pro: {
             available: data.platforms?.vision_pro?.available || false,
-           price: data.platforms?.vision_pro?.price || "",
+            price: data.platforms?.vision_pro?.price || "",
             size: data.platforms?.vision_pro?.size || "",
             download_link: data.platforms?.vision_pro?.download_link || "",
             system_requirements: {
@@ -773,6 +857,20 @@ export default function Game() {
               data.platforms?.nintendo_switch_2?.download_link || "",
             supported_play_modes:
               data.platforms?.nintendo_switch_2?.supported_play_modes || "",
+          },
+          android: {
+            available: data.platforms?.android?.available || false,
+            price: data.platforms?.android?.price || "",
+            size: data.platforms?.android?.size || "",
+            download_link: data.platforms?.android?.download_link || "",
+            
+          },
+          ios: {
+            available: data.platforms?.ios?.available || false,
+            price: data.platforms?.ios?.price || "",
+            size: data.platforms?.ios?.size || "",
+            download_link: data.platforms?.ios?.download_link || "",
+            
           },
         },
       });
@@ -877,9 +975,9 @@ export default function Game() {
                 <td className="py-2 px-5 whitespace-nowrap">
                   {Array.isArray(game.tags) && game.tags.length > 0
                     ? game.tags
-                        .slice(0, 3)
-                        .map((tag) => tag.replace(/"/g, ""))
-                        .join(", ")
+                      .slice(0, 3)
+                      .map((tag) => tag.replace(/"/g, ""))
+                      .join(", ")
                     : "-"}
                 </td>
                 {/* <td className="py-2 px-5 whitespace-nowrap">
@@ -894,7 +992,7 @@ export default function Game() {
                       </span>
                     ))}
                 </td> */}
-                {["windows", "vision_pro", "ps5", "xbox", "quest", "nintendo_switch_1", "nintendo_switch_2"]
+                {["windows", "vision_pro", "ps5", "xbox", "quest", "nintendo_switch_1", "nintendo_switch_2", "android", "ios"]
                   .filter((p) => game.platforms?.[p]?.available)
                   .map((p) => {
                     const icons = {
@@ -922,7 +1020,7 @@ export default function Game() {
                           className="inline-block mr-1"
                         />
                       ),
-                      quest: (  
+                      quest: (
                         <SiOculus
                           title="Quest"
                           className="inline-block mr-1"
@@ -934,12 +1032,18 @@ export default function Game() {
                       nintendo_switch_2: (
                         <BsNintendoSwitch title="Nintendo Switch" className="inline-block mr-1" />
                       ),
+                      android: (
+                        <FaAndroid title="Android" className="inline-block mr-1" />
+                      ),
+                      ios: (
+                        <FaApple title="iOS" className="inline-block mr-1" />
+                      ),
                     };
                     const color = {
                       ios: "text-white",
                       android: "text-green-500",
                       windows: "text-blue-500",
-                    }[p];
+                    }[p] || "text-white";
                     return (
                       <span
                         key={p}
@@ -1298,8 +1402,8 @@ export default function Game() {
               <label className="text-brown font-bold">Gallery Images</label>
               <div className="flex items-center border border-brown rounded w-full p-2 mt-1">
                 {formik.values.images &&
-                Array.isArray(formik.values.images) &&
-                formik.values.images.length > 0 ? (
+                  Array.isArray(formik.values.images) &&
+                  formik.values.images.length > 0 ? (
                   <>
                     <div className="flex flex-wrap gap-2 flex-1">
                       {formik.values.images.map((img, idx) => (
@@ -1675,11 +1779,11 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched.platforms?.vision_pro?.price &&
-                          formik.errors.platforms?.vision_pro?.price && (
-                            <p className="text-red-500 text-sm">
-                              {formik.errors.platforms?.vision_pro?.price}
-                            </p>
-                          )}
+                        formik.errors.platforms?.vision_pro?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms?.vision_pro?.price}
+                          </p>
+                        )}
                       <input
                         type="text"
                         placeholder="Storage"
@@ -1700,14 +1804,14 @@ export default function Game() {
                         }
                         className="w-full p-2 rounded bg-white/5"
                       />
-                     {formik.touched?.platforms?.vision_pro?.system_requirements?.storage &&
-                          formik.errors.platforms?.vision_pro?.system_requirements?.storage && (
-                            <p className="text-red-500 text-sm">
-                              {
-                                formik.errors.platforms?.vision_pro?.system_requirements?.storage
-                              }
-                            </p>
-                          )}
+                      {formik.touched?.platforms?.vision_pro?.system_requirements?.storage &&
+                        formik.errors.platforms?.vision_pro?.system_requirements?.storage && (
+                          <p className="text-red-500 text-sm">
+                            {
+                              formik.errors.platforms?.vision_pro?.system_requirements?.storage
+                            }
+                          </p>
+                        )}
                       <input
                         type="file"
                         accept=".zip,.pkg,.tar,.bin,.exe"
@@ -1768,13 +1872,13 @@ export default function Game() {
                         }
                         className="w-full p-2 rounded bg-white/5"
                       />
-                       {formik.touched?.platforms?.ps5?.price &&
-                          formik.errors?.platforms?.ps5?.price && (
-                            <p className="text-red-500 text-sm">
-                              {formik.errors.platforms.ps5.price}
-                            </p>
-                          )}
-                       <input
+                      {formik.touched?.platforms?.ps5?.price &&
+                        formik.errors?.platforms?.ps5?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms.ps5.price}
+                          </p>
+                        )}
+                      <input
                         type="file"
                         accept=".zip,.pkg,.bin,.iso"
                         onChange={(e) =>
@@ -1834,12 +1938,12 @@ export default function Game() {
                         }
                         className="w-full p-2 rounded bg-white/5"
                       />
-                       {formik.touched?.platforms?.xbox?.price &&
-                          formik.errors?.platforms?.xbox?.price && (
-                            <p className="text-red-500 text-sm">
-                              {formik.errors.platforms.xbox.price}
-                            </p>
-                          )}
+                      {formik.touched?.platforms?.xbox?.price &&
+                        formik.errors?.platforms?.xbox?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms.xbox.price}
+                          </p>
+                        )}
                       <input
                         type="text"
                         placeholder="Device compatibility"
@@ -1863,13 +1967,13 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched.platforms?.xbox?.system_requirements?.device_compatibility &&
-                          formik.errors.platforms?.xbox?.system_requirements?.device_compatibility && (
-                            <p className="text-red-500 text-sm">
-                              {
-                                formik.errors.platforms.xbox.system_requirements.device_compatibility
-                              }
-                            </p>
-                          )}
+                        formik.errors.platforms?.xbox?.system_requirements?.device_compatibility && (
+                          <p className="text-red-500 text-sm">
+                            {
+                              formik.errors.platforms.xbox.system_requirements.device_compatibility
+                            }
+                          </p>
+                        )}
                       <input
                         type="file"
                         accept=".zip,.pkg,.bin,.iso"
@@ -1931,11 +2035,11 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched?.platforms?.quest?.price &&
-                          formik.errors?.platforms?.quest?.price && (
-                            <p className="text-red-500 text-sm">
-                              {formik.errors.platforms.quest.price}
-                            </p>
-                          )}
+                        formik.errors?.platforms?.quest?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms.quest.price}
+                          </p>
+                        )}
                       <input
                         type="text"
                         placeholder="Supported Platforms"
@@ -1959,14 +2063,14 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched.platforms?.quest?.system_requirements?.supported_Platforms &&
-                          formik.errors?.platforms?.quest?.system_requirements?.supported_Platforms && (
-                            <p className="text-red-500 text-sm">
-                              {
-                                formik.errors.platforms?.quest.system_requirements?.supported_Platforms
+                        formik.errors?.platforms?.quest?.system_requirements?.supported_Platforms && (
+                          <p className="text-red-500 text-sm">
+                            {
+                              formik.errors.platforms?.quest.system_requirements?.supported_Platforms
 
-                              }
-                            </p>
-                          )}
+                            }
+                          </p>
+                        )}
                       <input
                         type="text"
                         placeholder="Storage"
@@ -1990,13 +2094,13 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched.platforms?.quest?.system_requirements?.storage &&
-                          formik.errors.platforms?.quest?.system_requirements?.storage && (
-                            <p className="text-red-500 text-sm">
-                              {
-                                formik.errors.platforms.quest.system_requirements.storage
-                              }
-                            </p>
-                          )}
+                        formik.errors.platforms?.quest?.system_requirements?.storage && (
+                          <p className="text-red-500 text-sm">
+                            {
+                              formik.errors.platforms.quest.system_requirements.storage
+                            }
+                          </p>
+                        )}
                       <input
                         type="file"
                         accept=".zip,.pkg,.bin,.apk"
@@ -2059,12 +2163,12 @@ export default function Game() {
                         }
                         className="w-full p-2 rounded bg-white/5"
                       />
-                        {formik.touched?.platforms?.nintendo_switch_1?.price &&
-                          formik.errors.platforms?.nintendo_switch_1?.price && (
-                            <p className="text-red-500 text-sm">
-                              {formik.errors.platforms.nintendo_switch_1.price}
-                            </p>
-                          )}
+                      {formik.touched?.platforms?.nintendo_switch_1?.price &&
+                        formik.errors.platforms?.nintendo_switch_1?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms.nintendo_switch_1.price}
+                          </p>
+                        )}
                       <input
                         type="text"
                         placeholder="Supported play modes"
@@ -2084,14 +2188,14 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched.platforms?.nintendo_switch_1?.supported_play_modes &&
-                          formik.errors.platforms?.nintendo_switch_1?.supported_play_modes && (
-                            <p className="text-red-500 text-sm">
-                              {
-                                formik.errors.platforms.nintendo_switch_1.supported_play_modes
-                              }
-                            </p>
-                          ) 
-                        }
+                        formik.errors.platforms?.nintendo_switch_1?.supported_play_modes && (
+                          <p className="text-red-500 text-sm">
+                            {
+                              formik.errors.platforms.nintendo_switch_1.supported_play_modes
+                            }
+                          </p>
+                        )
+                      }
                       <input
                         type="file"
                         accept=".zip,.pkg,.bin,.apk"
@@ -2154,12 +2258,12 @@ export default function Game() {
                         }
                         className="w-full p-2 rounded bg-white/5"
                       />
-                        {formik.touched.platforms?.nintendo_switch_2?.price &&
-                          formik.errors.platforms?.nintendo_switch_2?.price && (
-                            <p className="text-red-500 text-sm">
-                              {formik.errors.platforms.nintendo_switch_2.price}
-                            </p>
-                          )}
+                      {formik.touched.platforms?.nintendo_switch_2?.price &&
+                        formik.errors.platforms?.nintendo_switch_2?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms.nintendo_switch_2.price}
+                          </p>
+                        )}
 
                       <input
                         type="text"
@@ -2180,14 +2284,14 @@ export default function Game() {
                         className="w-full p-2 rounded bg-white/5"
                       />
                       {formik.touched.platforms?.nintendo_switch_2?.supported_play_modes &&
-                          formik.errors.platforms?.nintendo_switch_2?.supported_play_modes && (
-                            <p className="text-red-500 text-sm">
-                              {
-                                formik.errors.platforms.nintendo_switch_2.supported_play_modes
-                              }
-                            </p>
-                          ) 
-                        }
+                        formik.errors.platforms?.nintendo_switch_2?.supported_play_modes && (
+                          <p className="text-red-500 text-sm">
+                            {
+                              formik.errors.platforms.nintendo_switch_2.supported_play_modes
+                            }
+                          </p>
+                        )
+                      }
                       <input
                         type="file"
                         accept=".zip,.pkg,.bin,.apk"
@@ -2211,6 +2315,143 @@ export default function Game() {
                     </div>
                   )}
                 </div>
+
+                {/* Android */}
+                <div className="border border-brown rounded p-3">
+                  <label className="font-bold">
+                    <input
+                      type="checkbox"
+                      checked={formik.values.platforms.android.available}
+                      onChange={(e) =>
+                        formik.setFieldValue("platforms", {
+                          ...formik.values.platforms,
+                          android: {
+                            ...formik.values.platforms.android,
+                            available: e.target.checked,
+                          },
+                        })
+                      }
+                      className="m-2"
+                    />
+                    Android
+                  </label>
+                  {formik.values.platforms.android.available && (
+                    <div className="space-y-2 mt-2">
+                      <input
+                        type="number"
+                        placeholder="Price"
+                        value={formik.values.platforms.android.price}
+                        onChange={(e) =>
+                          formik.setFieldValue("platforms", {
+                            ...formik.values.platforms,
+                            android: {
+                              ...formik.values.platforms.android,
+                              price: e.target.value,
+                            },
+                          })
+                        }
+                        className="w-full p-2 rounded bg-white/5"
+                      />
+                      {formik.touched.platforms?.android?.price &&
+                        formik.errors.platforms?.android?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms.android.price}
+                          </p>
+                        )}
+                      
+                    
+                      <input
+                        type="file"
+                        accept=".apk,.xapk,.apks"
+                        onChange={(e) =>
+                          formik.setFieldValue("android_file", e.currentTarget.files[0])
+                        }
+                        className="w-full p-2 rounded bg-white/5"
+                      />
+                      {formik.values.platforms.android.download_link && (
+                        <p className="text-xs text-[#d1d1d1]">
+                          Current file:{" "}
+                          {formik.values.platforms.android.download_link
+                            .split("?")[0]
+                            .split("/")
+                            .pop()}
+                        </p>
+                      )}
+                      {formik.touched.android_file && formik.errors.android_file && (
+                        <p className="text-red-500 text-sm">{formik.errors.android_file}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* iOS */}
+                <div className="border border-brown rounded p-3">
+                  <label className="font-bold">
+                    <input
+                      type="checkbox"
+                      checked={formik.values.platforms.ios.available}
+                      onChange={(e) =>
+                        formik.setFieldValue("platforms", {
+                          ...formik.values.platforms,
+                          ios: {
+                            ...formik.values.platforms.ios,
+                            available: e.target.checked,
+                          },
+                        })
+                      }
+                      className="m-2"
+                    />
+                    iOS
+                  </label>
+                  {formik.values.platforms.ios.available && (
+                    <div className="space-y-2 mt-2">
+                      <input
+                        type="number"
+                        placeholder="Price"
+                        value={formik.values.platforms.ios.price}
+                        onChange={(e) =>
+                          formik.setFieldValue("platforms", {
+                            ...formik.values.platforms,
+                            ios: {
+                              ...formik.values.platforms.ios,
+                              price: e.target.value,
+                            },
+                          })
+                        }
+                        className="w-full p-2 rounded bg-white/5"
+                      />
+                      {formik.touched.platforms?.ios?.price &&
+                        formik.errors.platforms?.ios?.price && (
+                          <p className="text-red-500 text-sm">
+                            {formik.errors.platforms.ios.price}
+                          </p>
+                        )}
+                     
+
+                      <input
+                        type="file"
+                        accept=".ipa,.zip"
+                        onChange={(e) =>
+                          formik.setFieldValue("ios_file", e.currentTarget.files[0])
+                        }
+                        className="w-full p-2 rounded bg-white/5"
+                      />
+                      {formik.values.platforms.ios.download_link && (
+                        <p className="text-xs text-[#d1d1d1]">
+                          Current file:{" "}
+                          {formik.values.platforms.ios.download_link
+                            .split("?")[0]
+                            .split("/")
+                            .pop()}
+                        </p>
+                      )}
+                      {formik.touched.ios_file && formik.errors.ios_file && (
+                        <p className="text-red-500 text-sm">{formik.errors.ios_file}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
               </div>
             </div>
             {/* Submit/Cancel */}

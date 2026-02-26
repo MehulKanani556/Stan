@@ -5,7 +5,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import '../css/Store.css';
-import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart, FaWindows, FaXbox } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart, FaWindows, FaXbox, FaAndroid, FaApple } from "react-icons/fa";
 import { Navigation } from "swiper/modules";
 import game1 from '../images/game1.jpg';
 import { getAllGames, getAllActiveGames, getPopularGames, getTopGames, getTrendingGames } from '../Redux/Slice/game.slice';
@@ -296,8 +296,18 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
                 )}
                 {(game?.platforms?.nintendo_switch_1?.available ||
                   game?.platforms?.nintendo_switch_2?.available) && (
-                  <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
-                    <BsNintendoSwitch className="text-base" />
+                    <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
+                      <BsNintendoSwitch className="text-base" />
+                    </span>
+                  )}
+                {game?.platforms?.android?.available && (
+                  <span className=" text-green-500 rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaAndroid className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.ios?.available && (
+                  <span className=" text-white rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaApple className="text-base" />
                   </span>
                 )}
                 {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
@@ -636,116 +646,116 @@ const Store = () => {
 
   return (
     <>
-    <section>
-      <StoreSlider />
-      <Advertize limitImages={true}/>
-      {/* Featured Games Section */}
-      <div className="mx-auto flex flex-col items-center sm:max-w-full">
-        <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[95%] md:w-[75%] mx-auto">
+      <section>
+        <StoreSlider />
+        <Advertize limitImages={true} />
+        {/* Featured Games Section */}
+        <div className="mx-auto flex flex-col items-center sm:max-w-full">
+          <div className="py-4 sm:py-6 md:py-8 lg:py-10 w-[95%] md:w-[75%] mx-auto">
+            <SwiperSection
+              title="All Games"
+              games={Array.isArray(games) ? games.slice(0, 12) : []} // Limit initial display
+              gameActions={gameActions}
+              onNavigate={handleNavigate}
+              onAddToCart={openPlatformModal}
+            />
+
+            <SwiperNavigation
+              title="Featured Games"
+              onAllGamesClick={handleAllGames}
+              onPrev={() => featuredNavigation.swiperRef.current?.slidePrev()}
+              onNext={() => featuredNavigation.swiperRef.current?.slideNext()}
+              isBeginning={featuredNavigation.isBeginning}
+              isEnd={featuredNavigation.isEnd}
+            />
+
+            <Swiper
+              modules={[Navigation]}
+              ref={featuredNavigation.swiperRef}
+              {...SWIPER_CONFIG}
+              {...featuredNavigation.swiperEvents}
+            >
+              {loading ? (
+                Array.from({ length: 4 }, (_, i) => (
+                  <SwiperSlide key={i}>
+                    <LazyGameCard suppressSkeleton={false} delay={i * 100}>
+                      <div className="w-full h-80 bg-gray-800 rounded-lg animate-pulse"></div>
+                    </LazyGameCard>
+                  </SwiperSlide>
+                ))
+              ) : featuredMaxSizeGames.length > 0 ? (
+                featuredMaxSizeGames.map((game, index) => (
+                  <SwiperSlide key={game._id}>
+                    {/* <LazyGameCard
+                    threshold={0.1}
+                    delay={index * 75}
+                    suppressSkeleton={false}
+                  > */}
+                    <MemoizedGameCard
+                      game={game}
+                      onNavigate={handleNavigate}
+                      gameActions={gameActions}
+                      onAddToCart={openPlatformModal}
+                    />
+                    {/* </LazyGameCard> */}
+                  </SwiperSlide>
+                ))
+              ) : (
+                <SwiperSlide>
+                  <div className="text-center text-white py-10">No featured games available</div>
+                </SwiperSlide>
+              )}
+            </Swiper>
+          </div>
+        </div>
+        <Advertize />
+        {/* Game Sections */}
+        <div className="py-0 max-w-[95%] md:max-w-[75%] mx-auto">
+
           <SwiperSection
-            title="All Games"
-            games={Array.isArray(games) ? games.slice(0, 12) : []} // Limit initial display
+            title="Trending Games"
+            games={Array.isArray(trendingGames) ? trendingGames : []}
             gameActions={gameActions}
             onNavigate={handleNavigate}
             onAddToCart={openPlatformModal}
           />
 
-          <SwiperNavigation
-            title="Featured Games"
-            onAllGamesClick={handleAllGames}
-            onPrev={() => featuredNavigation.swiperRef.current?.slidePrev()}
-            onNext={() => featuredNavigation.swiperRef.current?.slideNext()}
-            isBeginning={featuredNavigation.isBeginning}
-            isEnd={featuredNavigation.isEnd}
+          <SwiperSection
+            title="Popular Games"
+            games={Array.isArray(popularGames) ? popularGames : []}
+            gameActions={gameActions}
+            onNavigate={handleNavigate}
+            onAddToCart={openPlatformModal}
           />
 
-          <Swiper
-            modules={[Navigation]}
-            ref={featuredNavigation.swiperRef}
-            {...SWIPER_CONFIG}
-            {...featuredNavigation.swiperEvents}
-          >
-            {loading ? (
-              Array.from({ length: 4 }, (_, i) => (
-                <SwiperSlide key={i}>
-                  <LazyGameCard suppressSkeleton={false} delay={i * 100}>
-                    <div className="w-full h-80 bg-gray-800 rounded-lg animate-pulse"></div>
-                  </LazyGameCard>
-                </SwiperSlide>
-              ))
-            ) : featuredMaxSizeGames.length > 0 ? (
-              featuredMaxSizeGames.map((game, index) => (
-                <SwiperSlide key={game._id}>
-                  {/* <LazyGameCard
-                    threshold={0.1}
-                    delay={index * 75}
-                    suppressSkeleton={false}
-                  > */}
-                  <MemoizedGameCard
-                    game={game}
-                    onNavigate={handleNavigate}
-                    gameActions={gameActions}
-                    onAddToCart={openPlatformModal}
-                  />
-                  {/* </LazyGameCard> */}
-                </SwiperSlide>
-              ))
-            ) : (
-              <SwiperSlide>
-                <div className="text-center text-white py-10">No featured games available</div>
-              </SwiperSlide>
-            )}
-          </Swiper>
+          <SwiperSection
+            title="Action Games"
+            games={Array.isArray(actionGames) && actionGames.length > 0 ? actionGames : (Array.isArray(games) ? games.slice(0, 8) : [])}
+            gameActions={gameActions}
+            onNavigate={handleNavigate}
+            onAddToCart={openPlatformModal}
+          />
+
+          <SwiperSection
+            title="Top Games"
+            games={Array.isArray(topGames) ? topGames : []}
+            gameActions={gameActions}
+            onNavigate={handleNavigate}
+            onAddToCart={openPlatformModal}
+          />
         </div>
-      </div>
-      <Advertize />
-      {/* Game Sections */}
-      <div className="py-0 max-w-[95%] md:max-w-[75%] mx-auto">
-
-        <SwiperSection
-          title="Trending Games"
-          games={Array.isArray(trendingGames) ? trendingGames : []}
-          gameActions={gameActions}
-          onNavigate={handleNavigate}
-          onAddToCart={openPlatformModal}
-        />
-
-        <SwiperSection
-          title="Popular Games"
-          games={Array.isArray(popularGames) ? popularGames : []}
-          gameActions={gameActions}
-          onNavigate={handleNavigate}
-          onAddToCart={openPlatformModal}
-        />
-
-        <SwiperSection
-          title="Action Games"
-          games={Array.isArray(actionGames) && actionGames.length > 0 ? actionGames : (Array.isArray(games) ? games.slice(0, 8) : [])}
-          gameActions={gameActions}
-          onNavigate={handleNavigate}
-          onAddToCart={openPlatformModal}
-        />
-
-        <SwiperSection
-          title="Top Games"
-          games={Array.isArray(topGames) ? topGames : []}
-          gameActions={gameActions}
-          onNavigate={handleNavigate}
-          onAddToCart={openPlatformModal}
-        />
-      </div>
-    </section>
-    <PlatformSelectionModal
-      open={Boolean(platformModalGame)}
-      gameTitle={platformModalGame?.title}
-      game={platformModalGame}
-      onClose={closePlatformModal}
-      selectedPlatforms={selectedPlatforms}
-      onPlatformToggle={handlePlatformToggle}
-      onConfirm={confirmPlatformSelection}
-      addedPlatforms={selectedGamePlatforms}
-      isSubmitting={isSubmittingPlatforms}
-    />
+      </section>
+      <PlatformSelectionModal
+        open={Boolean(platformModalGame)}
+        gameTitle={platformModalGame?.title}
+        game={platformModalGame}
+        onClose={closePlatformModal}
+        selectedPlatforms={selectedPlatforms}
+        onPlatformToggle={handlePlatformToggle}
+        onConfirm={confirmPlatformSelection}
+        addedPlatforms={selectedGamePlatforms}
+        isSubmitting={isSubmittingPlatforms}
+      />
     </>
   );
 };

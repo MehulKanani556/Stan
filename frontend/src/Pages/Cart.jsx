@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { FaWindows, FaPlaystation, FaXbox, FaApple, FaSteamSymbol } from "react-icons/fa";
+import { FaWindows, FaPlaystation, FaXbox, FaApple, FaSteamSymbol, FaAndroid } from "react-icons/fa";
 import { SiOculus, SiNintendoswitch } from "react-icons/si";
 import { MdWorkspacePremium } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -34,6 +34,8 @@ const PLATFORM_META = {
     quest: { label: 'Quest', icon: SiOculus },
     nintendo_switch_1: { label: 'Nintendo Switch 1', icon: SiNintendoswitch },
     nintendo_switch_2: { label: 'Nintendo Switch 2', icon: SiNintendoswitch },
+    android: { label: 'Android', icon: FaAndroid },
+    ios: { label: 'iOS', icon: FaApple },
     default: { label: 'Platform', icon: FaSteamSymbol }
 };
 
@@ -51,6 +53,7 @@ const Cart = () => {
     const [currentOrderId, setCurrentOrderId] = useState(null);
     const [amountToPay, setAmountToPay] = useState(0);
     const userId = localStorage.getItem("userId");
+    const isLoggedIn = Boolean(authUser?._id || userId);
 
     // Fan coin state
     const [useFanCoinsChecked, setUseFanCoinsChecked] = useState(false);
@@ -79,12 +82,12 @@ const Cart = () => {
     // Group cart items by game ID
     const groupedCartItems = useMemo(() => {
         if (!Array.isArray(cartItems)) return [];
-        
+
         const grouped = {};
         cartItems.forEach((item) => {
             const gameId = item?.game?._id || item?.game;
             if (!gameId) return;
-            
+
             if (!grouped[gameId]) {
                 grouped[gameId] = {
                     game: item.game,
@@ -92,7 +95,7 @@ const Cart = () => {
                     totalPrice: 0
                 };
             }
-            
+
             grouped[gameId].platforms.push({
                 platform: item.platform,
                 price: item.price,
@@ -100,7 +103,7 @@ const Cart = () => {
             });
             grouped[gameId].totalPrice += item.price;
         });
-        
+
         return Object.values(grouped);
     }, [cartItems]);
 
@@ -177,32 +180,70 @@ const Cart = () => {
     };
 
     const handleCheckout = async () => {
+        if (!isLoggedIn) {
+            alert("Please login to proceed to checkout.");
+            navigate("/login");
+            return;
+        }
+
         if (!cartItems || cartItems.length === 0) {
             alert("Your cart is empty. Please add items before checking out.");
             return;
         }
 
-        const items = (Array.isArray(cartItems) ? cartItems.map(it => ({
-            game: it.game?._id || it.game,
-            name: it.name,
-            platform: it.platform,
-            price: Number(it.price || it?.game?.platforms?.[it.platform]?.price || 0),
-        })) : []);
+        const items = (Array.isArray(cartItems)
+            ? cartItems
+                .map((it) => {
+                    const gameId =
+                        it?.game?._id ||
+                        it?.game ||
+                        it?.gameId ||
+                        it?.id;
+                    if (!gameId) {
+                        console.error("Skipping cart item without valid game id:", it);
+                        return null;
+                    }
+
+                    const price = Number(
+                        it.price ||
+                        it?.game?.platforms?.[it.platform]?.price ||
+                        0
+                    );
+
+                    return {
+                        game: gameId,
+                        name: it.name || it?.game?.title || "",
+                        platform: it.platform,
+                        price,
+                    };
+                })
+                .filter(Boolean)
+            : []);
 
         const originalAmount = items.reduce((sum, it) => sum + it.price, 0);
-        // console.log('Applying fan coins:', fanCoinsToUse, useFanCoinsChecked);
+        const safeFinalAmount =
+            Number.isFinite(finalAmount) && finalAmount >= 0
+                ? finalAmount
+                : originalAmount;
 
         try {
-            // 1. Create order first with original amount and fan coin details
+            // 1. Create order first with final amount and fan coin details
             const orderResult = await dispatch(createOrder({
                 items,
-                amount: finalAmount, // Use final amount after fan coins
+                amount: safeFinalAmount,
                 fanCoinsUsed: fanCoinsToUse || 0,
                 fanCoinDiscount: fanCoinsToUse || 0
             }));
 
             if (!createOrder.fulfilled.match(orderResult)) {
-                alert("Failed to create order. Please try again.");
+                console.error("Order creation failed:", orderResult);
+                const backendMessage =
+                    orderResult?.payload?.message ||
+                    orderResult?.payload?.error ||
+                    (typeof orderResult?.payload === "string"
+                        ? orderResult.payload
+                        : null);
+                alert(backendMessage || "Failed to create order. Please try again.");
                 return;
             }
 
@@ -304,98 +345,99 @@ const Cart = () => {
                                 );
 
                                 return (
-                                <div
-                                    key={game?._id}
-                                    onClick={() => navigate(`/single/${game._id}`)}
-                                    className="bg-black/15 border border-white/10 p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6"
-                                >
-                                    <div className="w-full lg:w-40 h-36 sm:h-44 lg:h-40 shrink-0">
-                                        <img
-                                            src={game.cover_image.url}
-                                            alt={game.title}
-                                            className="w-full h-full object-cover rounded-lg"
-                                        />
-                                    </div>
+                                    <div
+                                        key={game?._id}
+                                        onClick={() => navigate(`/single/${game._id}`)}
+                                        className="bg-black/15 border border-white/10 p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6"
+                                    >
+                                        <div className="w-full lg:w-40 h-36 sm:h-44 lg:h-40 shrink-0">
+                                            <img
+                                                src={game.cover_image.url}
+                                                alt={game.title}
+                                                className="w-full h-full object-cover rounded-lg"
+                                            />
+                                        </div>
 
-                                    <div className="flex-1 flex flex-col justify-between">
-                                        <div>
-                                            <div className="flex items-start justify-between">
-                                                <span className="text-xs bg-[#525050] px-2 py-1 rounded tracking-wide">
-                                                    {game.category.categoryName}
-                                                </span>
+                                        <div className="flex-1 flex flex-col justify-between">
+                                            <div>
+                                                <div className="flex items-start justify-between">
+                                                    <span className="text-xs bg-[#525050] px-2 py-1 rounded tracking-wide">
+                                                        {game.category.categoryName}
+                                                    </span>
 
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        handleRemoveGame(game);
-                                                    }}
-                                                    className="text-red-400 hover:text-red-500 transition text-lg relative z-[50]"
-                                                    title="Remove game from cart"
-                                                >
-                                                    <RiDeleteBin6Line />
-                                                </button>
-                                            </div>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleRemoveGame(game);
+                                                        }}
+                                                        className="text-red-400 hover:text-red-500 transition text-lg relative z-[50]"
+                                                        title="Remove game from cart"
+                                                    >
+                                                        <RiDeleteBin6Line />
+                                                    </button>
+                                                </div>
 
-                                            <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">
-                                                {game.title}
-                                            </h2>
+                                                <h2 className="text-lg sm:text-xl font-semibold mt-2 whitespace-normal break-words">
+                                                    {game.title}
+                                                </h2>
 
-                                            {/* Display all platforms */}
-                                            <div className="flex flex-wrap gap-2 mt-2">
-                                                {groupedItem.platforms.map((platformItem) => {
-                                                    const platformMeta = getPlatformMeta(platformItem.platform);
-                                                    const PlatformIcon = platformMeta.icon;
-                                                    const isSinglePlatform = groupedItem.platforms.length === 1;
-                                                    return (
-                                                        <div
-                                                            key={platformItem.platform}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full relative group"
-                                                        >
-                                                            <PlatformIcon className="text-purple-300" />
-                                                            <span className="font-semibold">{platformMeta.label}</span>
-                                                        <span className="text-xs text-slate-400 ml-1">${platformItem.price.toFixed(2)}</span>
-                                                        {!isSinglePlatform && (
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.preventDefault();
-                                                                    e.stopPropagation();
-                                                                    handleRemove(platformItem.item);
-                                                                }}
-                                                                className="ml-1 text-red-400 hover:text-red-500 transition "
-                                                                title="Remove platform"
+                                                {/* Display all platforms */}
+                                                <div className="flex flex-wrap gap-2 mt-2">
+                                                    {groupedItem.platforms.map((platformItem) => {
+                                                        const platformMeta = getPlatformMeta(platformItem.platform);
+                                                        const PlatformIcon = platformMeta.icon;
+                                                        const isSinglePlatform = groupedItem.platforms.length === 1;
+                                                        return (
+                                                            <div
+                                                                key={platformItem.platform}
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full relative group"
                                                             >
-                                                                <IoClose size={16}  />
-                                                            </button>
-                                                        )}
-                                                        </div>
-                                                    );
-                                                })}
+                                                                <PlatformIcon className="text-purple-300" />
+                                                                <span className="font-semibold">{platformMeta.label}</span>
+                                                                <span className="text-xs text-slate-400 ml-1">${platformItem.price.toFixed(2)}</span>
+                                                                {!isSinglePlatform && (
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            handleRemove(platformItem.item);
+                                                                        }}
+                                                                        className="ml-1 text-red-400 hover:text-red-500 transition "
+                                                                        title="Remove platform"
+                                                                    >
+                                                                        <IoClose size={16} />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+
                                             </div>
 
-                                        </div>
-
-                                        <div className="flex justify-between items-center mt-3 gap-3">
-                                            <p className="text-lg sm:text-xl font-bold text-white">
-                                                ${groupedItem.totalPrice.toFixed(2)}
-                                            </p>
-                                            {canAddMorePlatforms && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        openPlatformModal(game);
-                                                    }}
-                                                    className="text-xs sm:text-sm font-semibold text-purple-300 hover:text-white transition bg-white/5 px-3 py-1 rounded-full"
-                                                >
-                                                    Add platform
-                                                </button>
-                                            )}
+                                            <div className="flex justify-between items-center mt-3 gap-3">
+                                                <p className="text-lg sm:text-xl font-bold text-white">
+                                                    ${groupedItem.totalPrice.toFixed(2)}
+                                                </p>
+                                                {canAddMorePlatforms && (
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            openPlatformModal(game);
+                                                        }}
+                                                        className="text-xs sm:text-sm font-semibold text-purple-300 hover:text-white transition bg-white/5 px-3 py-1 rounded-full"
+                                                    >
+                                                        Add platform
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );})
+                                );
+                            })
                         ) : (
                             <div className="flex flex-col items-center justify-center text-center py-20 bg-black/15 rounded-2xl">
                                 <p className="text-2xl font-semibold text-gray-300 mb-4">🛒 Your cart is empty</p>

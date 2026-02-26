@@ -8,9 +8,36 @@ import Advertize from './Advertize';
 
 // Constants
 const DEFAULT_ITEMS_COUNT = 6;
-const MIN_REQUIRED_ITEMS = 6
+const MIN_REQUIRED_ITEMS = 5
 
 const SECTION_CONFIG = [
+  {
+    title: "Best Value",
+    dataKey: 'bestValue',
+    link: '/store',
+
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
+    )
+  },
+  {
+    title: "Trending Games",
+    dataKey: 'trending',
+    link: '/store',
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
+    )
+  },
   {
     title: "Top Sellers",
     dataKey: 'game',
@@ -24,19 +51,7 @@ const SECTION_CONFIG = [
       />
     )
   },
-  {
-    title: "Top Free Games",
-    dataKey: 'freeGame',
-    link: '/games',
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M13 10V3L4 14h7v7l9-11h-7z"
-      />
-    )
-  },
+  
   {
     title: "New Games",
     dataKey: 'newGames',
@@ -51,8 +66,8 @@ const SECTION_CONFIG = [
     )
   },
   {
-    title: "Ultimate Games",
-    dataKey: 'ultimate',
+          title: "Top Price Games",
+      dataKey: 'topPrice',
     link: '/store',
     icon: (
       <path
@@ -63,23 +78,11 @@ const SECTION_CONFIG = [
       />
     )
   },
+  
   {
     title: "Top Free Games",
     dataKey: 'freeGame',
     link: '/games',
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M13 10V3L4 14h7v7l9-11h-7z"
-      />
-    )
-  },
-  {
-    title: "New Games",
-    dataKey: 'newGames',
-    link: '/store',
     icon: (
       <path
         strokeLinecap="round"
@@ -247,13 +250,13 @@ const LoadingIndicator = () => (
 );
 
 // Game Section Component
-const GameSection = React.memo(({ section, items, length, isRefreshing }) => (
-  
+const GameSection = React.memo(({ section, items, isRefreshing }) => (
+
   <div>
     <SectionHeader title={section.title} isRefreshing={isRefreshing} />
     <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-3 md:gap-5 lg:grid-cols-1 lg:gap-6">
       {items && items.length > 0 ? (
-        items.slice(0, length).map((item) => (
+        items.map((item) => (
           // console.log('data', item),
           <GameCard key={item._id || item.id} item={item} />
         ))
@@ -282,7 +285,6 @@ GameSection.displayName = 'GameSection';
 // Main TopGames Component
 function TopGames() {
   const dispatch = useDispatch();
-  const [length, setLength] = useState(DEFAULT_ITEMS_COUNT);
 
   const Homegames = useSelector(state => ({
     ...state.game.homeTopGame,
@@ -297,10 +299,29 @@ function TopGames() {
   const gameData = useMemo(() => {
     // Handle case where Homegames might be an array or object
     const homeGamesData = Array.isArray(Homegames) ? {} : Homegames;
-    
-    const topSelling = Array.isArray(homeGamesData?.topSelling) ? homeGamesData.topSelling : [];
-    const freegames = Array.isArray(homeGamesData?.freegames) ? homeGamesData.freegames : [];
-    const newGames = Array.isArray(homeGamesData?.newGames) ? homeGamesData.newGames : [];
+
+    // Normalize different API shapes into plain game objects
+    const normalizeList = (list = [], primaryKey, secondaryKey) => {
+      if (!Array.isArray(list)) return [];
+      return list
+        .map((item) => {
+          if (primaryKey && item?.[primaryKey]) return item[primaryKey];
+          if (secondaryKey && item?.[secondaryKey]) return item[secondaryKey];
+          return item;
+        })
+        .filter(Boolean);
+    };
+
+    // Top sellers often come as { game: {...}, totalSold: n }
+    const topSelling = normalizeList(homeGamesData?.topSelling, 'game');
+    // Free games may come as { game: {...} } or { freeGame: {...} }
+    const freegames = normalizeList(
+      homeGamesData?.freegames,
+      'game',
+      'freeGame'
+    );
+    // New games may come wrapped as { game: {...} }
+    const newGames = normalizeList(homeGamesData?.newGames, 'game');
 
     const isPaid = (g) => {
       const price = g?.platforms?.windows?.price;
@@ -320,42 +341,223 @@ function TopGames() {
 
     const ultimate = [...uniqueFromTop, ...backfillFromNew];
 
+    // Helper to keep games unique by id
+    const uniqueById = (list) => {
+      const seen = new Set();
+      return list.filter((g) => {
+        const id = g?._id || g?.id;
+        if (!id || seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    };
+
+    // Trending: mix of new paid and paid top games
+    const trending = uniqueById([...paidNew, ...paidTop]);
+
+    // Best value: free games + lower priced paid games
+
+    // const bestValuePaid = uniqueById([
+    //   ...paidTop,
+    //   ...paidNew,
+    //   ...ultimate
+    // ]).filter(g => {
+    //   const price = g?.platforms?.windows?.price;
+    //   return typeof price === "number" && price > 0 && price <= 1000;
+    // });
+
+    // Top Price Games (highest price first)
+const topPrice = uniqueById([
+  ...paidTop,
+  ...paidNew,
+  ...ultimate
+])
+.filter(g => {
+  const price = g?.platforms?.windows?.price;
+  return typeof price === "number" && price > 0;
+})
+.sort((a, b) => {
+  const pa = a?.platforms?.windows?.price || 0;
+  const pb = b?.platforms?.windows?.price || 0;
+  return pb - pa; // highest first
+});
+
+    const bestValue = uniqueById([
+      ...paidTop,
+      ...paidNew,
+      ...ultimate
+    ]).filter(g => {
+      const price = g?.platforms?.windows?.price;
+      return typeof price === "number" && price > 0 && price <= 1000;
+    });
+
+    // Helper to ensure we only use games that can actually render nicely
+    const hasVisualData = (g) =>
+      Boolean(
+        g &&
+        (g.cover_image?.url ||
+          g.image ||
+          g.thumbnail ||
+          (g.platforms && Object.keys(g.platforms).length > 0))
+      );
+
+    // Ensure Top Sellers column never shows empty/blank cards.
+    // 1) Start from topSelling
+    // 2) If empty, fall back to ultimate/new
+    // 3) Filter to games that have basic visual/price data
+    let safeTopSellingBase =
+      topSelling.length > 0
+        ? topSelling
+        : ultimate.length > 0
+          ? ultimate
+          : newGames;
+
+    safeTopSellingBase = Array.isArray(safeTopSellingBase)
+      ? uniqueById(safeTopSellingBase)
+      : [];
+
+    let safeTopSelling = safeTopSellingBase.filter(hasVisualData);
+
+    // Final fallback: if still nothing usable, reuse newGames or freegames
+    if (!safeTopSelling.length) {
+      const fallback = uniqueById([
+        ...(newGames || []),
+        ...(ultimate || []),
+        ...(freegames || []),
+      ]).filter(hasVisualData);
+      safeTopSelling = fallback;
+    }
+
     return {
-      game: topSelling,
+      game: safeTopSelling,
       freeGame: freegames,
       newGames,
-      ultimate
+      ultimate,
+      trending,
+      bestValue,
+      topPrice
     };
   }, [Homegames]);
+
+  // Prepare per-section items so that:
+  // - Each column shows up to DEFAULT_ITEMS_COUNT games
+  // - No game repeats across columns
+  // - "Top Free Games" only shows free games, other sections prefer paid games
+  const sectionItems = useMemo(() => {
+    const result = {};
+    const usedIds = new Set();
+
+    const isFreeGame = (game) => {
+      if (!game) return false;
+      const prices = [
+        game?.platforms?.windows?.price,
+        game?.platforms?.ios?.price,
+        game?.platforms?.android?.price,
+      ].filter((p) => typeof p === 'number' && !Number.isNaN(p));
+      if (!prices.length) {
+        // Treat missing price as free for the free-games section only
+        return true;
+      }
+      return Math.min(...prices) === 0;
+    };
+
+    const allGamesUnique = (() => {
+      const combined = [
+        ...(gameData.game || []),
+        ...(gameData.freeGame || []),
+        ...(gameData.newGames || []),
+        ...(gameData.ultimate || []),
+        ...(gameData.trending || []),
+        ...(gameData.bestValue || []),
+      ];
+      const seen = new Set();
+      const unique = [];
+      combined.forEach((g) => {
+        const id = g?._id || g?.id;
+        if (!id || seen.has(id)) return;
+        seen.add(id);
+        unique.push(g);
+      });
+      return unique;
+    })();
+
+    SECTION_CONFIG.forEach((section) => {
+      const key = section.dataKey;
+      const maxItems = DEFAULT_ITEMS_COUNT;
+      let baseList = Array.isArray(gameData[key]) ? gameData[key] : [];
+
+      // Enforce free/paid preference per section
+      if (key === 'freeGame') {
+        baseList = baseList.filter((g) => isFreeGame(g));
+      } else {
+        baseList = baseList.filter((g) => !isFreeGame(g));
+      }
+
+      const picked = [];
+
+      const tryPickFrom = (source, ignoreUsed = false) => {
+        for (const g of source) {
+          if (picked.length >= maxItems) break;
+      
+          const id = g?._id || g?.id;
+          if (!id) continue;
+      
+          if (!ignoreUsed && usedIds.has(id)) continue;
+      
+          if (key === 'freeGame' && !isFreeGame(g)) continue;
+          if (key !== 'freeGame' && isFreeGame(g)) continue;
+      
+          if (!ignoreUsed) {
+            usedIds.add(id);
+          }
+          picked.push(g);
+        }
+      };
+
+      if (key === 'topPrice' || key === 'newGames') {
+        // For Top Price Games and New Games, allow reusing games from other columns
+        tryPickFrom(baseList, true);
+
+        if (picked.length < maxItems) {
+          tryPickFrom(allGamesUnique, true);
+        }
+
+        if (picked.length < maxItems) {
+          tryPickFrom(gameData.bestValue, true);
+          tryPickFrom(gameData.trending, true);
+          tryPickFrom(gameData.game, true);
+          tryPickFrom(gameData.newGames, true);
+          tryPickFrom(gameData.ultimate, true);
+        }
+      } else {
+        // 1) Prefer this section's own data
+        tryPickFrom(baseList);
+
+        if (picked.length < maxItems) {
+          tryPickFrom(allGamesUnique);
+        }
+
+        // 2) Backfill from global pool to ensure up to DEFAULT_ITEMS_COUNT
+        if (picked.length < maxItems) {
+          tryPickFrom(gameData.bestValue);
+          tryPickFrom(gameData.trending);
+          tryPickFrom(gameData.game);
+          tryPickFrom(gameData.newGames);
+          tryPickFrom(gameData.ultimate);
+        }
+      }
+
+      result[key] = picked;
+    });
+
+    return result;
+  }, [gameData]);
 
   // Compute loading and data availability
   const isLoading = useMemo(() => {
     return Homegames?.loading;
   }, [Homegames?.loading]);
 
-  // const hasData = gameData.length > 0;
-
-  // Calculate display length when appropriate
-  useEffect(() => {
-    if (isLoading) return;
-    // Filter out zero lengths to avoid setting length to 0 when some sections have data
-    const lengths = [
-      gameData.game?.length || 0,
-      gameData.freeGame?.length || 0,
-      gameData.newGames?.length || 0,
-      gameData.ultimate?.length || 0
-    ].filter(length => length > 0);
-    
-    // If all sections are empty, use default length
-    if (lengths.length === 0) {
-      setLength(DEFAULT_ITEMS_COUNT);
-      return;
-    }
-    
-    const minLength = Math.min(...lengths);
-    setLength(minLength < MIN_REQUIRED_ITEMS ? minLength : DEFAULT_ITEMS_COUNT);
-  }, [isLoading, gameData]);
-  
   // Fetch data on mount
   useEffect(() => {
     dispatch(getHomeTopGame());
@@ -384,13 +586,12 @@ function TopGames() {
         {/* Games Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3   2xl:grid-cols-3 3xl:grid-cols-6  gap-5 sm:gap-6 md:gap-6">
           {SECTION_CONFIG.map((section, i) => {
-            const sectionData = gameData[section.dataKey];
+            const sectionData = sectionItems[section.dataKey] || [];
             return (
               <GameSection
                 key={section.title}
                 section={section}
                 items={sectionData}
-                length={length}
                 isRefreshing={isLoading}
               />
             );
