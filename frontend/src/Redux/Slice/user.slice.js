@@ -363,14 +363,16 @@ export const leaveGroup = createAsyncThunk(
 export const changePassword = createAsyncThunk(
   "users/changePassword",
   async (
-    { email, oldPassword, newPassword },
+    { email, oldPassword, newPassword, confirmPassword },
     { dispatch, rejectWithValue }
   ) => {
     try {
+      // Backend expects: currentPassword, newPassword, confirmPassword
+      // Backend doesn't use email - it uses req.user._id from authenticated token
       const response = await axiosInstance.post(`/changePassword`, {
-        email,
         currentPassword: oldPassword,
         newPassword: newPassword,
+        confirmPassword: confirmPassword || newPassword, // Backend requires confirmPassword
       });
       // dispatch(setAlert({ text: response.data.message, color: 'success' }));
       enqueueSnackbar(response.data.message || "Old password is incorrect", { variant: "success" });

@@ -26,6 +26,7 @@ const platformFolders = {
     quest_file: 'games/quest',
     nintendo_switch_1_file: 'games/nintendo-switch-1',
     nintendo_switch_2_file: 'games/nintendo-switch-2',
+    
 };
 
 const storage = multerS3({
@@ -45,6 +46,8 @@ const storage = multerS3({
             folder = 'profilePic';
         } else if (file.fieldname === 'thumbnail' || file.fieldname === 'image') {
             folder = 'images';
+        } else if (file.fieldname === 'category_image') {
+            folder = 'CategoryImage';
         } else if (file.fieldname === 'video') {
             folder = 'videos';
         } else if (file.fieldname === 'cover_image' || file.fieldname === 'images') {

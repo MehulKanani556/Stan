@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart, FaWindows, FaXbox } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart, FaWindows, FaXbox, FaAndroid, FaApple } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
 import { IoFilter } from "react-icons/io5";
 import { MdArrowForwardIos, MdArrowBackIos } from "react-icons/md";
@@ -750,62 +750,72 @@ export default function AllGames() {
                     <div className="ms:p-4 p-2  md:p-6 ms:space-y-4 space-y-2 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
 
                         {/* Stats Grid */}
-                       <div className="grid grid-cols-1 gap-4">
-            <div className="bg-slate-700/50 rounded-xl relative z-10 px-2 sm:px-3 sm:py-2 py-2 md:px-4 md:py-3">
-              <div className="flex flex-wrap items-center space-x-2 mb-2">
-                {/* <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" /> */}
-                <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">
-                  Price :
-                </span>
-                <span className="ms:text-lg text-xs font-black text-white">
-                  ${game?.platforms?.windows?.price?.toLocaleString("en-IN")}
-                </span>
-                <span className="ms:text-xs text-[10px] text-slate-400 font-medium">
-                  USD
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center space-x-2 mb-2">
-                {console.log(game?.platforms)}
+                        <div className="grid grid-cols-1 gap-4">
+                            <div className="bg-slate-700/50 rounded-xl relative z-10 px-2 sm:px-3 sm:py-2 py-2 md:px-4 md:py-3">
+                                <div className="flex flex-wrap items-center space-x-2 mb-2">
+                                    {/* <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" /> */}
+                                    <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">
+                                        Price :
+                                    </span>
+                                    <span className="ms:text-lg text-xs font-black text-white">
+                                        ${game?.platforms?.windows?.price?.toLocaleString("en-IN")}
+                                    </span>
+                                    <span className="ms:text-xs text-[10px] text-slate-400 font-medium">
+                                        USD
+                                    </span>
+                                </div>
+                                <div className="flex flex-wrap items-center space-x-2 mb-2">
+                                    {console.log(game?.platforms)}
 
-                {/* {game?.platforms?.windows && <} */}
-                {game?.platforms?.windows?.available && (
-                  <span className=" text-blue-400 rounded font-semibold whitespace-nowrap flex items-center">
-                    <FaWindows className="text-base" />
-                  </span>
-                )}
-                {game?.platforms?.xbox?.available && (
-                  <span className=" text-green-400 rounded font-semibold whitespace-nowrap flex items-center">
-                    <FaXbox className="text-base" />
-                  </span>
-                )}
-                {game?.platforms?.ps5?.available && (
-                  <span className=" text-blue-600 rounded font-semibold whitespace-nowrap flex items-center">
-                    <SiPlaystation className="text-base" />
-                  </span>
-                )}
-                {game?.platforms?.quest?.available && (
-                  <span className=" text-indigo-400 rounded font-semibold whitespace-nowrap flex items-center">
-                    <SiOculus className="text-base" />
-                  </span>
-                )}
-                {game?.platforms?.vision_pro?.available && (
-                  <span className=" text-gray-400 rounded font-semibold whitespace-nowrap flex items-center">
-                    <TbDeviceVisionPro className="text-base" />
-                  </span>
-                )}
-                {(game?.platforms?.nintendo_switch_1?.available ||
-                  game?.platforms?.nintendo_switch_2?.available) && (
-                  <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
-                    <BsNintendoSwitch className="text-base" />
-                  </span>
-                )}
-                {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
+                                    {/* {game?.platforms?.windows && <} */}
+                                    {game?.platforms?.windows?.available && (
+                                        <span className=" text-blue-400 rounded font-semibold whitespace-nowrap flex items-center">
+                                            <FaWindows className="text-base" />
+                                        </span>
+                                    )}
+                                    {game?.platforms?.xbox?.available && (
+                                        <span className=" text-green-400 rounded font-semibold whitespace-nowrap flex items-center">
+                                            <FaXbox className="text-base" />
+                                        </span>
+                                    )}
+                                    {game?.platforms?.ps5?.available && (
+                                        <span className=" text-blue-600 rounded font-semibold whitespace-nowrap flex items-center">
+                                            <SiPlaystation className="text-base" />
+                                        </span>
+                                    )}
+                                    {game?.platforms?.quest?.available && (
+                                        <span className=" text-indigo-400 rounded font-semibold whitespace-nowrap flex items-center">
+                                            <SiOculus className="text-base" />
+                                        </span>
+                                    )}
+                                    {game?.platforms?.vision_pro?.available && (
+                                        <span className=" text-gray-400 rounded font-semibold whitespace-nowrap flex items-center">
+                                            <TbDeviceVisionPro className="text-base" />
+                                        </span>
+                                    )}
+                                    {(game?.platforms?.nintendo_switch_1?.available ||
+                                        game?.platforms?.nintendo_switch_2?.available) && (
+                                            <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
+                                                <BsNintendoSwitch className="text-base" />
+                                            </span>
+                                        )}
+                                    {game?.platforms?.android?.available && (
+                                        <span className=" text-green-500 rounded font-semibold whitespace-nowrap flex items-center">
+                                            <FaAndroid className="text-base" />
+                                        </span>
+                                    )}
+                                    {game?.platforms?.ios?.available && (
+                                        <span className=" text-white rounded font-semibold whitespace-nowrap flex items-center">
+                                            <FaApple className="text-base" />
+                                        </span>
+                                    )}
+                                    {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
                 <span className="ms:text-lg text-xs font-black text-white">
                   {game?.platforms?.windows?.size || 'N/A'}
                 </span> */}
-              </div>
-            </div>
-          </div>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Action Button */}
                         <button

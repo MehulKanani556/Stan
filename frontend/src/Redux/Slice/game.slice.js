@@ -147,7 +147,9 @@ export const deleteGame = createAsyncThunk(
       enqueueSnackbar("Game Delete successful", { variant: "success" });
       return { _id };
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || err.message);
+      const errorMessage = err.response?.data?.message || err.response?.data?.msg || err.message || "Failed to delete game";
+      enqueueSnackbar(errorMessage, { variant: "error" });
+      return rejectWithValue(errorMessage);
     }
   }
 );

@@ -41,7 +41,7 @@ export const addToCart = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(gameId)) {
             return sendError(res, 400, 'Invalid game id');
         }
-        if (!['windows', 'vision_pro', 'ps5', 'xbox', 'quest', 'nintendo_switch_1', 'nintendo_switch_2'].includes(platform)) {
+        if (!['windows', 'vision_pro', 'ps5', 'xbox', 'quest', 'nintendo_switch_1', 'nintendo_switch_2', 'ios', 'android'].includes(platform)) {
             return sendError(res, 400, 'Invalid platform');
         }
         const game = await Game.findById(gameId);

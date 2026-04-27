@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { FaChevronLeft, FaChevronRight, FaHeart, FaPlay, FaRegStar, FaShoppingCart, FaStar, FaStarHalfAlt, FaWindows, FaPlaystation, FaXbox, FaApple, FaSteamSymbol } from 'react-icons/fa'
+import {
+  FaChevronLeft, FaChevronRight,
+  FaHeart, FaPlay, FaRegStar, FaShoppingCart,
+  FaStar, FaStarHalfAlt, FaWindows, FaPlaystation,
+  FaXbox, FaApple, FaSteamSymbol, FaAndroid
+} from 'react-icons/fa'
 import { SiOculus, SiNintendoswitch } from 'react-icons/si'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -33,7 +38,9 @@ const PLATFORM_LABELS = {
   xbox: 'X Box',
   quest: 'Quest',
   nintendo_switch_1: 'Nintendo Switch 1',
-  nintendo_switch_2: 'Nintendo Switch 2'
+  nintendo_switch_2: 'Nintendo Switch 2',
+  android: 'Android',
+  ios: 'iOS'
 }
 
 const PLATFORM_META = {
@@ -44,6 +51,8 @@ const PLATFORM_META = {
   quest: { label: PLATFORM_LABELS.quest, icon: SiOculus },
   nintendo_switch_1: { label: PLATFORM_LABELS.nintendo_switch_1, icon: SiNintendoswitch },
   nintendo_switch_2: { label: PLATFORM_LABELS.nintendo_switch_2, icon: SiNintendoswitch },
+  android: { label: PLATFORM_LABELS.android, icon: FaAndroid },
+  ios: { label: PLATFORM_LABELS.ios, icon: FaApple },
   default: { label: 'Platform', icon: FaSteamSymbol }
 }
 
@@ -84,6 +93,14 @@ const PLATFORM_SYSTEM_FIELDS = {
     right: [],
   },
   nintendo_switch_2: {
+    left: [{ label: "Supported play modes", key: "Supported_play_modes" }],
+    right: [],
+  },
+  android: {
+    left: [{ label: "Supported play modes", key: "Supported_play_modes" }],
+    right: [],
+  },
+  ios: {
     left: [{ label: "Supported play modes", key: "Supported_play_modes" }],
     right: [],
   },
@@ -773,15 +790,15 @@ const SingleGame = () => {
 
   return (
     <div className="">
-    <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
-      <div>
-        <h2 className="md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize">
-          {single?.title}
-        </h2>
-      </div>
+      <div className="w-full max-w-[95%] md:max-w-[85%] mx-auto">
+        <div>
+          <h2 className="md:text-[40px] ms:text-[30px] text-[24px] font-[800] pt-5 capitalize">
+            {single?.title}
+          </h2>
+        </div>
 
-      <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
-        <div className="3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5 order-2 lg:order-1">
+        <div className="flex flex-col-reverse lg:flex-row lg:mt-11">
+          <div className="3xl:w-3/4 2xl:w-2/3 xl:w-3/5 lg:w-3/5 w-full xl:mt-0 mt-5 xl:px-0 lg:px-5 order-2 lg:order-1">
 
             <div>
               <Slider
@@ -905,11 +922,10 @@ const SingleGame = () => {
                             <button
                               key={platformKey}
                               onClick={() => setActivePlatformTab(platformKey)}
-                              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
-                                isActive
+                              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${isActive
                                   ? 'bg-[#ab99e1]/20 border-[#ab99e1] text-white'
                                   : 'border-gray-700 text-gray-300 hover:border-[#ab99e1]/60 hover:text-white'
-                              }`}
+                                }`}
                               role="tab"
                               aria-selected={isActive}
                             >
@@ -927,7 +943,7 @@ const SingleGame = () => {
                     </div>
                     <div>
                       <h4 className="text-base font-semibold mb-6 flex flex-col">
-                      
+
                         <span className="text-sm text-gray-400">
                           System Requirements
                         </span>
@@ -966,8 +982,8 @@ const SingleGame = () => {
             </div>
           </div>
 
-            {/* right side copntent */}
-            <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 order-1 lg:order-2">
+          {/* right side copntent */}
+          <div className="3xl:w-1/4  2xl:w-1/3 xl:w-2/5 lg:w-2/5 w-full xl:pl-6 mt-10 xl:mt-0 order-1 lg:order-2">
             <div className="p-6 sticky top-24 bg-black/30 ">
               <div className="flex justify-center mb-6">
                 <img
@@ -976,7 +992,7 @@ const SingleGame = () => {
                   className="w-[330px] h-[200px] object-cover "
                 />
               </div>
- 
+
               {/* Price */}
               <div className="flex mb-6">
                 <div>
@@ -986,11 +1002,11 @@ const SingleGame = () => {
                   </p>
                 </div>
               </div>
- 
- 
 
-             {/* Action Buttons */}
-             {isLoggedIn ? (
+
+
+              {/* Action Buttons */}
+              {isLoggedIn ? (
                 <div className="space-y-4">
                   <div className="flex sx:gap-4 gap-2">
                     {/* Wishlist Button */}
@@ -1023,10 +1039,10 @@ const SingleGame = () => {
                         <span className="text-xs">Add To WishList</span>
                       </button>
                     )}
- 
+
                     {/* Cart Button */}
                     {!isBuyed && (
-                      
+
                       <button
                         onClick={() => handleAddToCart(single)}
                         disabled={isInCart}
@@ -1042,11 +1058,11 @@ const SingleGame = () => {
                         <span className="text-xs">{isInCart ? 'Added to cart' : 'Add To Cart'}</span>
                       </button>
                     )}
- 
+
                   </div>
- 
+
                   {/* Purchase/Review Buttons */}
- 
+
                   {isBuyed ? (
                     <>
                       <button
@@ -1105,7 +1121,7 @@ const SingleGame = () => {
                   login to Buy
                 </button>
               )}
- 
+
 
               {/* Payment Modal */}
               <Dialog

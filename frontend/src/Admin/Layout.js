@@ -14,21 +14,12 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import { AiFillHome, AiOutlineClose } from "react-icons/ai";
-import {
-  FaUser,
-  FaQuestion,
-  FaExchangeAlt,
-  FaBlog,
-} from "react-icons/fa";
+import { FaUser, FaQuestion, FaExchangeAlt, FaBlog, } from "react-icons/fa";
 import { BiSolidCategory, } from "react-icons/bi";
-
-import {
-  LuContact,
-  LuEye,
-  LuEyeClosed,
-} from "react-icons/lu";
+import { ReactComponent as YOYO_LOGO } from "../images/YOYO-LOGO.svg"
+import { LuContact, LuEye, LuEyeClosed, } from "react-icons/lu";
 import { RiFileTextLine } from "react-icons/ri";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { Modal } from "@mui/material";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
@@ -40,6 +31,7 @@ import { HiOutlineShieldCheck } from "react-icons/hi2";
 import { logoutUser } from "../Redux/Slice/auth.slice";
 import { decryptData } from "../Utils/encryption";
 import { IoGameControllerOutline } from "react-icons/io5";
+import { IMAGE_URL } from "../Utils/baseUrl";
 // import { logout } from '../reduxe/slice/auth.slice';
 // import { setSearchValue } from '../reduxe/slice/search.slice';
 
@@ -58,15 +50,54 @@ function Layout({ children }) {
     localStorage.getItem("role");
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const user = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state) => state.user.currentUser);
   const [openProfile, setOpenProfile] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
   const fileInputRef = useRef(null);
   const dropdownRef = useRef(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
-  // Memoize the user data
-  const memoizedUser = useMemo(() => user, [user]);
+  // Memoize the user data - prefer currentUser from user slice as it has the latest data
+  const memoizedUser = useMemo(() => currentUser || user, [currentUser, user]);
+
+  // Get profile picture URL with proper handling
+  const getProfilePicUrl = (userData) => {
+    if (!userData) return null;
+    // Prioritize profilePic as that's the field name in the database
+    const photo = userData?.profilePic || userData?.photo;
+    if (!photo || photo === "null" || photo === "" || photo === null) return null;
+    
+    // If the path starts with "/uploads/", prepend IMAGE_URL
+    if (typeof photo === 'string' && photo.startsWith("/uploads/")) {
+      return `${IMAGE_URL}${photo}`;
+    }
+    // Return the photo URL as-is (could be a full URL from Cloudinary or other sources)
+    return photo;
+  };
+
+  const profilePicUrl = getProfilePicUrl(memoizedUser);
+
+  // Debug: Log user data to help troubleshoot
+  useEffect(() => {
+    if (memoizedUser) {
+      console.log("Profile Pic Debug:", {
+        currentUser,
+        authUser: user,
+        memoizedUser,
+        profilePicUrl,
+        photo: memoizedUser?.photo,
+        profilePic: memoizedUser?.profilePic
+      });
+    }
+  }, [memoizedUser, profilePicUrl, currentUser, user]);
+
+  // Reset image error when user or profilePicUrl changes
+  useEffect(() => {
+    setImageError(false);
+  }, [memoizedUser, profilePicUrl]);
 
   useEffect(() => {
     if (userId) {
@@ -185,7 +216,10 @@ function Layout({ children }) {
     >
       {/* Show YOYO only on mobile */}
       <Box sx={{ display: { xs: "block", md: "none" }, p: 2 }}>
-        <span className="text-3xl font-bold text-white">YOYO</span>
+        <NavLink to={"/admin"} className="flex items-center gap-2 flex-none">
+          <YOYO_LOGO className="svg-current-color h-12 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+          {/* <span className='text-[var(--color-change)] font-semibold text-4xl'>YOYO</span> */}
+        </NavLink>
       </Box>
       <Divider />
       <List className="gap-1 flex flex-col grow">
@@ -398,7 +432,10 @@ function Layout({ children }) {
               <MenuIcon />
             </IconButton>
             <Box onClick={() => navigate('/admin')} sx={{ cursor: 'pointer', display: { xs: "none", md: "block" } }}>
-              <span className="text-3xl font-bold text-white">YOYO</span>
+              <NavLink to={"/admin"} className="flex items-center gap-2 flex-none">
+                <YOYO_LOGO className="svg-current-color h-12 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                {/* <span className='text-[var(--color-change)] font-semibold text-4xl'>YOYO</span> */}
+              </NavLink>
             </Box>
             <Box
               sx={{
@@ -433,11 +470,12 @@ function Layout({ children }) {
                   style={{ cursor: "pointer" }}
                 >
                   <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                    {memoizedUser?.photo && memoizedUser?.photo !== "null" ? (
+                    {profilePicUrl && !imageError ? (
                       <img
-                        src={memoizedUser.photo}
+                        src={profilePicUrl}
                         alt="Profile"
                         className="w-full h-full rounded-full object-cover"
+                        onError={() => setImageError(true)}
                       />
                     ) : (
                       <span
@@ -517,10 +555,19 @@ function Layout({ children }) {
                 {/* Change Password */}
                 <Modal
                   open={openPassword}
-                  onClose={() => setOpenPassword(false)}
-                  className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+                  onClose={() => {
+                    setOpenPassword(false);
+                    setPasswordError(""); // Clear error when modal closes
+                  }}
+                  sx={{
+                    zIndex: 1300,
+                    '& .MuiBackdrop-root': {
+                      zIndex: 1300,
+                    }
+                  }}
+                  className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center"
                 >
-                  <div className="bg-[#141414] p-3 md:p-6 text-white w-[310px] sm:w-[400px]">
+                  <div className="bg-[#141414] p-3 md:p-6 text-white w-[310px] sm:w-[400px] relative rounded-lg shadow-2xl overflow-visible" style={{ zIndex: 1301, position: 'relative' }}>
                     <div className="flex justify-between items-center border-b-[1px] border-white/10 pb-[12px] mb-[12px]">
                       <h1 className="text-lg font-semibold ">
                         Change Password
@@ -560,16 +607,44 @@ function Layout({ children }) {
                         return errors;
                       }}
                       onSubmit={(values) => {
-                        const { oldPassword, newPassword } = values;
+                        const { oldPassword, newPassword, confirmNewPassword } = values;
+                        // Clear previous error
+                        setPasswordError("");
+                        
+                        // Get email from currentUser or user, decrypt if needed
+                        const userEmail = memoizedUser?.email || user?.email;
+                        const decryptedEmail = userEmail ? (userEmail.includes('encrypted') || userEmail.length > 50 ? decryptData(userEmail) : userEmail) : null;
+                        
+                        if (!decryptedEmail) {
+                          console.error("Email not available for password change");
+                          return;
+                        }
+                        
                         dispatch(
                           changePassword({
-                            email: user.email,
+                            email: decryptedEmail,
                             oldPassword,
                             newPassword,
+                            confirmPassword: confirmNewPassword, // Backend expects confirmPassword
                           })
                         ).then((response) => {
-                          if (response.payload.success) {
+                          if (response.payload?.success) {
                             setOpenPassword(false);
+                            setPasswordError(""); // Clear error on success
+                            // Reset form values
+                            values.oldPassword = "";
+                            values.newPassword = "";
+                            values.confirmNewPassword = "";
+                          } else if (response.payload?.message) {
+                            // Show error message if password is incorrect
+                            setPasswordError(response.payload.message);
+                          }
+                        }).catch((error) => {
+                          // Handle rejected promise
+                          if (error?.payload?.message) {
+                            setPasswordError(error.payload.message);
+                          } else if (error?.message) {
+                            setPasswordError(error.message);
                           }
                         });
                       }}
@@ -584,10 +659,11 @@ function Layout({ children }) {
                       }) => (
                         <form
                           onSubmit={handleSubmit}
-                          className="change-pass-form flex flex-col gap-4 p-[12px]"
+                          className="change-pass-form flex flex-col gap-4 p-[12px] relative overflow-visible"
+                          style={{ zIndex: 1302 }}
                         >
                           {/* Current Password */}
-                          <div className="w-full flex flex-col mb-[10px]">
+                          <div className="w-full flex flex-col mb-[10px] relative" style={{ zIndex: 1303 }}>
                             <label className="text-[13px] font-normal text-white/80 mb-[5px]">
                               Old password
                             </label>
@@ -600,7 +676,13 @@ function Layout({ children }) {
                                 name="oldPassword"
                                 className="w-full bg-[#232323] text-[13px] text-white p-2 rounded j_input_field"
                                 value={values.oldPassword}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                  // Clear error when user starts typing
+                                  if (passwordError) {
+                                    setPasswordError("");
+                                  }
+                                }}
                               />
                               <div
                                 className="absolute right-3 top-3 cursor-pointer select-none text-white/60"
@@ -618,16 +700,21 @@ function Layout({ children }) {
                                   <LuEyeClosed />
                                 )}
                               </div>
-                              {errors.oldPassword && touched.oldPassword && (
-                                <div className="text-red-500 text-sm mt-1">
-                                  {errors.oldPassword}
-                                </div>
-                              )}
                             </div>
+                            {(errors.oldPassword && touched.oldPassword) && (
+                              <div className="text-red-500 text-sm mt-1" style={{ zIndex: 9999, position: 'relative' }}>
+                                {errors.oldPassword}
+                              </div>
+                            )}
+                            {passwordError && (
+                              <div className="text-red-500 text-sm mt-1" style={{ zIndex: 9999, position: 'relative' }}>
+                                {passwordError}
+                              </div>
+                            )}
                           </div>
 
                           {/* New Password */}
-                          <div className="w-full flex flex-col mb-[10px]">
+                          <div className="w-full flex flex-col mb-[10px] relative" style={{ zIndex: 1303 }}>
                             <label className="text-[13px] font-normal text-white/80 mb-[5px]">
                               New Password
                             </label>
@@ -658,16 +745,16 @@ function Layout({ children }) {
                                   <LuEyeClosed />
                                 )}
                               </div>
-                              {errors.newPassword && touched.newPassword && (
-                                <div className="text-red-500 text-sm mt-1">
-                                  {errors.newPassword}
-                                </div>
-                              )}
                             </div>
+                            {errors.newPassword && touched.newPassword && (
+                              <div className="text-red-500 text-sm mt-1" style={{ zIndex: 9999, position: 'relative' }}>
+                                {errors.newPassword}
+                              </div>
+                            )}
                           </div>
 
                           {/* Confirm New Password */}
-                          <div className="w-full flex flex-col mb-[10px]">
+                          <div className="w-full flex flex-col mb-[10px] relative" style={{ zIndex: 1303 }}>
                             <label className="text-[13px] font-normal text-white/80 mb-[5px]">
                               Confirm password
                             </label>
@@ -700,13 +787,13 @@ function Layout({ children }) {
                                   <LuEyeClosed />
                                 )}
                               </div>
-                              {errors.confirmNewPassword &&
-                                touched.confirmNewPassword && (
-                                  <div className="text-red-500 text-sm mt-1">
-                                    {errors.confirmNewPassword}
-                                  </div>
-                                )}
                             </div>
+                            {errors.confirmNewPassword &&
+                              touched.confirmNewPassword && (
+                                <div className="text-red-500 text-sm mt-1" style={{ zIndex: 9999, position: 'relative' }}>
+                                  {errors.confirmNewPassword}
+                                </div>
+                              )}
                           </div>
 
                           <div className="flex justify-between mt-[10px] md:mt-[32px] gap-4">

@@ -23,10 +23,12 @@ export default function Category() {
   const loading = useSelector(state => state.category.loading);
   const isSmallScreen = useMediaQuery("(max-width:425px)");
 
-  const [error, setError] = useState("");
   const [isImageChanged, setIsImageChanged] = useState(false);
   const fileInputRef = useRef(null);
   const [searchValue, setSearchValue] = useState('');
+
+  console.log("HHHHHH", category);
+  
 
   const validationSchema = Yup.object({
     categoryName: Yup.string().required("Category name is required"),
@@ -55,23 +57,37 @@ export default function Category() {
       category_image: null,
     },
     validationSchema,
-    onSubmit: async (values) => {
-      const formData = new FormData();
-      formData.append("categoryName", values.categoryName);
-      formData.append("category_description", values.category_description);
+    onSubmit: async (values, { setFieldError }) => {
+      try {
+        const formData = new FormData();
+        formData.append("categoryName", values.categoryName);
+        formData.append("category_description", values.category_description);
 
-      if (values.category_image && typeof values.category_image !== "string") {
-        formData.append("category_image", values.category_image);
-      }
+        if (values.category_image && typeof values.category_image !== "string") {
+          formData.append("category_image", values.category_image);
+        }
 
-      if (categoryData) {
-        // Update category
-        dispatch(updateCategory({ _id: categoryData._id, formData }));
-      } else {
-        // Create category
-        dispatch(createCategory(formData));
+        if (categoryData) {
+          // Update category
+          const result = await dispatch(updateCategory({ _id: categoryData._id, formData }));
+          if (updateCategory.fulfilled.match(result)) {
+            handleCreateClose();
+          }
+        } else {
+          // Create category - require image for new categories
+          if (!values.category_image) {
+            setFieldError("category_image", "Category image is required for new categories");
+            return;
+          }
+          const result = await dispatch(createCategory(formData));
+          if (createCategory.fulfilled.match(result)) {
+            handleCreateClose();
+          }
+        }
+      } catch (error) {
+        console.error("Error submitting category:", error);
+        setFieldError("category_image", "Failed to save category. Please try again.");
       }
-      handleCreateClose();
     },
   });
 
@@ -124,9 +140,15 @@ export default function Category() {
     setDelOpen(false);
   };
 
-  const handleDeleteCategory = () => {
-    dispatch(deleteCategory({ _id: categoryData._id }));
-    setDelOpen(false);
+  const handleDeleteCategory = async () => {
+    try {
+      const result = await dispatch(deleteCategory({ _id: categoryData._id }));
+      if (deleteCategory.fulfilled.match(result)) {
+        setDelOpen(false);
+      }
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    }
   };
 
   const handleDeleteAll = () => {

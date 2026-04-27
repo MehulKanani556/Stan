@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from 'swiper/modules';
-import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart, FaWindows, FaXbox } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart, FaWindows, FaXbox, FaAndroid, FaApple } from "react-icons/fa";
 import LazyGameCard from '../lazyLoader/LazyGameCard';
 import TopGames from '../components/TopGames';
 import ExploreGames from '../images/ExploreGames.webp';
@@ -154,7 +154,7 @@ const GameCard = ({
       onClick={() => onGameClick(game._id)}
       className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
     >
-      {}
+      { }
       <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
         {/* Enhanced Glow Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -185,11 +185,10 @@ const GameCard = ({
             {/* Wishlist Button */}
 
             <button
-              className={`absolute ms:top-4 ms:right-4 top-2 right-2 ms:p-2.5 p-2 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${
-                isInWishlist && isLoggedIn
+              className={`absolute ms:top-4 ms:right-4 top-2 right-2 ms:p-2.5 p-2 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${isInWishlist && isLoggedIn
                   ? "bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30"
                   : "bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50"
-              }`}
+                }`}
               onClick={(e) => {
                 e.stopPropagation();
                 isLoggedIn ? onWishlistToggle(game) : navigate("/login");
@@ -261,8 +260,18 @@ const GameCard = ({
                 )}
                 {(game?.platforms?.nintendo_switch_1?.available ||
                   game?.platforms?.nintendo_switch_2?.available) && (
-                  <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
-                    <BsNintendoSwitch className="text-base" />
+                    <span className=" text-red-400 rounded font-semibold whitespace-nowrap flex items-center">
+                      <BsNintendoSwitch className="text-base" />
+                    </span>
+                  )}
+                {game?.platforms?.android?.available && (
+                  <span className=" text-green-500 rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaAndroid className="text-base" />
+                  </span>
+                )}
+                {game?.platforms?.ios?.available && (
+                  <span className=" text-white rounded font-semibold whitespace-nowrap flex items-center">
+                    <FaApple className="text-base" />
                   </span>
                 )}
                 {/* <span className="ms:text-sm text-[10px] text-green-400 font-semibold uppercase tracking-wider">Size</span>
@@ -280,11 +289,10 @@ const GameCard = ({
               isLoggedIn ? onAddToCart(game) : navigate("/login");
             }}
             disabled={disableCartAction}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${
-              disableCartAction
+            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${disableCartAction
                 ? "bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30"
                 : "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
-            }`}
+              }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
               {isLoggedIn ? (
@@ -302,8 +310,8 @@ const GameCard = ({
                     {isPurchased
                       ? "Purchased"
                       : isInCart
-                      ? "Added to Cart"
-                      : "Add to Cart"}
+                        ? "Added to Cart"
+                        : "Add to Cart"}
                   </span>
                 </>
               ) : (
@@ -395,8 +403,8 @@ export default function Home() {
     [authUser, currentUser]
   );
 
-  console.log(gameData,"gameData");
-  
+  console.log(gameData, "gameData");
+
 
   const filteredGames = useMemo(() => {
     if (!gameData) return [];

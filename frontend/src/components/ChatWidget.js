@@ -219,10 +219,14 @@ const ChatWidget = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const hideInAdmin = myManage?.pathname.startsWith("/admin");
+
+
   return (
     <div>
       {/* Floating button */}
-      {(!isContactModalOpen && myManage?.pathname !== "/login") && (
+     {(!isContactModalOpen && myManage?.pathname !== "/login" && !hideInAdmin) && (
+
         <button
           onClick={() => setIsContactModalOpen(true)}
           className="fixed md:bottom-6 right-6 bottom-16 z-50 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"
@@ -230,7 +234,7 @@ const ChatWidget = () => {
           💬
         </button>
       )}
-      {(showGoUp && !isContactModalOpen) && (
+      {(showGoUp && !isContactModalOpen && !hideInAdmin) && (
         <button
           onClick={scrollToTop}
           className="fixed bottom-28 right-6 md:bottom-6 md:right-20 z-50 p-3  rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
