@@ -790,7 +790,7 @@ const RewardsExperience = () => {
             <section className='ms:pb-12 pb-6 overflow-x-hidden'>
                 <div className='max-w-[95%] md:max-w-[75%] m-auto overflow-x-hidden'>
                     {/* Hero */}
-                    <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden'>
+                    <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden '>
                         <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
                         <div className='relative z-10 px-4 sm:px-6 md:px-10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6'>
                             <div className='w-full lg:w-auto'>

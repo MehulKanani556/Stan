@@ -31,6 +31,7 @@ import Loader from './Pages/Loader.js';
 import Demo from './Pages/demo.jsx';
 import QuizGame from './components/QuizGame.jsx';
 import BackgroundColor from './components/BackgroundColor';
+import ContactUs from './Pages/ContactUs.jsx';
 import HomeSlider from './components/HomeSlider.jsx';
 import LoaderWrapper from './components/LoaderWrapper.jsx';
 import ScratchGame from './Pages/ScratchGame.js';
@@ -86,6 +87,7 @@ function App() {
                   <Route path="/allGames" element={<AllGames />} />
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/quizRewards" element={<QuizGame />} />
+                  <Route path="/contact" element={<ContactUs />} />
 
                   <Route
                     path="/admin/*"

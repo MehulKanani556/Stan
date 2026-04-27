@@ -234,7 +234,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
             onClick={handleCardClick}
             className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
         >
-            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
+            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
 
                 {/* Enhanced Glow Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
@@ -286,12 +286,12 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
                 </div>
 
                 {/* Content Section */}
-                <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
+                <div className="p-4 sm:p-5 md:p-6 space-y-4 bg-gradient-to-br from-slate-700/95 to-slate-800/95">
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 gap-4">
                         {/* Price */}
-                        <div className="bg-slate-700/50 rounded-xl relative z-10 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+                        <div className="bg-slate-600/50 rounded-xl relative z-10 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
                             <div className="flex flex-wrap items-center space-x-2 mb-2">
                                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                                 <span className="text-sm text-blue-400 font-semibold uppercase tracking-wider">Price</span>
@@ -688,7 +688,7 @@ export default function AllGames() {
                 onClick={() => navigate(`/single/${game?._id}`)}
                 className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
             >
-                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-600/70">
+                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
 
                     {/* Enhanced Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
@@ -747,11 +747,11 @@ export default function AllGames() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="ms:p-4 p-2  md:p-6 ms:space-y-4 space-y-2 bg-gradient-to-br from-slate-800/95 to-slate-900/95">
+                    <div className="ms:p-4 p-2  md:p-6 ms:space-y-4 space-y-2 bg-gradient-to-br from-slate-700/95 to-slate-800/95">
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 gap-4">
-                            <div className="bg-slate-700/50 rounded-xl relative z-10 px-2 sm:px-3 sm:py-2 py-2 md:px-4 md:py-3">
+                            <div className="bg-slate-600/50 rounded-xl relative z-10 px-2 sm:px-3 sm:py-2 py-2 md:px-4 md:py-3">
                                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                                     {/* <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" /> */}
                                     <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">

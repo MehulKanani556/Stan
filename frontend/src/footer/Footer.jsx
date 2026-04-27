@@ -63,10 +63,10 @@ const Footer = () => {
             <div className="space-y-4 max-[425px]:col-span-2">
               <div className='w-fit'>
                 <NavLink to={"/"} >
-                  <YOYO_LOGO className="svg-current-color h-9 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                  <h1 className='text-6xl font-bold text-white ' >Stan.</h1>
                 </NavLink>
               </div>
-              <p className="text-gray-300 text-sm leading-relaxed">
+              {/* <p className="text-gray-300 text-sm leading-relaxed">
                 A realm where ancient horrors dwell and forgotten heroes rise again. Unleash your legend in the shadows.
               </p>
               <div className="flex justify-center md:justify-start gap-3 sm:gap-4 md:gap-5 flex-wrap ">
@@ -87,7 +87,7 @@ const Footer = () => {
                     <Icon className="text-sm sm:text-base md:text-lg lg:text-xl" />
                   </a>
                 ))}
-              </div>
+              </div> */}
             </div>
 
             <div>
@@ -126,11 +126,11 @@ const Footer = () => {
                 Support
               </h4>
               <ul className="space-y-2">
-                {["FAQs", "Guides", "Terms of Service", "Privacy Policy"].map((link, i) => (
+                {["FAQs", "Guides", "Contact Us", "Terms of Service", "Privacy Policy"].map((link, i) => (
                   <li key={i}>
                     <Link
-                      to={link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#"}
-                      className={` hover:text-[var(--color-change)] transition-colors text-sm ${location.pathname === (link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#") ? "font-semibold text-[var(--color-change)]" : "text-gray-300"}`}
+                      to={link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Contact Us" ? "/contact" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#"}
+                      className={` hover:text-[var(--color-change)] transition-colors text-sm ${location.pathname === (link === "FAQs" ? "/faqs" : link === "Guides" ? "/guides" : link === "Contact Us" ? "/contact" : link === "Terms of Service" ? "/terms" : link === "Privacy Policy" ? "/privacy" : "#") ? "font-semibold text-[var(--color-change)]" : "text-gray-300"}`}
                     >
                       {link}
                     </Link>
@@ -139,7 +139,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            <div className="max-[425px]:col-span-2">
+            {/* <div className="max-[425px]:col-span-2">
               <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
                 Contact Us
               </h4>
@@ -182,15 +182,15 @@ const Footer = () => {
                   </a>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
-          <div className='md:pb-0 pb-4'>
+          {/* <div className='md:pb-0 pb-4'>
             <div className="border-t border-white/10 py-6 text-gray-400 text-sm flex flex-col sm:flex-row justify-center items-center gap-3">
               <p>
                 © 2025 YOYO Khel Pvt. Ltd. All rights reserved.
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       </footer>
     </>

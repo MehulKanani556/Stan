@@ -17,7 +17,7 @@ const Advertize = ({ limitImages = false }) => {
     return (
         <div className="relative w-full">
             {/* Left Side Ad - Hidden on mobile */}
-            <div className="hidden md:block absolute top-[300px] xs:top-[250px] sm:top-[300px] md:top-[350px] lg:top-[400px] xl:top-[450px] left-2 xs:left-3 sm:left-4 md:left-1 lg:left-5 transform -translate-y-1/2 w-16 xs:w-20 sm:w-24 md:w-28 lg:w-32 xl:w-40">
+            <div className="hidden md:block absolute top-[300px] xs:top-[250px] sm:top-[300px] md:top-[350px] lg:top-[400px] xl:top-[450px] left-2 xs:left-3 sm:left-4 md:left-1 lg:left-5 transform -translate-y-1/2 w-16 xs:w- sm:w-24 md:w-28 lg:w-32 xl:w-40">
                 {leftAds.map((ad, index) => (
                     <img
                         key={`left-${index}`}
@@ -29,7 +29,7 @@ const Advertize = ({ limitImages = false }) => {
             </div>
 
             {/* Right Side Ad - Hidden on mobile */}
-            <div className="hidden md:block absolute top-[300px] xs:top-[250px] sm:top-[300px] md:top-[350px] lg:top-[400px] xl:top-[450px] right-2 xs:right-3 sm:right-4 md:right-1 lg:right-5 transform -translate-y-1/2 w-16 xs:w-20 sm:w-24 md:w-28 lg:w-32 xl:w-40">
+            <div className="hidden md:block absolute top-[300px] xs:top-[250px] sm:top-[300px] md:top-[350px] lg:top-[400px] xl:top-[450px] right-2 xs:right-3 sm:right-4 md:right-[-12px] lg:right-[0] transform -translate-y-1/2 w-16 xs:w-20 sm:w-24 md:w-28 lg:w-32 xl:w-40 ">
                 {rightAds.map((ad, index) => (
                     <img
                         key={`right-${index}`}

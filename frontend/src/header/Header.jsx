@@ -32,6 +32,7 @@ import { handleMyToggle } from '../Redux/Slice/game.slice';
 import { fetchCart } from '../Redux/Slice/cart.slice';
 import playstoreLogo from "../images/images/playstore.png"
 import appstoreLogo from "../images/images/appstore.png"
+import logo from "../images/unnamed.png"
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -151,9 +152,8 @@ export default function Header() {
 
                         <div className="navbar w-[97%] m-auto px-0 justify-between">
 
-                            <NavLink to={isAdminRoute ? "/admin" : "/"} className="flex items-center gap-2 flex-none">
-                                <YOYO_LOGO className="svg-current-color h-12 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
-                                {/* <span className='text-[var(--color-change)] font-semibold text-4xl'>YOYO</span> */}
+                            <NavLink to={isAdminRoute ? "/admin" : "/"} className="flex items-center gap-2 rounded-full overflow-hidden flex-none">
+                               <img src={logo} alt="" className='w-12' />
                             </NavLink>
 
 
@@ -266,7 +266,7 @@ export default function Header() {
 
 
                                         <div
-                                            className="w-9 h-9 rounded-full border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[var(--color-change)] transition-colors"
+                                            className="w-9 h-9 rounded-full flex-shrink-0 border-2 border-white overflow-hidden flex items-center justify-center cursor-pointer hover:border-[var(--color-change)] transition-colors"
                                             onClick={toggleDropdown}
                                         >
                                             <img
@@ -276,7 +276,7 @@ export default function Header() {
                                             />
                                         </div>
                                         <p
-                                            className='text-base cursor-pointer hover:text-[var(--color-change)] transition-colors'
+                                            className='text-base lg:block hidden cursor-pointer hover:text-[var(--color-change)] transition-colors'
                                             onClick={toggleDropdown}
                                         >
                                             {decryptData(name)?.split(" ")[0]}
@@ -418,8 +418,8 @@ export default function Header() {
 
                             {/* brand */}
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <YOYO_LOGO className="svg-current-color h-7 w-auto text-[var(--color-change)]" style={{ fill: 'currentColor', stroke: 'currentColor' }} />
+                                <div className="flex items-center gap-2 rounded-full overflow-hidden">
+                                    <img src={logo} alt="" className='w-12' />
                                 </div>
                                 <label
                                     htmlFor="my-drawer-3"
