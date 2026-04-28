@@ -195,8 +195,8 @@ const PaymentForm = ({
             {amount > 0 && (
                 <div className="relative group">
                     <FaRegCreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-                        <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 sm:px-1">
+                    <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-orange-400 group-focus-within:shadow-[0_0_10px_#ff8615]">
+                        <label className="absolute -top-2 left-10 text-xs text-orange-300 bg-gray-900 sm:px-1">
                             Card Number
                         </label>
                         <CardNumberElement options={CARD_STYLE} />
@@ -209,8 +209,8 @@ const PaymentForm = ({
                     {/* Expiry Date */}
                     <div className="relative group flex-1">
                         <BsCalendar2Event className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-                            <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 sm:px-1">
+                        <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-orange-400 group-focus-within:shadow-[0_0_10px_#ff8615]">
+                            <label className="absolute -top-2 left-10 text-xs text-orange-300 bg-gray-900 sm:px-1">
                                 Expiry Date
                             </label>
                             <CardExpiryElement options={CARD_STYLE} />
@@ -219,8 +219,8 @@ const PaymentForm = ({
                     {/* CVV */}
                     <div className="relative group flex-1">
                         <BsCalendar2Event className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-                            <label className="absolute -top-2 left-10 text-xs text-purple-300 bg-gray-900 sm:px-1">
+                        <div className="p-3 pl-10 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-orange-400 group-focus-within:shadow-[0_0_10px_#ff8615]">
+                            <label className="absolute -top-2 left-10 text-xs text-orange-300 bg-gray-900 sm:px-1">
                                 CVV
                             </label>
                             <CardCvcElement
@@ -237,8 +237,8 @@ const PaymentForm = ({
             {/* Name and Email Fields */}
             <div className="space-y-4">
                 <div className="relative group">
-                    <div className="p-3 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-                        <label className="absolute -top-2 left-3 text-xs text-purple-300 bg-gray-900 px-1">
+                    <div className="p-3 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-orange-400 group-focus-within:shadow-[0_0_10px_#ff8615]">
+                        <label className="absolute -top-2 left-3 text-xs text-orange-300 bg-gray-900 px-1">
                             Full Name
                         </label>
                         <input
@@ -252,8 +252,8 @@ const PaymentForm = ({
                 </div>
 
                 <div className="relative group">
-                    <div className="p-3 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-purple-400 group-focus-within:shadow-[0_0_10px_#621df2]">
-                        <label className="absolute -top-2 left-3 text-xs text-purple-300 bg-gray-900 px-1">
+                    <div className="p-3 rounded-xl border border-gray-700 bg-gray-800 transition-all group-focus-within:border-orange-400 group-focus-within:shadow-[0_0_10px_#ff8615]">
+                        <label className="absolute -top-2 left-3 text-xs text-orange-300 bg-gray-900 px-1">
                             Email
                         </label>
                         <input
@@ -295,7 +295,7 @@ const PaymentForm = ({
             {/* Pay Button */}
             <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 rounded-xl active:scale-95 transition transform hover:shadow-[0_0_15px_#621df2]"
+                className="w-full style_btn_color text-white font-semibold py-3 rounded-xl active:scale-95 transition transform hover:shadow-[0_0_10px_#ff8615]"
                 disabled={!stripe && amount > 0}
             >
                 {amount === 0 

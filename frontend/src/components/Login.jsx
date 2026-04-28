@@ -57,7 +57,7 @@ const InputWithIcon = ({ id, label, type, icon, isPassword, showPassword, onTogg
           id={id}
           name={props.name}
           type={isPassword && showPassword ? "text" : type}
-          className="w-full pl-10 pr-10 py-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400/50 transition-all duration-300 backdrop-blur-sm"
+          className="w-full pl-10 pr-10 py-3 rounded-xl border border-white/30 bg-white/10 text-white placeholder-gray-300 focus:outline-none   focus:ring-green-400/50 focus:border-green-400/50 transition-all duration-300 backdrop-blur-sm"
           placeholder={`Enter ${label.toLowerCase()}`}
           {...props}
         />
@@ -512,11 +512,11 @@ const Login = () => {
           <button
             type="submit"
             disabled={showCaptchaModal && !isCaptchaSolved}
-            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${showCaptchaModal && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
+            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none   focus:ring-yellow-400     transition-all duration-300 hover:scale-105 ${showCaptchaModal && !isCaptchaSolved ? 'opacity-50 cursor-not-allowed' : ''
               }`}
           >
-            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
-            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f5c95b_0%,#f58b5b_25%,#EC4899_50%,#f58b5b_75%,#f5c95b_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-yellow-700 group-hover:to-orange-700">
               <span className="mr-2">Sign in</span>
               <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -622,12 +622,12 @@ const Login = () => {
           <ErrorMessage name="agreeToTerms" component="div" className="text-red-400 text-sm mt-1" />
           <button
             type="submit"
-            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 ${''
+            className={`group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] focus:outline-none         transition-all duration-300 hover:scale-105 ${''
               }`}
           >
-            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
-            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
-              <span className="mr-2">Sign up</span>
+           <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f5c95b_0%,#f58b5b_25%,#EC4899_50%,#f58b5b_75%,#f5c95b_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-yellow-700 group-hover:to-orange-700">
+             <span className="mr-2">Sign up</span>
               <svg className="w-4 h-4 transform group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
@@ -681,10 +681,10 @@ const Login = () => {
             name="email"
             icon={<FaEnvelope size={20} />}
           />
-          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
-            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
-            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
-              <span className="mr-2">Send OTP</span>
+          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none         transition-all duration-300 hover:scale-105">
+           <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f5c95b_0%,#f58b5b_25%,#EC4899_50%,#f58b5b_75%,#f5c95b_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-yellow-700 group-hover:to-orange-700">
+             <span className="mr-2">Send OTP</span>
               <svg className="w-4 h-4 transform group-hover:animate-bounce transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
@@ -781,7 +781,7 @@ const Login = () => {
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
                     className="w-12 h-12 text-center text-white bg-white/10 border border-white/30 rounded-xl 
-                               focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400/50 
+                               focus:outline-none   focus:ring-green-400/50 focus:border-green-400/50 
                                transition-all duration-300"
                   />
                 ))}
@@ -798,15 +798,13 @@ const Login = () => {
                 onClick={verifyOtpHandler}
                 disabled={isLoading}
                 className="group relative inline-flex w-full overflow-hidden rounded-xl p-[1px] 
-                           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 
-                           focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105 
+                           focus:outline-none       
+                             transition-all duration-300 hover:scale-105 
                            disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] 
-                               bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
-                <span className="relative inline-flex h-full w-full items-center justify-center rounded-xl 
-                                 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300">
-                  {isLoading ? (
+                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f5c95b_0%,#f58b5b_25%,#EC4899_50%,#f58b5b_75%,#f5c95b_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-yellow-700 group-hover:to-orange-700">
+           {isLoading ? (
                     <span className="flex items-center">
                       <svg
                         className="animate-spin h-5 w-5 mr-2"
@@ -915,10 +913,10 @@ const Login = () => {
             showPassword={showConfirmPassword}
             onToggleShowPassword={toggleConfirmPasswordVisibility}
           />
-          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:scale-105">
-            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#3B82F6_0%,#8B5CF6_25%,#EC4899_50%,#8B5CF6_75%,#3B82F6_100%)]" />
-            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5  text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-blue-700 group-hover:to-purple-700">
-              <span className="mr-2">Reset Password</span>
+          <button type="submit" className="group relative inline-flex  w-full overflow-hidden rounded-xl p-[1px] focus:outline-none         transition-all duration-300 hover:scale-105">
+           <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f5c95b_0%,#f58b5b_25%,#EC4899_50%,#f58b5b_75%,#f5c95b_100%)]" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-3xl transition-all duration-300 group-hover:from-yellow-700 group-hover:to-orange-700">
+             <span className="mr-2">Reset Password</span>
               <svg className="w-4 h-4 transform group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>

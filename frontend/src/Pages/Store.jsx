@@ -194,10 +194,10 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
       onClick={() => onNavigate(`/single/${game?._id}`)}
       className="w-full max-w-[220px] sm:max-w-[260px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] cursor-pointer mx-auto"
     >
-      <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
+       <div className="group relative overflow-hidden rounded-2xl bg-[#141414] border border-slate-600/50 shadow-[0_4px_33px_#0000000d] hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
 
         {/* Enhanced Glow Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+       <div className="absolute inset-0 bg-[#141414] opacity-100 transition-opacity duration-700" />
 
         {/* Image Container */}
         <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
@@ -214,7 +214,7 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
             {/* NEW Badge */}
             {isNewGame && (
               <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
-                <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                <div className="px-3 ms:py-1.5 py-1  bg-[var(--color-change)] rounded-full backdrop-blur-sm border border-orange-400/30 shadow-lg">
                   <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
                 </div>
               </div>
@@ -256,10 +256,10 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
 
           {/* Game Info */}
           <div className="grid grid-cols-1 gap-4">
-            <div className="bg-slate-600/50 rounded-xl relative z-10 px-3 sm:px-4 sm:py-3 py-2 md:px-6 md:py-3.5">
+            <div className="bg-[#06060690] rounded-xl relative z-10 px-3 sm:px-4 sm:py-3 py-2 md:px-6 md:py-3.5">
               <div className="flex flex-wrap items-center space-x-2 mb-2">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">Price</span>
+               
+                <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">Price :</span>
                 <span className="ms:text-lg text-xs font-black text-white">
                   ${game?.platforms?.windows?.price?.toLocaleString('en-IN')}
                 </span>
@@ -329,9 +329,9 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
               addToCartHandler?.(game);
             }}
             disabled={disableCartAction}
-            className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${disableCartAction
-              ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
-              : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
+           className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${disableCartAction
+                ? "bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30"
+                : "bg-[radial-gradient(50%_50%_at_50%_100%,rgb(255,177,104)_0%,rgb(227,109,0)_100%)] hover:shadow-xl  hover:scale-[1.02] active:scale-[0.98]"
               }`}
           >
             <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
@@ -388,27 +388,31 @@ const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning,
       {title}
     </p>
     <div className="flex items-center gap-3">
-      <button onClick={onAllGamesClick} className="text-nowrap  px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
+      <button onClick={onAllGamesClick}  className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
                     font-medium text-sm transition-all duration-200 ease-out
-                    border-[1px] border-purple-400 
+                    border-[1px] border-[var(--color-change)]
                     rounded-md
-                    text-white
-                    hover:bg-purple-400  hover:scale-110
-                    active:scale-95 focus-visible:outline-none 
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+                    text-white focus-visible:outline-none 
+                    focus-visible:ring-2  focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900  ">
         All Games
       </button>
       <button
         onClick={onPrev}
         disabled={isBeginning}
-        className={`${isBeginning ? BUTTON_STYLES.navDisabled : BUTTON_STYLES.navActive} rotate-180`}
+        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isBeginning
+                    ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                    : ' style_btn_color hover:scale-110'
+                    } text-white rotate-180`}
       >
         <FaArrowRight size={16} />
       </button>
       <button
         onClick={onNext}
         disabled={isEnd}
-        className={isEnd ? BUTTON_STYLES.navDisabled : BUTTON_STYLES.navActive}
+        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${isEnd
+                    ? 'bg-gray-500 cursor-not-allowed opacity-50'
+                    : 'style_btn_color hover:scale-110'
+                    } text-white`}
       >
         <FaArrowRight size={16} />
       </button>

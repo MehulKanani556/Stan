@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
 
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
             Privacy Policy
           </h1>
           <p className="text-gray-300 text-base md:text-lg">
@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
         {/* Introduction */}
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
           <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3">
-            <FaShieldAlt className="text-purple-400 text-2xl" />
+            <FaShieldAlt className="text-orange-400 text-2xl" />
             Your Privacy Matters
           </h2>
           <p className="text-gray-300 leading-relaxed text-sm md:text-base">
@@ -47,13 +47,13 @@ export default function PrivacyPolicy() {
 
         {/* Information We Collect */}
         <div id="information" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaDatabase className="text-purple-400 text-2xl md:text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaDatabase className="text-orange-400 text-2xl md:text-xl" />
             1. Information We Collect
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Personal Information</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Personal Information</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Name, email address, and contact information</li>
                 <li>Date of birth and age verification</li>
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Usage Information</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Usage Information</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Game preferences and play history</li>
                 <li>Device information and IP addresses</li>
@@ -71,7 +71,7 @@ export default function PrivacyPolicy() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Technical Information</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Technical Information</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Browser type and operating system</li>
                 <li>Device identifiers and hardware information</li>
@@ -84,13 +84,13 @@ export default function PrivacyPolicy() {
 
         {/* How We Use Your Information */}
         <div id="usage" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaEye className="text-purple-400 text-2xl md:text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaEye className="text-orange-400 text-2xl md:text-xl" />
             2. How We Use Your Information
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Service Provision</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Service Provision</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Provide and maintain our gaming platform</li>
                 <li>Process payments and manage subscriptions</li>
@@ -99,7 +99,7 @@ export default function PrivacyPolicy() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Communication</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Communication</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Send important service updates</li>
                 <li>Provide customer support</li>
@@ -108,7 +108,7 @@ export default function PrivacyPolicy() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Improvement & Analytics</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Improvement & Analytics</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Analyze platform usage and performance</li>
                 <li>Develop new features and games</li>
@@ -121,7 +121,7 @@ export default function PrivacyPolicy() {
 
         {/* Information Sharing */}
         <div id="sharing" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">3. Information Sharing</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">3. Information Sharing</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:
@@ -137,8 +137,8 @@ export default function PrivacyPolicy() {
 
         {/* Data Security */}
         <div id="security" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaLock className="text-purple-400 text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaLock className="text-orange-400 text-xl" />
             4. Data Security
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
@@ -161,14 +161,14 @@ export default function PrivacyPolicy() {
 
         {/* Cookies & Tracking */}
         <div id="cookies" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">5. Cookies & Tracking Technologies</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">5. Cookies & Tracking Technologies</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               We use cookies and similar technologies to enhance your gaming experience:
             </p>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Essential Cookies</h4>
+                <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Essential Cookies</h4>
                 <ul className="list-disc list-inside space-y-1 ml-4 text-xs md:text-sm">
                   <li>Authentication and session management</li>
                   <li>Security and fraud prevention</li>
@@ -176,7 +176,7 @@ export default function PrivacyPolicy() {
                 </ul>
               </div>
               <div>
-                <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Analytics Cookies</h4>
+                <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Analytics Cookies</h4>
                 <ul className="list-disc list-inside space-y-1 ml-4 text-xs md:text-sm">
                   <li>Usage statistics and performance metrics</li>
                   <li>Feature improvement insights</li>
@@ -192,8 +192,8 @@ export default function PrivacyPolicy() {
 
         {/* Your Rights */}
         <div id="rights" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaUser className="text-purple-400 text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaUser className="text-orange-400 text-xl" />
             6. Your Rights & Choices
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
@@ -202,7 +202,7 @@ export default function PrivacyPolicy() {
             </p>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Access & Control</h4>
+                <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Access & Control</h4>
                 <ul className="list-disc list-inside space-y-1 ml-4 text-xs md:text-sm">
                   <li>Access your personal data</li>
                   <li>Update or correct information</li>
@@ -211,7 +211,7 @@ export default function PrivacyPolicy() {
                 </ul>
               </div>
               <div>
-                <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Communication Preferences</h4>
+                <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Communication Preferences</h4>
                 <ul className="list-disc list-inside space-y-1 ml-4 text-xs md:text-sm">
                   <li>Opt-out of marketing emails</li>
                   <li>Control notification settings</li>
@@ -228,7 +228,7 @@ export default function PrivacyPolicy() {
 
         {/* Children's Privacy */}
         <div id="children" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">7. Children's Privacy</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">7. Children's Privacy</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               Our platform is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.
@@ -247,8 +247,8 @@ export default function PrivacyPolicy() {
 
         {/* Policy Changes */}
         <div id="changes" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaCog className="text-purple-400 text-2xl md:text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaCog className="text-orange-400 text-2xl md:text-xl" />
             8. Changes to This Policy
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
@@ -270,7 +270,7 @@ export default function PrivacyPolicy() {
 
         {/* Contact Us */}
         <div id="contact" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">9. Contact Us</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">9. Contact Us</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               If you have any questions about this Privacy Policy or our data practices, please contact us:
@@ -287,8 +287,8 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Footer */}
-        <div className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 border border-purple-500/30">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-center text-purple-200">Your Privacy is Our Priority</h3>
+        <div className="bg-gradient-to-r from-orange-900/50 to-pink-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 border border-orange-500/30">
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-center text-orange-200">Your Privacy is Our Priority</h3>
           <p className="text-gray-300 text-center leading-relaxed text-sm md:text-base">
             We are committed to transparency and protecting your privacy. This Privacy Policy explains how we handle your information
             and your rights regarding your personal data. By using our platform, you acknowledge that you have read and understood

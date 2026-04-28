@@ -394,7 +394,7 @@ const Cart = () => {
                                                                 onClick={(e) => e.stopPropagation()}
                                                                 className="text-gray-300 flex items-center gap-2 text-sm bg-white/5 px-3 py-1 rounded-full relative group"
                                                             >
-                                                                <PlatformIcon className="text-purple-300" />
+                                                                <PlatformIcon className="text-orange-300" />
                                                                 <span className="font-semibold">{platformMeta.label}</span>
                                                                 <span className="text-xs text-slate-400 ml-1">${platformItem.price.toFixed(2)}</span>
                                                                 {!isSinglePlatform && (
@@ -428,7 +428,7 @@ const Cart = () => {
                                                             e.stopPropagation();
                                                             openPlatformModal(game);
                                                         }}
-                                                        className="text-xs sm:text-sm font-semibold text-purple-300 hover:text-white transition bg-white/5 px-3 py-1 rounded-full"
+                                                        className="text-xs sm:text-sm font-semibold text-orange-300 hover:text-white transition bg-white/5 px-3 py-1 rounded-full"
                                                     >
                                                         Add platform
                                                     </button>
@@ -444,7 +444,7 @@ const Cart = () => {
                                 <p className="text-gray-500 mb-6">Looks like you haven't added anything yet.</p>
                                 <button
                                     onClick={handleContinueShopping}
-                                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
+                                    className="px-6 py-3 rounded-xl bg-[var(--color-change)] text-white font-semibold hover:scale-105 transition"
                                 >
                                     Continue Shopping
                                 </button>
@@ -461,7 +461,7 @@ const Cart = () => {
                             ) : (
                                 <>
                                     <h2 className="font-bold text-xl">Order Summary</h2>
-                                    <span className="text-xl font-bold text-purple-400">{groupedCartItems.length}</span>
+                                    <span className="text-xl font-bold text-orange-400">{groupedCartItems.length}</span>
                                 </>
                             )}
 
@@ -496,7 +496,7 @@ const Cart = () => {
                                                         id="useFanCoins"
                                                         checked={useFanCoinsChecked}
                                                         onChange={(e) => handleFanCoinCheckboxChange(e.target.checked)}
-                                                        className="mr-2 text-purple-600 focus:ring-purple-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="mr-2 text-orange-600 focus:ring-orange-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                                                     />
                                                     Use Fan Coins
                                                 </label>
@@ -548,7 +548,7 @@ const Cart = () => {
                                                     min="0"
                                                     max={Math.min(fanCoins, totalPrice)}
                                                     step="1"
-                                                    className="w-full p-2 rounded-xl bg-gray-700/20 text-white border border-gray-600 focus:border-purple-400 focus:ring-purple-500"
+                                                    className="w-full p-2 rounded-xl bg-gray-700/20 text-white border border-gray-600 focus:border-orange-400 focus:ring-orange-500"
                                                     placeholder={`Max: ${Math.min(fanCoins, totalPrice)}`}
                                                 />
                                                 <div className="text-xs text-gray-400 mt-1">
@@ -580,18 +580,18 @@ const Cart = () => {
 
                         {!loading && (
                             <div className="gap-4">
-                                <button onClick={handleCheckout} className="w-full bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
+                                <button onClick={handleCheckout} className="w-full style_btn_color text-white font-semibold py-3 my-2 rounded-xl active:scale-105 transition">
                                     Proceed to Checkout
                                 </button>
                                 <button
                                     onClick={handleClearCart}
-                                    className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
+                                    className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
                                 >
                                     Clear Cart
                                 </button>
                                 <button
                                     onClick={handleContinueShopping}
-                                    className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
+                                    className="w-full  bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300 font-semibold py-3 my-2 rounded-xl"
                                 >
                                     Continue Shopping
                                 </button>

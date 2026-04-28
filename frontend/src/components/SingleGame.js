@@ -875,7 +875,7 @@ const SingleGame = () => {
                 {/* Genres */}
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-8">
                   <div className="bg-black/30 p-6 rounded-lg shadow-lg">
-                    <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#ab99e1]">
+                    <h3 className="text-lg md:text-2xl font-semibold mb-4 text-[#e1b999]">
                       Genres
                     </h3>
                     <div className="flex flex-wrap gap-3">
@@ -893,7 +893,7 @@ const SingleGame = () => {
 
                 {/* Game Description */}
                 <div className="bg-black/30 p-8 rounded-lg shadow-lg mb-8">
-                  <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#ab99e1] capitalize">
+                  <h3 className="text-lg md:text-2xl font-bold mb-1 text-[#e1b999] capitalize">
                     {single?.title}
                   </h3>
                   <p className="mb-4">(also Includes {single?.title} Legacy)</p>
@@ -906,7 +906,7 @@ const SingleGame = () => {
                 <div className="bg-black/20 p-6 sm:p-8 rounded-lg shadow-lg w-full">
                   <div className="flex flex-col gap-4">
                     <div>
-                      <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-4 border-b border-gray-700 text-[#ab99e1]">
+                      <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-4 border-b border-gray-700 text-[#e1b999]">
                         Platforms
                       </h3>
                       <div
@@ -923,8 +923,8 @@ const SingleGame = () => {
                               key={platformKey}
                               onClick={() => setActivePlatformTab(platformKey)}
                               className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${isActive
-                                  ? 'bg-[#ab99e1]/20 border-[#ab99e1] text-white'
-                                  : 'border-gray-700 text-gray-300 hover:border-[#ab99e1]/60 hover:text-white'
+                                  ? 'bg-[#e1b999]/20 border-[#e1b999] text-white'
+                                  : 'border-gray-700 text-gray-300 hover:border-[#e1b999]/60 hover:text-white'
                                 }`}
                               role="tab"
                               aria-selected={isActive}
@@ -966,7 +966,7 @@ const SingleGame = () => {
                 {single?.instructions?.length > 0 && (
                   <div className="mt-5 pt-2">
                     <div className="bg-black/20 p-8 rounded-lg shadow-lg w-full">
-                      <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#ab99e1]">
+                      <h3 className="text-lg md:text-2xl font-semibold pb-4 mb-6 border-b border-gray-700 text-[#e1b999]">
                         Instructions
                       </h3>
                       {single.instructions.map((instruction, index) => (
@@ -1015,11 +1015,11 @@ const SingleGame = () => {
                         onClick={() => handleRemoveFromWishlist(single._id)}
                         className="w-full flex items-center justify-center gap-2
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                               style_btn_color
+                    text-white shadow-lg shadow-amber-500/30
+                    hover:scale-110
                     active:scale-95 focus-visible:outline-none
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         <FaHeart size={16} />
                         <span className="text-xs">WishListed</span>
@@ -1029,11 +1029,11 @@ const SingleGame = () => {
                         onClick={() => handleAddWishlist(single)}
                         className="w-full flex items-center justify-center gap-2
                                 font-bold py-3 sm:px-4 px-1 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                               style_btn_color
+                    text-white shadow-lg shadow-amber-500/30
+                     hover:scale-110
                     active:scale-95 focus-visible:outline-none
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         <FaHeart size={16} />
                         <span className="text-xs">Add To WishList</span>
@@ -1048,11 +1048,11 @@ const SingleGame = () => {
                         disabled={isInCart}
                         className={`w-full flex items-center justify-center gap-2
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                               style_btn_color
+                    text-white shadow-lg shadow-amber-500/30
+                     hover:scale-110
                     active:scale-95 focus-visible:outline-none
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${isInCart ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${isInCart ? 'opacity-70 cursor-not-allowed' : ''}`}
                       >
                         <FaShoppingCart size={16} />
                         <span className="text-xs">{isInCart ? 'Added to cart' : 'Add To Cart'}</span>
@@ -1068,11 +1068,11 @@ const SingleGame = () => {
                       <button
                         className="w-full cursor-not-allowed
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                               style_btn_color
+                    text-white shadow-lg shadow-amber-500/30
+                     hover:scale-110
                     active:scale-95 focus-visible:outline-none
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         <span className="text-white font-bold text-sm me-2">
                           ✓
@@ -1083,11 +1083,11 @@ const SingleGame = () => {
                         onClick={() => setOpen(true)}
                         className="w-full cursor-pointer
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                               style_btn_color
+                    text-white shadow-lg shadow-amber-500/30
+                     hover:scale-110
                     active:scale-95 focus-visible:outline-none
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                       >
                         Review
                       </button>
@@ -1097,11 +1097,11 @@ const SingleGame = () => {
                       onClick={handleOpenBuyPlatformModal}
                       className="w-full cursor-pointer
                                 font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                                bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-                    text-white shadow-lg shadow-fuchsia-500/30
-                    hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                               style_btn_color
+                    text-white shadow-lg shadow-amber-500/30
+                     hover:scale-110
                     active:scale-95 focus-visible:outline-none
-                    focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                    focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                     >
                       Buy Now
                     </button>
@@ -1112,11 +1112,11 @@ const SingleGame = () => {
                   onClick={() => navigate("/login")}
                   className="w-full cursor-pointer
                         font-bold py-3 px-4 rounded-xl transition-all duration-300 ease-in-out
-                        bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899]
-            text-white shadow-lg shadow-fuchsia-500/30
-            hover:from-[#7C3AED] hover:via-[#9333EA] hover:to-[#DB2777] hover:scale-110
+                       style_btn_color
+            text-white shadow-lg shadow-amber-500/30
+             hover:scale-110
             active:scale-95 focus-visible:outline-none
-            focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+            focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
                 >
                   login to Buy
                 </button>
@@ -1219,7 +1219,7 @@ const SingleGame = () => {
                                       e.target.checked
                                     )
                                   }
-                                  className="mr-2 text-purple-600 focus:ring-purple-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="mr-2 text-orange-600 focus:ring-orange-500 border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                                   disabled={
                                     !isLoggedIn || !fanCoins || fanCoins <= 0
                                   }
@@ -1282,7 +1282,7 @@ const SingleGame = () => {
                                 min="0"
                                 max={Math.min(fanCoins, getPlatformPrice(selectedPurchasePlatform))}
                                 step="1"
-                                className="w-full p-2 rounded-xl bg-gray-700/20 text-white border border-gray-600 focus:border-purple-400 focus:ring-purple-500"
+                                className="w-full p-2 rounded-xl bg-gray-700/20 text-white border border-gray-600 focus:border-orange-400 focus:ring-orange-500"
                                 placeholder={`Max: ${Math.min(fanCoins, getPlatformPrice(selectedPurchasePlatform))}`}
                               />
                               <div className="text-xs text-gray-400 mt-1">
@@ -1308,7 +1308,7 @@ const SingleGame = () => {
                       </button>
                       <button
                         onClick={handleCheckout}
-                        className="w-full py-3 bg-gradient-to-r from-[#8B5CF6] via-[#A855F7] to-[#EC4899] text-white rounded-lg hover:opacity-90 transition"
+                        className="w-full py-3 style_btn_color text-white rounded-lg hover:opacity-90 transition"
                       >
                         Proceed to Payment
                       </button>

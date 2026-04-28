@@ -47,16 +47,16 @@ import Advertize from '../components/Advertize';
 const Trophy = [gold, silver, bronze];
 const gamerTheme = `
   .page-bg {
-    background: radial-gradient(1200px 600px at 10% -10%, rgba(98,29,242,0.25), transparent 60%),
-                radial-gradient(900px 500px at 100% 10%, rgba(177,145,255,0.18), transparent 60%),
-                linear-gradient(180deg, #0c0b11 0%, #0f0d19 100%);
+    background: radial-gradient(1200px 600px at 10% -10%, rgba(247, 210, 145,0.25), transparent 60%),
+                radial-gradient(900px 500px at 100% 10%, rgba(247, 210, 145,0.15), transparent 60%),
+                linear-gradient(180deg, #120f0c 0%, #0f0d19 100%);
     min-height: 100vh;
   }
   .hero-border {
-    border-image: linear-gradient(90deg, rgba(177,145,255,0.6), rgba(98,29,242,0.6)) 1;
+    border-image: linear-gradient(90deg, rgba(239, 167, 42,0.6), rgba(239, 167, 42,0.15)) 1;
   }
   .reward-glow {
-    box-shadow: 0 0 24px rgba(177,145,255,0.18), inset 0 0 12px rgba(177,145,255,0.08);
+    box-shadow: 0 0 24px rgba(239, 167, 42,0.10), inset 0 0 12px rgba(239, 167, 42,0.15);
   }
   .glass-card {
     background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%);
@@ -64,12 +64,12 @@ const gamerTheme = `
     border: 1px solid rgba(255,255,255,0.08);
     transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   }
-  .glass-card:hover { transform: translateY(-2px); border-color: rgba(177,145,255,0.35); box-shadow: 0 12px 40px rgba(98,29,242,0.18); }
-  .btn-primary { background: linear-gradient(90deg, #621df2 0%, #b191ff 100%); color: #fff; }
+  .glass-card:hover { transform: translateY(-2px); border-color: rgba(239, 167, 42,0.35); box-shadow: 0 12px 40px rgba(241, 191, 111,0.15)); }
+  .btn-primary { background: linear-gradient(90deg, #f2621d 0%, #ffce91 100%); color: #fff; }
   .btn-primary:hover { filter: brightness(1.05); }
   .btn-soft { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.12); }
   .btn-soft:hover { background: rgba(255,255,255,0.12); }
-  .chip { background: linear-gradient(90deg, rgba(177,145,255,0.12), rgba(98,29,242,0.12)); border: 1px solid rgba(177,145,255,0.35); }
+  .chip { background: linear-gradient(90deg, rgba(235, 158, 86,0.12), rgba(241, 191, 111,0.15)); border: 1px solid rgba(239, 167, 42,0.35); }
   .redeem-progress::-webkit-progress-bar { background: rgba(255,255,255,0.08); border-radius: 9999px; }
   .redeem-progress::-webkit-progress-value { background: linear-gradient(90deg, #b191ff, #621df2); border-radius: 9999px; }
   .redeem-progress { width: 100%; height: 8px; border-radius: 9999px; overflow: hidden; }
@@ -791,10 +791,10 @@ const RewardsExperience = () => {
                 <div className='max-w-[95%] md:max-w-[75%] m-auto overflow-x-hidden'>
                     {/* Hero */}
                     <div className='relative mt-6 sm:mt-10 md:mt-16 rounded-2xl sm:rounded-3xl bg-white/5 overflow-hidden '>
-                        <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(177,145,255,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(98,29,242,0.25), transparent)" }}></div>
+                        <div className='absolute inset-0 opacity-40' style={{ background: "radial-gradient(800px 200px at 50% -20%, rgba(231, 182, 90,0.35), transparent), radial-gradient(600px 200px at 100% 0%, rgba(217, 136, 38,0.25), transparent)" }}></div>
                         <div className='relative z-10 px-4 sm:px-6 md:px-10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6'>
                             <div className='w-full lg:w-auto'>
-                                <div className='inline-flex items-center gap-2 chip text-purple-200 text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
+                                <div className='inline-flex items-center gap-2 chip text-[var(--color-change)] text-xs sm:text-sm font-semibold px-3 py-1 rounded-full mb-3'>
                                     <FaGem /> Level up your loot
                                 </div>
                                 <h1 className='text-white font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight tracking-tight'>Rewards Hub</h1>
@@ -803,11 +803,11 @@ const RewardsExperience = () => {
                             <div className='flex flex-row sm:flex-row items-center gap-2 sm:gap-6 w-full lg:w-auto flex-wrap sm:flex-nowrap'>
                                 <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                     <p className='text-white/70 text-xs'>Current Balance</p>
-                                    <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem className='flex-shrink-0' size={22} /> {userBalance.toFixed(2)}</div>
+                                    <div className='text-orange-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1 flex items-center justify-center gap-2'><FaGem className='flex-shrink-0' size={22} /> {userBalance.toFixed(2)}</div>
                                 </div>
                                 <div className='glass-card rounded-2xl p-3 sm:p-4 min-w-[11 0px] sm:min-w-[140px] text-center w-full sm:w-auto'>
                                     <p className='text-white/70 text-xs'>Total Earned</p>
-                                    <div className='text-purple-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
+                                    <div className='text-orange-300 font-extrabold text-xl sm:text-2xl md:text-3xl mt-1'>{totalEarned.toFixed(2)}</div>
                                 </div>
 
                             </div>
@@ -821,8 +821,8 @@ const RewardsExperience = () => {
                         {/* <div className='glass-card rounded-2xl p-4 sm:p-6 md:p-7 reward-glow h-fit md:col-span-1'>
                         <h3 className='text-white font-semibold text-base md:text-lg mb-4 sm:mb-5'>My Points</h3>
                         <div className='bg-[#171423] rounded-xl p-4 sm:p-6 md:p-7 flex flex-col items-center justify-center border border-white/10'>
-                            <FaGem className='text-purple-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
-                            <div className='text-purple-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance.toFixed(2)}</div>
+                            <FaGem className='text-orange-300 text-3xl sm:text-4xl md:text-5xl mb-3' />
+                            <div className='text-orange-300 font-extrabold text-3xl sm:text-4xl md:text-5xl'>{userBalance.toFixed(2)}</div>
                             <p className='text-white/80 text-sm md:text-base mt-1'>Your Balance</p>
                             <p className='text-white/50 text-xs md:text-sm text-center mt-3'>Earn points, unlock rewards, and flex your status.</p>
                             <p className='text-white/40 text-xs md:text-sm mt-2'>Total earned: {earnBalance.toFixed(2)}</p>
@@ -857,7 +857,7 @@ const RewardsExperience = () => {
                                                     <p className="text-white font-medium text-sm sm:text-base truncate">
                                                         {task?.title}
                                                     </p>
-                                                    <div className="flex items-center gap-2 text-purple-300 text-xs sm:text-sm">
+                                                    <div className="flex items-center gap-2 text-orange-300 text-xs sm:text-sm">
                                                         <FaGem /> <span>{task?.reward}</span>
                                                     </div>
                                                 </div>
@@ -878,7 +878,7 @@ const RewardsExperience = () => {
                                                     disabled={done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)}
                                                     className={`px-4 py-2 rounded-2xl text-sm font-semibold whitespace-nowrap w-full sm:w-auto text-center ${done || loadingTaskClaim || (task?.title === 'Take a quiz' && hasPlayedQuiz && quizScore === 0)
                                                         ? 'btn-soft cursor-not-allowed opacity-60'
-                                                        : 'btn-primary'
+                                                        : 'style_btn_color'
                                                         }`}
                                                 >
                                                     {loadingTaskClaim
@@ -910,7 +910,7 @@ const RewardsExperience = () => {
                                 {allTasksState?.earntask?.length > 2 && (
                                     <button
                                         onClick={() => setShowAll((v) => !v)}
-                                        className="w-full px-4 py-2 rounded-xl text-sm font-semibold btn-soft"
+                                        className="w-full px-4 py-2 rounded-xl text-sm font-semibold style_btn_color"
                                     >
                                         {showAll
                                             ? "Show less"
@@ -933,7 +933,7 @@ const RewardsExperience = () => {
                                 <p className='text-white/70 text-sm mb-3'>Share your link. When a friend registers, you earn referral coins.</p>
                                 <div className='flex flex-col sm:flex-row gap-2'>
                                     <input readOnly value={referralLink} className='flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm' />
-                                    <button onClick={handleCopyReferral} className='btn-primary px-4 py-2 rounded-lg text-sm font-semibold'>Copy link</button>
+                                    <button onClick={handleCopyReferral} className='style_btn_color px-4 py-2 rounded-lg text-sm font-semibold'>Copy link</button>
                                 </div>
 
                                 <div className='flex items-center justify-between mb-3'>
@@ -967,7 +967,7 @@ const RewardsExperience = () => {
                                             disabled={referralPoints === 0 || isClaimingReferral}
                                             className={`px-4 py-2 rounded-lg text-sm font-semibold ${referralPoints === 0 || isClaimingReferral
                                                 ? 'btn-soft cursor-not-allowed opacity-60'
-                                                : 'btn-primary'
+                                                : 'style_btn_color'
                                                 }`}
                                         >
                                             {isClaimingReferral ? 'Claiming...' : referralPoints === 0 ? 'All Claimed' : 'Claim Points'}
@@ -984,7 +984,7 @@ const RewardsExperience = () => {
                     <div className='mt-6 sm:mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
                         <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow'>
                             <div className='flex items-center justify-between mb-4'>
-                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-purple-300' /> Daily Tasks</h3>
+                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaCalendarDay className='text-orange-300' /> Daily Tasks</h3>
                                 <span className='text-white/70 text-xs'>Day {streakDay}/7</span>
                             </div>
                             <div className='space-y-3'>
@@ -1037,7 +1037,7 @@ const RewardsExperience = () => {
                                         <div key={task._id} className='bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10'>
                                             <div className='flex items-center justify-between mb-2'>
                                                 <p className='text-white font-medium text-xs sm:text-sm'>{task?.title}</p>
-                                                <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'>
+                                                <div className='flex items-center gap-1 text-orange-300 text-xs sm:text-sm'>
                                                     <FaGem /> {task?.reward}
                                                 </div>
                                             </div>
@@ -1051,12 +1051,12 @@ const RewardsExperience = () => {
                                                 <span className='text-white/50 text-xs'>{Math.round(progressPct)}%</span>
                                             </div>
                                             <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden mb-3'>
-                                                <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
+                                                <div className='h-2 bg-gradient-to-r from-[#ffcf91] to-[#f28f1d]' style={{ width: `${progressPct}%` }}></div>
                                             </div>
                                             <button
                                                 onClick={() => completeDailyTask(task)}
                                                 disabled={!canComplete || loadingTaskClaim || isDailyTaskClaimed(task?._id)}
-                                                className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isDailyTaskClaimed(task?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                                className={`w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isDailyTaskClaimed(task?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'style_btn_color' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                             >
                                                 {isDailyTaskClaimed(task?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim') : 'In Progress'}
                                             </button>
@@ -1121,15 +1121,15 @@ const RewardsExperience = () => {
                                                 {!isPlayTimeTask && goal > 0 && (
                                                     <span className='text-white/60 text-xs'>{progress}/{goal}</span>
                                                 )}
-                                                <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
+                                                <div className='flex items-center gap-1 text-orange-300 text-xs sm:text-sm'><FaGem /> {q.reward}</div>
                                             </div>
                                             <div className='mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                                <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${progressPct}%` }}></div>
+                                                <div className='h-2 bg-gradient-to-r from-[#ffcf91] to-[#f28f1d]' style={{ width: `${progressPct}%` }}></div>
                                             </div>
                                             <button
                                                 onClick={() => completeWeeklyTask(q)}
                                                 disabled={!canComplete || loadingTaskClaim || isWeeklyTaskClaimed(q?._id)}
-                                                className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isWeeklyTaskClaimed(q?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                                className={`mt-3 sm:mt-4 w-full py-2 rounded-lg text-xs sm:text-sm font-semibold ${isWeeklyTaskClaimed(q?._id) ? 'btn-soft cursor-not-allowed opacity-60' : canComplete ? 'style_btn_color' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                             >
                                                 {isWeeklyTaskClaimed(q?._id) ? 'Claimed' : canComplete ? (loadingTaskClaim ? 'Claiming...' : 'Claim Reward') : 'In Progress'}
                                             </button>
@@ -1262,11 +1262,11 @@ const RewardsExperience = () => {
                                                         ? claimed
                                                             ? 'btn-soft cursor-not-allowed opacity-60'
                                                             : canClaim && !isThisButtonLoading
-                                                                ? 'btn-primary'
+                                                                ? 'style_btn_color'
                                                                 : 'btn-soft cursor-not-allowed opacity-60'
                                                         : userBalance < reward.tier || isThisButtonLoading
                                                             ? 'btn-soft cursor-not-allowed opacity-60'
-                                                            : 'btn-primary'
+                                                            : 'style_btn_color'
                                                         }`}
                                                 >
                                                     {reward.type === 'fan'
@@ -1292,7 +1292,7 @@ const RewardsExperience = () => {
                     <div className='mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8'>
                         <div className='glass-card rounded-2xl p-4 sm:p-6 reward-glow lg:col-span-2'>
                             <div className='flex items-center justify-between mb-4'>
-                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-purple-300' /> Leaderboard</h3>
+                                <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaTrophy className='text-orange-300' /> Leaderboard</h3>
                                 <span className='text-white/50 text-xs'>Top this week</span>
                             </div>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4'>
@@ -1317,7 +1317,7 @@ const RewardsExperience = () => {
                                             {Trophy[idx] ? (
                                                 <img className='w-8 h-8 sm:w-9 sm:h-9 ' src={Trophy[idx]}></img>
                                             ) : (
-                                                <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-purple-600 text-white'>
+                                                <div className='shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ring-2 ring-white/20 bg-orange-600 text-white'>
                                                     {idx + 1}
                                                 </div>
                                             )}
@@ -1326,7 +1326,7 @@ const RewardsExperience = () => {
                                                 <span className='text-white/60 text-xs'>Top Player</span>
                                             </div>
                                         </div>
-                                        <div className='flex items-center gap-1 sm:gap-2 text-purple-300 text-xs sm:text-sm shrink-0'><FaGem /><span className='font-semibold'>{u.points}</span></div>
+                                        <div className='flex items-center gap-1 sm:gap-2 text-orange-300 text-xs sm:text-sm shrink-0'><FaGem /><span className='font-semibold'>{u.points}</span></div>
                                     </div>
                                 ))}
                             </div>
@@ -1351,7 +1351,7 @@ const RewardsExperience = () => {
                     {/* Milestones & Badges */}
                     <div className='mt-8 sm:mt-12'>
                         <div className='flex items-center justify-between mb-3'>
-                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-purple-300' /> Milestones & Badges</h3>
+                            <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><FaMedal className='text-orange-300' /> Milestones & Badges</h3>
                             <span className='text-white/50 text-xs'>Lifetime progress</span>
                         </div>
                         {console.log("allTasksState.milestone", allTasksState)}
@@ -1364,7 +1364,7 @@ const RewardsExperience = () => {
                                 return (
                                     <div key={m._id} className='glass-card rounded-2xl p-4 sm:p-5 reward-glow'>
                                         <div className='flex items-center gap-2 sm:gap-3 mb-2'>
-                                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${canClaim ? 'bg-purple-300 text-white' : claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
+                                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${canClaim ? 'bg-orange-300 text-white' : claimed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-white'}`}>
                                                 <FaStar className='text-xs sm:text-sm' />
                                             </div>
                                             <div className='min-w-0 flex-1'>
@@ -1373,16 +1373,16 @@ const RewardsExperience = () => {
                                             </div>
                                         </div>
                                         <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
-                                            <div className='h-2 bg-gradient-to-r from-[#b191ff] to-[#621df2]' style={{ width: `${pct}%` }}></div>
+                                            <div className='h-2 bg-gradient-to-r from-[#ffcf91] to-[#f28f1d]' style={{ width: `${pct}%` }}></div>
                                         </div>
                                         <div className='flex items-center justify-between mt-2 sm:mt-3'>
                                             <span className='text-white/70 text-xs'>Bonus</span>
-                                            <div className='flex items-center gap-1 text-purple-300 text-xs sm:text-sm'><FaGem /> {m.reward}</div>
+                                            <div className='flex items-center gap-1 text-orange-300 text-xs sm:text-sm'><FaGem /> {m.reward}</div>
                                         </div>
                                         <button
                                             onClick={() => claimMilestone(m)}
                                             disabled={!canClaim || loadingTaskClaim || isMilestoneTaskClaimed(m._id)}
-                                            className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${isMilestoneTaskClaimed(m._id) ? 'btn-soft cursor-not-allowed opacity-60' : canClaim ? 'btn-primary' : 'btn-soft cursor-not-allowed opacity-60'}`}
+                                            className={`mt-3 sm:mt-4 w-full py-2 rounded-xl text-xs sm:text-sm font-semibold ${isMilestoneTaskClaimed(m._id) ? 'btn-soft cursor-not-allowed opacity-60' : canClaim ? 'style_btn_color' : 'btn-soft cursor-not-allowed opacity-60'}`}
                                         >
                                             {isMilestoneTaskClaimed(m._id) ? 'Claimed' : canClaim ? (loadingTaskClaim ? 'Claiming...' : 'Claim Bonus') : 'In Progress'}
                                         </button>

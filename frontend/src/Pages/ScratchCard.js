@@ -41,7 +41,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
     canvas.width = 300;
     canvas.height = 150;
 
-    ctx.fillStyle = "#252327"; // Silver background
+    ctx.fillStyle = "#262422"; // Silver background
     ctx.fillRect(0, 0, 300, 150);
 
     ctx.fillStyle = "#666";
@@ -186,7 +186,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
                     <div className="text-white text-lg font-bold">
                       {prize?.reward?.game?.title || "Paid Game"}
                     </div>
-                    <div className="text-purple-300 text-sm mt-1">
+                    <div className="text-orange-300 text-sm mt-1">
                       {prize?.reward?.message}
                     </div>
                   </div>
@@ -235,7 +235,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
             );
           })() : (
             <div className="w-full h-full bg-[#171423] flex items-center justify-center">
-              <div className="text-xl font-bold text-center text-purple-500 px-4">
+              <div className="text-xl font-bold text-center text-[var(--color-change)] px-4">
                 {typeof prize === "object" ? prize?.reward?.message : String(prize?.reward?.message)}
               </div>
             </div>
@@ -269,7 +269,7 @@ const ScratchCard = ({ prize, onDetailsClick }) => {
         <div className="mt-3">
           <button
             onClick={() => navigate(`/single/${prize.reward.game._id}`)}
-            className="px-4 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300"
+            className="px-4 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300"
           >
             Play now
           </button>

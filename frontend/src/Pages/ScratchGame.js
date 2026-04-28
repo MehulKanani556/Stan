@@ -24,7 +24,7 @@ const PrizeConfetti = () => {
         left: `${Math.random() * 100}%`,
         animationDelay: `${Math.random() * 2}s`,
         color: [
-          'text-purple-500', 'text-pink-500', 'text-yellow-500',
+          'text-orange-500', 'text-pink-500', 'text-yellow-500',
           'text-blue-500', 'text-green-500'
         ][Math.floor(Math.random() * 5)],
         size: `text-${['xs', 'sm', 'base', 'lg'][Math.floor(Math.random() * 4)]}`,
@@ -111,9 +111,9 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
       return (
         <div
           className="relative w-full  sm:p-6 p-4 rounded-3xl 
-         from-gray-900/90 via-purple-900/60 to-black/80 
+         from-gray-900/90 via-orange-900/60 to-black/80 
         backdrop-blur-2xl shadow-[0_0_25px_rgba(168,85,247,0.5)] 
-        border border-purple-500/30 overflow-hidden 
+        border border-orange-500/30 overflow-hidden 
         animate-fadeInUp"
         >
 
@@ -127,9 +127,9 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
 
           {/* Floating Trophy Badge */}
           <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20">
-            <div className=" from-purple-500 to-purple-800 
+            <div className=" from-orange-500 to-orange-800 
             rounded-full ms:p-5 p-3 shadow-2xl border-4 border-white/20 
-            animate-bounce-slow ring-4 ring-purple-500/40">
+            animate-bounce-slow ring-4 ring-orange-500/40">
               <FaTrophy className="ms:text-5xl text-3xl text-yellow-300 drop-shadow-lg" />
             </div>
           </div>
@@ -146,15 +146,15 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
             {/* Neon overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent 
             opacity-0 group-hover:opacity-100 transition-all duration-500" />
-            <div className="absolute -inset-1 rounded-2xl border border-purple-500/50 blur opacity-40 group-hover:opacity-70"></div>
+            <div className="absolute -inset-1 rounded-2xl border border-orange-500/50 blur opacity-40 group-hover:opacity-70"></div>
           </div>
 
           {/* Title */}
           <h2
-            className="mt-6 text-center ms:text-3xl text-2xl font-extrabold text-purple-300 
+            className="mt-6 text-center ms:text-3xl text-2xl font-extrabold text-orange-300 
             flex items-center justify-center gap-3 tracking-wide"
           >
-            <FaGamepad className="text-purple-500 animate-bounce" />
+            <FaGamepad className="text-orange-500 animate-bounce" />
             {game.title}
             <FaFireAlt className="text-red-500 animate-pulse" />
           </h2>
@@ -162,7 +162,7 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
           {/* Prize Message */}
           <p
             className="mt-3 text-center ms:text-xl text-lg italic font-medium 
-            bg-gradient-to-r from-purple-400 to-pink-500 
+            bg-gradient-to-r from-orange-400 to-pink-500 
             bg-clip-text text-transparent"
           >
             "{prize.reward.message}"
@@ -172,18 +172,18 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
           <div className="mt-6 grid sm:grid-cols-2 grid-cols-2 sm:gap-4 gap-2">
             <div
               className="bg-white/10 backdrop-blur-md rounded-xl sm:p-4 p-2 
-              text-center border border-purple-500/30 
-              hover:scale-105 hover:shadow-purple-500/30 transition-all"
+              text-center border border-orange-500/30 
+              hover:scale-105 hover:shadow-orange-500/30 transition-all"
             >
-              <FaCalendarAlt className="mx-auto text-2xl text-purple-400 mb-2" />
+              <FaCalendarAlt className="mx-auto text-2xl text-orange-400 mb-2" />
               <span className="text-sm text-white/80">
                 {daysLeft > 0 ? `${daysLeft} Days Left` : "Expires Soon"}
               </span>
             </div>
             <div
               className="bg-white/10 backdrop-blur-md rounded-xl sm:p-4 p-2 
-              text-center border border-purple-500/30 
-              hover:scale-105 hover:shadow-purple-500/30 transition-all"
+              text-center border border-orange-500/30 
+              hover:scale-105 hover:shadow-orange-500/30 transition-all"
             >
               <FaGift className="mx-auto text-2xl text-pink-400 mb-2 animate-pulse" />
               <span className="text-sm text-white/80">Scratch Card Prize</span>
@@ -195,9 +195,9 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
             <button
               onClick={isExpired ? handleClose : handlePlayNow}
               className="mt-6 w-full py-4 rounded-xl text-lg font-bold 
-              bg-gradient-to-r from-purple-600 via-pink-600 to-purple-800 
+              style_btn_color
               shadow-[0_0_20px_rgba(236,72,153,0.5)] text-white 
-              hover:from-purple-700 hover:via-pink-700 hover:to-purple-900 
+             
               transition-all duration-300 hover:scale-105 active:scale-95 
               flex items-center justify-center gap-3 relative"
             >
@@ -222,9 +222,9 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
     return (
       <div
         className="relative w-full sm:p-6 p-4 rounded-3xl 
-        from-gray-900/90 via-purple-900/60 to-black/80 
-        backdrop-blur-2xl shadow-[0_0_25px_rgba(168,85,247,0.5)] 
-        border border-purple-500/30 overflow-hidden 
+        from-gray-900/90 via-orange-900/60 to-black/80 
+        backdrop-blur-2xl shadow-[0_0_25px_rgba(247,169,85,0.5)] 
+        border border-orange-500/30 overflow-hidden 
         animate-fadeInUp"
       >
         <button
@@ -239,7 +239,7 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
           <FaGift className="text-6xl text-yellow-300 mb-6 animate-bounce" />
           <p
             className="text-2xl font-bold text-center 
-            bg-gradient-to-r from-pink-400 to-purple-600 
+            bg-gradient-to-r from-pink-400 to-orange-600 
             bg-clip-text text-transparent"
           >
             {prize.reward.message}
@@ -265,7 +265,7 @@ const ScratchCardDetailsModal = ({ prize, onClose }) => {
       >
         <div
           className="max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-3xl 
-    shadow-[0_0_40px_rgba(168,85,247,0.6)] scrollbar-thin scrollbar-thumb-purple-500/50"
+    shadow-[0_0_25px_rgba(247,169,85,0.5)] scrollbar-thin scrollbar-thumb-orange-500/50"
         >
           {/* Close Button */}
 
@@ -344,14 +344,14 @@ const ScratchGame = () => {
     <div className="py-8">
       <div className="mb-8 flex items-center justify-between">
         <div className="text-left">
-          <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><SiScratch className='text-purple-300' /> Scratch Card Game</h3>
+          <h3 className='text-white font-semibold text-base md:text-lg flex items-center gap-2'><SiScratch className='text-orange-300' /> Scratch Card Game</h3>
           <p className="text-sm sm:text-base md:text-lg text-white/70 mt-2">Scratch and win exciting prizes!</p>
         </div>
         {Array.isArray(scratchCards) && scratchCards.length > 8 && (
           <div className="flex justify-end">
             <button
               onClick={() => setShowAll((prev) => !prev)}
-              className="px-5 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300"
+              className="px-5 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300"
             >
               {showAll ? 'View less' : 'View all'}
             </button>
@@ -366,11 +366,11 @@ const ScratchGame = () => {
             key={index}
             className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6 text-center hover:scale-105 transition-transform"
           >
-            <h3 className="text-xl font-semibold text-purple-300 mb-2">{option.label}</h3>
+            <h3 className="text-xl font-semibold text-orange-300 mb-2">{option.label}</h3>
             <p className="text-white/80 mb-4">${option.price.toFixed(2)}</p>
             <button
               onClick={() => handlePurchaseScratchCards(option)}
-              className="w-full py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors disabled:opacity-50"
+              className="w-full py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors disabled:opacity-50"
             >
               {'Buy Now'}
             </button>

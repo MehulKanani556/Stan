@@ -219,7 +219,7 @@ const GamePlay = () => {
             <div className='container pt-28 pb-24'>
                 {/* Show server time if available */}
                 {serverTime && (
-                    <div className='mb-4 text-purple-200 text-sm bg-white/10 px-3 py-1 rounded-lg border border-white/10'>
+                    <div className='mb-4 text-orange-200 text-sm bg-white/10 px-3 py-1 rounded-lg border border-white/10'>
                         Server Time: {serverTime}
                     </div>
                 )}
@@ -228,22 +228,22 @@ const GamePlay = () => {
                         <h1 className='text-white text-2xl font-semibold uppercase'>{game ? game.name : 'Game'}</h1>
                         {/* Show play time if game loaded and not error */}
                         {/* {game && !iframeError && (
-                            <span className='ml-0 md:ml-4 text-purple-200 text-sm bg-white/10 px-3 py-1 rounded-lg border border-white/10'>
+                            <span className='ml-0 md:ml-4 text-orange-200 text-sm bg-white/10 px-3 py-1 rounded-lg border border-white/10'>
                                 Play Time: {formatTime(playSeconds)}
                             </span>
                         )}
-                        <span className='ml-0 md:ml-4 text-purple-300 text-xs bg-white/5 px-2 py-1 rounded border border-white/5'>
+                        <span className='ml-0 md:ml-4 text-orange-300 text-xs bg-white/5 px-2 py-1 rounded border border-white/5'>
                             Total Play Time: {formatTime(totalPlaySeconds)}
                         </span> */}
                     </div>
                     <div className='flex items-center gap-4'>
                         <button
                             onClick={toggleFullScreen}
-                            className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40"
+                            className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300 shadow-lg shadow-orange-900/40"
                         >
                             Full Screen
                         </button>
-                        <Link to='/games' className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40">Back to Games</Link>
+                        <Link to='/games' className="px-4 sm:px-6 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300 shadow-lg shadow-orange-900/40">Back to Games</Link>
                     </div>
                 </div>
                 {game ? (
