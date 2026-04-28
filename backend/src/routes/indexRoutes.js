@@ -16,6 +16,7 @@ import { createTrailer, deleteTrailer, getAllTrailer, getPublicTrailers, updateT
 import { addToCart, clearCart, getCart, removeFromCart, updateCartItem } from "../controllers/cart.controller.js";
 import { addToWishlist, checkWishlistStatus, getWishlist, removeFromWishlist } from "../controllers/wishlist.controller.js";
 import websiteInfoRoutes from "./websiteInfo.routes.js";
+import contactRoutes from "./contact.routes.js";
 import { createOrder, createPaymentIntent, downloadGame, getAllOrders, getUserOrders, retryOrderPayment, verifyPayment } from "../controllers/order.controller.js";
 // import { createOrUpdateRating, deleteRating, getAllRatings, getGameRatings, getGameRatingStats, getUserGameRating, getUserRatings, markReviewHelpful, updateRating } from "../controllers/rating.controller.js";
 import { createOrUpdateRating, getAllRatingByGame, getAllRatings } from "../controllers/rating.controller.js";
@@ -229,6 +230,7 @@ indexRoutes.delete("/deleteCategory/:id", deleteCategory);
 
 indexRoutes.get("/chatWidget", chatWidGetController);
 indexRoutes.use('/website', websiteInfoRoutes);
+indexRoutes.use('/contact', contactRoutes);
 
 
 // payment

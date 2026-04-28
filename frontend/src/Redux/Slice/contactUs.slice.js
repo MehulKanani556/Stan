@@ -19,8 +19,8 @@ export const getAllcontactUs = createAsyncThunk(
     "contactUs/getAllcontactUs",
     async (_, { dispatch, rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get(`/getAllContactUs`);            
-            return response.data.data;
+            const response = await axiosInstance.get(`/contact/messages`);            
+            return response.data.messages;
         } catch (error) {
             return handleErrors(error, dispatch, rejectWithValue);
         }
@@ -33,8 +33,7 @@ export const createcontactUs = createAsyncThunk(
         // console.log(data);
 
         try {
-            const response = await axiosInstance.post(`/createContactUs`, data);
-            // enqueueSnackbar(response.data.message || "Contact Add successful", { variant: "success" });
+            const response = await axiosInstance.post(`/contact/submit`, data);
             return response.data;
         } catch (error) {
             enqueueSnackbar(error.response?.data?.message || error.message || "Contact not successful", { variant: "error" });
@@ -103,7 +102,9 @@ const contactUsSlice = createSlice({
                 state.loading = false;
                 state.success = true;
                 state.message = 'contactUs created successfully';
-                state.contactUs = state.contactUs.push(action.payload);
+                if (state.contactUs && Array.isArray(state.contactUs)) {
+                    state.contactUs.push(action.payload.data);
+                }
             })
             .addCase(createcontactUs.rejected, (state, action) => {
                 state.loading = false;

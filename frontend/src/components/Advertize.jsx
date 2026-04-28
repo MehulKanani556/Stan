@@ -11,8 +11,8 @@ import ad12 from '../images/ad12.webp';
 
 const Advertize = ({ limitImages = false }) => {
     // Define which images to show based on the limitImages prop
-    const leftAds = limitImages ? [ad1, dominoz] : [ad1, dominoz, ad14, ad5, ad6, ad11];
-    const rightAds = limitImages ? [ad6, ad13] : [ad6, ad13, ad8, ad10, ad12];
+    const leftAds = limitImages ? [ad1, dominoz] : [ad1, dominoz, ad14, ad5, ad6, ad11, ad14];
+    const rightAds = limitImages ? [ad6, ad13] : [ad6, ad13, ad8, ad10, ad12, ad13];
 
     return (
         <div className="relative w-full">
@@ -29,7 +29,7 @@ const Advertize = ({ limitImages = false }) => {
             </div>
 
             {/* Right Side Ad - Hidden on mobile */}
-            <div className="hidden md:block absolute top-[300px] xs:top-[250px] sm:top-[300px] md:top-[350px] lg:top-[400px] xl:top-[450px] right-2 xs:right-3 sm:right-4 md:right-[-12px] lg:right-[0] transform -translate-y-1/2 w-16 xs:w-20 sm:w-24 md:w-28 lg:w-32 xl:w-40 ">
+            <div className="hidden md:block absolute top-[300px] xs:top-[250px] sm:top-[300px] md:top-[350px] lg:top-[400px] xl:top-[450px] right-2 xs:right-3 sm:right-4 md:right-[1px] lg:right-[0] transform -translate-y-1/2 w-16 xs:w-20 sm:w-24 md:w-24 lg:w-32 xl:w-40 ">
                 {rightAds.map((ad, index) => (
                     <img
                         key={`right-${index}`}

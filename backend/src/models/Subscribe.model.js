@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const subscribeSchema = mongoose.Schema({
+    type: {
+        type: String,
+        default: 'subscription'
+    },
     email: {
         type: String,
     },
