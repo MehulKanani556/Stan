@@ -34,7 +34,8 @@ const SWIPER_BREAKPOINTS = {
   768: { slidesPerView: 2.5, spaceBetween: 14 },
   1024: { slidesPerView: 3, spaceBetween: 14 },
   1280: { slidesPerView: 3.5, spaceBetween: 14 },
-  1480: { slidesPerView: 4.8, spaceBetween: 16 },
+  1480: { slidesPerView: 4, spaceBetween: 16 },
+  1550: { slidesPerView: 4.5, spaceBetween: 16 },
 };
 
 const BUTTON_STYLES = {
