@@ -14,6 +14,7 @@ import Faq from "../Admin/Faq";
 import Transaction from "../Admin/Transaction";
 import NotFound from "../Admin/NotFound";
 import Subscriber from "../Admin/Subscriber";
+import FreeGameAdmin from "../Admin/FreeGameAdmin";
 
 
 const AdminRoutes = () => {
@@ -39,6 +40,7 @@ const AdminRoutes = () => {
         <Route path="/" element={<AdminDashboard />} />
         <Route path="/category" element={<Category />} />
         <Route path="/games" element={<Game />} />
+        <Route path="/free-games" element={<FreeGameAdmin />} />
         {/* <Route path="/blog" element={<Blog />} /> */}
         <Route path="/user" element={<User />} />
         <Route path="/profile" element={<AdminProfile />} />

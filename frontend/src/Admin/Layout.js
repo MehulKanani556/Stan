@@ -157,6 +157,7 @@ function Layout({ children }) {
     { title: "Dashboard", icon: <AiFillHome />, path: "/admin" },
     { title: "Category", icon: <BiSolidCategory />, path: "/admin/category" },
     { title: "Games", icon: <IoGameControllerOutline />, path: "/admin/games" },
+    { title: "Free Games", icon: <IoGameControllerOutline />, path: "/admin/free-games" },
     { title: "User", icon: <FaUser />, path: "/admin/user" },
     // {
     //   title: "Terms and Conditions",

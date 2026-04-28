@@ -51,6 +51,77 @@ export const fetchGameBySlug = createAsyncThunk(
   }
 );
 
+// Async thunk for creating a new free game
+export const createFreeGame = createAsyncThunk(
+  "freeGame/createFreeGame",
+  async (gameData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post('/free-games', gameData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.data.success) {
+        enqueueSnackbar(response.data.message, { variant: "success" });
+        return response.data.result;
+      } else {
+        return rejectWithValue({ message: response.data.message });
+      }
+    } catch (error) {
+      console.error('Error creating free game:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to create game';
+      enqueueSnackbar(errorMessage, { variant: "error" });
+      return rejectWithValue({ message: errorMessage });
+    }
+  }
+);
+
+// Async thunk for updating a free game
+export const updateFreeGame = createAsyncThunk(
+  "freeGame/updateFreeGame",
+  async ({ id, gameData }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put(`/free-games/${id}`, gameData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.data.success) {
+        enqueueSnackbar(response.data.message, { variant: "success" });
+        return response.data.result;
+      } else {
+        return rejectWithValue({ message: response.data.message });
+      }
+    } catch (error) {
+      console.error('Error updating free game:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to update game';
+      enqueueSnackbar(errorMessage, { variant: "error" });
+      return rejectWithValue({ message: errorMessage });
+    }
+  }
+);
+
+// Async thunk for deleting a free game
+export const deleteFreeGame = createAsyncThunk(
+  "freeGame/deleteFreeGame",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`/free-games/${id}`);
+      if (response.data.success) {
+        enqueueSnackbar(response.data.message, { variant: "success" });
+        return id;
+      } else {
+        return rejectWithValue({ message: response.data.message });
+      }
+    } catch (error) {
+      console.error('Error deleting free game:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to delete game';
+      enqueueSnackbar(errorMessage, { variant: "error" });
+      return rejectWithValue({ message: errorMessage });
+    }
+  }
+);
+
 const freeGameSlice = createSlice({
   name: "freeGame",
   initialState,
@@ -106,6 +177,44 @@ const freeGameSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || 'Failed to fetch game';
         state.selectedGame = null;
+      })
+      // Create free game
+      .addCase(createFreeGame.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createFreeGame.fulfilled, (state, action) => {
+        state.loading = false;
+        state.games.unshift(action.payload);
+        state.totalGames += 1;
+      })
+      .addCase(createFreeGame.rejected, (state) => {
+        state.loading = false;
+      })
+      // Update free game
+      .addCase(updateFreeGame.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateFreeGame.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.games.findIndex(g => g._id === action.payload._id);
+        if (index !== -1) {
+          state.games[index] = action.payload;
+        }
+      })
+      .addCase(updateFreeGame.rejected, (state) => {
+        state.loading = false;
+      })
+      // Delete free game
+      .addCase(deleteFreeGame.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteFreeGame.fulfilled, (state, action) => {
+        state.loading = false;
+        state.games = state.games.filter(g => g._id !== action.payload);
+        state.totalGames -= 1;
+      })
+      .addCase(deleteFreeGame.rejected, (state) => {
+        state.loading = false;
       });
   },
 });

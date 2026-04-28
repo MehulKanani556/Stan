@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearError, getFreeGames } from '../Redux/Slice/freeGame.slice'
+import { getAllCategories } from '../Redux/Slice/category.slice'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FaChevronLeft, FaChevronRight, FaGamepad, FaPlay, FaTh, FaList, FaStar, FaFire } from 'react-icons/fa'
 import 'swiper/css'
@@ -12,9 +13,15 @@ import Advertize from '../components/Advertize'
 const Games = () => {
 	const dispatch = useDispatch()
 	const { games, loading, error } = useSelector((state) => state.freeGame)
+	const { categories } = useSelector((state) => state.category)
 	const swiperRef = useRef(null)
+	const scrollRef = useRef(null)
+	const [isDragging, setIsDragging] = useState(false)
+	const [startX, setStartX] = useState(0)
+	const [scrollLeft, setScrollLeft] = useState(0)
 
 	const [showAll, setShowAll] = useState(false)
+	const [selectedCategory, setSelectedCategory] = useState('All')
 	const [isBeginning, setIsBeginning] = useState(true)
 	const [isEnd, setIsEnd] = useState(false)
 
@@ -22,6 +29,7 @@ const Games = () => {
 
 	useEffect(() => {
 		dispatch(getFreeGames())
+		dispatch(getAllCategories())
 	}, [dispatch])
 
 	useEffect(() => {
@@ -62,7 +70,33 @@ const Games = () => {
 		}
 	}, [safeGames])
 
+	const handleMouseDown = (e) => {
+		setIsDragging(true)
+		setStartX(e.pageX - scrollRef.current.offsetLeft)
+		setScrollLeft(scrollRef.current.scrollLeft)
+	}
+
+	const handleMouseLeave = () => {
+		setIsDragging(false)
+	}
+
+	const handleMouseUp = () => {
+		setIsDragging(false)
+	}
+
+	const handleMouseMove = (e) => {
+		if (!isDragging) return
+		e.preventDefault()
+		const x = e.pageX - scrollRef.current.offsetLeft
+		const walk = (x - startX) * 2 // Scroll speed
+		scrollRef.current.scrollLeft = scrollLeft - walk
+	}
+
 	const isInitialLoading = loading && (!Array.isArray(games) || games.length === 0)
+
+	const filteredGames = selectedCategory === 'All'
+		? safeGames
+		: safeGames.filter(game => game.category === selectedCategory || (categories.find(c => c.categoryName === selectedCategory)?._id === game.category))
 
 	// Error state
 	if (error) {
@@ -146,7 +180,42 @@ const Games = () => {
 			{/* Main Content */}
 			<>
 				<Advertize limitImages={true} />
-				<div className="w-full max-w-[95%] md:max-w-[75%] mx-auto mt-11 pt-2 pb-5">
+
+				{/* Category Filter */}
+				<div className="w-full max-w-[95%] md:max-w-[75%] mx-auto mt-11 px-1">
+					<div
+						ref={scrollRef}
+						onMouseDown={handleMouseDown}
+						onMouseLeave={handleMouseLeave}
+						onMouseUp={handleMouseUp}
+						onMouseMove={handleMouseMove}
+						className="flex space-x-2 overflow-x-auto hide-scrollbar cursor-grab active:cursor-grabbing select-none"
+					>
+						<button
+							onClick={() => setSelectedCategory('All')}
+							className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6  font-medium text-xs sm:text-sm md:text-base lg:text-lg rounded-lg  whitespace-nowrap transition-all duration-300 ${selectedCategory === 'All'
+								? 'text-[var(--color-change)] bg-gray-700/50  shadow-lg shadow-orange-500/20'
+								: 'hover:text-[var(--color-change)] hover:bg-gray-700/50'
+								}`}
+						>
+							All Games
+						</button>
+						{categories.filter(cat => safeGames.some(game => game.category === cat._id || game.category === cat.categoryName)).map((cat) => (
+							<button
+								key={cat._id}
+								onClick={() => setSelectedCategory(cat.categoryName)}
+								className={`px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 lg:px-6 rounded-lg font-medium text-xs sm:text-sm md:text-base lg:text-lg whitespace-nowrap transition-all duration-300 ${selectedCategory === cat.categoryName
+									? 'text-[var(--color-change)] bg-gray-700/50  shadow-lg shadow-orange-500/20'
+									: ' hover:text-[var(--color-change)] hover:bg-gray-700/50'
+									}`}
+							>
+								{cat.categoryName}
+							</button>
+						))}
+					</div>
+				</div>
+
+				<div className="w-full max-w-[95%] md:max-w-[75%] mx-auto mt-6 pt-2 pb-5">
 					<div className="flex flex-col ms:flex-row lg:items-center ms:items-start items-center sm:justify-between ms:gap-8 gap-4 mb-12">
 						<div className="space-y-3">
 							<h2 className="xl:text-5xl lg:text-4xl md:text-3xl sm:text-2xl text-2xl font-bold text-white">
@@ -239,7 +308,7 @@ const Games = () => {
 										}}
 										className="!pb-8"
 									>
-										{safeGames.map((game, index) => (
+										{filteredGames.map((game, index) => (
 											<SwiperSlide key={game._id}>
 												<GameCard game={game} index={index} />
 											</SwiperSlide>
@@ -250,13 +319,13 @@ const Games = () => {
 
 							{showAll && (
 								<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ms:gap-8 gap-y-6 " >
-									{safeGames.map((game, index) => (
+									{filteredGames.map((game, index) => (
 										<GameCard key={game._id} game={game} index={index} />
 									))}
 								</div>
 							)}
 
-							{safeGames.length === 0 && (
+							{filteredGames.length === 0 && (
 								<div className="text-center py-20">
 									<div className="w-32 h-32 bg-gradient-to-br from-gray-700 to-gray-800 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
 										<FaGamepad className="w-16 h-16 text-gray-400" />
@@ -277,6 +346,14 @@ const Games = () => {
 			</>
 
 			<style jsx>{`
+				.hide-scrollbar::-webkit-scrollbar {
+					display: none;
+				}
+				.hide-scrollbar {
+					-ms-overflow-style: none;
+					scrollbar-width: none;
+				}
+
 				.swiper-slide {
 					transition: transform 0.4s ease;
 					height: auto;
