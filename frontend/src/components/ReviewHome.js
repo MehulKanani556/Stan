@@ -174,8 +174,8 @@ import user from '../images/user_img.png'
         }
         .ds_reviewHome_slide .card__bg {
           position: absolute; inset: 0; border-radius: 18px; overflow: hidden; pointer-events: none;
-          background: radial-gradient(600px 220px at 30% 0%, rgba(144,47,126,0.2), transparent 55%),
-                      radial-gradient(600px 220px at 70% 100%, rgba(111,53,255,0.18), transparent 55%);
+          background: radial-gradient(600px 220px at 30% 0%, rgba(237, 127, 44,0.3), transparent 55%),
+                      radial-gradient(600px 220px at 70% 100%, rgba(236, 162, 105,0.20), transparent 55%);
           transform: scale(1.06);
         }
         .ds_reviewHome_slide .card__shine {

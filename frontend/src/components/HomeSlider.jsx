@@ -183,7 +183,7 @@ import HeroSliderSkeleton2 from "../lazyLoader/HeroSkeleton2";
                                         <div className="name xl:text-[50px] md:text-[28px] text-[24px] z-10">{slide.title || slide.name || 'Untitled'}</div>
                                         <div className="des xl:text-base md:text-sm  text-xs text-[#ccc]">{slide.description?.slice(0, 100) + '...' || 'No description available'}</div>
                                         <Link to={'/single/' + slide._id} className='flex justify-center mt-5'>
-                                            <button className='btn xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
+                                            <button className='btn xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 style_btn_color border-none text-white rounded mx-auto '>
                                                 Learn More
                                             </button>
                                         </Link>

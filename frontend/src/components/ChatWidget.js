@@ -229,7 +229,7 @@ const ChatWidget = () => {
 
         <button
           onClick={() => setIsContactModalOpen(true)}
-          className="fixed md:bottom-6 right-6 bottom-16 z-50 rounded-full p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl hover:scale-105 transition"
+          className="fixed md:bottom-6 right-6 bottom-16 z-50 rounded-full p-2 style_btn_color text-white shadow-xl hover:scale-105 transition"
         >
           💬
         </button>
@@ -237,7 +237,7 @@ const ChatWidget = () => {
       {(showGoUp && !isContactModalOpen && !hideInAdmin) && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-28 right-6 md:bottom-6 md:right-20 z-50 p-3  rounded-full bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
+          className="fixed bottom-28 right-6 md:bottom-6 md:right-20 z-50 p-3  rounded-full style_btn_color text-white shadow-lg animate-pulse hover:scale-110 hover:animate-none transition-all duration-300"
           title="Go to top"
         >
           <FaArrowUp />
@@ -259,7 +259,7 @@ const ChatWidget = () => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 sticky top-0">
+              <div className="flex items-center gap-3 px-4 py-3 style_btn_color sticky top-0">
                 <button
                   className="text-white hover:scale-110 transition"
                   onClick={() => { setIsContactModalOpen(false); dispatch(chatToggleFunc(false)) }}
@@ -291,7 +291,7 @@ const ChatWidget = () => {
                       <div
                         className={`px-4 py-3 rounded-2xl shadow-lg whitespace-pre-wrap break-words
                         ${m.role === "user"
-                            ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none"
+                            ? "bg-[var(--color-change)] text-white rounded-br-none"
                             : "bg-white/10 backdrop-blur-md text-gray-200 border border-white/10 rounded-bl-none"
                           }`}
                       >
@@ -323,7 +323,7 @@ const ChatWidget = () => {
                               <button
                                 key={idx}
                                 onClick={() => sendMessage({ q: suggestion })}
-                                className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-full"
+                                className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs px-3 py-1 rounded-full"
                               >
                                 {suggestion}
                               </button>
@@ -358,8 +358,8 @@ const ChatWidget = () => {
                   <button
                     onClick={sendMessage}
                     disabled={isLoading || !input.trim()}
-                    className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 
-                       hover:from-blue-500 hover:to-purple-500 text-white px-4 py-2 shadow-lg transition disabled:opacity-50"
+                    className="inline-flex items-center justify-center rounded-xl style_btn_color 
+                       text-white px-4 py-2 shadow-lg transition disabled:opacity-50"
                   >
                     <FaPaperPlane className="w-5 h-5" />
                   </button>

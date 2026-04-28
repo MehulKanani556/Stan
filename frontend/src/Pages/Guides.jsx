@@ -21,7 +21,7 @@ const SupportPage = () => {
   return (
     <div className="w-full ">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-purple-800 via-purple-900/60 to-[#332a77] text-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-gradient-to-r from-orange-800 via-orange-900/60 to-[#78592a] text-center py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-6 drop-shadow-lg">
             Game Guides
@@ -74,31 +74,31 @@ const SupportPage = () => {
       />
 
       <section className="relative py-6 sm:py-8 md:py-16 lg:py-20  overflow-hidden w-[95%] md:w-[85%] mx-auto">
-        <div className="absolute inset-0 bg-purple-500/10 blur-3xl" />
+        <div className="absolute inset-0 bg-orange-500/10 blur-3xl" />
 
         <div className="relative max-w-5xl mx-auto text-center text-white">
           <h2 className="text-xl sm:text-2xl md:text-4xl font-extrabold mb-4 tracking-wide">
             Still Need Help?{" "}
-            <span className="text-purple-400">We’ve Got You</span>
+            <span className="text-orange-400">We’ve Got You</span>
           </h2>
           <p className="text-gray-300 max-w-2xl mx-auto sm:mb-12 mb-6 text-base sm:text-lg">
             Our team is here to get you back in the game quickly. Choose the option that works best for you:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 text-left">
-            <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1">
+            <div className="group bg-gradient-to-b from-orange-900/40 to-black/40 p-6 rounded-2xl border border-orange-500/30 shadow-md hover:shadow-orange-500/30 hover:border-orange-400 transition transform hover:-translate-y-1">
               <h3 className="font-semibold text-lg md:text-xl mb-3">
                 Email
               </h3>
               <a
                 href="mailto:info@yoyokhel.com"
-                className="text-purple-400 group-hover:text-purple-300 font-medium hover:underline break-all"
+                className="text-orange-400 group-hover:text-orange-300 font-medium hover:underline break-all"
               >
                 info@yoyokhel.com
               </a>
             </div>
 
-            <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
+            <div className="group bg-gradient-to-b from-orange-900/40 to-black/40 p-6 rounded-2xl border border-orange-500/30 shadow-md hover:shadow-orange-500/30 hover:border-orange-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
               <div>
                 <h3 className="font-semibold text-lg md:text-xl mb-3">
                   Chat With Us
@@ -107,12 +107,12 @@ const SupportPage = () => {
                   You will have all answers of your questions
                 </p>
               </div>
-              <button onClick={() => dispatch(chatToggleFunc(true))} className="w-full py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition">
+              <button onClick={() => dispatch(chatToggleFunc(true))} className="w-full py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-sm font-semibold transition">
                 Start Chat
               </button>
             </div>
 
-            <div className="group bg-gradient-to-b from-purple-900/40 to-black/40 p-6 rounded-2xl border border-purple-500/30 shadow-md hover:shadow-purple-500/30 hover:border-purple-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
+            <div className="group bg-gradient-to-b from-orange-900/40 to-black/40 p-6 rounded-2xl border border-orange-500/30 shadow-md hover:shadow-orange-500/30 hover:border-orange-400 transition transform hover:-translate-y-1 flex flex-col justify-between">
               <div>
                 <h3 className="font-semibold text-lg md:text-xl mb-3">
                   FAQs
@@ -123,7 +123,7 @@ const SupportPage = () => {
               </div>
               <Link
                 to="/faqs"
-                className="w-full text-center py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition inline-block"
+                className="w-full text-center py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-sm font-semibold transition inline-block"
               >
                 View FAQs
               </Link>
@@ -145,13 +145,13 @@ const SectionWrapper = ({ title, description, img, items, flip }) => {
 
         {/* Content */}
         <div className={`${flip ? "md:col-start-2" : ""} order-2 md:order-1`}>
-          <h2 className="text-2xl md:text-3xl font-bold text-purple-400 mb-4">{title}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-orange-400 mb-4">{title}</h2>
           <p className="text-gray-300 mb-6">{description}</p>
           <ul className="space-y-4">
             {items.map((item, idx) => (
               <li
                 key={idx}
-                className="bg-black/40 p-4 rounded-lg border border-purple-500/30 hover:border-purple-400 transition"
+                className="bg-black/40 p-4 rounded-lg border border-orange-500/30 hover:border-orange-400 transition"
               >
                 <h3 className="font-semibold text-white">{item.title}</h3>
                 <p className="text-gray-400 text-sm">{item.text}</p>
@@ -162,7 +162,7 @@ const SectionWrapper = ({ title, description, img, items, flip }) => {
 
         {/* Image */}
         <div className={`${flip ? "md:col-start-1 md:row-start-1" : ""} order-1 md:order-2`}>
-          <div className="w-full h-[300px] md:h-[350px] overflow-hidden rounded-xl border border-purple-500/30 shadow-lg">
+          <div className="w-full h-[300px] md:h-[350px] overflow-hidden rounded-xl border border-orange-500/30 shadow-lg">
             <img
               src={img}
               alt={title}

@@ -134,10 +134,10 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
   const price = item?.platforms?.windows?.price;
   return (
     <Link to={linkTo} className='block '>
-      <div className="group relative bg-gradient-to-br cursor-pointer md:mb-0 mb-6 from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/60 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2 sm:h-[-webkit-fill-available]">
+      <div className="group relative bg-gradient-to-br cursor-pointer md:mb-0 mb-6 from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-gray-600 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[var(--color-change20)] hover:-translate-y-2 sm:h-[-webkit-fill-available]">
 
         {/* Background gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" /> */}
 
         {/* Image container */}
         <div className="relative overflow-hidden aspect-[16/9]">
@@ -150,7 +150,7 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
           />
 
           {/* Gradient overlay on image */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" /> */}
 
           {/* Status badge */}
           {item?.status && (
@@ -186,8 +186,8 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
             )}
 
             {/* Arrow icon */}
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-[var(--bg-light)]  flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </div>
@@ -195,7 +195,7 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
         </div>
 
         {/* Bottom accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+        {/* <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" /> */}
       </div>
     </Link>
   );
@@ -205,8 +205,8 @@ GameCard.displayName = 'GameCard';
 
 // Section Header Component
 const SectionHeader = React.memo(({ title, isRefreshing }) => (
-  <div className="flex items-center gap-4 mb-6 sm:mb-8">
-    <div className=" h-8 w-8 flex-shrink-0 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
+  <div className="flex items-center gap-4 mb-6 sm:mb-8 border-b-2 border-[var(--color-change)]">
+    {/* <div className=" h-8 w-8 flex-shrink-0 rounded-full bg-gradient-to-tr from-[#ab99e1]/30 to-[#7d6bcf]/30 flex items-center justify-center group shadow-md hover:shadow-lg hover:shadow-[#ab99e1]/40 transition-all duration-300">
       <svg
         className="sm:w-6 sm:h-6 h-4 w-4 text-[#ab99e1] transition-all duration-300 group-hover:fill-[#ab99e1] group-hover:scale-110"
         fill="none"
@@ -220,9 +220,9 @@ const SectionHeader = React.memo(({ title, isRefreshing }) => (
           d="M13 10V3L4 14h7v7l9-11h-7z"
         />
       </svg>
-    </div>
+    </div> */}
 
-    <h3 className=" text-lg sm:text-xl xl:text-2xl 2xl:text-[22px] font-bold text-[#ab99e1]  text-nowrap">
+    <h3 className=" text-lg sm:text-xl xl:text-2xl 2xl:text-[22px] font-bold text-[var(--color-change)] pb-3 text-nowrap">
       {title}
     </h3>
 
@@ -242,7 +242,7 @@ const LoadingIndicator = () => (
     {[0, 0.1, 0.2].map((delay, i) => (
       <div
         key={i}
-        className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"
+        className="w-2 h-2 bg-[var(--color-change)] rounded-full animate-bounce"
         style={{ animationDelay: `${delay}s` }}
       />
     ))}
@@ -271,8 +271,8 @@ const GameSection = React.memo(({ section, items, isRefreshing }) => (
       )}
     </div>
     <Link to={section.link}>
-      <div className="mt-6 sm:mt-8 pt-6 border-t border-purple-500/30">
-        <button className="w-full sm:py-3 py-2 sm:px-4 px-3 sm:text-base text-sm rounded-xl bg-gradient-to-r from-[#ab99e1]/20 to-[#b8a8e6]/20 hover:from-[#ab99e1]/30 hover:to-[#b8a8e6]/30 border border-[#ab99e1]/30 text-[#ab99e1] font-semibold transition-all duration-300 hover:shadow-lg">
+      <div className="mt-6 sm:mt-8 pt-6 border-t border-[var(--color-change)]">
+        <button className="w-full sm:py-3 py-2 sm:px-4 px-3 sm:text-base text-sm rounded-xl  hover:bg-[var(--color-change)] hover:text-white  border border-[var(--color-change)] text-[var(--color-change)] font-semibold transition-all duration-300 hover:shadow-lg">
           View All {section.title}
         </button>
       </div>

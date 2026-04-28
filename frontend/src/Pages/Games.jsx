@@ -76,7 +76,7 @@ const Games = () => {
 					<p className="text-gray-400 mb-6">{error}</p>
 					<button
 						onClick={() => dispatch(getFreeGames())}
-						className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+						className="px-6 py-3 style_btn_color text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
 					>
 						Try Again
 					</button>
@@ -88,12 +88,12 @@ const Games = () => {
 	return (
 		<div className="min-h-screen ">
 			{/* Hero Section */}
-			<div className="relative overflow-hidden bg-gradient-to-r from-purple-900/30 via-blue-900/20 to-pink-900/30">
+			<div className="relative overflow-hidden bg-gradient-to-r to-orange-900/30 via-pink-900/20 from-yellow-900/30">
 				<div className="absolute inset-0 opacity-30">
 					<div
 						className="absolute inset-0 animate-pulse"
 						style={{
-							backgroundImage: 'radial-gradient(circle at 20% 50%, #7c3aed 0%, transparent 50%), radial-gradient(circle at 80% 20%, #ec4899 0%, transparent 50%), radial-gradient(circle at 40% 80%, #3b82f6 0%, transparent 50%)',
+							backgroundImage: 'radial-gradient(circle at 20% 50%, #ed6c39 0%, transparent 50%), radial-gradient(circle at 80% 20%, #eded4a 0%, transparent 50%), radial-gradient(circle at 40% 80%, #f53bc6 0%, transparent 50%)',
 						}}
 					></div>
 				</div>
@@ -108,15 +108,15 @@ const Games = () => {
 
 				<div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 md:pt-20 md:pb-16 pt-11 pb-11">
 					<div className="text-center">
-						<div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-full text-purple-300 text-sm font-semibold mb-8 backdrop-blur-sm shadow-lg">
+						<div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600/20 to-red-600/20 border border-yellow-500/30 rounded-full text-orange-300 text-sm font-semibold mb-8 backdrop-blur-sm shadow-lg">
 							<FaGamepad className="w-4 h-4 mr-2" />
 							Free Games Collection
-							<FaFire className="w-4 h-4 ml-2 text-orange-400" />
+							<FaFire className="w-4 h-4 ml-2 text-amber-300" />
 						</div>
 
 						<h1 className="lg:text-6xl md:text-5xl sm:text-4xl text-3xl font-black text-white mb-8 leading-tight">
 							Epic
-							<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400"> Games</span>
+							<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-yellow-400 to-pink-400"> Games</span>
 						</h1>
 
 						<p className=" md:text-2xl sm:text-xl text-lg text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed">
@@ -164,7 +164,7 @@ const Games = () => {
 											disabled={isBeginning}
 											className={`group md:w-12 md:h-12 ms:w-10 ms:h-10 h-8 w-8 rounded-xl flex items-center justify-center transition-all duration-300 ${isBeginning
 												? 'bg-gray-700/50 text-gray-500 cursor-not-allowed opacity-50'
-												: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white hover:scale-110 shadow-lg hover:shadow-purple-500/25'
+												: 'style_btn_color  text-white hover:scale-110 shadow-lg hover:shadow-orange-500/25'
 												}`}
 										>
 											<FaChevronLeft className="ms:w-5 ms:h-5 w-3 h-3" />
@@ -174,7 +174,7 @@ const Games = () => {
 											disabled={isEnd}
 											className={`group md:w-12 md:h-12 ms:w-10 ms:h-10 h-8 w-8 rounded-xl flex items-center justify-center transition-all duration-300 ${isEnd
 												? 'bg-gray-700/50 text-gray-500 cursor-not-allowed opacity-50'
-												: 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white hover:scale-110 shadow-lg hover:shadow-purple-500/25'
+												: 'style_btn_color text-white hover:scale-110 shadow-lg hover:shadow-orange-500/25'
 												}`}
 										>
 											<FaChevronRight className="ms:w-5 ms:h-5 w-3 h-3" />
@@ -184,7 +184,7 @@ const Games = () => {
 
 								<button
 									onClick={() => setShowAll(!showAll)}
-									className="group flex items-center gap-3 text-sm px-6 md:py-3 ms:py-2 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-indigo-500/25"
+									className="group flex items-center gap-3 text-sm px-6 md:py-3 ms:py-2 py-2  style_btn_color text-white rounded-xl font-semibold transition-all duration-300   "
 								>
 									{showAll ? (
 										<>
@@ -265,7 +265,7 @@ const Games = () => {
 									<p className="text-gray-400 mb-8 text-lg">Check back later for awesome new games!</p>
 									<button
 										onClick={() => dispatch(getFreeGames())}
-										className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+										className="px-8 py-4 bg-gradient-to-r from-orange-600 to-pink-600 hover:from-orange-700 hover:to-pink-700 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
 									>
 										Refresh Games
 									</button>
@@ -312,7 +312,7 @@ const GameCard = ({ game, index = 0 }) => {
 				animationDelay: `${index * 0.1}s`,
 			}}
 		>
-			<div className="relative bg-gradient-to-br from-gray-800/60 to-gray-900/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 hover:transform hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/10 group h-full flex flex-col">
+			<div className="relative bg-gradient-to-br from-gray-800/60 to-gray-900/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-orange-500/50 transition-all duration-500 hover:transform hover:scale-[1.03] hover:shadow-2xl hover:shadow-orange-500/10 group h-full flex flex-col">
 
 				{/* Image Container with Fixed Dimensions Across All Breakpoints */}
 				<div className="relative bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden flex-shrink-0 w-full sm:h-40 h-32 ms:h-72 md:h-64 lg:h-72 xl:h-64 2xl:h-80">
@@ -320,8 +320,8 @@ const GameCard = ({ game, index = 0 }) => {
 					{!imageLoaded && !imageError && (
 						<div className="absolute inset-0 flex items-center justify-center bg-gray-700">
 							<div className="relative">
-								<div className="animate-spin rounded-full h-12 w-12 border-3 border-purple-500 border-t-transparent"></div>
-								<div className="absolute inset-0 animate-ping rounded-full h-12 w-12 border border-purple-400 opacity-20"></div>
+								<div className="animate-spin rounded-full h-12 w-12 border-3 border-orange-500 border-t-transparent"></div>
+								<div className="absolute inset-0 animate-ping rounded-full h-12 w-12 border border-orange-400 opacity-20"></div>
 							</div>
 						</div>
 					)}
@@ -376,7 +376,7 @@ const GameCard = ({ game, index = 0 }) => {
 				</div>
 
 				{/* Hover Glow Effect */}
-				<div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-600/0 via-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:via-purple-600/5 group-hover:to-pink-600/10 transition-all duration-500 pointer-events-none"></div>
+				<div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-600/0 via-orange-600/0 to-pink-600/0 group-hover:from-orange-600/10 group-hover:via-orange-600/5 group-hover:to-pink-600/10 transition-all duration-500 pointer-events-none"></div>
 			</div>
 		</Link>
 	)

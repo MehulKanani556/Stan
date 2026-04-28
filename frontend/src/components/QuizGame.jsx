@@ -217,18 +217,18 @@ export default function QuizGame({
 
     return (
         <div className='container pt-14 lg:py-24'>
-            <div className='mx-auto max-w-3xl bg-[#221f2a] rounded-2xl border border-white/10 p-2 sm:p-5 md:p-8 shadow-xl shadow-purple-900/20'>
+            <div className='mx-auto max-w-3xl bg-[#221f2a] rounded-2xl border border-white/10 p-2 sm:p-5 md:p-8 shadow-xl shadow-orange-900/20'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
                         <button
-                            className='px-3 py-1 rounded-lg text-xs font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40'
+                            className='px-3 py-1 rounded-lg text-xs font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/10 transition-all duration-300 shadow-lg  '
                             onClick={() => navigate(-1)}
                         >
                             Back
                         </button>
                         <h2 className='text-xl sm:text-2xl font-semibold text-white'>Quiz Game</h2>
                     </div>
-                    <div className='text-sm text-purple-200 bg-white/10 px-3 py-1 rounded-lg border border-white/10'>
+                    <div className='text-sm text-orange-200 bg-white/10 px-3 py-1 rounded-lg border border-white/10'>
                         {started && !finished ? (
                             <span>Time Left: {formatTime(timeLeft)}</span>
                         ) : (
@@ -241,12 +241,12 @@ export default function QuizGame({
                 <div className='mt-4'>
                     <div className='w-full h-2 rounded-full bg-white/10 overflow-hidden'>
                         <div
-                            className='h-2 bg-gradient-to-r from-purple-500 to-fuchsia-500 transition-all duration-300'
+                            className='h-2 style_btn_color transition-all duration-300'
                             style={{ width: `${progressPercent}%` }}
                         />
                     </div>
                     {started && !finished && (
-                        <p className='text-xs text-purple-200 mt-1'>
+                        <p className='text-xs text-orange-200 mt-1'>
                             Question {currentIndex + 1} of {totalQuestions}
                         </p>
                     )}
@@ -255,11 +255,11 @@ export default function QuizGame({
                 {/* Body */}
                 {!started && !finished && (
                     <div className='mt-8 text-center'>
-                        <p className='text-purple-200'>Test your gaming knowledge. Each question has a timer.</p>
-                        <p className='text-purple-200'>1 queston true will be you given 1 point</p>
-                        <p className='text-purple-200'>If you leave it incomplete, you won't get a single point.</p>
+                        <p className='text-orange-200'>Test your gaming knowledge. Each question has a timer.</p>
+                        <p className='text-orange-200'>1 queston true will be you given 1 point</p>
+                        <p className='text-orange-200'>If you leave it incomplete, you won't get a single point.</p>
                         <button
-                            className={`mt-6 px-6 py-3 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 transition-all duration-300 shadow-lg shadow-purple-900/40 ${hasPlayed ? 'opacity-50 cursor-not-allowed' : 'hover:text-white hover:bg-purple-500/30'}`}
+                            className={`mt-6 px-6 py-3 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 transition-all duration-300 shadow-lg   ${hasPlayed ? 'opacity-50 cursor-not-allowed' : 'hover:text-white hover:bg-orange-500/30'}`}
                             onClick={startQuiz}
                             disabled={hasPlayed}
                         >
@@ -284,8 +284,8 @@ export default function QuizGame({
                                                 handleSubmit(idx)
                                             }}
                                             className={`text-left px-4 py-3 rounded-lg border transition-all duration-200 ${isPicked
-                                                ? 'bg-purple-600/30 border-purple-400 text-white'
-                                                : 'bg-white/5 hover:bg-white/10 border-white/10 text-purple-100'
+                                                ? 'bg-orange-600/30 border-orange-400 text-white'
+                                                : 'bg-white/5 hover:bg-white/10 border-white/10 text-orange-100'
                                                 }`}
                                         >
                                             {opt}
@@ -296,8 +296,8 @@ export default function QuizGame({
                         </div>
 
                         <div className='mt-6 flex items-center justify-between'>
-                            <span className='text-purple-200 text-sm'>Score: {score}</span>
-                            <span className='text-purple-300 text-xs'>
+                            <span className='text-orange-200 text-sm'>Score: {score}</span>
+                            <span className='text-orange-300 text-xs'>
                                 {currentIndex + 1}/{totalQuestions}
                             </span>
                         </div>
@@ -308,10 +308,10 @@ export default function QuizGame({
                     <div className='mt-8'>
                         <div className='bg-white/5 rounded-xl p-5 border border-white/10'>
                             <p className='text-white text-lg font-semibold'>Results</p>
-                            <p className='text-purple-200 mt-2'>
+                            <p className='text-orange-200 mt-2'>
                                 You scored {score} out of {totalQuestions}
                             </p>
-                            <p className='text-purple-200 mt-1'>
+                            <p className='text-orange-200 mt-1'>
                                 Total Reward: {rewardEarned} points
                             </p>
 
@@ -326,14 +326,14 @@ export default function QuizGame({
                                             <p className='text-white text-sm'>{i + 1}. {q.question}</p>
                                             <p className={`text-xs mt-1 ${a.isCorrect ? 'text-green-400' : 'text-red-400'}`}>
                                                 {a.isCorrect ? 'Correct' : wasSkipped ? 'Timed out' : 'Incorrect'}
-                                                <span className='text-purple-300'> • Time: {a.timeTaken}s</span>
+                                                <span className='text-orange-300'> • Time: {a.timeTaken}s</span>
                                             </p>
-                                            <p className='text-purple-200 text-xs mt-1'>
+                                            <p className='text-orange-200 text-xs mt-1'>
                                                 Correct: {correctText}
                                                 {!a.isCorrect && (
                                                     <>
                                                         <span> • Your answer: </span>
-                                                        <span className='text-purple-100'>{pickedText}</span>
+                                                        <span className='text-orange-100'>{pickedText}</span>
                                                     </>
                                                 )}
                                             </p>
@@ -344,7 +344,7 @@ export default function QuizGame({
 
                             {/* <div className='mt-6 flex items-center justify-between'>
                                 <button
-                                    className='px-6 py-3 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40'
+                                    className='px-6 py-3 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300 shadow-lg  '
                                     onClick={restart}
                                 >
                                     Restart
@@ -357,13 +357,13 @@ export default function QuizGame({
             {showResultModal && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center'>
                     <div className='absolute inset-0 bg-black/60' onClick={() => setShowResultModal(false)} />
-                    <div className='relative z-10 w-full max-w-md mx-4 rounded-2xl border border-white/10 bg-[#1a1720] p-6 shadow-2xl shadow-purple-900/30'>
+                    <div className='relative z-10 w-full max-w-md mx-4 rounded-2xl border border-white/10 bg-[#1a1720] p-6 shadow-2xl shadow-orange-900/30'>
                         <h3 className='text-xl font-semibold text-white'>Quiz Completed</h3>
-                        <p className='mt-2 text-purple-200'>Final Score: <span className='text-white'>{score}</span> / {totalQuestions}</p>
-                        <p className='mt-1 text-purple-200'>Total Reward Given: <span className='text-white'>{rewardEarned}</span> points</p>
+                        <p className='mt-2 text-orange-200'>Final Score: <span className='text-white'>{score}</span> / {totalQuestions}</p>
+                        <p className='mt-1 text-orange-200'>Total Reward Given: <span className='text-white'>{rewardEarned}</span> points</p>
                         <div className='mt-6 flex gap-3 justify-end'>
                             <button
-                                className='px-5 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-purple-300 hover:text-white hover:bg-purple-500/30 transition-all duration-300 shadow-lg shadow-purple-900/40'
+                                className='px-5 py-2 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-orange-300 hover:text-white hover:bg-orange-500/30 transition-all duration-300 shadow-lg  '
                                 onClick={() => setShowResultModal(false)}
                             >
                                 Close

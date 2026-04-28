@@ -7,7 +7,7 @@ export default function TermsService() {
       <div className="mx-auto md:max-w-[85%] max-w-[95%] pt-8 pb-5 md:py-10">
 
         <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
             Terms of Service
           </h1>
           <p className="text-gray-300 text-base md:text-lg">
@@ -18,7 +18,7 @@ export default function TermsService() {
 
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700">
           <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3">
-            <FaShieldAlt className="text-purple-400 text-2xl" />
+            <FaShieldAlt className="text-orange-400 text-2xl" />
             Welcome to YOYO Gaming Platform
           </h2>
           <p className="text-gray-300 leading-relaxed text-sm md:text-base">
@@ -49,7 +49,7 @@ export default function TermsService() {
 
 
         <div id="definitions" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">1. Definitions</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">1. Definitions</h3>
           <div className="space-y-2 md:space-y-3 text-gray-300 text-sm md:text-base">
             <p><strong>"Platform"</strong> refers to the YOYO gaming website, mobile applications, and related services.</p>
             <p><strong>"User"</strong> refers to any individual who accesses or uses our platform.</p>
@@ -61,13 +61,13 @@ export default function TermsService() {
 
 
         <div id="account" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaUser className="text-purple-400 text-2xl md:text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaUser className="text-orange-400 text-2xl md:text-xl" />
             2. Account Registration & Management
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Registration Requirements</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Registration Requirements</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>You must be at least 13 years old to create an account</li>
                 <li>Users under 18 require parental consent</li>
@@ -76,7 +76,7 @@ export default function TermsService() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Account Responsibilities</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Account Responsibilities</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>You are responsible for all activities under your account</li>
                 <li>Notify us immediately of any unauthorized access</li>
@@ -89,13 +89,13 @@ export default function TermsService() {
 
 
         <div id="games" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaGamepad className="text-purple-400 text-2xl md:text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaGamepad className="text-orange-400 text-2xl md:text-xl" />
             3. Games & Content
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Game Access & Usage</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Game Access & Usage</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Games are provided "as is" without warranties</li>
                 <li>Some games may require additional purchases or subscriptions</li>
@@ -104,7 +104,7 @@ export default function TermsService() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Content Guidelines</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Content Guidelines</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Respect intellectual property rights</li>
                 <li>Do not attempt to reverse engineer games</li>
@@ -117,13 +117,13 @@ export default function TermsService() {
 
 
         <div id="payments" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaCreditCard className="text-purple-400 text-2xl md:text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaCreditCard className="text-orange-400 text-2xl md:text-xl" />
             4. Payments & Transactions
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Payment Terms</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Payment Terms</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>All prices are in local currency unless specified</li>
                 <li>Payments are processed through secure third-party providers</li>
@@ -132,7 +132,7 @@ export default function TermsService() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Transaction Security</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Transaction Security</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>We do not store your payment information</li>
                 <li>All transactions are encrypted and secure</li>
@@ -145,13 +145,13 @@ export default function TermsService() {
 
 
         <div id="chat" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
-            <FaComments className="text-purple-400 text-2xl md:text-xl" />
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
+            <FaComments className="text-orange-400 text-2xl md:text-xl" />
             5. Chat & Communication
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Communication Guidelines</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Communication Guidelines</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Be respectful and courteous to other users</li>
                 <li>No harassment, bullying, or hate speech</li>
@@ -160,7 +160,7 @@ export default function TermsService() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Moderation</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Moderation</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>We monitor chat for inappropriate content</li>
                 <li>Violations may result in temporary or permanent bans</li>
@@ -173,10 +173,10 @@ export default function TermsService() {
 
 
         <div id="rewards" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">6. Rewards & Loyalty Program</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">6. Rewards & Loyalty Program</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Program Details</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Program Details</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Rewards are earned through platform engagement</li>
                 <li>Reward values and availability may change</li>
@@ -185,7 +185,7 @@ export default function TermsService() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Redemption & Expiration</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Redemption & Expiration</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Rewards may expire if not used within specified timeframes</li>
                 <li>Redemption is subject to availability</li>
@@ -198,13 +198,13 @@ export default function TermsService() {
 
 
         <div id="conduct" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-purple-300">
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 flex items-center gap-2 md:gap-3 text-orange-300">
             <FaExclamationTriangle className="text-red-400 text-lg md:text-xl" />
             7. User Conduct
           </h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Prohibited Activities</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Prohibited Activities</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Cheating, hacking, or exploiting game mechanics</li>
                 <li>Creating multiple accounts to gain unfair advantages</li>
@@ -214,7 +214,7 @@ export default function TermsService() {
               </ul>
             </div>
             <div>
-              <h4 className="text-base md:text-lg font-medium text-purple-200 mb-1 md:mb-2">Consequences</h4>
+              <h4 className="text-base md:text-lg font-medium text-orange-200 mb-1 md:mb-2">Consequences</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>First offense: Warning and temporary suspension</li>
                 <li>Second offense: Extended suspension</li>
@@ -227,7 +227,7 @@ export default function TermsService() {
 
 
         <div id="intellectual" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">8. Intellectual Property</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">8. Intellectual Property</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               All content on our platform, including games, graphics, text, and software, is owned by YOYO or our
@@ -243,7 +243,7 @@ export default function TermsService() {
 
 
         <div id="privacy" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">9. Privacy & Data Protection</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">9. Privacy & Data Protection</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               Your privacy is important to us. Our collection and use of personal information is governed by our
@@ -259,7 +259,7 @@ export default function TermsService() {
 
 
         <div id="termination" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">10. Account Termination</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">10. Account Termination</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               You may terminate your account at any time by contacting our support team. Upon termination:
@@ -279,7 +279,7 @@ export default function TermsService() {
 
 
         <div id="disclaimer" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">11. Disclaimers & Limitations</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">11. Disclaimers & Limitations</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               <strong>Service Availability:</strong> We strive to provide uninterrupted service but cannot guarantee
@@ -300,7 +300,7 @@ export default function TermsService() {
 
 
         <div id="contact" className="bg-gray-800/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 border border-gray-700 scroll-mt-24 md:scroll-mt-32">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-purple-300">12. Contact Information</h3>
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-orange-300">12. Contact Information</h3>
           <div className="space-y-3 md:space-y-4 text-gray-300 text-sm md:text-base">
             <p>
               If you have any questions about these Terms of Service, please contact us:
@@ -314,8 +314,8 @@ export default function TermsService() {
         </div>
 
 
-        <div className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 border border-purple-500/30">
-          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-center text-purple-200">Important Notice</h3>
+        <div className="bg-gradient-to-r from-orange-900/50 to-pink-900/50 backdrop-blur-sm rounded-xl md:rounded-2xl p-6 md:p-8 border border-orange-500/30">
+          <h3 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-center text-orange-200">Important Notice</h3>
           <p className="text-gray-300 text-center leading-relaxed text-sm md:text-base">
             By continuing to use the YOYO gaming platform, you acknowledge that you have read, understood, and
             agree to be bound by these Terms of Service. These terms may be updated from time to time, and your

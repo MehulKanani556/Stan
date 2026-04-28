@@ -112,12 +112,12 @@ const PlatformSelectionModal = ({
                 className={`flex items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-all duration-150 ${alreadyAdded
                     ? 'border-slate-800 bg-slate-900/70 text-slate-500 cursor-not-allowed'
                     : isSelected
-                      ? 'border-purple-400 bg-purple-500/15 text-white shadow-md shadow-purple-500/25'
-                      : 'border-slate-700 bg-slate-800/80 text-slate-200 hover:border-purple-400 hover:text-white'
+                      ? 'border-orange-400 bg-orange-500/15 text-white shadow-md shadow-orange-500/25'
+                      : 'border-slate-700 bg-slate-800/80 text-slate-200 hover:border-orange-400 hover:text-white'
                   }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-full text-base ${isSelected ? 'bg-purple-600/70 text-white' : 'bg-slate-900/70 text-slate-200'}`}>
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-full text-base ${isSelected ? 'bg-orange-600/70 text-white' : 'bg-slate-900/70 text-slate-200'}`}>
                     {(() => {
                       const IconComponent = details.icon || FaGamepad;
                       return <IconComponent className="h-4 w-4" />;
@@ -135,7 +135,7 @@ const PlatformSelectionModal = ({
                 ) : (
                   <span
                     className={`flex h-4 w-4 items-center justify-center rounded-full border text-[11px] font-bold ${isSelected
-                        ? 'bg-purple-500 border-purple-300 text-white'
+                        ? 'bg-orange-500 border-orange-300 text-white'
                         : 'border-slate-600 text-transparent'
                       }`}
                     aria-hidden="true"
@@ -180,7 +180,7 @@ const PlatformSelectionModal = ({
             disabled={selectedPlatforms.length === 0 || isSubmitting}
             className={`w-full rounded-xl py-3 font-semibold transition-all ${selectedPlatforms.length === 0 || isSubmitting
                 ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-purple-500/30'
+                : 'style_btn_color text-white hover:shadow-lg hover:shadow-orange-500/30'
               }`}
           >
             {isSubmitting ? 'Processing...' : confirmLabel}

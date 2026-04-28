@@ -144,7 +144,7 @@ export default function Header() {
 
     return (
         <>
-            <header className='bg-black/30 backdrop-blur-xl sticky w-full top-0 z-50 '>
+            <header className='bg-gray-700/30 backdrop-blur-xl sticky w-full top-0 z-50 '>
                 <div className={`drawer w-full ${isAdminRoute ? "" : "max-w-[95%] md:max-w-[85%] m-auto"}`}>
                     <input id="my-drawer-3" type="checkbox" className="drawer-toggle" checked={isDrawerOpen} onChange={(e) => setIsDrawerOpen(e.target.checked)} />
                     <div className="drawer-content flex flex-col">

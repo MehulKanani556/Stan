@@ -13,20 +13,22 @@ export const createFreeGame = async (req, res) => {
     try {
         console.log("Request body:", req.body);
         console.log("Uploaded file:", req.file);
-        
-        const { slug, name, iframeSrc } = req.body;
-        
+
+        const { slug, name, iframeSrc, category } = req.body;
+
         // Get image URL from uploaded file
         const image = req.file ? req.file.location : req.body.image;
 
-        if (!slug || !name || !image || !iframeSrc) {
-            return sendBadRequestResponse(res, "slug, name, image and iframeSrc are required");
+        if (!slug || !name || !image || !iframeSrc || !category) {
+            return sendBadRequestResponse(res, "slug, name, image, category and iframeSrc are required");
         }
 
         const normalizedSlug = sanitize(slug).toLowerCase();
         const safeName = sanitize(name);
         const safeImage = sanitize(image);
+        const safeCategory = sanitize(category)
         const normalizedIframeSrc = sanitize(iframeSrc).toLowerCase();
+
 
         const existing = await FreeGame.findOne({
             $or: [{ slug: normalizedSlug }, { iframeSrc: normalizedIframeSrc }],
@@ -38,6 +40,7 @@ export const createFreeGame = async (req, res) => {
         const created = await FreeGame.create({
             slug: normalizedSlug,
             name: safeName,
+            category: safeCategory,
             image: safeImage,
             iframeSrc: normalizedIframeSrc,
         });
@@ -86,7 +89,9 @@ export const updateFreeGame = async (req, res) => {
         if (typeof req.body.slug !== "undefined") update.slug = sanitize(req.body.slug).toLowerCase();
         if (typeof req.body.name !== "undefined") update.name = sanitize(req.body.name);
         if (typeof req.body.iframeSrc !== "undefined") update.iframeSrc = sanitize(req.body.iframeSrc).toLowerCase();
-        
+        if (typeof req.body.category !== "undefined") update.category = sanitize(req.body.category);
+
+
         // Handle image update - use uploaded file if available, otherwise use body
         if (req.file) {
             update.image = sanitize(req.file.location);

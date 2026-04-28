@@ -98,7 +98,7 @@ const FANCoin = () => {
                 <div className="flex flex-col items-center justify-center  relative">
 
                     <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br 
-               from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 
+               from-orange-500 to-pink-500 rounded-full blur-3xl opacity-20 
                animate-pulse"></div>
                     <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br 
                from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 
@@ -106,7 +106,7 @@ const FANCoin = () => {
 
 
                     <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
-               relative overflow-hidden shadow-lg shadow-purple-500/30">
+               relative overflow-hidden shadow-lg shadow-orange-500/30">
                         <img
                             src={lazyCatImage}
                             alt="Lazy Cat"
@@ -134,7 +134,7 @@ const UPICard = () => {
         <div className="flex flex-col items-center justify-center  px-3 sm:px-4 py-4 sm:py-6 ">
 
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
-              relative overflow-hidden shadow-lg shadow-purple-500/30">
+              relative overflow-hidden shadow-lg shadow-orange-500/30">
                 <img
                     src={lazyCatImage}
                     alt="Lazy Cat"
@@ -159,7 +159,7 @@ const PlayStore = () => {
         <div className="flex flex-col items-center justify-center px-3 sm:px-4 py-4 sm:py-6 ">
           
             <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 
-                  relative overflow-hidden shadow-lg shadow-purple-500/30">
+                  relative overflow-hidden shadow-lg shadow-orange-500/30">
                 <img
                     src={lazyCatImage}
                     alt="Lazy Cat"
@@ -181,9 +181,9 @@ const PlayStore = () => {
 const StyleDiv = ({ children }) => {
     return (
         <div
-            className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl p-3  border border-purple-500/30 shadow-lg hover:shadow-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden ds_height_manage"
+            className="relative group bg-gradient-to-br from-[#1a1a2e]/80 to-[#16213e]/80 backdrop-blur-xl rounded-2xl p-3  border border-orange-500/30 shadow-lg hover:shadow-orange-500/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] overflow-hidden ds_height_manage"
         >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
             <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-gradient-to-br from-blue-400 to-teal-500 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-all duration-500"></div>
             {children}
         </div>
@@ -608,7 +608,7 @@ export default function Profile() {
                     <p className="text-red-500 mb-4">Error: {error}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="bg-[#ab99e1] text-black px-4 py-2 rounded-lg hover:bg-white transition-colors"
+                        className="bg-[var(--bg-light)] text-black px-4 py-2 rounded-lg hover:bg-white transition-colors"
                     >
                         Retry
                     </button>
@@ -642,7 +642,7 @@ export default function Profile() {
                             <li className={` mt-2 transition-all  duration-300 ease-in-out cursor-pointer hover:scale-[105%]   backdrop-blur-xl  ${activeMenu === "profile" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('profile') }}>
                                 {(() => {
                                     const Tag = activeMenu === "profile" ? StyleDiv : "div";
-                                    const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "profile" ? "w-full h-[48px]" : "p-3  bg-[#4f3124] rounded-md";
                                     return (
                                         <Tag className={style} >
                                             <div className={"flex items-center "}>
@@ -656,7 +656,7 @@ export default function Profile() {
                             {/* <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "address" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('address') }}>
                                 {(() => {
                                     const Tag = activeMenu === "address" ? StylishDiv : "div";
-                                    const style = activeMenu === "address" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "address" ? "w-full" : "p-3  bg-[#4f3124] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -670,7 +670,7 @@ export default function Profile() {
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Transaction" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Transaction') }}>
                                 {(() => {
                                     const Tag = activeMenu === "Transaction" ? StyleDiv : "div";
-                                    const style = activeMenu === "Transaction" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "Transaction" ? "w-full" : "p-3  bg-[#4f3124] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -684,7 +684,7 @@ export default function Profile() {
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "Orders" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('Orders') }}>
                                 {(() => {
                                     const Tag = activeMenu === "Orders" ? StyleDiv : "div";
-                                    const style = activeMenu === "Orders" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "Orders" ? "w-full" : "p-3  bg-[#4f3124] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -698,7 +698,7 @@ export default function Profile() {
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "changePassword" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('changePassword') }}>
                                 {(() => {
                                     const Tag = activeMenu === "changePassword" ? StyleDiv : "div";
-                                    const style = activeMenu === "changePassword" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "changePassword" ? "w-full" : "p-3  bg-[#4f3124] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -712,7 +712,7 @@ export default function Profile() {
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "deleteAccount" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('deleteAccount') }}>
                                 {(() => {
                                     const Tag = activeMenu === "deleteAccount" ? StyleDiv : "div";
-                                    const style = activeMenu === "deleteAccount" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "deleteAccount" ? "w-full" : "p-3  bg-[#4f3124] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -726,7 +726,7 @@ export default function Profile() {
                             <li className={` mt-2 transition-all duration-300 ease-in-out cursor-pointer hover:scale-[105%] backdrop-blur-xl  ${activeMenu === "logout" ? "md:w-[105%] hover:scale-100   " : "w-[100%]   "}`} onClick={() => { setActiveMenu('logout') }}>
                                 {(() => {
                                     const Tag = activeMenu === "logout" ? StyleDiv : "div";
-                                    const style = activeMenu === "logout" ? "w-full" : "p-3  bg-[#31244e] rounded-md";
+                                    const style = activeMenu === "logout" ? "w-full" : "p-3  bg-[#4f3124] rounded-md";
                                     return (
                                         <Tag className={style}>
                                             <div className="flex items-center">
@@ -753,14 +753,14 @@ export default function Profile() {
                                 {isEditing ? (
                                     <button
                                         onClick={handleUpdateProfile}
-                                        className="bg-[#ab99e1] text-black px-3 py-1 rounded-lg hover:bg-white transition-colors ms-auto"
+                                        className="bg-[var(--bg-light)] text-black px-3 py-1 rounded-lg hover:bg-white transition-colors ms-auto"
                                     >
                                         Update
                                     </button>
                                 ) : (
                                     <button
                                         onClick={handleEditToggle}
-                                        className="text-[#ab99e1] hover:text-white transition-colors ms-auto"
+                                        className="text-[var(--bg-light)] hover:text-white transition-colors ms-auto"
                                     >
                                         <MdEdit className="w-6 h-6" />
                                     </button>
@@ -768,7 +768,7 @@ export default function Profile() {
                             </div>
                             <div className="flex flex-col items-center text-center">
                                 <div className="relative mb-4">
-                                    <div className="w-24 h-24 rounded-full border-4 border-[#ab99e1] overflow-hidden">
+                                    <div className="w-24 h-24 rounded-full border-4 border-[var(--bg-light)] overflow-hidden">
                                         <img
                                             src={profilePicFile ? URL.createObjectURL(profilePicFile) : (user?.profilePic || stanUser)}
                                             className="w-full h-full object-cover object-top"
@@ -776,7 +776,7 @@ export default function Profile() {
                                         />
                                     </div>
                                     {isEditing && (
-                                        <label className="absolute bottom-0 right-0 bg-[#ab99e1] text-black p-2 rounded-full hover:bg-white transition-colors cursor-pointer">
+                                        <label className="absolute bottom-0 right-0 bg-[var(--bg-light)] text-black p-2 rounded-full hover:bg-white transition-colors cursor-pointer">
                                             <MdEdit className="w-4 h-4" />
                                             <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                                         </label>
@@ -791,12 +791,12 @@ export default function Profile() {
                         {/* Profile Details */}
                         <div className=" rounded-2xl p-4 md:p-6 mb-6 border border-white/25">
                             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                                <FaUser className="text-[#ab99e1]" />
+                                <FaUser className="text-[var(--bg-light)]" />
                                 Personal Information
                             </h3>
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
-                                    <FaUser className="text-[#ab99e1] text-md flex-shrink-0" />
+                                    <FaUser className="text-[var(--bg-light)] text-md flex-shrink-0" />
                                     <div className="flex-1">
                                         <div className="md:text-sm text-xs text-gray-400 ">Name</div>
                                         {isEditing ? (
@@ -816,7 +816,7 @@ export default function Profile() {
                                 </div>
 
                                 <div className="flex items-center  gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
-                                    <MdEmail className="text-[#ab99e1] text-md flex-shrink-0" />
+                                    <MdEmail className="text-[var(--bg-light)] text-md flex-shrink-0" />
                                     <div className="flex-1 ">
                                         <div className="md:text-sm text-xs text-gray-400">Email</div>
                                         {/* {isEditing ? (
@@ -836,7 +836,7 @@ export default function Profile() {
                                 </div>
 
                                 <div className="flex items-center gap-3 p-3 bg-[#211f2a20] border border-white/25 rounded-lg overflow-hidden">
-                                    <div className="text-[#ab99e1] text-md flex-shrink-0">
+                                    <div className="text-[var(--bg-light)] text-md flex-shrink-0">
                                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                                         </svg>
@@ -844,7 +844,7 @@ export default function Profile() {
                                     <div className="flex-1">
                                         <div className="md:text-sm text-xs text-gray-400">Referral Code</div>
                                         <div className="flex items-center gap-2">
-                                            <div className="text-white md:text-sm text-xs font-mono bg-[#ab99e1]/10 px-2 py-1 rounded border border-[#ab99e1]/20">
+                                            <div className="text-white md:text-sm text-xs font-mono bg-[var(--bg-light)]/10 px-2 py-1 rounded border border-[var(--bg-light)]/20">
                                                 {user?.referralCode || "N/A"}
                                             </div>
                                             {user?.referralCode && (
@@ -854,7 +854,7 @@ export default function Profile() {
                                                         enqueueSnackbar("Referral code copied to clipboard", { variant: "success" });
                                                         // You can add a toast notification here
                                                     }}
-                                                    className="text-[#ab99e1] hover:text-white transition-colors p-1"
+                                                    className="text-[var(--bg-light)] hover:text-white transition-colors p-1"
                                                     title="Copy referral code"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -891,7 +891,7 @@ export default function Profile() {
                                          </button> */}
                                             <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>Transaction History</h1>
                                         </div>
-                                        <div className='bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white px-3 py-1.5 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md'>
+                                        <div className='style_btn_color text-white px-3 py-1.5 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md'>
                                             <div className='w-6 h-6 bg-white/20 rounded-full flex items-center justify-center'>
                                                 <span className='text-xs'></span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
@@ -915,15 +915,15 @@ export default function Profile() {
                                     <div className='flex items-center justify-between text-center text-sm md:text-lg  backdrop-blur-xl sm:px-4 px-2'>
                                         <div onClick={() => setIsActive("fanCoin")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "fanCoin" ? 'text-white' : 'text-gray-300'}`}>
                                             FAN Coins
-                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "fanCoin" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
+                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "fanCoin" ? 'bg-[#ffc999]' : "bg-transparent"} `}></div>
                                         </div>
                                         <div onClick={() => setIsActive("UPI")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "UPI" ? 'text-white' : 'text-gray-300'}`}>
                                             UPI/ Cards
-                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "UPI" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
+                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "UPI" ? 'bg-[#ffc999]' : "bg-transparent"} `}></div>
                                         </div>
                                         <div onClick={() => setIsActive("playStore")} className={`w-1/3 pt-4 cursor-pointer ${isActive === "playStore" ? 'text-white' : 'text-gray-300'}`}>
                                             Play Store
-                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "playStore" ? 'bg-[#aa98fe]' : "bg-transparent"} `}></div>
+                                            <div className={`w-full h-1 mt-2 transition-all ease-in duration-500 ${isActive === "playStore" ? 'bg-[#ffc999]' : "bg-transparent"} `}></div>
                                         </div>
                                     </div>
 
@@ -949,7 +949,7 @@ export default function Profile() {
                                     <div className='flex items-center gap-2 sm:gap-3'>
                                         <h1 className='text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight tracking-wide'>My Orders</h1>
                                     </div>
-                                    <div className='bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white px-3 py-1.5 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md'>
+                                    <div className='style_btn_color text-white px-3 py-1.5 rounded-xl flex items-center gap-2 text-sm font-medium shadow-md'>
                                         <div className='w-6 h-6 bg-white/20 rounded-full flex items-center justify-center'>
                                             <span className='text-xs'>🛍️</span>
                                         </div>
@@ -963,10 +963,10 @@ export default function Profile() {
                                         <OrderListSkeleton count={orders?.length} />
                                     ) : !orders || orders.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center px-4 relative">
-                                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+                                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                                             <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-to-br from-blue-400 to-teal-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
 
-                                            <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 relative overflow-hidden shadow-lg shadow-purple-500/30">
+                                            <div className="w-48 h-48 rounded-full flex items-center justify-center mb-8 relative overflow-hidden shadow-lg shadow-orange-500/30">
                                                 <img
                                                     src={lazyCatImage}
                                                     alt="No Orders"
@@ -986,14 +986,14 @@ export default function Profile() {
                                             {orders?.map((order, index) => (
                                                 <StylishDiv
                                                     key={order._id || index}
-                                                    className="group rounded-3xl overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 border border-white/10 hover:border-white/20 active:scale-[0.98]"
+                                                    className="group rounded-3xl overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 border border-white/10 hover:border-white/20 active:scale-[0.98]"
                                                     onClick={() => handleOrderClick(order)}
                                                 >
                                                     <div className="">
                                                         {/* Order Header */}
                                                         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
                                                             <div className="flex items-center gap-2 flex-shrink min-w-0">
-                                                                <div className="w-10 h-10 bg-gradient-to-br from-[#621df2] to-[#b191ff] rounded-full flex items-center justify-center">
+                                                                <div className="w-10 h-10 style_btn_color rounded-full flex items-center justify-center">
                                                                     <span className="text-white font-bold text-xs">#{order._id?.slice(-4) || 'N/A'}</span>
                                                                 </div>
                                                                 <div className="min-w-0">
@@ -1035,7 +1035,7 @@ export default function Profile() {
                                                                     {order.items.slice(0, 2).map((item, itemIndex) => (
                                                                         <div key={itemIndex} className="flex items-center justify-between p-2 bg-white/5 rounded-lg gap-2">
                                                                             <div className="flex items-center gap-2 min-w-0">
-                                                                                <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                                                                <div className="w-6 h-6 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center">
                                                                                     <span className="text-white text-xs font-bold">{itemIndex + 1}</span>
                                                                                 </div>
                                                                                 <div className="min-w-0">
@@ -1079,14 +1079,14 @@ export default function Profile() {
                                                                 </span>
                                                             </div>
                                                             <button
-                                                                className="flex items-center gap-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1.5 rounded-lg hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-300 border border-purple-500/30 hover:scale-105 active:scale-95 cursor-pointer shadow-lg hover:shadow-purple-500/20 w-full sm:w-auto order-1 sm:order-2"
+                                                                className="flex items-center gap-1 bg-gradient-to-r from-orange-500/20 to-pink-500/20 px-3 py-1.5 rounded-lg hover:from-orange-500/30 hover:to-pink-500/30 transition-all duration-300 border border-orange-500/30 hover:scale-105 active:scale-95 cursor-pointer shadow-lg hover:shadow-orange-500/20 w-full sm:w-auto order-1 sm:order-2"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleOrderClick(order);
                                                                 }}
                                                             >
-                                                                <span className="text-purple-300 text-xs font-medium hover:text-white transition-colors">View details</span>
-                                                                <svg className="w-3 h-3 text-purple-300 hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <span className="text-orange-300 text-xs font-medium hover:text-white transition-colors">View details</span>
+                                                                <svg className="w-3 h-3 text-orange-300 hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                                 </svg>
                                                             </button>
@@ -1226,7 +1226,7 @@ export default function Profile() {
                                             <button type='button' className="px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20" onClick={closeChangePasswordModal}>
                                                 Cancel
                                             </button>
-                                            <button type='submit' disabled={btnLoader} className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white disabled:opacity-60 disabled:cursor-not-allowed">
+                                            <button type='submit' disabled={btnLoader} className="px-4 py-2 rounded style_btn_color text-white disabled:opacity-60 disabled:cursor-not-allowed">
                                                 {btnLoader ? (
                                                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                                 ) : (
@@ -1278,8 +1278,7 @@ export default function Profile() {
 
                                     <div className="mt-5 flex justify-end gap-3">
                                         <button
-                                            className="px-4 py-2 rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] 
-                             hover:from-[#8354f8] hover:to-[#9f78ff]   text-white"
+                                            className="px-4 py-2 rounded style_btn_color  text-white"
                                             onClick={handleLogoutClick}
                                         >
                                             Logout
@@ -1329,7 +1328,7 @@ export default function Profile() {
                                         <>
                                             <Dialog.Title className="text-xl font-semibold flex items-center justify-between mb-6">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-12 h-12 bg-gradient-to-br from-[#621df2] to-[#b191ff] rounded-full flex items-center justify-center">
+                                                    <div className="w-12 h-12 style_btn_color rounded-full flex items-center justify-center">
                                                         <span className="text-white font-bold text-sm">#{selectedOrder._id?.slice(-4) || 'N/A'}</span>
                                                     </div>
                                                     <span>Order Details</span>
@@ -1389,7 +1388,7 @@ export default function Profile() {
                                                                 <div key={index} className="bg-white/5 rounded-lg px-4 py-2 border border-white/10">
                                                                     <div className="flex flex-wrap items-center justify-between">
                                                                         <div className="flex flex-wrap items-center gap-4 mt-2 mb-2">
-                                                                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                                                            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-pink-500 rounded-full flex items-center justify-center">
                                                                                 <span className="text-white font-bold text-sm">{index + 1}</span>
                                                                             </div>
                                                                             <div>
@@ -1541,7 +1540,7 @@ export default function Profile() {
                                 <div className='mt-6'>
                                     <button
                                         onClick={() => setShowDeleteOtpModal(true)}
-                                        className='w-full md:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] font-semibold text-white shadow-lg'
+                                        className='w-full md:w-auto px-6 py-3 rounded-xl style_btn_color font-semibold text-white shadow-lg'
                                     >
                                         Delete Account
                                     </button>
@@ -1579,7 +1578,7 @@ export default function Profile() {
                                          {verifyEmailFormik.touched.email && verifyEmailFormik.errors.email && (<p className="text-red-400 text-sm">{verifyEmailFormik.errors.email}</p>)}
                                          <div className='flex gap-3 justify-between'>
                                              <button type='button' className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={closeDeleteAccountModal} disabled={isSendingOtp}>Cancel</button>
-                                             <button type="submit" disabled={btnLoader} className="px-4 py-2 flex items-center justify-center rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed">
+                                             <button type="submit" disabled={btnLoader} className="px-4 py-2 flex items-center justify-center rounded style_btn_color text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed">
                                                 {btnLoader ? (
                                                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                                 ) : (
@@ -1632,7 +1631,7 @@ export default function Profile() {
                                          </div>
                                           <div className='flex gap-3 justify-between pt-5'>
                                               <button type='button' className='px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20 w-1/2' onClick={()=> setDeleteOtp(false)} disabled={isSendingOtp}>Cancel</button>
-                                              <button type="submit" disabled={btnLoader} className="px-4 py-2 flex items-center justify-center rounded bg-gradient-to-r from-[#621df2] to-[#b191ff] hover:from-[#8354f8] hover:to-[#9f78ff] text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed">
+                                              <button type="submit" disabled={btnLoader} className="px-4 py-2 flex items-center justify-center rounded style_btn_color text-white w-1/2 disabled:opacity-60 disabled:cursor-not-allowed">
                                                 {btnLoader ? (
                                                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                                 ) : (

@@ -237,7 +237,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
             <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
 
                 {/* Enhanced Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-orange-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                 {/* Image Container */}
                 <div className="relative w-full h-36 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden">
@@ -253,7 +253,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
 
                         {/* Top Badge */}
                         <div className="absolute top-4 left-4">
-                            <div className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                            <div className="px-3 py-1.5 bg-gradient-to-r from-[#ffcf91] to-[#f28f1d] rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
                                 <span className="text-xs font-bold text-white tracking-wider">NEW</span>
                             </div>
                         </div>
@@ -261,7 +261,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
                         {/* Wishlist Button */}
                         <button
                             className={`absolute ms:top-4 ms:right-4 top-0 left-0 ms:p-2.5 p-1 rounded-xl transition-all duration-300 hover:scale-110 backdrop-blur-md border ${isInWishlist
-                                ? 'bg-gradient-to-r from-red-500 to-pink-600 border-red-400/50 shadow-lg shadow-red-500/30'
+                                ? 'style_btn_color border-red-400/50 shadow-lg shadow-red-500/30'
                                 : 'bg-slate-800/60 hover:bg-slate-700/80 border-slate-600/50 hover:border-red-400/50'
                                 }`}
                             onClick={handleWishlistClick}
@@ -316,7 +316,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
                         disabled={isInCart || isPurchased}
                         className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${isInCart || isPurchased
                             ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
-                            : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
+                            : 'style_btn_color hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
                             }`}
                         aria-label={isInCart ? "Already in cart" : isPurchased ? "Already purchased" : "Add to cart"}
                     >
@@ -469,7 +469,7 @@ const Pagination = React.memo(({ currentPage, totalPages, onPageChange }) => {
                         key={i}
                         onClick={() => onPageChange(i)}
                         className={`inline-flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-md sm:rounded-xl border text-sm sm:text-base font-semibold transition-all ${isActive
-                            ? "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-purple-500 shadow-md shadow-purple-500/30"
+                            ? "style_btn_color text-white border-orange-500 shadow-md shadow-orange-500/30"
                             : "bg-slate-900/60 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
                             }`}
                     >
@@ -688,10 +688,10 @@ export default function AllGames() {
                 onClick={() => navigate(`/single/${game?._id}`)}
                 className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] xl:max-w-[440px] cursor-pointer mx-auto"
             >
-                <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
-
+                { }
+                <div className="group relative overflow-hidden rounded-2xl bg-[#141414] border border-slate-600/50 shadow-[0_4px_33px_#0000000d] hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
                     {/* Enhanced Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    <div className="absolute inset-0 bg-[#141414] opacity-100 transition-opacity duration-700" />
 
                     {/* Image Container with Enhanced Effects */}
                     <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
@@ -706,7 +706,7 @@ export default function AllGames() {
 
                             {/* Top Badge */}
                             <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
-                                <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-blue-500 to-purple-600 rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
+                                <div className="px-3 ms:py-1.5 py-1  bg-gradient-to-r from-[#fcc276] to-[#fa921a] rounded-full backdrop-blur-sm border border-blue-400/30 shadow-lg">
                                     <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
                                 </div>
                             </div>
@@ -751,7 +751,7 @@ export default function AllGames() {
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-1 gap-4">
-                            <div className="bg-slate-600/50 rounded-xl relative z-10 px-2 sm:px-3 sm:py-2 py-2 md:px-4 md:py-3">
+                            <div className="bg-[#06060690] rounded-xl relative z-10 px-2 sm:px-3 sm:py-2 py-2 md:px-4 md:py-3">
                                 <div className="flex flex-wrap items-center space-x-2 mb-2">
                                     {/* <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" /> */}
                                     <span className="ms:text-sm text-[10px] text-blue-400 font-semibold uppercase tracking-wider">
@@ -831,7 +831,7 @@ export default function AllGames() {
                             disabled={isPurchased || cartItems.some(item => item.game?._id === game?._id)}
                             className={`w-full relative overflow-hidden rounded-xl transition-all duration-500 transform ${(isPurchased || cartItems.some(item => item.game?._id === game?._id))
                                 ? 'bg-gradient-to-r from-emerald-600 to-green-600 cursor-not-allowed shadow-lg shadow-emerald-500/30'
-                                : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
+                                : 'style_btn_color hover:shadow-xl hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]'
                                 }`}
                         >
                             <div className="relative z-10 flex items-center justify-center space-x-2   px-2 py-2.5 sm:px-4 sm:py-3 md:px-4 md:py-3.5">
@@ -961,7 +961,7 @@ export default function AllGames() {
                             {(selectedCategory || debouncedSearchQuery || sortBy || priceRange) && (
                                 <button
                                     onClick={resetFilters}
-                                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors font-medium"
+                                    className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition-colors font-medium"
                                 >
                                     Clear All Filters
                                 </button>

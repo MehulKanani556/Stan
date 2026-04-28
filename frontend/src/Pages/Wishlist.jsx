@@ -181,8 +181,8 @@ const Wishlist = () => {
                           const isInCart = cartItems.some(cartItem => cartItem?.game?._id === item.game?._id);
                           const buttonLabel = isInCart ? "Add more platforms" : "Add to cart";
                           const buttonStyles = isInCart
-                            ? "bg-purple-900/40 text-purple-200 hover:bg-purple-900/60"
-                            : "bg-gradient-to-r from-purple-600 to-indigo-500 text-white hover:scale-105";
+                            ? "bg-orange-900/40 text-orange-200 hover:bg-orange-900/60"
+                            : "style_btn_color text-white hover:scale-105";
                           return (
                             <button
                               onClick={(e) => {
@@ -208,11 +208,11 @@ const Wishlist = () => {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center text-center py-20 bg-white/10 rounded-2xl">
-                <p className="text-2xl font-semibold text-gray-300 mb-4">💜 Your wishlist is empty</p>
+                <p className="text-2xl font-semibold text-gray-300 mb-4">🧡 Your wishlist is empty</p>
                 <p className="text-gray-500 mb-6">Save games you love to find them easily later.</p>
                 <button
                   onClick={() => navigate("/store")}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#621df2] to-[#b191ff] text-white font-semibold hover:scale-105 transition"
+                  className="px-6 py-3 rounded-xl bg-[var(--color-change)] text-white font-semibold hover:scale-105 transition"
                 >
                   Browse Store
                 </button>
@@ -227,7 +227,7 @@ const Wishlist = () => {
             <div className="bg-white/10 border border-white/20 rounded-2xl p-8 flex flex-col gap-6 h-fit shadow-lg sticky top-20">
               <div className="flex justify-between items-center">
                 <h2 className="font-bold text-xl">Total Items</h2>
-                <span className="text-xl font-bold text-purple-400">{items.length}</span>
+                <span className="text-xl font-bold text-orange-400">{items.length}</span>
               </div>
 
               <p className="text-gray-400 text-sm leading-relaxed">
@@ -235,10 +235,10 @@ const Wishlist = () => {
               </p>
 
               <div className="flex flex-col gap-3">
-                <button onClick={() => navigate("/store")} className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
+                <button onClick={() => navigate("/store")} className="w-full style_btn_color text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition">
                   Explore More Games
                 </button>
-                <button onClick={() => navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-purple-300 hover:text-white hover:bg-purple-600/30 transition font-semibold py-3 rounded-xl">
+                <button onClick={() => navigate("/cart")} className="w-full bg-white/10 backdrop-blur-lg border border-white/20 text-orange-300 hover:text-white hover:bg-orange-600/30 transition font-semibold py-3 rounded-xl">
                   View Cart
                 </button>
               </div>

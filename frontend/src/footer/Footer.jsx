@@ -91,7 +91,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
+              <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[var(--color-change)] after:absolute after:-bottom-2 after:left-0">
                 Quick Links
               </h4>
               <ul className="space-y-2">
@@ -122,7 +122,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[#ab99e1] after:absolute after:-bottom-2 after:left-0">
+              <h4 className="text-white font-semibold text-lg mb-4 relative after:content-[''] after:w-12 after:h-[2px] after:bg-[var(--color-change)] after:absolute after:-bottom-2 after:left-0">
                 Support
               </h4>
               <ul className="space-y-2">
