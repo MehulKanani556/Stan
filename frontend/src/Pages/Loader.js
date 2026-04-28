@@ -9,9 +9,9 @@ const Loader = () => {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
           <defs>
             <linearGradient gradientUnits="userSpaceOnUse" y2={2} x2={0} y1={62} x1={0} id="b">
-              <stop stopColor="#8B5CF6" />
-              <stop stopColor="#A855F7" offset="0.5" />
-              <stop stopColor="#EC4899" offset="1" />
+              <stop stopColor="#f5935b" />
+              <stop stopColor="#f79b54" offset="0.5" />
+              <stop stopColor="#edea4a" offset="1" />
             </linearGradient>
           </defs>
           <path
@@ -35,9 +35,9 @@ const Loader = () => {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
           <defs>
             <linearGradient gradientUnits="userSpaceOnUse" y2={0} x2={0} y1={64} x1={0} id="c">
-              <stop stopColor="#8B5CF6" />
-              <stop stopColor="#A855F7" offset="0.5" />
-              <stop stopColor="#EC4899" offset="1" />
+              <stop stopColor="#f5935b" />
+              <stop stopColor="#f79b54" offset="0.5" />
+              <stop stopColor="#edea4a" offset="1" />
               <animateTransform
                 repeatCount="indefinite"
                 keySplines=".42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1"
@@ -64,9 +64,9 @@ const Loader = () => {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
           <defs>
             <linearGradient gradientUnits="userSpaceOnUse" y2={2} x2={0} y1={62} x1={0} id="d">
-              <stop stopColor="#EC4899" />
-              <stop stopColor="#A855F7" offset="0.5" />
-              <stop stopColor="#8B5CF6" offset="1" />
+              <stop stopColor="#edea4a" />
+              <stop stopColor="#f79b54" offset="0.5" />
+              <stop stopColor="#f5935b" offset="1" />
             </linearGradient>
           </defs>
           <path
@@ -84,9 +84,9 @@ const Loader = () => {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100" className="letter" width="120" height="120">
           <defs>
             <linearGradient gradientUnits="userSpaceOnUse" y2={0} x2={0} y1={64} x1={0} id="c">
-              <stop stopColor="#8B5CF6" />
-              <stop stopColor="#A855F7" offset="0.5" />
-              <stop stopColor="#EC4899" offset="1" />
+              <stop stopColor="#f5935b" />
+              <stop stopColor="#f79b54" offset="0.5" />
+              <stop stopColor="#edea4a" offset="1" />
               <animateTransform
                 repeatCount="indefinite"
                 keySplines=".42,0,.58,1;.42,0,.58,1;.42,0,.58,1;.42,0,.58,1"
