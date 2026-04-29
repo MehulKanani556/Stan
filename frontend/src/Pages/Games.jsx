@@ -289,7 +289,7 @@ const Games = () => {
 								<div className="relative">
 									<Swiper
 										ref={swiperRef}
-										spaceBetween={32}
+										spaceBetween={30}
 										slidesPerView={1}
 										slidesPerGroup={1}
 										speed={600}
@@ -306,7 +306,7 @@ const Games = () => {
 											1280: { slidesPerView: 3.5, spaceBetween: 36 },
 											1536: { slidesPerView: 5, spaceBetween: 20 },
 										}}
-										className="!pb-8"
+										className="!py-8 !px-2 "
 									>
 										{filteredGames.map((game, index) => (
 											<SwiperSlide key={game._id}>
@@ -360,12 +360,12 @@ const Games = () => {
 				}
 				
 				.swiper-slide:hover {
-					transform: translateY(-8px);
+					transform: translateY(-4px);
 				}
 				
 				@keyframes float {
 					0%, 100% { transform: translateY(0px); }
-					50% { transform: translateY(-10px); }
+					50% { transform: translateY(-5px); }
 				}
 				
 				.animate-float {
