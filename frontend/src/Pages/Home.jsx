@@ -24,6 +24,11 @@ import usePlatformSelection from '../hooks/usePlatformSelection';
 import { SiOculus, SiPlaystation } from 'react-icons/si';
 import { TbDeviceVisionPro } from 'react-icons/tb';
 import { BsNintendoSwitch } from 'react-icons/bs';
+import Loader from './Loader';
+import TopGamesSkeleton from '../lazyLoader/TopGamesSkeleton';
+import TrailerSkeleton from '../lazyLoader/TrailerSkeleton';
+import ReviewCardSkeleton from '../components/ReviewCardSkeleton';
+import HomeGameCardSkeleton from '../lazyLoader/HomeGameCardSkeleton';
 
 // Constants
 const SWIPER_BREAKPOINTS = {
@@ -113,6 +118,44 @@ const isNewGame = (createdAt) => {
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
   return createdDate >= oneMonthAgo && createdDate <= new Date();
 };
+
+const LazySection = ({ children, skeleton: Skeleton, minHeight = "400px" }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { 
+        threshold: 0.01, // Trigger as soon as 1% is visible
+        rootMargin: '200px 0px' // Load 200px before it enters viewport
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.disconnect();
+      }
+    };
+  }, []);
+
+  return (
+    <div ref={sectionRef} style={{ minHeight: isVisible ? 'auto' : minHeight }}>
+      {isVisible ? children : Skeleton ? <Skeleton /> : null}
+    </div>
+  );
+};
+
+
 
 // Components
 const CategoryButton = ({ category, isActive, onClick }) => (
@@ -365,6 +408,7 @@ export default function Home() {
   // Add state for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const gamesPerPage = 10; // Adjust as needed
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Redux state
   const { games: gameData, category: cateData, loading } = useSelector(
@@ -421,6 +465,7 @@ export default function Home() {
 
   // Handlers
   const handleCategoryChange = useCallback((cateId) => {
+    setIsTransitioning(true);
     setActiveTab(cateId);
     if (gameSwiperRef.current?.slideTo) {
       gameSwiperRef.current.slideTo(0);
@@ -510,6 +555,12 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [currentPage, activeTab, gamesPerPage, dispatch]);
 
+  useEffect(() => {
+    if (!loading) {
+      setIsTransitioning(false);
+    }
+  }, [loading]);
+
 
 
 
@@ -541,8 +592,21 @@ export default function Home() {
     return () => window.removeEventListener('resize', handleResize);
   }, [updateSwiperStates]);
 
+  // if (loading && cateData.length === 0) {
+  //   return (
+  //     <div className="fixed inset-0 z-[999] bg-[#0a0a0a62] flex items-center justify-center">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
+
   return (
     <>
+    {loading && cateData.length === 0 && (
+      <div className="fixed inset-0 z-[999] bg-[#0a0a0a00] flex items-center justify-center">
+        <Loader />
+      </div>
+    ) }
       <section className="relative">
         {/* Responsive Ad Images */}
         {/* <div className="relative w-full py-4 px-4">
@@ -625,64 +689,62 @@ export default function Home() {
             </div>
 
             {/* Games Swiper */}
-            {/* Games Swiper */}
-            {Array.isArray(gameData) && gameData.length > 0 ? (
-              filteredGames?.length > 0 ? (
-                <Swiper
-                  modules={[Navigation]}
-                  spaceBetween={12}
-                  slidesPerView={1.1}
-                  breakpoints={SWIPER_BREAKPOINTS}
-                  style={{ padding: "20px 0px" }}
-                  className="game-swiper"
-                  onSwiper={(swiper) => {
-                    // console.log('Swiper initialized:', swiper);
-                    gameSwiperRef.current = swiper;
-                    setTimeout(() => {
-                      updateSwiperStates(swiper);
-                      // console.log('Swiper states updated:', { isBeginning: swiper.isBeginning, isEnd: swiper.isEnd });
-                    }, 100);
-                  }}
-                  onSlideChange={updateSwiperStates}
-                  onResize={updateSwiperStates}
-                >
-                  {filteredGames.map((game) => {
-                    const platformsForGame = cartPlatformsByGame[game._id] || [];
-                    return (
-                      <SwiperSlide key={game._id}>
-                        <GameCard
-                          game={game}
-                          onGameClick={handleGameClick}
-                          onWishlistToggle={handleWishlistToggle}
-                          onAddToCart={handleAddToCart}
-                          isInWishlist={wishlistStatus[game._id]}
-                          isInCart={platformsForGame.length > 0}
-                          addedPlatforms={platformsForGame}
-                          orders={orders}
-                          isLoggedIn={isLoggedIn}
-                        />
-                      </SwiperSlide>
-                    );
-                  })}
-                </Swiper>
-              ) : (
-                <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
-                  No games found for this category.
-                </div>
-              )
-            ) : loading ? (
-              // Show skeleton only while loading
-              <Swiper modules={[Navigation]} spaceBetween={12} slidesPerView={1.1} breakpoints={SWIPER_BREAKPOINTS}>
-                {Array.from({ length: 4 }, (_, i) => (
+            {loading || isTransitioning ? (
+              // Show skeleton while loading
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={12}
+                slidesPerView={1.1}
+                breakpoints={SWIPER_BREAKPOINTS}
+                style={{ padding: "20px 0px" }}
+                className="game-swiper"
+              >
+                {Array.from({ length: 5 }, (_, i) => (
                   <SwiperSlide key={i}>
-                    <LazyGameCard />
+                    <HomeGameCardSkeleton />
                   </SwiperSlide>
                 ))}
               </Swiper>
+            ) : filteredGames?.length > 0 ? (
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={12}
+                slidesPerView={1.1}
+                breakpoints={SWIPER_BREAKPOINTS}
+                style={{ padding: "20px 0px" }}
+                className="game-swiper"
+                onSwiper={(swiper) => {
+                  gameSwiperRef.current = swiper;
+                  setTimeout(() => {
+                    updateSwiperStates(swiper);
+                  }, 100);
+                }}
+                onSlideChange={updateSwiperStates}
+                onResize={updateSwiperStates}
+              >
+                {filteredGames.map((game) => {
+                  const platformsForGame = cartPlatformsByGame[game._id] || [];
+                  return (
+                    <SwiperSlide key={game._id}>
+                      <GameCard
+                        game={game}
+                        onGameClick={handleGameClick}
+                        onWishlistToggle={handleWishlistToggle}
+                        onAddToCart={handleAddToCart}
+                        isInWishlist={wishlistStatus[game._id]}
+                        isInCart={platformsForGame.length > 0}
+                        addedPlatforms={platformsForGame}
+                        orders={orders}
+                        isLoggedIn={isLoggedIn}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
             ) : (
-              // No games in database
+              // No games found
               <div className="text-center py-10 text-gray-400 text-lg sm:text-xl md:text-2xl">
-                No games found.
+                {activeTab ? "No games found for this category." : "No games found."}
               </div>
             )}
 
@@ -691,7 +753,9 @@ export default function Home() {
           </div>
         </div>
 
-        <TopGames />
+        <LazySection skeleton={TopGamesSkeleton} minHeight="800px">
+          <TopGames />
+        </LazySection>
 
         {/* Explore Banner */}
         {isExploreLoaded ? (
@@ -721,9 +785,17 @@ export default function Home() {
         )}
       </section>
 
-      <MultiHome />
-      <Trailer />
-      <ReviewHome />
+      <LazySection minHeight="600px">
+        <MultiHome />
+      </LazySection>
+      
+      <LazySection skeleton={TrailerSkeleton} minHeight="700px">
+        <Trailer />
+      </LazySection>
+      
+      <LazySection skeleton={ReviewCardSkeleton} minHeight="400px">
+        <ReviewHome />
+      </LazySection>
 
       <PlatformSelectionModal
         open={Boolean(platformModalGame)}

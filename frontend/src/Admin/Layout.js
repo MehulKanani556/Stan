@@ -159,6 +159,7 @@ function Layout({ children }) {
     { title: "Games", icon: <IoGameControllerOutline />, path: "/admin/games" },
     { title: "Free Games", icon: <IoGameControllerOutline />, path: "/admin/free-games" },
     { title: "User", icon: <FaUser />, path: "/admin/user" },
+    { title: "Contact", icon: <LuContact />, path: "/admin/contact" },
     // {
     //   title: "Terms and Conditions",
     //   icon: <RiFileTextLine />,
@@ -432,9 +433,9 @@ function Layout({ children }) {
               <MenuIcon />
             </IconButton>
             <Box onClick={() => navigate('/admin')} sx={{ cursor: 'pointer', display: { xs: "none", md: "block" } }}>
-             <NavLink to={"/admin"} className="flex items-center gap-2 w-fit rounded-full overflow-hidden flex-none">
-          <img src={logo} alt="" className='w-12' />
-        </NavLink>
+              <NavLink to={"/admin"} className="flex items-center gap-2 w-fit rounded-full overflow-hidden flex-none">
+                <img src={logo} alt="" className='w-12' />
+              </NavLink>
             </Box>
             <Box
               sx={{

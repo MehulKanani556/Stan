@@ -51,6 +51,7 @@ const AdminRoutes = () => {
         <Route path="/order" element={<Transaction />} />
         {/* <Route path="/subscriber" element={<Subscriber />} /> */}
         <Route path="*" element={<NotFound />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </Layout>
   );
