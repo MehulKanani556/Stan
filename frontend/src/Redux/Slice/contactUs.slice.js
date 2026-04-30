@@ -60,7 +60,7 @@ export const deletecontactUs = createAsyncThunk(
     "contactUs/deletecontactUs",
     async (data, { dispatch, rejectWithValue }) => {
         try {
-            const response = await axiosInstance.delete(`/deleteContactUs/${data._id}`);
+            const response = await axiosInstance.delete(`/contact/delete/${data._id}`);
             enqueueSnackbar(response.data.message || "Contact Delete successful", { variant: "success" });
             if (response.data.success) {
                 return data._id;

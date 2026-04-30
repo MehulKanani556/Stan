@@ -1,11 +1,9 @@
 import { Box, Modal, Pagination, useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllUsers } from '../Redux/Slice/user.slice';
-import { IMAGE_URL } from '../Utils/baseUrl';
-import { decryptData } from "../Utils/encryption";
-import { getAllcontactUs } from '../Redux/Slice/contactUs.slice';
-import { FaEye } from 'react-icons/fa';
+import { getAllcontactUs, deletecontactUs } from '../Redux/Slice/contactUs.slice';
+import { FaEye, FaTrash } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 export default function Contact() {
     const [searchValue, setSearchValue] = useState('');
@@ -21,9 +19,9 @@ export default function Contact() {
 
     // Search functionality
     const filteredData = contact.filter(data =>
-        data?.firstName?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        data?.lastName?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        data?.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
         data?.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        data?.subject?.toLowerCase().includes(searchValue.toLowerCase()) ||
         data?.message?.toLowerCase().includes(searchValue.toLowerCase())
     );
 
@@ -54,6 +52,24 @@ export default function Contact() {
         setSelectedUser(null);
     };
 
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            background: '#1a1a1a',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(deletecontactUs({ _id: id }));
+            }
+        });
+    };
+
     return (
         <div className="p-5 md:p-10">
             <div className="flex flex-col lg:flex-row gap-3 justify-between items-center">
@@ -79,11 +95,11 @@ export default function Contact() {
                 <table className="w-full bg-white/5">
                     <thead>
                         <tr className="text-brown font-bold border-slate-700/50 border-b">
-                            {/* <td className="py-2 px-5 w-1/6">ID</td> */}
-                            <td className="py-2 px-5 whitespace-nowrap">First Name</td>
-                            <td className="py-2 px-5 whitespace-nowrap">Last Name</td>
+                            <td className="py-2 px-5 whitespace-nowrap">Name</td>
                             <td className="py-2 px-5">Email</td>
+                            <td className="py-2 px-5">Subject</td>
                             <td className="py-2 px-5">Message</td>
+                            <td className="py-2 px-5 text-center">Actions</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,32 +107,36 @@ export default function Contact() {
                             <tr key={user._id} className="border-t border-gray-950">
                                 <td className="py-2 px-5 whitespace-nowrap">
                                     <span className="truncate block max-w-xs">
-                                        {user.firstName}
+                                        {user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim()}
                                     </span>
                                 </td>
-                                <td className="py-2 px-5 whitespace-nowrap">
-                                    <span className="truncate block max-w-xs">
-                                        {user.lastName}
-                                    </span>
-                                </td>
-
                                 <td className="py-2 px-5">
                                     <span className="truncate block max-w-xs">
                                         {user.email}
                                     </span>
                                 </td>
-
+                                <td className="py-2 px-5">
+                                    <span className="truncate block max-w-xs">
+                                        {user.subject || 'N/A'}
+                                    </span>
+                                </td>
                                 <td className="py-2 px-5">
                                     <span className="truncate block max-w-xs">
                                         {user.message}
                                     </span>
                                 </td>
-                                <td className="py-2 px-5 flex items-center gap-2">
+                                <td className="py-2 px-5 flex items-center justify-center gap-2">
                                     <button
                                         className="text-white/50 text-xl p-1 border border-brown-50 transition-colors rounded hover:text-white"
                                         onClick={() => handleview(user)}
                                     >
                                         <FaEye />
+                                    </button>
+                                    <button
+                                        className="text-red-500 text-xl p-1 border border-red-500 transition-colors rounded hover:text-white hover:bg-red-500"
+                                        onClick={() => handleDelete(user._id)}
+                                    >
+                                        <FaTrash />
                                     </button>
                                 </td>
                             </tr>
@@ -165,20 +185,20 @@ export default function Contact() {
                                 <p className="text-brown font-bold text-xl mb-4">Contact Us Details</p>
                             </div>
                             <div className="mb-4">
-                                <span className="font-bold">First Name : </span>
-                                <span>{selectedUser.firstName}</span>
-                            </div>
-                            <div className="mb-4">
-                                <span className="font-bold">Last Name : </span>
-                                <span>{selectedUser.lastName}</span>
+                                <span className="font-bold">Name : </span>
+                                <span>{selectedUser.name || `${selectedUser.firstName || ''} ${selectedUser.lastName || ''}`.trim()}</span>
                             </div>
                             <div className="mb-4">
                                 <span className="font-bold">Email : </span>
                                 <span>{selectedUser.email}</span>
                             </div>
                             <div className="mb-4">
-                                <h3 className="font-bold">Content : </h3>
-                                <p>{selectedUser.message}</p>
+                                <span className="font-bold">Subject : </span>
+                                <span>{selectedUser.subject || 'N/A'}</span>
+                            </div>
+                            <div className="mb-4">
+                                <h3 className="font-bold">Message : </h3>
+                                <p className="whitespace-pre-wrap">{selectedUser.message}</p>
                             </div>
                             <div className="flex justify-center mt-6">
                                 <button
@@ -192,6 +212,7 @@ export default function Contact() {
                     )}
                 </Box>
             </Modal>
+            
         </div>
     )
 }
