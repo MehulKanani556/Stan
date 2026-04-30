@@ -80,11 +80,15 @@ export default function Header() {
 
     useEffect(() => {
         const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
-        if (userId && (!items?.length && !cartItems?.length)) {
-            dispatch(fetchWishlist());
-            dispatch(fetchCart());
+        if (userId) {
+            if (!items?.length) {
+                dispatch(fetchWishlist());
+            }
+            if (!cartItems?.length) {
+                dispatch(fetchCart());
+            }
         }
-    }, [dispatch]);
+    }, [dispatch, authUser?._id, currentUser?._id]);
 
     useEffect(() => {
         const userId = authUser?._id || localStorage.getItem("userId");
@@ -231,7 +235,7 @@ export default function Header() {
                                                                     />
                                                                 </div>
 
-                                                                {(items?.length > 0 && myManage) && (
+                                                                {items?.length > 0 && (
                                                                     <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                                                                         {items?.length}
                                                                     </span>
@@ -253,7 +257,7 @@ export default function Header() {
                                                                     />
                                                                 </div>
 
-                                                                {(cartGamesCount > 0 && myManage) && (
+                                                                {cartGamesCount > 0 && (
                                                                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                                                                         {cartGamesCount}
                                                                     </span>
@@ -366,7 +370,7 @@ export default function Header() {
                                                     />
                                                 </div>
 
-                                                {(items?.length > 0 && myManage) && (
+                                                {items?.length > 0 && (
                                                     <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
                                                         {items?.length}
                                                     </span>
@@ -387,7 +391,7 @@ export default function Header() {
                                                     />
                                                 </div>
 
-                                                {(cartGamesCount > 0 && myManage) && (
+                                                {cartGamesCount > 0 && (
                                                     <span className="absolute -top-[0.4rem] -right-[0.4rem] bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center ">
                                                         {cartGamesCount}
                                                     </span>

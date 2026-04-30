@@ -421,7 +421,7 @@ const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning,
 );
 
 // Main Swiper Section Component
-const SwiperSection = ({ title, games = [], gameActions, onNavigate, onAddToCart }) => {
+const SwiperSection = ({ title, games = [], gameActions, onNavigate, onAddToCart, loading }) => {
   const { isBeginning, isEnd, swiperRef, swiperEvents } = useSwiperNavigation();
   const navigate = useNavigate();
 
@@ -429,7 +429,7 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate, onAddToCart
   const handleNext = useCallback(() => swiperRef.current?.slideNext(), []);
   const handleAllGames = useCallback(() => navigate('/allGames'), [navigate]);
 
-  if (!games.length) {
+  if (loading && !games.length) {
     return (
       <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
         <SwiperNavigation
@@ -454,6 +454,24 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate, onAddToCart
             </SwiperSlide>
           ))}
         </Swiper>
+      </div>
+    );
+  }
+
+  if (!loading && !games.length) {
+    return (
+      <div className='py-2 sm:py-4 md:py-4 lg:py-6'>
+        <SwiperNavigation
+          title={title}
+          onAllGamesClick={handleAllGames}
+          onPrev={handlePrev}
+          onNext={handleNext}
+          isBeginning={isBeginning}
+          isEnd={isEnd}
+        />
+        <div className="flex flex-col items-center justify-center py-10 bg-[#141414] rounded-2xl border border-slate-600/30">
+          <p className="text-white/60 text-lg font-medium">No games available in this category</p>
+        </div>
       </div>
     );
   }
@@ -662,6 +680,7 @@ const Store = () => {
               gameActions={gameActions}
               onNavigate={handleNavigate}
               onAddToCart={openPlatformModal}
+              loading={loading}
             />
 
             <SwiperNavigation
@@ -694,7 +713,7 @@ const Store = () => {
                     threshold={0.1}
                     delay={index * 75}
                     suppressSkeleton={false}
-                  > */}
+                    > */}
                     <MemoizedGameCard
                       game={game}
                       onNavigate={handleNavigate}
@@ -706,7 +725,9 @@ const Store = () => {
                 ))
               ) : (
                 <SwiperSlide>
-                  <div className="text-center text-white py-10">No featured games available</div>
+                  <div className="text-center text-white py-10 bg-[#141414] rounded-2xl border border-slate-600/30 w-full">
+                    No featured games available
+                  </div>
                 </SwiperSlide>
               )}
             </Swiper>
@@ -722,6 +743,7 @@ const Store = () => {
             gameActions={gameActions}
             onNavigate={handleNavigate}
             onAddToCart={openPlatformModal}
+            loading={loading}
           />
 
           <SwiperSection
@@ -730,14 +752,16 @@ const Store = () => {
             gameActions={gameActions}
             onNavigate={handleNavigate}
             onAddToCart={openPlatformModal}
+            loading={loading}
           />
 
           <SwiperSection
             title="Action Games"
-            games={Array.isArray(actionGames) && actionGames.length > 0 ? actionGames : (Array.isArray(games) ? games.slice(0, 8) : [])}
+            games={Array.isArray(actionGames) ? actionGames : []}
             gameActions={gameActions}
             onNavigate={handleNavigate}
             onAddToCart={openPlatformModal}
+            loading={loading}
           />
 
           <SwiperSection
@@ -746,6 +770,7 @@ const Store = () => {
             gameActions={gameActions}
             onNavigate={handleNavigate}
             onAddToCart={openPlatformModal}
+            loading={loading}
           />
         </div>
       </section>
