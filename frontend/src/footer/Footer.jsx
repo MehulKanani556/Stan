@@ -59,8 +59,8 @@ const Footer = () => {
 
         <div className="relative max-w-[95%] md:max-w-[75%] mx-auto ">
 
-          <div className=" py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-[425px]:grid-cols-2">
-            <div className="space-y-4 max-[425px]:col-span-2">
+          <div className=" py-10 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 md:gap-10  gap-4 max-[425px]:grid-cols-2">
+            <div className="space-y-4 max-[424px]:col-span-2">
               <div className='w-fit'>
                 <NavLink to={"/"} >
                   <h1 className='text-6xl font-bold text-white ' >Stan.</h1>

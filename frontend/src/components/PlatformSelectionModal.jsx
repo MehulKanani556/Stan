@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import { FaApple, FaDesktop, FaPlaystation, FaXbox, FaGamepad, FaAndroid } from 'react-icons/fa';
 import { SiOculus, SiNintendoswitch } from 'react-icons/si'
+import { IoMdClose } from "react-icons/io";
+
 export const PLATFORM_OPTIONS = [
   { label: 'Vision Pro', value: 'vision_pro' },
   { label: 'PC', value: 'windows' },
@@ -85,12 +87,13 @@ const PlatformSelectionModal = ({
           className="absolute top-3 right-3 text-slate-400 hover:text-white transition-colors text-xl leading-none"
           aria-label="Close platform selection"
         >
-          &times;
+         <IoMdClose/>
         </button>
 
         <h2 className="text-xl sm:text-2xl font-semibold text-white mb-1 text-center">
           Choose Platform(s)
         </h2>
+       
         <p className="text-slate-300 text-center mb-4 text-sm">
           {gameTitle ? `Select the platforms for ${gameTitle}` : 'Select your preferred platforms'}
         </p>

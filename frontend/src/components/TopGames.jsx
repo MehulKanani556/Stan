@@ -118,6 +118,23 @@ const GameCardSkeleton = () => (
 
 
 
+// Helper to get minimum price across all platforms
+const getPriceInfo = (item) => {
+  if (!item?.platforms) return { isFree: true, minPrice: 0 };
+  
+  const platformPrices = Object.values(item.platforms)
+    .map(p => p?.price)
+    .filter(price => typeof price === 'number' && !Number.isNaN(price));
+
+  if (platformPrices.length === 0) return { isFree: true, minPrice: 0 };
+  
+  const minPrice = Math.min(...platformPrices);
+  return {
+    isFree: minPrice === 0,
+    minPrice: minPrice
+  };
+};
+
 // Optimized GameCard Component
 const GameCard = React.memo(({ item, isLoading = false }) => {
   const handleImageError = useCallback((e) => {
@@ -129,9 +146,9 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
     return <GameCardSkeleton />;
   }
 
-  const isFree = !item?.platforms?.windows?.price;
+  const { isFree, minPrice } = getPriceInfo(item);
   const linkTo = isFree ? `/games/${item.slug}` : `/single/${item?._id}`;
-  const price = item?.platforms?.windows?.price;
+  
   return (
     <Link to={linkTo} className='block '>
       <div className="group relative bg-gradient-to-br cursor-pointer md:mb-0 mb-6 from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 hover:border-gray-600 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[var(--color-change20)] hover:-translate-y-2 sm:h-[-webkit-fill-available]">
@@ -176,11 +193,10 @@ const GameCard = React.memo(({ item, isLoading = false }) => {
                 <span className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-black px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                   FREE
                 </span>
-                {/* <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />  */}
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <span className="text-2xl sm:text-xl md:text-2xl font-bold text-white">${price}</span>
+                <span className="text-2xl sm:text-xl md:text-2xl font-bold text-white">${minPrice}</span>
                 <span className="text-slate-400 text-sm">USD</span>
               </div>
             )}
@@ -324,8 +340,8 @@ function TopGames() {
     const newGames = normalizeList(homeGamesData?.newGames, 'game');
 
     const isPaid = (g) => {
-      const price = g?.platforms?.windows?.price;
-      return typeof price === 'number' && !Number.isNaN(price) && price > 0;
+      const { isFree } = getPriceInfo(g);
+      return !isFree;
     };
 
     const paidTop = topSelling.filter(isPaid);
@@ -366,19 +382,19 @@ function TopGames() {
     //   return typeof price === "number" && price > 0 && price <= 1000;
     // });
 
-    // Top Price Games (highest price first)
+// Top Price Games (highest price first)
 const topPrice = uniqueById([
   ...paidTop,
   ...paidNew,
   ...ultimate
 ])
 .filter(g => {
-  const price = g?.platforms?.windows?.price;
-  return typeof price === "number" && price > 0;
+  const { isFree } = getPriceInfo(g);
+  return !isFree;
 })
 .sort((a, b) => {
-  const pa = a?.platforms?.windows?.price || 0;
-  const pb = b?.platforms?.windows?.price || 0;
+  const { minPrice: pa } = getPriceInfo(a);
+  const { minPrice: pb } = getPriceInfo(b);
   return pb - pa; // highest first
 });
 
@@ -387,8 +403,8 @@ const topPrice = uniqueById([
       ...paidNew,
       ...ultimate
     ]).filter(g => {
-      const price = g?.platforms?.windows?.price;
-      return typeof price === "number" && price > 0 && price <= 1000;
+      const { minPrice, isFree } = getPriceInfo(g);
+      return !isFree && minPrice <= 1000;
     });
 
     // Helper to ensure we only use games that can actually render nicely
@@ -448,17 +464,8 @@ const topPrice = uniqueById([
     const usedIds = new Set();
 
     const isFreeGame = (game) => {
-      if (!game) return false;
-      const prices = [
-        game?.platforms?.windows?.price,
-        game?.platforms?.ios?.price,
-        game?.platforms?.android?.price,
-      ].filter((p) => typeof p === 'number' && !Number.isNaN(p));
-      if (!prices.length) {
-        // Treat missing price as free for the free-games section only
-        return true;
-      }
-      return Math.min(...prices) === 0;
+      const { isFree } = getPriceInfo(game);
+      return isFree;
     };
 
     const allGamesUnique = (() => {

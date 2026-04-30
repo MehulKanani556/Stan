@@ -459,9 +459,12 @@ export default function Home() {
 
   const currentSectionTitle = useMemo(() => {
     if (activeTab == null) return "All Games";
-    const category = cateData?.find(c => c._id === activeTab);
-    return `${category?.name || "Category"} Games`;
+    const category = cateData?.find(c => String(c._id) === String(activeTab));
+    const categoryName = category?.name || category?.categoryName || "Category";
+    return `${categoryName} Games`;
   }, [activeTab, cateData]);
+
+
 
   // Handlers
   const handleCategoryChange = useCallback((cateId) => {
@@ -647,19 +650,19 @@ export default function Home() {
             </div>
 
             {/* Header with Navigation */}
-            <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex items-center justify-between">
+            <div className="k-trending-heading mb-4 sm:mb-5 md:mb-6 flex flex-col sm:flex-row gap-2 sm:gap-0 sm:items-center justify-between">
               <div>
                 <p className="font-semibold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-white">
                   {currentSectionTitle}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex justify-end gap-2">
                 <button
                   onClick={() => navigate('/allGames')}
                   className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-2 
                     font-medium text-sm transition-all duration-200 ease-out
                     border-[1px] border-[var(--color-change)]
-                    rounded-md
+                    rounded-md whitespace-nowrap
                     text-white focus-visible:outline-none 
                     focus-visible:ring-2  focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900  "
                 >

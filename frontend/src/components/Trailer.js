@@ -18,11 +18,11 @@ const Trailer = () => {
 
   useEffect(() => {
     // if (!trailer) {
-      dispatch(getHomeTrailer()).then((value) => {
-        if (value?.meta?.requestStatus === "fulfilled") {
-          setLoader(false)
-        }
-      });
+    dispatch(getHomeTrailer()).then((value) => {
+      if (value?.meta?.requestStatus === "fulfilled") {
+        setLoader(false)
+      }
+    });
     // }
 
   }, [dispatch]);

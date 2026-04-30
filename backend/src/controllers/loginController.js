@@ -150,7 +150,7 @@ export const userLogin = async (req, res) => {
             const waitMinutes = Math.ceil(
                 (user.lockUntil - Date.now()) / 60000
             );
-            return sendErrorResponse(res,429, `Account locked due to multiple failed login attempts. Try again in ${waitMinutes} minute(s).`)
+            return sendErrorResponse(res, 429, `Account locked due to multiple failed login attempts. Try again in ${waitMinutes} minute(s).`)
 
         }
 
