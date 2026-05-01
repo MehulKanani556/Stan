@@ -124,7 +124,7 @@ export default function Transaction() {
                                                             <span className="font-semibold">{item.gameTitle}</span>
                                                             <div>
                                                                 <span className="text-gray-400">({item.platform})</span>
-                                                                <span className="ml-1 text-green-400">${item.price}</span>
+                                                                <span className="ml-1 text-green-400">${item.price?.toFixed(2)}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -146,7 +146,7 @@ export default function Transaction() {
                                     )}
                                 </td>
                                 <td className="py-3 px-4 text-gray-300 text-sm">
-                                    ${transaction.totalAmount}
+                                    ${transaction.totalAmount?.toFixed(2)}
                                 </td>
                                 <td className='py-3 px-4 text-gray-300 text-sm'>
                                     <span className={`${transaction.status == 'paid' ? 'bg-green-600/20 text-green-400' : ''} text-xs px-2 py-1 rounded font-semibold`}>

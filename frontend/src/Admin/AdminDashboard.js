@@ -528,7 +528,7 @@ export default function AdminDashboard() {
             </div>
             <div className="text-end">
               <div className="text-2xl md:text-3xl xl:text-2xl 2xl:text-3xl font-bold text-white mb-2">
-                {DashboardStats?.totalRevenue}
+                {DashboardStats?.totalRevenue?.toFixed(2)}
               </div>
               <div className="text-white text-sm">Total Revenue</div>
             </div>
@@ -705,7 +705,7 @@ export default function AdminDashboard() {
                         {game.totalOrders}
                       </td>
                       <td className="py-3 px-4 text-gray-300 text-sm text-center">
-                        {game.totalRevenue}
+                        {game.totalRevenue?.toFixed(2)} 
                       </td>
                     </tr>
                   ))}
@@ -823,7 +823,7 @@ export default function AdminDashboard() {
                                         ({item.platform})
                                       </span>
                                       <span className="ml-1 text-green-400">
-                                        ${item.price}
+                                        ${item.price?.toFixed(2)} 
                                       </span>
                                     </div>
                                   </div>
@@ -850,7 +850,7 @@ export default function AdminDashboard() {
                         )}
                       </td>
                       <td className="py-3 px-4 text-gray-300 text-sm text-center">
-                        ${transaction.totalAmount}
+                        ${transaction.totalAmount?.toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-gray-300 text-sm text-center">
                         <span

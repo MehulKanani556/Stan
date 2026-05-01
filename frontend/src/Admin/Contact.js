@@ -179,7 +179,7 @@ export default function Contact() {
             )}
 
             <Modal open={viewOpen} onClose={handleViewClose}>
-                <Box className="bg-primary-dark/90 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded max-w-[500px] w-full">
+                <Box className="bg-primary-dark/90 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded max-w-[500px] w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
                     {selectedUser && (
                         <div className="p-5">
                             <div className="text-center">
@@ -191,7 +191,7 @@ export default function Contact() {
                             </div>
                             <div className="mb-4">
                                 <span className="font-bold">Email : </span>
-                                <span>{selectedUser.email}</span>
+                                <span className='break-all'>{selectedUser.email}</span>
                             </div>
                             <div className="mb-4">
                                 <span className="font-bold">Subject : </span>
