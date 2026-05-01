@@ -153,8 +153,8 @@ export default function AdminDashboard() {
       {
         label: "order",
         data: topPlatform.map((revenue) => revenue.totalOrders),
-        borderColor: "#6263ED",
-        backgroundColor: "6263ED",
+        borderColor: "#ff8615",
+        backgroundColor: "ff8615",
         borderWidth: 3,
         pointRadius: 0,
         pointHoverRadius: 6,
@@ -247,8 +247,8 @@ export default function AdminDashboard() {
       {
         label: "Order Category",
         data: topCategories.slice(0, 5).map((revenue) => revenue.totalOrders),
-        backgroundColor: "#6263ED",
-        borderColor: "#6263ED",
+        backgroundColor: "#ff8615",
+        borderColor: "#ff8615",
         borderWidth: 0,
       },
     ],
@@ -340,8 +340,8 @@ export default function AdminDashboard() {
     datasets: [
       {
         data: CategoryByGame?.map((cat) => cat.gameCount) || [],
-        backgroundColor: "#6263ED",
-        borderColor: "#00C6FF",
+        backgroundColor: "#ff8615",
+        borderColor: "#ff8615",
         borderWidth: 0,
       },
     ],

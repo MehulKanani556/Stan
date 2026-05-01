@@ -247,9 +247,9 @@ const GamePlay = () => {
                     </div>
                 </div>
                 {game ? (
-                    <div className='mt-4 bg-[#221f2a] rounded-xl overflow-hidden relative'>
+                    <div className='mt-4 bg-[#2a241f]  overflow-hidden relative'>
                         {(isLoading || loading) && (
-                            <div className='absolute inset-0 flex items-center justify-center bg-[#221f2a] z-10'>
+                            <div className='absolute inset-0 flex items-center justify-center bg-[#2a251f] z-10'>
                                 <div className='text-white text-lg'>Loading game...</div>
                             </div>
                         )}
@@ -261,7 +261,7 @@ const GamePlay = () => {
                                 </div>
                                 <button
                                     onClick={openGameInNewTab}
-                                    className='bg-[#ab99e1] hover:bg-[#9a8ad0] text-white px-6 py-3 rounded-lg font-medium transition-colors'
+                                    className='bg-[#e1bc99] hover:bg-[#d0b48a] text-white px-6 py-3 rounded-lg font-medium transition-colors'
                                 >
                                     Play Game in New Tab
                                 </button>

@@ -2,8 +2,8 @@ import { Box, Modal, Pagination, useMediaQuery } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllcontactUs, deletecontactUs } from '../Redux/Slice/contactUs.slice';
-import { FaEye, FaTrash } from 'react-icons/fa';
-import Swal from 'sweetalert2';
+import { FaEye } from 'react-icons/fa';
+import { RiDeleteBin6Fill } from "react-icons/ri";
 
 export default function Contact() {
     const [searchValue, setSearchValue] = useState('');
@@ -12,6 +12,8 @@ export default function Contact() {
     const isSmallScreen = useMediaQuery("(max-width:425px)");
     const [viewOpen, setViewOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [delOpen, setDelOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
 
     useEffect(() => {
         dispatch(getAllcontactUs())
@@ -53,21 +55,20 @@ export default function Contact() {
     };
 
     const handleDelete = (id) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!',
-            background: '#1a1a1a',
-            color: '#fff'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                dispatch(deletecontactUs({ _id: id }));
-            }
-        });
+        setDeleteId(id);
+        setDelOpen(true);
+    };
+
+    const handleDeleteClose = () => {
+        setDelOpen(false);
+        setDeleteId(null);
+    };
+
+    const handleDeleteConfirm = () => {
+        if (deleteId) {
+            dispatch(deletecontactUs({ _id: deleteId }));
+            handleDeleteClose();
+        }
     };
 
     return (
@@ -136,7 +137,7 @@ export default function Contact() {
                                         className="text-red-500 text-xl p-1 border border-red-500 transition-colors rounded hover:text-white hover:bg-red-500"
                                         onClick={() => handleDelete(user._id)}
                                     >
-                                        <FaTrash />
+                                        <RiDeleteBin6Fill />
                                     </button>
                                 </td>
                             </tr>
@@ -212,7 +213,28 @@ export default function Contact() {
                     )}
                 </Box>
             </Modal>
-            
+            <Modal open={delOpen} onClose={handleDeleteClose}>
+                <Box className="bg-primary-dark text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded max-w-[400px] w-full">
+                    <div className="p-5 text-center">
+                        <p className="text-brown font-bold text-xl mb-4">Delete Contact Us Inquiry</p>
+                        <p className="mb-6">Are you sure you want to delete this inquiry? This action cannot be undone.</p>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={handleDeleteClose}
+                                className="text-brown w-32 border-brown border px-4 py-2 rounded hover:bg-brown-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteConfirm}
+                                className="bg-brown text-white w-32 border-brown border px-4 py-2 rounded hover:bg-brown-50"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </Box>
+            </Modal>
         </div>
     )
 }

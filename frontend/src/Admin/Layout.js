@@ -659,7 +659,7 @@ function Layout({ children }) {
                       }) => (
                         <form
                           onSubmit={handleSubmit}
-                          className="change-pass-form flex flex-col gap-4 p-[12px] relative overflow-visible"
+                          className="change-pass-form flex flex-col gap-4 sm:p-[12px]  relative overflow-visible"
                           style={{ zIndex: 1302 }}
                         >
                           {/* Current Password */}
@@ -799,13 +799,13 @@ function Layout({ children }) {
                           <div className="flex justify-between mt-[10px] md:mt-[32px] gap-4">
                             <button
                               onClick={() => setOpenPassword(false)}
-                              className="bg-white/10 text-[14px] hover:bg-white/20 text-white py-2 rounded-[4px] w-48"
+                              className="border text-[14px]  text-white py-2 rounded-[4px] w-48"
                             >
                               Cancel
                             </button>
                             <button
                               type="submit"
-                              className="text-[14px] w-48 py-2 rounded-[4px] font-medium sm:py-3 text-white border-none cursor-pointer bg-gradient-primary bg-[length:200%_100%] bg-[position:left_center] hover:bg-[position:right_center] transition-[background-position] duration-400 ease-in-out"
+                              className="text-[14px] w-48 py-2 rounded-[4px] font-medium sm:py-3 text-white cursor-pointer border  transition-[background-position] duration-400 ease-in-out"
                             >
                               Change Password
                             </button>
@@ -882,8 +882,8 @@ function Layout({ children }) {
 
           <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-gradient-to-b from-[#0f0d12] to-[#141216]">
             {/* Decorative blobs */}
-            <div className={`pointer-events-none absolute ${window?.innerWidth < 900 ? "-top-20 -left-24" : "top-10 left-24"}  w-[420px] h-[420px] rounded-full bg-purple-700/30 blur-3xl `} />
-            <div className="pointer-events-none absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full bg-indigo-700/30 blur-3xl" />
+            <div className={`pointer-events-none absolute ${window?.innerWidth < 900 ? "-top-20 -left-24" : "top-10 left-24"}  w-[420px] h-[420px] rounded-full bg-orange-700/20 blur-3xl `} />
+            <div className="pointer-events-none absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full bg-amber-500/20 blur-3xl" />
           </div>
           {children}
         </div>
@@ -922,7 +922,7 @@ function Layout({ children }) {
           <div className="flex justify-between gap-4 mt-4">
             <button
               onClick={() => setShowLogoutModal(false)}
-              className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-[4px]"
+              className="w-full border text-white py-2 rounded-[4px]"
             >
               Cancel
             </button>
@@ -932,7 +932,7 @@ function Layout({ children }) {
                 setShowLogoutModal(false);
                 handleLogout();
               }}
-              className="w-full text-white py-2 rounded-[4px] text-[14px] font-medium sm:py-3 border-none cursor-pointer bg-gradient-primary bg-[length:200%_100%] bg-[position:left_center] hover:bg-[position:right_center] transition-[background-position] duration-400 ease-in-out"
+              className="w-full text-white py-2 rounded-[4px] text-[14px] font-medium sm:py-3 border cursor-pointer   duration-400 ease-in-out"
             >
               Yes, Logout
             </button>
