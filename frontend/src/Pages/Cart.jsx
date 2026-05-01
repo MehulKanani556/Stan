@@ -17,6 +17,7 @@ import { CartSkeletonCard, CartSkeletonSummary } from "../lazyLoader/CartSkeleto
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import PaymentForm from '../components/PaymentForm';
+import ReviewForm from "../components/ReviewForm";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { fanCoinsuse, getUserById } from '../Redux/Slice/user.slice';
 import Advertize from "../components/Advertize";
@@ -59,6 +60,9 @@ const Cart = () => {
     const [useFanCoinsChecked, setUseFanCoinsChecked] = useState(false);
     const [fanCoinsToUse, setFanCoinsToUse] = useState(0);
     const [finalAmount, setFinalAmount] = useState(0);
+    const [isAfterPurchase, setIsAfterPurchase] = useState(false);
+    const [openReview, setOpenReview] = useState(false);
+    const [reviewGameId, setReviewGameId] = useState(null);
 
     // Platform selection modal (add)
     const {
@@ -302,6 +306,9 @@ const Cart = () => {
     };
 
     const handlePaymentSuccess = () => {
+        // Save the first game ID for review before clearing cart
+        const firstGameId = cartItems.length > 0 ? (cartItems[0]?.game?._id || cartItems[0]?.game) : null;
+
         setShowPaymentForm(false);
         setClientSecret("");
         setCurrentOrderId(null);
@@ -313,11 +320,22 @@ const Cart = () => {
         // Clear the cart after successful payment
         dispatch(clearCart());
 
-        // Navigate to success page or orders page
-        // navigate('/orders'); // Uncomment if you have an orders page
-
-        // alert("Order placed successfully!");
+        // If there was a game, trigger review modal
+        if (firstGameId) {
+            setReviewGameId(firstGameId);
+            setOpenReview(true);
+            setIsAfterPurchase(true);
+        } else {
+            navigate('/');
+        }
     };
+
+    const handleReviewSuccess = useCallback(() => {
+        setOpenReview(false);
+        if (isAfterPurchase) {
+            navigate('/');
+        }
+    }, [isAfterPurchase, navigate]);
 
     return (
         <>
@@ -650,6 +668,20 @@ const Cart = () => {
                         </DialogPanel>
                     </div>
                 </Dialog>
+
+                {/* Review Modal */}
+                {openReview && (
+                    <ReviewForm
+                        open={openReview}
+                        onClose={() => {
+                            setOpenReview(false);
+                            setIsAfterPurchase(false);
+                            navigate('/'); // Navigate to home even if they close it after purchase
+                        }}
+                        onSuccess={handleReviewSuccess}
+                        game={reviewGameId}
+                    />
+                )}
             </div>
         </>
     );

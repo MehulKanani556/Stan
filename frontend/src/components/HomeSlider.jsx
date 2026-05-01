@@ -239,7 +239,7 @@ import HeroSliderSkeleton2 from "../lazyLoader/HeroSkeleton2";
                                                 {game.description.slice(0, 200) + '...'}
                                             </p>
                                             <Link to={'/single/' + game._id} className='flex justify-center mt-5'>
-                                                <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 bg-white text-black rounded mx-auto border hover:bg-transparent hover:text-white'>
+                                                <button className='xl:text-base md:text-sm  text-xs  p-2 md:px-8 px-4 style_btn_color text-white rounded mx-auto '>
                                                     Learn More
                                                 </button>
                                             </Link>

@@ -448,7 +448,7 @@ export default function Header() {
                                             <p className="text-white/60 text-[11px]">View Profile</p>
                                         </div>
                                     </div>
-                                    <button className='text-[#ebe8f1] text-lg'>
+                                    <button className='text-[#f1ede8] text-lg'>
                                         <IoIosArrowForward />
                                     </button>
                                 </div>
@@ -468,7 +468,7 @@ export default function Header() {
 
                                         </div>
                                     </div>
-                                    <button className='text-[#ebe8f1] text-lg'>
+                                    <button className='text-[#f1ede8] text-lg'>
                                         <IoIosArrowForward />
                                     </button>
                                 </div>

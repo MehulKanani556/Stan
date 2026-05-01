@@ -360,6 +360,7 @@ const SingleGame = () => {
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [amountToPay, setAmountToPay] = useState(0);
   const [open, setOpen] = useState(false);
+  const [isAfterPurchase, setIsAfterPurchase] = useState(false);
 
   // Fan coin state
   const [useFanCoinsChecked, setUseFanCoinsChecked] = useState(false);
@@ -739,7 +740,18 @@ const SingleGame = () => {
     if (isInCart) {
       dispatch(removeFromCart({ gameId: id, platform: selectedPurchasePlatform || "windows" }))
     }
+
+    // Open review modal after payment success
+    setOpen(true)
+    setIsAfterPurchase(true)
   }, [dispatch, id, isInCart, selectedPurchasePlatform, getPlatformPrice])
+
+  const handleReviewSuccess = useCallback(() => {
+    setOpen(false)
+    if (isAfterPurchase) {
+      navigate('/')
+    }
+  }, [isAfterPurchase, navigate])
 
   // Slider settings
   const mainSettings = useMemo(
@@ -1472,7 +1484,15 @@ const SingleGame = () => {
 
       {/* Review Modal */}
       {open && (
-        <ReviewForm open={open} onClose={() => setOpen(false)} game={id} />
+        <ReviewForm
+          open={open}
+          onClose={() => {
+            setOpen(false)
+            setIsAfterPurchase(false)
+          }}
+          onSuccess={handleReviewSuccess}
+          game={id}
+        />
       )}
       <PlatformSelectionModal
         open={Boolean(platformModalGame)}

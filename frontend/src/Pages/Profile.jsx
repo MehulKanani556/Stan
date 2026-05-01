@@ -299,6 +299,7 @@ export default function Profile() {
         setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
         setShowPassword({ current: false, newPass: false, confirm: false });
         setPasswordError("");
+        changePassFormik.resetForm();
     };
 
     const closeChangePasswordModal = () => {
