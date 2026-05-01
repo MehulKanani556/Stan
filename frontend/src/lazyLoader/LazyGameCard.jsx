@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import GameCardSkeleton from './GameCardSkeleton';
 
-const LazyGameCard = ({ children, threshold = 0.1, delay = 300, suppressSkeleton = false }) => {
+const LazyGameCard = ({ children, threshold = 0.1, delay = 100, suppressSkeleton = false }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const cardRef = useRef(null);
