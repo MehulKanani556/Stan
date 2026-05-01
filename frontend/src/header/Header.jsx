@@ -62,6 +62,11 @@ export default function Header() {
     const name = useSelector((state) => state?.user?.name);
     const myManage = useSelector((state) => state?.game?.myToggle)
 
+    console.log("User name", name);
+    console.log("authUser", authUser);
+    console.log("currentUser", currentUser);
+
+
 
     const userId = authUser?._id || currentUser?._id || localStorage.getItem("userId");
     const { items } = useSelector((state) => state.wishlist);
@@ -157,7 +162,7 @@ export default function Header() {
                         <div className="navbar w-[97%] m-auto px-0 justify-between">
 
                             <NavLink to={isAdminRoute ? "/admin" : "/"} className="flex items-center gap-2 rounded-full overflow-hidden flex-none">
-                               <img src={logo} alt="" className='w-12' />
+                                <img src={logo} alt="" className='w-12' />
                             </NavLink>
 
 
@@ -444,7 +449,7 @@ export default function Header() {
                                             />
                                         </div>
                                         <div className='flex flex-col gap-0.5 '>
-                                            <h2 className="text-white text-sm font-medium capitalize">{currentUser?.userName || currentUser?.fullName || authUser?.userName || authUser?.fullName || 'Profile'}</h2>
+                                            <h2 className="text-white text-sm font-medium truncate capitalize">{decryptData(name) || 'Profile'}</h2>
                                             <p className="text-white/60 text-[11px]">View Profile</p>
                                         </div>
                                     </div>
