@@ -205,11 +205,11 @@ const GameCard = ({
 
         {/* Image Container */}
         {/* {console.log('games image',game?.cover_image?.url)} */}
-        <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
+        <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-t-2xl">
           <img
             src={game?.cover_image?.url}
             alt={game?.title}
-            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110 rounded-2xl"
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110 rounded-t-2xl"
             loading="lazy"
           />
 

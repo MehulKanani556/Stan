@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearError, getFreeGames } from '../Redux/Slice/freeGame.slice'
@@ -9,6 +9,7 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import FreeGamesSkeleton from '../lazyLoader/FreeGamesSkeleton'
 import Advertize from '../components/Advertize'
+import game1 from '../images/game1.jpg';
 
 const Games = () => {
 	const dispatch = useDispatch()
@@ -219,7 +220,7 @@ const Games = () => {
 					<div className="flex flex-col ms:flex-row lg:items-center ms:items-start items-center sm:justify-between ms:gap-8 gap-4 mb-12">
 						<div className="space-y-3">
 							<h2 className="xl:text-5xl lg:text-4xl md:text-3xl sm:text-2xl text-2xl font-bold text-white">
-								Featured Games
+								{selectedCategory === "All" ? "All games"  : selectedCategory }
 							</h2>
 							<p className="md:text-xl text-lg text-gray-400">Handpicked games just for you</p>
 						</div>
@@ -272,15 +273,7 @@ const Games = () => {
 					</div>
 
 					{isInitialLoading && (
-						<div className="grid grid-cols-2 ms:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-							{[...Array(8)].map((_, i) => (
-								<div key={i} className="animate-pulse">
-									<div className="bg-gray-700/50 rounded-2xl mb-4 w-full h-64 sm:h-72 md:h-64 lg:h-72 xl:h-64 2xl:h-80"></div>
-									<div className="h-4 bg-gray-700/50 rounded-lg mb-2"></div>
-									<div className="h-3 bg-gray-700/30 rounded-lg w-2/3"></div>
-								</div>
-							))}
-						</div>
+						<FreeGamesSkeleton />
 					)}
 
 					{!isInitialLoading && (
@@ -299,14 +292,15 @@ const Games = () => {
 										onResize={syncEdges}
 										onBreakpoint={syncEdges}
 										breakpoints={{
-											320: { slidesPerView: 2, spaceBetween: 0 },
+											320: { slidesPerView: 1.8, spaceBetween: 10 },
+											450: { slidesPerView: 2, spaceBetween: 20 },
 											640: { slidesPerView: 2, spaceBetween: 30 },
 											768: { slidesPerView: 2, spaceBetween: 28 },
 											1024: { slidesPerView: 3, spaceBetween: 32 },
 											1280: { slidesPerView: 3.5, spaceBetween: 36 },
 											1536: { slidesPerView: 5, spaceBetween: 20 },
 										}}
-										className="!py-8 !px-2 "
+										className="!py-8 !px-2"
 									>
 										{filteredGames.map((game, index) => (
 											<SwiperSlide key={game._id}>
@@ -318,7 +312,7 @@ const Games = () => {
 							)}
 
 							{showAll && (
-								<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ms:gap-8 gap-y-6 " >
+								<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ms:gap-8 gap-4  gap-y-6 " >
 									{filteredGames.map((game, index) => (
 										<GameCard key={game._id} game={game} index={index} />
 									))}
@@ -353,6 +347,7 @@ const Games = () => {
 					-ms-overflow-style: none;
 					scrollbar-width: none;
 				}
+				
 
 				.swiper-slide {
 					transition: transform 0.4s ease;
@@ -381,79 +376,69 @@ const GameCard = ({ game, index = 0 }) => {
 	const [imageLoaded, setImageLoaded] = useState(false)
 	const [imageError, setImageError] = useState(false)
 
+	const isNewGame = useMemo(() => {
+		if (!game?.createdAt) return false;
+		const createdDate = new Date(game.createdAt);
+		const oneMonthAgo = new Date();
+		oneMonthAgo.setMonth(new Date().getMonth() - 1);
+		return createdDate >= oneMonthAgo && createdDate <= new Date();
+	}, [game?.createdAt]);
+
 	return (
 		<Link
 			to={`/games/${game.slug}`}
-			className="group block h-full w-full ms:px-0 px-1 "
+			className="w-full max-w-[220px] sm:max-w-[260px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] cursor-pointer mx-auto"
 			style={{
 				animationDelay: `${index * 0.1}s`,
 			}}
 		>
-			<div className="relative bg-gradient-to-br from-gray-800/60 to-gray-900/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-orange-500/50 transition-all duration-500 hover:transform hover:scale-[1.03] hover:shadow-2xl hover:shadow-orange-500/10 group h-full flex flex-col">
+			<div className="group relative overflow-hidden rounded-2xl bg-[#141414] border border-slate-600/50 shadow-[0_4px_33px_#0000000d] hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
+				<div className="absolute inset-0 bg-[#141414] opacity-100 transition-opacity duration-700" />
+				<div className="relative w-full h-32 ms:h-48 md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-t-2xl">
+					<img
+						src={game?.image || game1}
+						alt={game?.name}
+						className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110 rounded-t-2xl"
+						loading="lazy"
+					/>
+					<div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
+						{isNewGame && (
+							<div className="absolute ms:top-4 ms:left-4 top-1 left-1">
+								<div className="px-3 ms:py-1.5 py-1 bg-[var(--color-change)] rounded-full backdrop-blur-sm border border-orange-400/30 shadow-lg">
+									<div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
+								</div>
+							</div>
+						)}
 
-				{/* Image Container with Fixed Dimensions Across All Breakpoints */}
-				<div className="relative bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden flex-shrink-0 w-full sm:h-40 h-32 ms:h-72 md:h-64 lg:h-72 xl:h-64 2xl:h-80">
-					{/* Loading State */}
-					{!imageLoaded && !imageError && (
-						<div className="absolute inset-0 flex items-center justify-center bg-gray-700">
-							<div className="relative">
-								<div className="animate-spin rounded-full h-12 w-12 border-3 border-orange-500 border-t-transparent"></div>
-								<div className="absolute inset-0 animate-ping rounded-full h-12 w-12 border border-orange-400 opacity-20"></div>
+						<div className="absolute bottom-4 left-4 right-4">
+							<div className="ms:p-4 p-0">
+								<h3 className="text-white font-bold ms:text-sm text-xs sm:text-base md:text-lg lg:text-xl leading-tight">
+									{game?.name}
+								</h3>
 							</div>
 						</div>
-					)}
-
-					{/* Error State */}
-					{imageError && (
-						<div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800">
-							<FaGamepad className="text-gray-400 mb-3 w-16 h-16 sm:w-20 sm:h-20 md:w-18 md:h-18 lg:w-24 lg:h-24 xl:w-20 xl:h-20 2xl:w-28 2xl:h-28" />
-							<span className="text-gray-400 text-xs sm:text-sm">Image unavailable</span>
-						</div>
-					)}
-
-					{/* Game Image with Fixed Aspect Ratio */}
-					{!imageError && (
-						<img
-							src={game.image}
-							alt={game.name}
-							onLoad={() => setImageLoaded(true)}
-							onError={() => setImageError(true)}
-							className={`
-								w-full  h-full object-cover transition-all duration-700 group-hover:scale-110
-								${imageLoaded ? 'opacity-100' : 'opacity-0'}
-							`}
-							style={{ objectFit: 'cover', objectPosition: 'center' }}
-						/>
-					)}
-
-					{/* Gradient Overlay */}
-					<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-					{/* Play Button Overlay */}
-					<div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-						<div className="w-16 h-16 sm:w-20 sm:h-20 md:w-18 md:h-18 lg:w-24 lg:h-24 xl:w-20 xl:h-20 2xl:w-22 2xl:h-22 bg-white/20 backdrop-blur-lg rounded-full flex items-center justify-center border-2 border-white/30 transform scale-75 group-hover:scale-100 transition-transform duration-300 shadow-lg">
-							<FaPlay className="text-white ml-1 w-6 h-6 sm:w-8 sm:h-8 md:w-7 md:h-7 lg:w-10 lg:h-10 xl:w-8 xl:h-8 2xl:w-8 2xl:h-8" />
+					</div>
+				</div>
+				<div className="ms:p-4 p-2 md:p-6 ms:space-y-4 space-y-2 bg-gradient-to-br from-slate-700/95 to-slate-800/95">
+					<div className="grid grid-cols-1 gap-4">
+						<div className="bg-[#06060690] rounded-xl relative z-10 px-3 sm:px-4 sm:py-3 py-2 md:px-6 md:py-3.5">
+							<div className="flex flex-wrap items-center space-x-2">
+								<span className="ms:text-sm text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">Status:</span>
+								<span className="ms:text-lg text-xs font-black text-white">Free to Play</span>
+							</div>
 						</div>
 					</div>
-
-					{/* Free Badge */}
-					<div className="absolute ms:top-4 ms:right-4 top-0 right-1 px-3 py-1  sm:px-4 sm:py-2 md:px-3 md:py-1.5 lg:px-5 lg:py-2.5 xl:px-4 xl:py-2 2xl:px-5 2xl:py-2.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold rounded-full shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-[10px] sm:text-sm md:text-xs lg:text-sm xl:text-sm 2xl:text-base">
-						FREE
-					</div>
-
-
+					<button className="w-full relative overflow-hidden rounded-xl transition-all duration-500 transform bg-gradient-to-r from-emerald-600 to-green-600 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
+						<div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+							<FaPlay className="text-white md:w-5 ms:h-5 h-3 w-3" />
+							<span className="text-white font-bold text-sm tracking-wider uppercase ms:text-sm text-xs">Play Now</span>
+						</div>
+						<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+					</button>
 				</div>
-
-				{/* Card Content */}
-				<div className="flex-grow ms:flex flex-col p-2 sm:p-6 md:p-5 lg:p-7 xl:p-6 2xl:p-8">
-					<h3 className="font-bold text-white group-hover:text-[var(--color-change)] transition-colors duration-300 line-clamp-2 leading-tight mb-3 flex-grow text-sm sm:text-xl md:text-lg lg:text-2xl xl:text-xl ">
-						{game.name}
-					</h3>
-
+				<div className="absolute top-1 left-1 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+					<div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-emerald-400/30 rounded-lg transform rotate-45"></div>
 				</div>
-
-				{/* Hover Glow Effect */}
-				<div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-600/0 via-orange-600/0 to-pink-600/0 group-hover:from-orange-600/10 group-hover:via-orange-600/5 group-hover:to-pink-600/10 transition-all duration-500 pointer-events-none"></div>
 			</div>
 		</Link>
 	)

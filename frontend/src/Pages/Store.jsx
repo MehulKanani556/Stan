@@ -5,10 +5,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import '../css/Store.css';
-import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart, FaWindows, FaXbox, FaAndroid, FaApple } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaShoppingCart, FaRegHeart, FaWindows, FaXbox, FaAndroid, FaApple, FaPlay } from "react-icons/fa";
 import { Navigation } from "swiper/modules";
 import game1 from '../images/game1.jpg';
 import { getAllGames, getAllActiveGames, getPopularGames, getTopGames, getTrendingGames } from '../Redux/Slice/game.slice';
+import { getFreeGames } from '../Redux/Slice/freeGame.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCategories } from '../Redux/Slice/category.slice';
 import { useNavigate } from 'react-router-dom';
@@ -200,11 +201,11 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
        <div className="absolute inset-0 bg-[#141414] opacity-100 transition-opacity duration-700" />
 
         {/* Image Container */}
-        <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
+        <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-t-2xl">
           <img
             src={game?.cover_image?.url || game1}
             alt={game?.title}
-            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110 rounded-2xl"
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110 rounded-t-2xl"
             loading="lazy"
           />
 
@@ -381,6 +382,75 @@ const GameCard = ({ game, onNavigate, gameActions, onAddToCart }) => {
 // Memoized GameCard to prevent unnecessary re-renders
 const MemoizedGameCard = React.memo(GameCard);
 
+// Free Game Card Component
+const FreeGameCard = ({ game, onNavigate }) => {
+  const isNewGame = useMemo(() => {
+    if (!game?.createdAt) return false;
+    const createdDate = new Date(game.createdAt);
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(new Date().getMonth() - 1);
+    return createdDate >= oneMonthAgo && createdDate <= new Date();
+  }, [game?.createdAt]);
+
+  return (
+    <div
+      onClick={() => onNavigate(`/games/${game.slug}`)}
+      className="w-full max-w-[220px] sm:max-w-[260px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] cursor-pointer mx-auto"
+    >
+      <div className="group relative overflow-hidden rounded-2xl bg-[#141414] border border-slate-600/50 shadow-[0_4px_33px_#0000000d] hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
+        <div className="absolute inset-0 bg-[#141414] opacity-100 transition-opacity duration-700" />
+        <div className="relative w-full h-32 ms:h-48 md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-t-2xl">
+          <img
+            src={game?.image || game1}
+            alt={game?.name}
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110 rounded-t-2xl"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/60 to-transparent">
+            {isNewGame && (
+              <div className="absolute ms:top-4 ms:left-4 top-1 left-1">
+                <div className="px-3 ms:py-1.5 py-1 bg-[var(--color-change)] rounded-full backdrop-blur-sm border border-orange-400/30 shadow-lg">
+                  <div className="ms:text-xs text-[8px] font-bold text-white tracking-wider flex justify-center items-center"><p>NEW</p></div>
+                </div>
+              </div>
+            )}
+            <div className="absolute ms:top-4 ms:right-4 top-2 right-2 px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold rounded-full shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 text-[10px] sm:text-xs">
+              FREE
+            </div>
+            <div className="absolute bottom-4 left-4 right-4">
+              <div className="ms:p-4 p-0">
+                <h3 className="text-white font-bold ms:text-sm text-xs sm:text-base md:text-lg lg:text-xl leading-tight">
+                  {game?.name}
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="ms:p-4 p-2 md:p-6 ms:space-y-4 space-y-2 bg-gradient-to-br from-slate-700/95 to-slate-800/95">
+          <div className="grid grid-cols-1 gap-4">
+            <div className="bg-[#06060690] rounded-xl relative z-10 px-3 sm:px-4 sm:py-3 py-2 md:px-6 md:py-3.5">
+              <div className="flex flex-wrap items-center space-x-2">
+                <span className="ms:text-sm text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">Status:</span>
+                <span className="ms:text-lg text-xs font-black text-white">Free to Play</span>
+              </div>
+            </div>
+          </div>
+          <button className="w-full relative overflow-hidden rounded-xl transition-all duration-500 transform bg-gradient-to-r from-emerald-600 to-green-600 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]">
+            <div className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-3.5">
+              <FaPlay className="text-white md:w-5 ms:h-5 h-3 w-3" />
+              <span className="text-white font-bold text-sm tracking-wider uppercase ms:text-sm text-xs">Play Now</span>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+          </button>
+        </div>
+        <div className="absolute top-1 left-1 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+          <div className="ms:w-16 ms:h-16 h-12 w-12 border-2 border-emerald-400/30 rounded-lg transform rotate-45"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Navigation Component
 const SwiperNavigation = ({ title, onAllGamesClick, onPrev, onNext, isBeginning, isEnd }) => (
   <div className="k-trending-heading mb-0 sm:mb-5 md:mb-6 flex items-center justify-between md:pt-0 sm:pt-5 pt-3">
@@ -448,9 +518,15 @@ const SwiperSection = ({ title, games = [], gameActions, onNavigate, onAddToCart
         >
           {Array.from({ length: 4 }, (_, i) => (
             <SwiperSlide key={i}>
-              <LazyGameCard suppressSkeleton={false} delay={100 * i}>
-                <div className="w-full h-80 bg-gray-800 rounded-lg animate-pulse"></div>
-              </LazyGameCard>
+              <div className="w-full max-w-[380px] mx-auto animate-pulse">
+                <div className="rounded-2xl bg-[#141414] border border-slate-600/30 overflow-hidden">
+                  <div className="w-full h-32 ms:h-48 md:h-52 lg:h-36 bg-slate-800" />
+                  <div className="ms:p-4 p-2 md:p-6 space-y-4 bg-slate-800/50">
+                    <div className="bg-slate-700 h-6 rounded-lg w-3/4" />
+                    <div className="h-10 bg-slate-700 rounded-xl w-full" />
+                  </div>
+                </div>
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -521,10 +597,12 @@ const Store = () => {
 
   // Redux selectors
   const { games, popularGames, topGames, trendingGames, loading, error, category } = useSelector((state) => state.game);
+  const { games: freeGames, loading: freeLoading } = useSelector((state) => state.freeGame);
 
   // Custom hooks
   const gameActions = useGameActions();
   const featuredNavigation = useSwiperNavigation();
+  const freeNavigation = useSwiperNavigation();
   const {
     openPlatformModal,
     closePlatformModal,
@@ -610,7 +688,8 @@ const Store = () => {
         await Promise.all([
           dispatch(getPopularGames({ page: 1, limit: 8 })), // Reduced limit
           dispatch(getTopGames({ page: 1, limit: 8 })), // Reduced limit
-          dispatch(getTrendingGames({ page: 1, limit: 8, days: 30 })) // Reduced limit
+          dispatch(getTrendingGames({ page: 1, limit: 8, days: 30 })), // Reduced limit
+          dispatch(getFreeGames())
         ]);
       }, 100); // Small delay to prioritize critical data
     };
@@ -682,6 +761,55 @@ const Store = () => {
               onAddToCart={openPlatformModal}
               loading={loading}
             />
+
+            {/* Free Games Section */}
+            <div className='md:py-4 lg:py-6'>
+              <SwiperNavigation
+                title="Free Games"
+                onAllGamesClick={() => navigate('/games')}
+                onPrev={() => freeNavigation.swiperRef.current?.slidePrev()}
+                onNext={() => freeNavigation.swiperRef.current?.slideNext()}
+                isBeginning={freeNavigation.isBeginning}
+                isEnd={freeNavigation.isEnd}
+              />
+              <Swiper
+                modules={[Navigation]}
+                ref={freeNavigation.swiperRef}
+                {...SWIPER_CONFIG}
+                {...freeNavigation.swiperEvents}
+              >
+                {freeLoading ? (
+                  Array.from({ length: 4 }, (_, i) => (
+                    <SwiperSlide key={i}>
+                      <div className="w-full max-w-[380px] mx-auto animate-pulse">
+                        <div className="rounded-2xl bg-[#141414] border border-slate-600/30 overflow-hidden">
+                          <div className="w-full h-32 ms:h-48 md:h-52 lg:h-36 xl:h-36 bg-slate-800" />
+                          <div className="ms:p-4 p-2 md:p-6 space-y-4 bg-slate-800/50">
+                            <div className="bg-slate-700 h-6 rounded-lg w-3/4" />
+                            <div className="h-10 bg-slate-700 rounded-xl w-full" />
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  ))
+                ) : freeGames.length > 0 ? (
+                  freeGames.map((game, index) => (
+                    <SwiperSlide key={game._id}>
+                      <FreeGameCard
+                        game={game}
+                        onNavigate={handleNavigate}
+                      />
+                    </SwiperSlide>
+                  ))
+                ) : (
+                  <SwiperSlide>
+                    <div className="text-center text-white py-10 bg-[#141414] rounded-2xl border border-slate-600/30 w-full">
+                      No free games available
+                    </div>
+                  </SwiperSlide>
+                )}
+              </Swiper>
+            </div>
 
             <SwiperNavigation
               title="Featured Games"

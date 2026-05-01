@@ -249,7 +249,7 @@ const GameCard = React.memo(({ game, orders, onWishlistToggle, onAddToCart, wish
             <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 border border-slate-600/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-slate-500/70">
 
                 {/* Enhanced Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-orange-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/5 via-orange-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                 {/* Image Container */}
                 <div className="relative w-full h-36 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden">
@@ -727,11 +727,11 @@ export default function AllGames() {
                     <div className="absolute inset-0 bg-[#141414] opacity-100 transition-opacity duration-700" />
 
                     {/* Image Container with Enhanced Effects */}
-                    <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-2xl">
+                    <div className="relative w-full h-32 ms:h-48  md:h-52 lg:h-36 xl:h-36 overflow-hidden rounded-t-2xl">
                         <img
                             src={imageUrl}
                             alt={game?.title}
-                            className="w-full h-full object-cover rounded-2xl"
+                            className="w-full h-full object-cover rounded-t-2xl"
                         />
 
                         {/* Gradient Overlay */}
