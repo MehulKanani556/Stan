@@ -531,22 +531,45 @@ export const getAllGames = function (req, res) {
             const sortOrder = order === 'asc' ? 1 : -1;
             const category = req.query.category; // Optional category filter
             const search = req.query.search; // Optional search filter
+            const platform = req.query.platform; // Optional platform filter
             
-            // Build base filter
+            // Build filter
             let filter = {};
-            
+            let conditions = [];
+
             // Add category filter if provided
             if (category && mongoose.Types.ObjectId.isValid(category)) {
-                filter.category = category;
+                conditions.push({ category: category });
             }
             
             // Add search filter if provided
             if (search) {
-                filter.$or = [
-                    { title: { $regex: search, $options: 'i' } },
-                    { description: { $regex: search, $options: 'i' } },
-                    { tags: { $in: [new RegExp(search, 'i')] } }
-                ];
+                conditions.push({
+                    $or: [
+                        { title: { $regex: search, $options: 'i' } },
+                        { description: { $regex: search, $options: 'i' } },
+                        { tags: { $in: [new RegExp(search, 'i')] } }
+                    ]
+                });
+            }
+
+            // Add platform filter if provided
+            if (platform) {
+                if (platform === 'nintendo') {
+                    conditions.push({
+                        $or: [
+                            { 'platforms.nintendo_switch_1.available': true },
+                            { 'platforms.nintendo_switch_2.available': true }
+                        ]
+                    });
+                } else {
+                    let platformKey = `platforms.${platform}.available`;
+                    conditions.push({ [platformKey]: true });
+                }
+            }
+
+            if (conditions.length > 0) {
+                filter = { $and: conditions };
             }
             
             // Define sorting options
@@ -608,7 +631,8 @@ export const getAllGames = function (req, res) {
                 },
                 filters: {
                     category: category || null,
-                    search: search || null
+                    search: search || null,
+                    platform: platform || null
                 }
             });
         } catch (error) {

@@ -43,6 +43,18 @@ const PRICE_RANGES = [
     { value: "over-2000", label: "Over $2000" },
 ];
 
+const PLATFORM_OPTIONS = [
+    { value: "", label: "All Platforms" },
+    { value: "windows", label: "Windows" },
+    { value: "xbox", label: "Xbox" },
+    { value: "ps5", label: "PlayStation 5" },
+    { value: "quest", label: "Meta Quest" },
+    { value: "vision_pro", label: "Apple Vision Pro" },
+    { value: "nintendo", label: "Nintendo Switch" },
+    { value: "android", label: "Android" },
+    { value: "ios", label: "iOS" },
+];
+
 // Custom hook for debounced value
 const useDebounce = (value, delay) => {
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -366,6 +378,8 @@ const FilterHeader = React.memo(({
     setSearchQuery,
     selectedCategory,
     setSelectedCategory,
+    selectedPlatform,
+    setSelectedPlatform,
     sortBy,
     setSortBy,
     priceRange,
@@ -373,7 +387,7 @@ const FilterHeader = React.memo(({
     categories,
     onResetFilters
 }) => {
-    const hasActiveFilters = searchQuery || selectedCategory || sortBy || priceRange;
+    const hasActiveFilters = searchQuery || selectedCategory || selectedPlatform || sortBy || priceRange;
 
     return (
         <div className="backdrop-blur-xl rounded-2xl p-6 mb-8 border border-white/25 shadow-2xl">
@@ -395,7 +409,7 @@ const FilterHeader = React.memo(({
                 </div>
 
                 {/* Filters */}
-                <div className="flex  sx:flex-nowrap flex-wrap items-end gap-4">
+                <div className="flex  md:flex-nowrap flex-wrap items-end gap-4 w-full lg:w-auto">
 
                     {/* Category Filter */}
                     <div className="min-w-[150px] flex-1">
@@ -409,6 +423,22 @@ const FilterHeader = React.memo(({
                             {categories?.map((category) => (
                                 <option key={category._id} value={category._id}>
                                     {category.categoryName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Platform Filter */}
+                    <div className="min-w-[150px] flex-1">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Platform</label>
+                        <select
+                            value={selectedPlatform}
+                            onChange={(e) => setSelectedPlatform(e.target.value)}
+                            className="w-full px-4 py-3 bg-black/20 border border-white/25 rounded-xl text-white focus:outline-none outline-none focus:ring-1 focus:ring-white/25 transition-all duration-300"
+                        >
+                            {PLATFORM_OPTIONS.map(option => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
                                 </option>
                             ))}
                         </select>
@@ -559,6 +589,7 @@ export default function AllGames() {
     // Local state
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedPlatform, setSelectedPlatform] = useState("");
     const [sortBy, setSortBy] = useState("");
     const [priceRange, setPriceRange] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -598,6 +629,7 @@ export default function AllGames() {
     const resetFilters = useCallback(() => {
         setSearchQuery("");
         setSelectedCategory("");
+        setSelectedPlatform("");
         setSortBy("");
         setPriceRange("");
         setCurrentPage(1);
@@ -644,16 +676,17 @@ export default function AllGames() {
             page: currentPage,
             limit: GAMES_PER_PAGE,
             category: selectedCategory,
-            search: debouncedSearchQuery
+            search: debouncedSearchQuery,
+            platform: selectedPlatform
         };
 
         dispatch(getAllGames(params));
-    }, [dispatch, currentPage, selectedCategory, debouncedSearchQuery]);
+    }, [dispatch, currentPage, selectedCategory, debouncedSearchQuery, selectedPlatform]);
 
     // Reset to first page when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [debouncedSearchQuery, selectedCategory, sortBy, priceRange]);
+    }, [debouncedSearchQuery, selectedCategory, selectedPlatform, sortBy, priceRange]);
 
     // Wishlist and Cart Handlers for the second GameCard component
     const handleRemoveFromWishlist = useCallback((gameId) => {
@@ -901,6 +934,8 @@ export default function AllGames() {
                     setSearchQuery={setSearchQuery}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
+                    selectedPlatform={selectedPlatform}
+                    setSelectedPlatform={setSelectedPlatform}
                     sortBy={sortBy}
                     setSortBy={setSortBy}
                     priceRange={priceRange}
@@ -947,18 +982,18 @@ export default function AllGames() {
                                 </svg>
                             </div>
                             <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                                {selectedCategory || debouncedSearchQuery || sortBy || priceRange
+                                {selectedCategory || selectedPlatform || debouncedSearchQuery || sortBy || priceRange
                                     ? 'No games found'
                                     : 'No games available'
                                 }
                             </h3>
                             <p className="text-gray-400 text-sm sm:text-base mb-4">
-                                {selectedCategory || debouncedSearchQuery || sortBy || priceRange
+                                {selectedCategory || selectedPlatform || debouncedSearchQuery || sortBy || priceRange
                                     ? 'Try adjusting your filters to see more results'
                                     : 'Check back later for new releases and updates'
                                 }
                             </p>
-                            {(selectedCategory || debouncedSearchQuery || sortBy || priceRange) && (
+                            {(selectedCategory || selectedPlatform || debouncedSearchQuery || sortBy || priceRange) && (
                                 <button
                                     onClick={resetFilters}
                                     className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-500 transition-colors font-medium"

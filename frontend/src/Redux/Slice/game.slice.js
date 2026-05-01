@@ -6,7 +6,7 @@ import { enqueueSnackbar } from "notistack";
 // GET ALL GAMES - Optimized version
 export const getAllGames = createAsyncThunk(
   "game/getAllGames",
-  async ({ page = 1, limit = 20, sortBy = 'createdAt', order = 'desc', category, search } = {}, { rejectWithValue }) => {
+  async ({ page = 1, limit = 20, sortBy = 'createdAt', order = 'desc', category, search, platform } = {}, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -17,6 +17,7 @@ export const getAllGames = createAsyncThunk(
 
       if (category) params.append('category', category);
       if (search) params.append('search', search);
+      if (platform) params.append('platform', platform);
 
       const res = await axiosInstance.get(`/getAllGames?${params}`);
       console.log(res.data);
